@@ -74,8 +74,8 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 	private SkeletonUtils skeletonUtils= new SkeletonUtils();
 	private ControllerUtils ctrUtils = new ControllerUtils();
 
-	protected static final String  udaEjb = "SkeletonRemote";
-	protected static final String  geremuaEjb = "Home";
+	protected static final String udaEjb = "SkeletonRemote";
+	protected static final String geremuaEjb = "Home";
 	
 	// Logs en la consola
 	private ConsoleLogger consola = new ConsoleLogger(Constants.CONSOLE_NAME);
@@ -103,8 +103,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 	 */
 	public void addPages() {
 		page = new GenerateStubWizardPage(selection);
-		addPage(page);
-		
+		addPage(page);		
 	}
 
 	/**
@@ -133,7 +132,6 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		final String ipServer=page.getIpServer();
 		final String codapp = Utilities.getAppName(ejbProject.getName());
 		final String earClassesProyPath=page.getProjectEARClassesLocation();
-
 		
 		final boolean isEjb3 = page.getRadEJBUda();
 		
@@ -187,9 +185,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 					page.setMessage("El campo IP del servidor de despliegue no tiene una dirección IP válida", IMessageProvider.ERROR);
 					return false;
 				}
-					
 		}
-			
 			
 		if (portIp.equals("") ) {
 			page.setMessage("Es obligatorio introducir el puerto del servidor de despliegue", IMessageProvider.ERROR);
@@ -197,10 +193,8 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		}
 		if (!portIp.equals("") &&(portIp.length() > 4 ||!Utilities.validateNumber(portIp)) ){
 			page.setMessage("El campo puerto del servidor de despliegue no es correcto", IMessageProvider.ERROR);
-			return false; 
-			
+			return false;
 		}
-		
 		if (nameServer.equals("") ) {
 			page.setMessage("Es obligatorio introducir el nombre del servidor EJB", IMessageProvider.ERROR);
 			return false; 
@@ -209,9 +203,6 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 			page.setMessage("Es obligatorio introducir la dirección IP del servidor EJB", IMessageProvider.ERROR);
 			return false; 
 		}
-		
-		
-		
 		if (!ipServer.equals("") ){
 			if (Utilities.validateNumber(ipServer.replace(".", "")) && !Utilities.validateIPAdderess(ipServer)){
 				page.setMessage("Dirección IP no válida en 'IP Servidor'", IMessageProvider.ERROR);
@@ -220,9 +211,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 				page.setMessage("Dirección IP no válida en 'IP Servidor'", IMessageProvider.ERROR);
 				return false;
 			}
-				
 	    }		
-		
 		if (portServer.equals("") ) {
 			page.setMessage("Es obligatorio introducir el puerto del servidor EJB", IMessageProvider.ERROR);
 			return false; 
@@ -230,7 +219,6 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		if (!portServer.equals("") &&(portServer.length() > 4 ||!Utilities.validateNumber(portServer)) ){
 			page.setMessage("El campo puerto del servidor de EJB no es correcto", IMessageProvider.ERROR);
 			return false; 
-			
 		}
 		if (userServer.equals("") ) {
 			page.setMessage("Es obligatorio introducir el usuario del servidor EJB", IMessageProvider.ERROR);
@@ -240,11 +228,8 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 			page.setMessage("Es obligatorio introducir la contraseña del servidor EJB", IMessageProvider.ERROR);
 			return false; 
 		}
-	
-		
-		
 		// Validación de tecnologias JPA 2.0 o Spring JDBC en los proyectos seleccionados
-		 final boolean  isJPAEARClasses ;
+		final boolean  isJPAEARClasses ;
 		
 		if (earClasses != null){
 			isJPAEARClasses = isJPAProjectEARClasses(earClasses);
@@ -257,7 +242,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 			// MessageDialog.openError(getShell(), "Error", "Operación cancelada por el usuario");
 			 return false;
 		 }
-			// Inicia la ejecución de proceso
+		// Inicia la ejecución de proceso
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor)
 					throws CoreException {
@@ -287,6 +272,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		}
 		return true;
 	}
+
 	/**
 	 * Genera el stub seleccionado
 	 * 
@@ -318,7 +304,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 			String ejbProyPath, boolean isJPAEARClasses, boolean isEjb3	,String weblogicIp,
 			String portIp,String nameServer,String ipServer,String portServer,String userServer
 			,String pwdServer , String codapp, String earClassesProyPath) throws Exception {
-		
+
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
 		Map<String, Object> context = new HashMap<String, Object>();
@@ -341,7 +327,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		context.put("pwdServer",pwdServer);
 		context.put("codapp",codapp);
 		context.put("earClassesPath",earClassesProyPath);
-		
+
 		// Recupera el Workspace para crear los proyectos
 		//IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if (addNeededLibraries(earProyPath,isEjb3)){
@@ -354,14 +340,16 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 				context.put("methods",metodos);
 			}
 		}
-		
+
 		createAdministrationStub(ejbProyPath,context);
 		createAdministrationStubRemote(ejbProyPath,context);
 		createAppConfigXml(configProyPath,context);
 		editXMLFile(context.get("earClassesPath")+"/src/spring", new File(context.get("earClassesPath")+"/src/spring/service-config.xml"),context);
-		editXMLFileWeblogicEjbJar(ejbProyPath+"\\ejbModule\\META-INF", new File(ejbProyPath+"\\ejbModule\\META-INF\\weblogic-ejb-jar.xml"),context);
+		editXMLFileWeblogicEjbJar(ejbProyPath+"/ejbModule/META-INF", new File(ejbProyPath+"/ejbModule/META-INF/weblogic-ejb-jar.xml"),context);
 		this.summary = createSummary(context);
 
+		consola.println("Cliente EJB " + context.get("serviceName")+ "Stub del proyecto " + ((String)ejbProyName), Constants.MSG_INFORMATION);
+		consola.println("generado en " + ((String) context.get(Constants.PACKAGE_PATTERN)).replace(".service", ".remoting"), Constants.MSG_INFORMATION);
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
 	}
 
@@ -376,425 +364,368 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		summaryText.append("\n\n- EJB ");
 		summaryText.append(context.get("serviceName")+ "Stub");
 		summaryText.append(" generado para ");
-	    if ((Boolean)context.get("isEjb3")){
+		if ((Boolean)context.get("isEjb3")){
 			summaryText.append(context.get("serviceName")+"SkeletonRemote");
 		}else{
 			summaryText.append(context.get("serviceName")+"Home");
 		}
 		summaryText.append(" en:  ");
 		summaryText.append(packageRemoting);
-		
+
 		return summaryText.toString();
 	}
-	   
-   
-    public static void addFile(String s) throws IOException {
-        File f = new File(s);
-        addFile(f);
-  }
 
-  public static void addFile(File f) throws IOException {
-        addURL(f.toURI().toURL());
-  }
+	public static void addFile(String s) throws IOException {
+		File f = new File(s);
+		addFile(f);
+	}
 
-  public static void addURL(URL u) throws IOException {
-        URLClassLoader sysloader = (URLClassLoader) ClassLoader
-                    .getSystemClassLoader();
-        Class<?> sysclass = URLClassLoader.class;
-        try {
-              Method method = sysclass.getDeclaredMethod("addURL", parameters);
-              method.setAccessible(true);
-              method.invoke(sysloader, new Object[] { u });
-        } catch (Throwable t) {
-              t.printStackTrace();
-              throw new IOException(
-                         "Error, could not add URL to system classloader");
-        }
-  }
-  /**
+	public static void addFile(File f) throws IOException {
+		addURL(f.toURI().toURL());
+	}
+
+	public static void addURL(URL u) throws IOException {
+		URLClassLoader sysloader = (URLClassLoader) ClassLoader
+		.getSystemClassLoader();
+		Class<?> sysclass = URLClassLoader.class;
+		try {
+			Method method = sysclass.getDeclaredMethod("addURL", parameters);
+			method.setAccessible(true);
+			method.invoke(sysloader, new Object[] { u });
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new IOException(
+					"Error, could not add URL to system classloader");
+		}
+	}
+	
+	/**
 	 * Obtiene las classes existentes del tipo EJB 3
 	 * @param fileName - nombre del fichero
 	 * @param earProyPath - path del proyecto EAR
 	 * @return - lista de nombres de clases existentes
 	 */
-public static  List<String[]> getClassesEJB3( String fileName,
-			String earProyPath
-		  ) throws IOException,
-             SecurityException, ClassNotFoundException,
-             IllegalArgumentException, InstantiationException,
-             IllegalAccessException, InvocationTargetException,
-             NoSuchMethodException {
+	public static  List<String[]> getClassesEJB3( String fileName, String earProyPath) throws IOException,
+	SecurityException, ClassNotFoundException,
+	IllegalArgumentException, InstantiationException,
+	IllegalAccessException, InvocationTargetException,
+	NoSuchMethodException {
 
 		Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(
-						fileName);
-     //Map<?, ?> identity = new HashMap<Object, Object>();
-     //Proxy someServiceImpl = null;
-     List<String[]> list = new ArrayList<String[]>();
-     boolean bol = true;
+				fileName);
+		//Map<?, ?> identity = new HashMap<Object, Object>();
+		//Proxy someServiceImpl = null;
+		List<String[]> list = new ArrayList<String[]>();
+		boolean bol = true;
 
-//   try {
-//     	someServiceImpl = (Proxy) UdaDynamicProxy.newInstance(identity, new Class[]
-//                { clazz },ClassLoader.getSystemClassLoader());
-//     }catch(Exception e){
-//         e.printStackTrace();
-//        logger.error("", e);
-//         
-//     }
-    	    //Method[] methods = someServiceImpl.getClass().getDeclaredMethods();
-     Method[] methods = clazz.getDeclaredMethods();
-          for(Method met:methods){
-          	for(String str:genericMethods){
-          		//if(str.equalsIgnoreCase(met.toGenericString())){
-          		if(met.toGenericString().endsWith(str)){
-          			bol = false;
-          			break;
-          		}            		
-          	}
-          	if (bol){
-              	//String str = met.toGenericString();
-              	String[] auxiliar = StubClassUtils.getMetodCaracteristics(met);
-          		if (auxiliar!=null){
-          			list.add(auxiliar);
-          		}	
-          	}
-          	bol = true;
-          	
-          }
-          return list;
-      
+		Method[] methods = clazz.getDeclaredMethods();
+		for(Method met:methods){
+			for(String str:genericMethods){
+				//if(str.equalsIgnoreCase(met.toGenericString())){
+				if(met.toGenericString().endsWith(str)){
+					bol = false;
+					break;
+				}            		
+			}
+			if (bol){
+				//String str = met.toGenericString();
+				String[] auxiliar = StubClassUtils.getMetodCaracteristics(met);
+				if (auxiliar!=null){
+					list.add(auxiliar);
+				}	
+			}
+			bol = true;
+		}
+		return list;
+
 	}
-/**
- * Genera el stub del método indicado
- * @param ejbProyPath - path proyecto EJB
- * @param context - Contexto Freemarker
- * @return - devuelve el resultado de la ejecución
- */
-  public boolean createAdministrationStub(
-	String ejbProyPath,Map<String, Object> context){
-	    String packageName= (String) context.get(Constants.PACKAGE_PATTERN);
-	    String serviceName=(String) context.get("serviceName");
-	    String serviceNameAux = "";
-	    if ((Boolean) context.get("isEjb3")){
-	    	  serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(udaEjb, "");
-	    }else{
-	    	 serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(geremuaEjb, "");
-	    }
-	   
-		   
-	    serviceName = serviceName.substring(0,serviceName.lastIndexOf("."));
-	    context.put("skeletonUtils", skeletonUtils);
-	    context.put("ctrUtils", ctrUtils);
+	/**
+	 * Genera el stub del método indicado
+	 * @param ejbProyPath - path proyecto EJB
+	 * @param context - Contexto Freemarker
+	 * @return - devuelve el resultado de la ejecución
+	 */
+	public boolean createAdministrationStub(String ejbProyPath,Map<String, Object> context){
+		String packageName= (String) context.get(Constants.PACKAGE_PATTERN);
+		String serviceName=(String) context.get("serviceName");
+		String serviceNameAux = "";
+		if ((Boolean) context.get("isEjb3")){
+			serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(udaEjb, "");
+		}else{
+			serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(geremuaEjb, "");
+		}
+
+		serviceName = serviceName.substring(0,serviceName.lastIndexOf("."));
+		context.put("skeletonUtils", skeletonUtils);
+		context.put("ctrUtils", ctrUtils);
 		context.put("packageNameRemoting",packageName);
 		context.put("serviceName",serviceNameAux);
 		context.put("stubUtils", getStub);
-		
+
+		String pathTemplatesEjb = Activator.getDefault().getPreferenceStore()
+				.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
+				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB;
+		try {
+			ProjectWorker.createFileTemplateRename(pathTemplatesEjb+"/client",ejbProyPath+ "/ejbModule/"+packageName.replace(".", "/"),"stub", serviceNameAux + "Stub.java",context);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 	
-		String pathTemplatesEjb = Activator.getDefault().getPreferenceStore()
-		.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
-		+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB;
-    	try {
+	/**
+	 * Genera el stub remote del método indicado
+	 * @param ejbProyPath - path proyecto EJB
+	 * @param context - Contexto Freemarker
+	 * @return - devuelve el resultado de la ejecución
+	 */  
+	public boolean createAdministrationStubRemote(String ejbProyPath,Map<String, Object> context){
+		String packageName= (String) context.get(Constants.PACKAGE_PATTERN);
 
-			ProjectWorker.createFileTemplateRename( pathTemplatesEjb,ejbProyPath+ "\\ejbModule\\"+packageName.replace(".", "\\"),"Stub", serviceNameAux + "Stub.java",context);
-			logger.info("Stub generado en:" +packageName);
+		String serviceName=(String) context.get("serviceName");
+		String serviceNameAux = "";
+		if ((Boolean) context.get("isEjb3")){
+			serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(udaEjb, "");
+		}else{
+			serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(geremuaEjb, "");
+		}
+		context.put("serviceName",serviceNameAux);
+		context.put("skeletonUtils", skeletonUtils);
+		context.put("ctrUtils", ctrUtils);
+		String pathTemplatesEjb = Activator.getDefault().getPreferenceStore()
+				.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
+				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB;
+		try {
+			ProjectWorker.createFileTemplateRename(pathTemplatesEjb+"/client",ejbProyPath+ "/ejbModule/"+packageName.replace(".", "/"),"stubRemote", serviceNameAux + "StubRemote.java",context);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
 		return true;
- }	
-  /**
-   * Genera el stub remote del método indicado
-   * @param ejbProyPath - path proyecto EJB
-   * @param context - Contexto Freemarker
-   * @return - devuelve el resultado de la ejecución
-   */  
-    public boolean createAdministrationStubRemote(
-	String ejbProyPath,Map<String, Object> context){
-	    String packageName= (String) context.get(Constants.PACKAGE_PATTERN);
-	    
-	    String serviceName=(String) context.get("serviceName");
-	    String serviceNameAux = "";
-	    if ((Boolean) context.get("isEjb3")){
-	    	  serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(udaEjb, "");
-	    }else{
-	    	 serviceNameAux = serviceName.substring(serviceName.lastIndexOf(".")+1,serviceName.length()).replace(geremuaEjb, "");
-	    }
-	    context.put("serviceName",serviceNameAux);
-	    context.put("skeletonUtils", skeletonUtils);
-	    context.put("ctrUtils", ctrUtils);
-		String pathTemplatesEjb = Activator.getDefault().getPreferenceStore()
-		.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
-		+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB;
-    	try {
+	}
 
-			ProjectWorker.createFileTemplateRename( pathTemplatesEjb,ejbProyPath+ "\\ejbModule\\"+packageName.replace(".", "\\"),"StubRemote", serviceNameAux + "StubRemote.java",context);
-			logger.info(serviceNameAux + "StubRemote generado en:" +packageName);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		return true;
- }	
-    /**
-     * Actualiza el app.properties
-     * @param configProyPath - path proyecto config
-     * @param context - Contexto Freemarker
-     * @return - devuelve el resultado de la ejecución
-     */
-  public boolean createAppConfigXml(
+	/**
+	 * Actualiza el app.properties
+	 * @param configProyPath - path proyecto config
+	 * @param context - Contexto Freemarker
+	 * @return - devuelve el resultado de la ejecución
+	 */
+	public boolean createAppConfigXml(
 			String configProyPath,Map<String, Object> context){
-		    	try {
-		    		insertStringInFile(new File(configProyPath+"\\"+context.get("codapp")+".properties"),context);
-		    		logger.info(configProyPath+"\\"+context.get("codapp")+".properties actualizado");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return false;
-				}
-				return true;
-		 }	
-  /**
-   * Verifica si el proyecto EARClasses es de persistencia JPA
-   * @param project - proyecto EARClasses
-   * @return - devuelve el resultado de la ejecución
-   */  
-   private boolean isJPAProjectEARClasses(IProject project){
+		try {
+			insertStringInFile(new File(configProyPath+"/"+context.get("codapp")+".properties"),context);
+			logger.info(configProyPath+"/"+context.get("codapp")+".properties actualizado");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Verifica si el proyecto EARClasses es de persistencia JPA
+	 * @param project - proyecto EARClasses
+	 * @return - devuelve el resultado de la ejecución
+	 */  
+	private boolean isJPAProjectEARClasses(IProject project){
 		boolean isJPA = false;
 		if (project != null){
 			IFile persistence = project.getFile("/src/META-INF/udaPersistence.xml");
-			
+
 			// Verifica si existe el fichero udaPersistence.xml
 			// y busca en su contenido que tipo de tecnologia de persistencia tiene 
 			if (persistence.exists()){
 				isJPA = true;
 			}	
 		}
-			
 		return isJPA;
 	}
-   /**
-    * Borrado de fichero
-    * @param fileName - nombreFichero
-    */   
-   /*private static void fileDelete(String fileName){
-	  File f = new File(fileName);
 
-	  if (f.exists()){	
-		  if (f.isDirectory()) {
-		    String[] files = f.list();
-		    if (files.length > 0){
-		    	List<String> filesList= Arrays.asList(files);
-		    	Iterator<String> it = filesList.iterator();
-		    	while (it.hasNext()){
-		    		String name=(String) it.next();
-		    		if (name.startsWith(Constants.PREF_DEFAULT_UDA_JAR) && name.endsWith(".jar")){
-		    			fileDelete(fileName+"\\"+name);
-		    		}
-		    	}
-		    }	
-		  }
-		  //boolean success = f.delete();
-		  f.delete();
-	  } 
-  }*/
-   /**
-    * añade al classpath las librerias necesarias
-    * @param earPath - path proyecto EAR
-    * @param isEjb3 - indica si el proyecto es ejb3
-    * @throws IOException
-    */     
-public boolean addNeededLibraries(String earPath,boolean isEjb3) throws IOException{
-	  String x38JarName =Utilities.findFileStartsLike(new File(earPath + Constants.PREF_DEFAULT_EAR_LIBS),Constants.PREF_DEFAULT_X38_LIBS);
+	/**
+	 * añade al classpath las librerias necesarias
+	 * @param earPath - path proyecto EAR
+	 * @param isEjb3 - indica si el proyecto es ejb3
+	 * @throws IOException
+	 */     
+	public boolean addNeededLibraries(String earPath,boolean isEjb3) throws IOException{
+		String x38JarName =Utilities.findFileStartsLike(new File(earPath + Constants.PREF_DEFAULT_EAR_LIBS),Constants.PREF_DEFAULT_X38_LIBS);
 		if (x38JarName.equals("")){
-			   throw new IOException(
-            "La libreria x38ShLibClasses no está instalada en: "+earPath + Constants.PREF_DEFAULT_EAR_LIBS + "\\"  + x38JarName);
+			throw new IOException(
+					"La libreria x38ShLibClasses no está instalada en: "+earPath + Constants.PREF_DEFAULT_EAR_LIBS + "/"  + x38JarName);
 		}
-		addFile(earPath + Constants.PREF_DEFAULT_EAR_LIBS+"\\"+x38JarName);
+		addFile(earPath + Constants.PREF_DEFAULT_EAR_LIBS+"/"+x38JarName);
 		//Add libraries where name like '%Remoting.jar'
 		List<String> librerias = Utilities.findFileEndsLike(new File(earPath + Constants.PREF_DEFAULT_EAR_LIBS),"Remoting");
 		Iterator<String> itLib = librerias.iterator();
 		while (itLib.hasNext()){
 			String nombreLib= (String) itLib.next();
-			addFile(earPath+ Constants.PREF_DEFAULT_EAR_LIBS+"\\" +nombreLib);
+			addFile(earPath+ Constants.PREF_DEFAULT_EAR_LIBS+"/" +nombreLib);
 		}	
 		if (!isEjb3){
 			try{
 				String property = System.getProperty("eclipse.home.location").replace("file:/", "");
-				String directorio =findDirectory(new File(property+"\\plugins"));
+				String directorio =findDirectory(new File(property+"/plugins"));
 				if (directorio!=null){
-					// addFile("D:\\UDALast\\tools\\z98\\code\\com.ejie.uda\\lib\\ejb-api-3.0.jar");
-					addFile(property.replace("/","\\")+ "plugins\\"+directorio + "\\lib\\tools\\ejb-api-3.0.jar");
+					// addFile("D:/UDALast/tools/z98/code/com.ejie.uda/lib/ejb-api-3.0.jar");
+					addFile(property + "plugins/" + directorio + "/lib/tools/ejb-api-3.0.jar");
 				}else{
-					  throw new IOException(
-					            "No se encuentra la carpeta de hibernate para obtener el jar ejb-api-3.0.jar ");
+					throw new IOException(
+							"No se encuentra la carpeta de hibernate para obtener el jar ejb-api-3.0.jar ");
 				}
 			}catch(Exception e){
-				   throw new IOException(
-				            "La libreria ejb-api-3.0.jar  no está introducida en:"+  System.getProperty("eclipse.home.location").replace("file:/", "")+"\\plugins\\" );
+				throw new IOException(
+						"La libreria ejb-api-3.0.jar  no está introducida en:"+  System.getProperty("eclipse.home.location").replace("file:/", "")+"/plugins/" );
 
 			}
-			 
+
 		}
 		return true;
-  }
-/**
- * Busca el directorio de hibernate desde la raíz del eclipse
- * @param directory - directorio
- * @return - nombre del directorio
- */  
-  private static String findDirectory(File directory) 
-	{
-      String directoryName="";
-      if (!directory.exists()) {
-
-      	return "";
-      }
-   
-      File[] files = directory.listFiles();
-      for (File file : files) {
-      	String fileName = file.getName();
-      	 if (file.isDirectory() && fileName.startsWith("org.hibernate.eclipse_")){
-      		directoryName=fileName;
-      	 }
-       
-      }
-
-      return directoryName;
-  }
-  /**
-   * Busca un nodo dentro de un fichero XML
-   * @param document - docuemnto
-   * @param nodeName- nombre del nodo
-   * @param attributeName - nombre del atributo
-   * @param attributeValue - valor del atributo
-   * @return - indicador de encontrado
-   */  
-	private boolean findNodeAttribute(Document document, String nodeName, String attributeName, String attributeValue){
-		
-		boolean match = false;
-		
-		if (document != null   && !Utilities.isBlank(nodeName)){
-			NodeList nodeList = document.getElementsByTagName(nodeName);
-			
-			int size = nodeList.getLength();
-			
-			for(int i=0; i < size; i++){
-				  Node childNode = nodeList.item(i);
-				  
-				  NamedNodeMap nodeMap = childNode.getAttributes();
-				  if (attributeName.equals("")){
-					  match=true;
-				  }	  
-				  if (!attributeName.equals("")){
-				  String valor =nodeMap.getNamedItem(attributeName).getNodeValue();
-				  
-				    if (attributeValue.equals(valor)){
-					  match = true;
-					  break;
-				    }
-				  }    
+	}
+	/**
+	 * Busca el directorio de hibernate desde la raíz del eclipse
+	 * @param directory - directorio
+	 * @return - nombre del directorio
+	 */  
+	private static String findDirectory(File directory){
+		String directoryName="";
+		if (!directory.exists()) {
+			return "";
+		}
+		File[] files = directory.listFiles();
+		for (File file : files) {
+			String fileName = file.getName();
+			if (file.isDirectory() && fileName.startsWith("org.hibernate.eclipse_")){
+				directoryName=fileName;
 			}
 		}
-				
+		return directoryName;
+	}
+	/**
+	 * Busca un nodo dentro de un fichero XML
+	 * @param document - docuemnto
+	 * @param nodeName- nombre del nodo
+	 * @param attributeName - nombre del atributo
+	 * @param attributeValue - valor del atributo
+	 * @return - indicador de encontrado
+	 */  
+	private boolean findNodeAttribute(Document document, String nodeName, String attributeName, String attributeValue){
+
+		boolean match = false;
+
+		if (document != null   && !Utilities.isBlank(nodeName)){
+			NodeList nodeList = document.getElementsByTagName(nodeName);
+
+			int size = nodeList.getLength();
+
+			for(int i=0; i < size; i++){
+				Node childNode = nodeList.item(i);
+
+				NamedNodeMap nodeMap = childNode.getAttributes();
+				if (attributeName.equals("")){
+					match=true;
+				}	  
+				if (!attributeName.equals("")){
+					String valor =nodeMap.getNamedItem(attributeName).getNodeValue();
+
+					if (attributeValue.equals(valor)){
+						match = true;
+						break;
+					}
+				}    
+			}
+		}
 		return match;
 	}
 	/**
-	   * Inserta una cadena de carácteres en un fichero
-	   * @param inFile - ficehro
-	   * @param context- contexto Freemarker
-	   */  	
-public void insertStringInFile
-     (File inFile,Map<String, Object> context)
-     	throws Exception {
-		  boolean foundJavaNaming=false;
-	 
-		 File outFile = new File("prop.tmp");
-		     
+	 * Inserta una cadena de carácteres en un fichero
+	 * @param inFile - ficehro
+	 * @param context- contexto Freemarker
+	 */  	
+	public void insertStringInFile(File inFile,Map<String, Object> context) throws Exception {
+		boolean foundJavaNaming=false;
 
-		  
-		 FileInputStream fis  = new FileInputStream(inFile);
-		 BufferedReader in = new BufferedReader
-		     (new InputStreamReader(fis));
-		
-		 
-		 FileOutputStream fos = new FileOutputStream(outFile);
-	     PrintWriter out = new PrintWriter(fos);
+		File outFile = new File("prop.tmp");
+		FileInputStream fis  = new FileInputStream(inFile);
+		BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+		FileOutputStream fos = new FileOutputStream(outFile);
+		PrintWriter out = new PrintWriter(fos);
 
-
-		 String thisLine = "";
-		 while ((thisLine = in.readLine()) != null) {
-			 if (thisLine.toUpperCase().contains(Constants.SERVER_JNI_NAMING.toUpperCase())){
-				 foundJavaNaming=true;
-			 }
-		    out.println(thisLine);
-		   }
-		 out.println(" ");
-		 if (!foundJavaNaming){
-			 out.println(Constants.SERVER_FACTORY + "="+ Constants.DEFAULT_SERVER_FACTORY);
-			 out.println(Constants.SERVER_JNI_NAMING + "="+ Constants.DEFAULT_SERVER_JNI_NAMING);
-			 out.println(" ");
-		 }
-		 // añadimo el nuevo Stub
-		 if ((Boolean) context.get("isEjb3")){
-				String key= context.get("nameServer")+"."+context.get("serviceName")+ "SkeletonRemote.jndi";
-				out.println(key + " = "+(String) context.get("jndiName") + "#" + (String)context.get("namePackageEjb")+ "." + (String)context.get("serviceName")+ "SkeletonRemote");
-			}else{
-				String key= context.get("nameServer")+"."+context.get("serviceName")+ "Home.jndi";
-				out.println(key + " = "+(String) context.get("jndiName") );
+		String thisLine = "";
+		while ((thisLine = in.readLine()) != null) {
+			if (thisLine.toUpperCase().contains(Constants.SERVER_JNI_NAMING.toUpperCase())){
+				foundJavaNaming=true;
 			}
-			String key= context.get("nameServer")+".url";
-			out.println(key + " = "+(String) "t3://" + context.get("ipServer")+":"+ context.get("portServer") );
-			key= context.get("nameServer")+".user";
-			out.println(key +" = " +(String)  context.get("userServer"));
-			key= context.get("nameServer")+".password";
-			out.println(key +" = " +(String)  context.get("pwdServer"));
-			
-			  out.flush();
-			  out.close();
-			    in.close();
-			    
-			    inFile.delete();
-			    outFile.renameTo(inFile);
+			out.println(thisLine);
+		}
+		out.println(" ");
+		if (!foundJavaNaming){
+			out.println(Constants.SERVER_FACTORY + "="+ Constants.DEFAULT_SERVER_FACTORY);
+			out.println(Constants.SERVER_JNI_NAMING + "="+ Constants.DEFAULT_SERVER_JNI_NAMING);
+			out.println(" ");
+		}
+		// añadimos el nuevo Stub
+		if ((Boolean) context.get("isEjb3")){
+			String key= context.get("nameServer")+"."+context.get("serviceName")+ "SkeletonRemote.jndi";
+			out.println(key + " = "+(String) context.get("jndiName") + "#" + (String)context.get("namePackageEjb")+ "." + (String)context.get("serviceName")+ "SkeletonRemote");
+		}else{
+			String key= context.get("nameServer")+"."+context.get("serviceName")+ "Home.jndi";
+			out.println(key + " = "+(String) context.get("jndiName") );
+		}
+		String key= context.get("nameServer")+".url";
+		out.println(key + " = "+(String) "t3://" + context.get("ipServer")+":"+ context.get("portServer") );
+		key= context.get("nameServer")+".user";
+		out.println(key +" = " +(String)  context.get("userServer"));
+		key= context.get("nameServer")+".password";
+		out.println(key +" = " +(String)  context.get("pwdServer"));
 
-		
-		
+		out.flush();
+		out.close();
+		in.close();
+
+		inFile.delete();
+		outFile.renameTo(inFile);
+
+
+
 	}
-/**
- * Edita un fichero XML
- * @param path - ruta
- * @param xmlFile- fichero XML
- * @param context - contexto de Freemarker
- */  	
-private void editXMLFile(String path, File xmlFile,Map<String, Object> context){
-	try {
-	
-		if (xmlFile.exists()) {
-			// Crea la instancia de DocumentBuilderFactory
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	/**
+	 * Edita un fichero XML
+	 * @param path - ruta
+	 * @param xmlFile- fichero XML
+	 * @param context - contexto de Freemarker
+	 */  	
+	private void editXMLFile(String path, File xmlFile,Map<String, Object> context){
+		try {
 
-			//factory.setValidating(true);
-			factory.setNamespaceAware(true);
-			factory.setIgnoringElementContentWhitespace(true);
-			
-			// recupera DocumentBuilder
-			DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			
-			// utiliza el fichero xml
-			Document doc = docBuilder.parse(xmlFile);
-			boolean found=findNodeAttribute(doc, "bean","id","remoteEJBFactory");
-				
+			if (xmlFile.exists()) {
+				// Crea la instancia de DocumentBuilderFactory
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+				//factory.setValidating(true);
+				factory.setNamespaceAware(true);
+				factory.setIgnoringElementContentWhitespace(true);
+
+				// recupera DocumentBuilder
+				DocumentBuilder docBuilder = factory.newDocumentBuilder();
+
+				// utiliza el fichero xml
+				Document doc = docBuilder.parse(xmlFile);
+				boolean found=findNodeAttribute(doc, "bean","id","remoteEJBFactory");
+
 				doc.getDoctype();
 				doc.setXmlStandalone(true);
-				
+
 				// recoge el elemento raiz
 				Element rootElement = doc.getDocumentElement();
 				// crea un elemento nuevo de definition
 				if (!found){
-				//	Element definitionElement = doc.getDocumentElement()nt("util:properties");
+					//	Element definitionElement = doc.getDocumentElement()nt("util:properties");
 					// Añade atributos
-					
+
 					//definitionElement.setAttribute("id", "appConfiguration");	
 					//definitionElement.setAttribute("location", "classpath:"+context.get("codapp")+"/"+context.get("codapp")+".properties");
 					//rootElement.appendChild(definitionElement);
@@ -806,38 +737,38 @@ private void editXMLFile(String path, File xmlFile,Map<String, Object> context){
 					definitionElementBeanChild.setAttribute("ref", "appConfiguration");
 					definitionElementBean.appendChild(definitionElementBeanChild);
 					rootElement.appendChild(definitionElementBean);
-					
+
 					// Añade atributos
-					
-		         }	
-				
-					Element definitionElementEJB = doc.createElement("jee:remote-slsb");
-					definitionElementEJB.setAttribute("business-interface",context.get("packageName")+"."+context.get("serviceName") + "StubRemote");
-					definitionElementEJB.setAttribute("environment-ref", "appConfiguration");
-					definitionElementEJB.setAttribute("id",  ControllerUtils.stringDecapitalize((String)context.get("serviceName")) + "StubRemote");
-					definitionElementEJB.setAttribute("jndi-name", (String) context.get("jndiName")+"#"+context.get("packageName")+"."+context.get("serviceName") + "StubRemote");
-					definitionElementEJB.setAttribute("lookup-home-on-startup", "true");
-					definitionElementEJB.setAttribute("refresh-home-on-connect-failure", "true");
-					rootElement.appendChild(definitionElementEJB);
-			
+
+				}	
+
+				Element definitionElementEJB = doc.createElement("jee:remote-slsb");
+				definitionElementEJB.setAttribute("business-interface",context.get("packageName")+"."+context.get("serviceName") + "StubRemote");
+				definitionElementEJB.setAttribute("environment-ref", "appConfiguration");
+				definitionElementEJB.setAttribute("id",  ControllerUtils.stringDecapitalize((String)context.get("serviceName")) + "StubRemote");
+				definitionElementEJB.setAttribute("jndi-name", (String) context.get("jndiName")+"#"+context.get("packageName")+"."+context.get("serviceName") + "StubRemote");
+				definitionElementEJB.setAttribute("lookup-home-on-startup", "true");
+				definitionElementEJB.setAttribute("refresh-home-on-connect-failure", "true");
+				rootElement.appendChild(definitionElementEJB);
+
 				// crea elemento hijo para la JSP
 				//contentElement.setAttribute("value", relativePathJsp);
-				
+
 				// configura transformer
 				TransformerFactory transfac = TransformerFactory.newInstance();
 				transfac.setAttribute("indent-number", 4);
-				
+
 				Transformer trans = transfac.newTransformer();
 				trans.setOutputProperty(OutputKeys.INDENT, "yes");
-					
+
 				// genera una cadena con el arbol xml
 				StringWriter sw = new StringWriter();
 				StreamResult result = new StreamResult(sw);
 				DOMSource source = new DOMSource(doc);
-				
+
 				trans.transform(source, result);
 				String xmlString = sw.toString();
-				
+
 				OutputStream f0;
 				byte buf[] = xmlString.getBytes();
 				f0 = new FileOutputStream(path + "/" + xmlFile.getName());
@@ -847,77 +778,77 @@ private void editXMLFile(String path, File xmlFile,Map<String, Object> context){
 				f0.close();
 				buf = null;
 				logger.info(xmlFile.getPath() + " actualizado");
-			
-		}
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-}
-/**
- * Edita un fichero XML weblogic
- * @param path - ruta
- * @param xmlFile- fichero XML
- * @param context - contexto de Freemarker
- */ 
-private void editXMLFileWeblogicEjbJar(String path, File xmlFile,Map<String, Object> context){
-	try {
-	
-		if (xmlFile.exists()) {
-			// Crea la instancia de DocumentBuilderFactory
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-			//factory.setValidating(true);
-			factory.setNamespaceAware(true);
-			factory.setIgnoringElementContentWhitespace(true);
-			
-			// recupera DocumentBuilder
-			DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			
-			// utiliza el fichero xml
-			Document doc = docBuilder.parse(xmlFile);	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Edita un fichero XML weblogic
+	 * @param path - ruta
+	 * @param xmlFile- fichero XML
+	 * @param context - contexto de Freemarker
+	 */ 
+	private void editXMLFileWeblogicEjbJar(String path, File xmlFile,Map<String, Object> context){
+		try {
+
+			if (xmlFile.exists()) {
+				// Crea la instancia de DocumentBuilderFactory
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+				//factory.setValidating(true);
+				factory.setNamespaceAware(true);
+				factory.setIgnoringElementContentWhitespace(true);
+
+				// recupera DocumentBuilder
+				DocumentBuilder docBuilder = factory.newDocumentBuilder();
+
+				// utiliza el fichero xml
+				Document doc = docBuilder.parse(xmlFile);	
 				doc.getDoctype();
 				doc.setXmlStandalone(true);
-				
+
 				// recoge el elemento raiz
 				Element rootElement = doc.getDocumentElement();
 				// crea un elemento nuevo de definition
-					Element definitionElementwlsEnterprise = doc.createElement("wls:weblogic-enterprise-bean");
-					// Añade atributos
-					Element definitionEjbname = doc.createElement("wls:ejb-name");
-					definitionEjbname.setTextContent((String) context.get("serviceName")+"Stub");
-					Element definitionStateles= doc.createElement("wls:stateless-session-descriptor");
-					Element definitionPool= doc.createElement("wls:pool");
-					
-					Element definitionMax= doc.createElement("wls:max-beans-in-free-pool");
-					definitionMax.setTextContent("1");
-					Element definitionInit= doc.createElement("wls:initial-beans-in-free-pool");
-					definitionInit.setTextContent("1");
-					Element definitionIdle= doc.createElement("wls:idle-timeout-seconds");
-					definitionIdle.setTextContent("60000");
-					
-					definitionPool.appendChild(definitionMax);
-					definitionPool.appendChild(definitionInit);
-					definitionPool.appendChild(definitionIdle);
-					definitionStateles.appendChild(definitionPool);
-					definitionElementwlsEnterprise.appendChild(definitionEjbname);
-					definitionElementwlsEnterprise.appendChild(definitionStateles);
-					rootElement.appendChild(definitionElementwlsEnterprise);
-		   
+				Element definitionElementwlsEnterprise = doc.createElement("wls:weblogic-enterprise-bean");
+				// Añade atributos
+				Element definitionEjbname = doc.createElement("wls:ejb-name");
+				definitionEjbname.setTextContent((String) context.get("serviceName")+"Stub");
+				Element definitionStateles= doc.createElement("wls:stateless-session-descriptor");
+				Element definitionPool= doc.createElement("wls:pool");
+
+				Element definitionMax= doc.createElement("wls:max-beans-in-free-pool");
+				definitionMax.setTextContent("1");
+				Element definitionInit= doc.createElement("wls:initial-beans-in-free-pool");
+				definitionInit.setTextContent("1");
+				Element definitionIdle= doc.createElement("wls:idle-timeout-seconds");
+				definitionIdle.setTextContent("60000");
+
+				definitionPool.appendChild(definitionMax);
+				definitionPool.appendChild(definitionInit);
+				definitionPool.appendChild(definitionIdle);
+				definitionStateles.appendChild(definitionPool);
+				definitionElementwlsEnterprise.appendChild(definitionEjbname);
+				definitionElementwlsEnterprise.appendChild(definitionStateles);
+				rootElement.appendChild(definitionElementwlsEnterprise);
+
 				// configura transformer
 				TransformerFactory transfac = TransformerFactory.newInstance();
 				transfac.setAttribute("indent-number", 4);
-				
+
 				Transformer trans = transfac.newTransformer();
 				trans.setOutputProperty(OutputKeys.INDENT, "yes");
-					
+
 				// genera una cadena con el arbol xml
 				StringWriter sw = new StringWriter();
 				StreamResult result = new StreamResult(sw);
 				DOMSource source = new DOMSource(doc);
-				
+
 				trans.transform(source, result);
 				String xmlString = sw.toString();
-				
+
 				OutputStream f0;
 				byte buf[] = xmlString.getBytes();
 				f0 = new FileOutputStream(path + "/" + xmlFile.getName());
@@ -926,10 +857,10 @@ private void editXMLFileWeblogicEjbJar(String path, File xmlFile,Map<String, Obj
 				}
 				f0.close();
 				buf = null;
-			
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-	} catch (Exception e) {
-		e.printStackTrace();
 	}
-}
 }

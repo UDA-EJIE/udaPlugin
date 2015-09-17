@@ -8,17 +8,46 @@ import java.util.List;
  */
 @SuppressWarnings({"rawtypes", "finally"})
 public class SkeletonUtils {
+	
+	//Fix: utilidad que comprueba que no es tipo primitivo o clase de Java (java.*)
+	private static boolean isAvoidable(String param){
+		if (param.equalsIgnoreCase("boolean") ||
+				param.equalsIgnoreCase("byte") ||
+				param.equalsIgnoreCase("char") ||
+				param.equalsIgnoreCase("short") ||
+				param.equalsIgnoreCase("int") ||
+				param.equalsIgnoreCase("long") ||
+				param.equalsIgnoreCase("float") ||
+				param.equalsIgnoreCase("double") ||
+				param.toLowerCase().startsWith("java.lang.")){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public SkeletonUtils(){
 		
 	}
 	public static List<String> getParametersSkeleton(String cadena, boolean imports,boolean isJpa){
 		List<String> resultado= new ArrayList<String>();
 		try{
-		if (cadena!=null && !cadena.equals("")){
+			if (cadena!=null && !cadena.equals("")){
 				String auxiliar = cadena;
 				while (cadena.contains(";") && cadena!=null && !cadena.equals("") ){
 					String parameter =  auxiliar.substring(0,auxiliar.indexOf(";"));
 					String parameterRemp = parameter.replace("class ", "");
+					
+					//FIX
+					if (imports){
+						parameterRemp = parameter.replace("[]", "").trim();
+						if (isAvoidable(parameterRemp)){
+							cadena = auxiliar.substring(auxiliar.indexOf(";")+1,auxiliar.length());
+							auxiliar = cadena;
+							continue;
+						}
+					}
+					
 					String parametroCambio=parameterRemp;
 					String objectType = parametroCambio.substring(parametroCambio.lastIndexOf(".")+1,parametroCambio.length());
 					if (isJpa && parameterRemp.trim().startsWith("com.ejie") && !parameterRemp.trim().startsWith("com.ejie.x38")){
@@ -26,27 +55,18 @@ public class SkeletonUtils {
 						objectType = parametroCambio.substring(parametroCambio.lastIndexOf(".")+1,parametroCambio.length());
 					}
 					
-					if (!parametroCambio.startsWith("java.Lang")){
-						if (imports){
-							resultado.add(parametroCambio);
-						}	else{
-							String parametros=objectType;
-							resultado.add(parametros);
-						}
-					}else{
-						String parametros=objectType;
-						resultado.add(parametros);
+					if (imports){
+						resultado.add(parametroCambio);
+					}	else{
+						resultado.add(objectType);
 					}
 					cadena = auxiliar.substring(auxiliar.indexOf(";")+1,auxiliar.length());
 					auxiliar = cadena;
 				}
-			return resultado;
-		}else{
-			return resultado;
-		}
+			}
 		}catch(Exception e){
-			return resultado;
 		}
+		return resultado;
 		
 	}
 
@@ -57,9 +77,15 @@ public class SkeletonUtils {
 			Iterator itmet= listaMetodos.iterator();
 			while (itmet.hasNext()){
 				String cadenaMet= itmet.next().toString();
-				String[] cadenaMetAux = cadenaMet.split(","); 
+				String[] cadenaMetAux = cadenaMet.split(",");
+				//Param
 				String clase=cadenaMetAux[3].toString();
-				List<String> listaAux = getParametersSkeleton(clase.substring(0,clase.length()-1),true,isJpa);
+				if (clase.endsWith("]")){
+					clase = clase.substring(0, clase.length()-1);
+				}
+				//Excep
+				clase += cadenaMetAux[5].toString().substring(0,cadenaMetAux[5].toString().length()-1).trim();
+				List<String> listaAux = getParametersSkeleton(clase,true,isJpa);
 				Iterator<String> imports= listaAux.iterator();
 				//parametros dle metodo
 				while (imports.hasNext()){
@@ -73,7 +99,10 @@ public class SkeletonUtils {
 					}
 				}
 				//parametros del retorno
-				String retorno=cadenaMetAux[1].toString();
+				String retorno=cadenaMetAux[1].toString().trim();
+				if (isAvoidable(retorno)){
+					continue;
+				}
 				String retornoFinal=retorno;
 				if (isJpa && retorno.startsWith("com.ejie") && !retorno.startsWith("com.ejie.x38")){
 					retornoFinal=retorno+"Dto";
@@ -87,12 +116,9 @@ public class SkeletonUtils {
 						resultado.add(retorno);
 					}
 				}
-			
-			
-		}
+			}
 		}catch(Exception e){
 			e.getStackTrace();
-			
 		}finally{
 			return resultado;
 		}

@@ -171,7 +171,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				return false;
 			}
 		}
-
 		// Validación idiomas
 		if (Utilities.isBlank(languages) || Utilities.isBlank(languagesWithoutQuotes)) {
 			page.setMessage("Debe estar seleccionado al menos un idioma",
@@ -182,22 +181,19 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			page.setMessage("El campo 'Idioma por defecto' es obligatorio",
 					IMessageProvider.ERROR);
 			return false;
-		}
-		
+		}		
 		// Validación EJBProject
 		if ( ejbCheck && Utilities.isBlank(ejbProject) ) {
 			page.setMessage("El campo 'Nombre Proyecto EJBs' es obligatorio para remoting",
 					IMessageProvider.ERROR);
 			return false;
-		}
-		
+		}		
 		// Verifica si es correcta la instalación de maven
 		if(Utilities.isBlank(System.getenv("M2_HOME"))){
 			page.setMessage("No se ha detectado la variable de entorno 'M2_HOME' de maven",
 					IMessageProvider.ERROR);
 			return false;
-		}
-		
+		}		
 		page.setMessage("Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar", IMessageProvider.NONE);
 		
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -220,7 +216,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			getContainer().run(true, false, op);
 			
 			page.getControl().setEnabled(false);
-			MessageDialog.openInformation(getShell(), "Información", "!Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
@@ -286,7 +282,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		monitor.setTaskName("Creando proyecto Config...");
 		IProject projectConfig = createProjectConfig(root, context);
 		monitor.worked(1);
-
+		
 		// Crea el proyecto xxxStatics
 		monitor.setTaskName("Creando proyecto Statics...");
 		IProject projectStatics = createProjectStatics(root, locationCheck, locationText, appType, context, monitor);
@@ -365,7 +361,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		consola.println("Para revisar la configuración del log en " + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
-		consola.println("- el servidor Weblogic Server 10.3.1 ", Constants.MSG_INFORMATION);
+		consola.println("- el servidor Weblogic Server 10.3.5 ", Constants.MSG_INFORMATION);
 		consola.println("- las reglas de los plugins de calidad: PMD, Checkstyle y Findbugs en las preferencias (Window>Preferences) ", Constants.MSG_INFORMATION);
 		consola.println("- la librería de dependencias UDAWLS11Classpath ", Constants.MSG_INFORMATION);
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
@@ -374,128 +370,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		//Generar sumario si ha generado correctamente
 		this.summary = createSummary(context, ejbCheck);
 	}
-	
+
 	/**
-	 * Crea el proyecto de contenido Estático
-	 * 
-	 * @param root - workspace del eclipse
-	 * @param context - contexto del plugin 
-	 * @return proyecto tipo xxxStatics
-	 * @throws Exception
-	 */
-	private IProject createProjectStatics(IWorkspaceRoot root, boolean locationCheck, String locationText, String appType, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
-		
-		String pathStatics = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS;
-		
-		// Crea el proyecto de xxxStatics
-		IProject projectStatics = root.getProject((String)context.get(Constants.STATICS_PATTERN));
-
-		// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
-		if (locationCheck){
-			projectStatics.create(null);
-			projectStatics.open(null);
-		}else{
-			projectStatics = ProjectWorker.createProjectLocation(projectStatics, locationText, true);				
-		}
-		
-		// Lo genera como un Dinamic Project
-		IFacetedProject fpStaticsWAR = ProjectFacetsManager.create(projectStatics.getProject(), true, null);
-		fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion("1.6"), null, null);
-		fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion("2.5"), null, null);
-		fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wst.jsdt.web").getVersion("1.0"), null, null);
-		try {
-			// Facets de weblogic
-			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.web").getVersion("10.3.1"), null, null);
-		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
-		}
-
-		//Añade el runTime de Oracle
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.web").getVersion("2.5"))){
-				fpStaticsWAR.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
-			}
-		}
-		fpStaticsWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
-				ProjectFacetsManager.getProjectFacet("jst.java"),
-				ProjectFacetsManager.getProjectFacet("jst.web")
-			})));
-		
-		
-		/* rup */
-			// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
-			String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
-			String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
-			RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
-			
-			//Borramos el directorio de resources
-			RVCopyWorker.deleteDirectoryContent(new File(path+"/resources"), false);
-			
-			//i18n
-			String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
-			if (languages.indexOf("es")!=-1){
-				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_es.json", context);
-			}
-			if (languages.indexOf("eu")!=-1){
-				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_eu.json", context);
-			}
-			if (languages.indexOf("en")!=-1){
-				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_en.json", context);
-			}
-			if (languages.indexOf("fr")!=-1){
-				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_fr.json", context);
-			}
-		
-		/* xxx */
-			// Copia la configuración específica de la aplicación en la carpeta WebContent/codapp del proyecto Statics
-			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN));
-			pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC;
-			RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
-			//Crear carpeta de statics para la aplicación
-			ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
-			ProjectWorker.refresh(projectStatics);
-	
-			//Styles
-			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
-			new File (path+"/xxx.css.ftl").delete();
-			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
-		
-			//i18n
-			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
-			RVCopyWorker.deleteDirectoryContent(new File(path), false);
-			if (languages.indexOf("es")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
-			}
-			if (languages.indexOf("eu")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
-			}
-			if (languages.indexOf("en")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
-			}
-			if (languages.indexOf("fr")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
-			}
-		
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
-		ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
-		
-		
-		// Genera los ficheros de configuración del proyecto
-		path =  projectStatics.getLocation().toString() + "/.settings";
-		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
-
-		return projectStatics;
-	}
-	
-	/**
-	 * Crea el proyecto de contenido Congiuración
+	 * Crea el proyecto de contenido Configuración
 	 * 
 	 * @param root - workspace del eclipse
 	 * @param context - contexto del plugin 
@@ -532,6 +409,122 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		return projectConfig;
 	}
 
+	
+	/**
+	 * Crea el proyecto de contenido Estático
+	 * 
+	 * @param root - workspace del eclipse
+	 * @param context - contexto del plugin 
+	 * @return proyecto tipo xxxStatics
+	 * @throws Exception
+	 */
+	private IProject createProjectStatics(IWorkspaceRoot root, boolean locationCheck, String locationText, String appType, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+		
+		String pathStatics = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS;
+		
+		// Crea el proyecto de xxxStatics
+		IProject projectStatics = null; 
+		try {		
+			projectStatics = root.getProject((String)context.get(Constants.STATICS_PATTERN));
+
+			// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
+			if (locationCheck){
+				projectStatics.create(null);
+				projectStatics.open(null);
+			}else{
+				projectStatics = ProjectWorker.createProjectLocation(projectStatics, locationText, true);
+			}
+
+			// Lo genera como un Dinamic Project
+			IFacetedProject fpStaticsWAR = ProjectFacetsManager.create(projectStatics.getProject(), true, null);
+			//Añade el runTime de Oracle
+			fpStaticsWAR.addTargetedRuntime(Utilities.addServerRuntime(fpStaticsWAR, "jst.web", Constants.JST_WEB_VERSION), new SubProgressMonitor(monitor,1));
+
+			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
+			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion(Constants.JST_WEB_VERSION), null, null);
+			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wst.jsdt.web").getVersion(Constants.WST_JSDT_WEB_VERSION), null, null);
+			// Facets de weblogic
+			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.web").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
+
+			fpStaticsWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
+					ProjectFacetsManager.getProjectFacet("jst.java"),
+					ProjectFacetsManager.getProjectFacet("jst.web")
+				})));
+			
+		} catch (Exception e) {
+			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
+			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
+			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
+		}
+		
+		/* rup */
+		// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
+		String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
+		String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
+		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
+		
+		//Borramos el directorio de resources
+		RVCopyWorker.deleteDirectoryContent(new File(path+"/resources"), false);
+		
+		//i18n
+		String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
+		if (languages.indexOf("es")!=-1){
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_es.json", context);
+		}
+		if (languages.indexOf("eu")!=-1){
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_eu.json", context);
+		}
+		if (languages.indexOf("en")!=-1){
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_en.json", context);
+		}
+		if (languages.indexOf("fr")!=-1){
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_fr.json", context);
+		}
+	
+		/* xxx */
+		// Copia la configuración específica de la aplicación en la carpeta WebContent/codapp del proyecto Statics
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN));
+		pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC;
+		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
+		//Crear carpeta de statics para la aplicación
+		ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
+		ProjectWorker.refresh(projectStatics);
+
+		//Styles
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
+		new File (path+"/xxx.css.ftl").delete();
+		ProjectWorker.createFileTemplate(pathStatics, path, "xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
+	
+		//i18n
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
+		RVCopyWorker.deleteDirectoryContent(new File(path), false);
+		if (languages.indexOf("es")!=-1){
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+		}
+		if (languages.indexOf("eu")!=-1){
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+		}
+		if (languages.indexOf("en")!=-1){
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+		}
+		if (languages.indexOf("fr")!=-1){
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+		}
+	
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
+		ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
+		
+		
+		// Genera los ficheros de configuración del proyecto
+		path =  projectStatics.getLocation().toString() + "/.settings";
+		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
+
+		return projectStatics;
+	}
+	
+	
 	/**
 	 * Crea el proyecto EARClasses
 	 * 
@@ -541,8 +534,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 * @return projecto tipo xxxEARClasses
 	 * @throws Exception
 	 */
-	private IProject createProjectEARClasses(IWorkspaceRoot root, boolean radJPA,
-			boolean locationCheck, String locationText, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+	private IProject createProjectEARClasses(IWorkspaceRoot root, boolean radJPA, boolean locationCheck, String locationText, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+
 		
 		String pathEARClasses = Activator.getDefault().getPreferenceStore()
 				.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
@@ -551,35 +544,35 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		String path = "";
 
 		// Crea el proyecto de xxxEARClasses
-		IProject projectEARClasses = root.getProject((String)context.get(Constants.EARCLASSES_NAME_PATTERN));
-		
-		// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
-		if (locationCheck){
-		projectEARClasses.create(null);
-		projectEARClasses.open(null);
-		}else{
-			projectEARClasses = ProjectWorker.createProjectLocation(projectEARClasses, locationText, true);
+		IProject projectEARClasses = null;
+		try{
+			projectEARClasses = root.getProject((String)context.get(Constants.EARCLASSES_NAME_PATTERN));
 			
-		}
-
-		IFacetedProject fpEARClasses = ProjectFacetsManager.create(projectEARClasses.getProject(), true, null);
-		// Lo genera como Java Project
-		fpEARClasses.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion("1.6"), null, null);
-		fpEARClasses.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.utility").getVersion("1.0"), null, null);
-		
-		// Añade el runTime de Oracle
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.utility").getVersion("1.0"))){
-				fpEARClasses.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
+			// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
+			if (locationCheck){
+				projectEARClasses.create(null);
+				projectEARClasses.open(null);
+			}else{
+				projectEARClasses = ProjectWorker.createProjectLocation(projectEARClasses, locationText, true);
 			}
+	
+			IFacetedProject fpEARClasses = ProjectFacetsManager.create(projectEARClasses.getProject(), true, null);
+			// Añade el runTime de Oracle
+			fpEARClasses.addTargetedRuntime(Utilities.addServerRuntime(fpEARClasses, "jst.utility", Constants.JST_UTILITY_VERSION), new SubProgressMonitor(monitor,1));
+			
+			// Lo genera como Java Project
+			fpEARClasses.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
+			fpEARClasses.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.utility").getVersion(Constants.JST_UTILITY_VERSION), null, null);
+			
+			fpEARClasses.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
+					ProjectFacetsManager.getProjectFacet("jst.utility"),
+					ProjectFacetsManager.getProjectFacet("jst.java")
+				})));
+		} catch (Exception e) {
+			consola.println("No tiene OEPE con WebLogic instalado para el EARClasses!", Constants.MSG_ERROR);
+			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
+			page.setMessage("No tiene OEPE con WebLogic instalado para el EARClasses!",IMessageProvider.ERROR);
 		}
-		
-		fpEARClasses.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
-				ProjectFacetsManager.getProjectFacet("jst.utility"),
-				ProjectFacetsManager.getProjectFacet("jst.java")
-			})));
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
 		ProjectWorker.organizeEARClassesLibraries(projectEARClasses, context, monitor);
@@ -652,7 +645,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		if (languages.indexOf("fr")!=-1){
 			ProjectWorker.copyFile(pathEARClasses, path, "resources/xxx_fr.properties", context, context.get(Constants.CODAPP_PATTERN) + ".i18n_fr.properties");
 		}
-
 		
 		final IFolder srcFolder = projectEARClasses.getFolder("resources");
 		final IClasspathEntry resourcesCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
@@ -693,34 +685,40 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 * @return projecto tipo xxxWAR
 	 * @throws Exception
 	 */
-	private IProject createProjectWAR(IWorkspaceRoot root, boolean radJPA,
-			boolean locationCheck, String locationText, 
-			String layout, String appType, String category,  
-			Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+	private IProject createProjectWAR(IWorkspaceRoot root, boolean radJPA, boolean locationCheck, String locationText, String layout, String appType, String category, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+
 
 		String path = "";
 		String pathWar = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_WAR;
 
 		// Crea el proyecto de xxxWAR
-		IProject projectWAR = root.getProject((String)context.get(Constants.WAR_NAME_PATTERN));
-		
-		// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
-		if (locationCheck){
-			projectWAR.create(null);
-			projectWAR.open(null);
-		}else{
-			projectWAR = ProjectWorker.createProjectLocation(projectWAR, locationText, true);			
-		}
-		// Lo genera como un Dinamic Project
-		IFacetedProject fpWAR = ProjectFacetsManager.create(projectWAR.getProject(), true, null);
-		fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion("1.6"), null, null);
-		fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion("2.5"), null, null);
-		fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wst.jsdt.web").getVersion("1.0"), null, null);
+		IProject projectWAR = null;
 		try {
+			projectWAR = root.getProject((String)context.get(Constants.WAR_NAME_PATTERN));
+			// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
+			if (locationCheck){
+				projectWAR.create(null);
+				projectWAR.open(null);
+			}else{
+				projectWAR = ProjectWorker.createProjectLocation(projectWAR, locationText, true);			
+			}
+			
+			// Lo genera como un Dinamic Project
+			IFacetedProject fpWAR = ProjectFacetsManager.create(projectWAR.getProject(), true, null);
+			// Añade el runTime de Oracle
+			fpWAR.addTargetedRuntime(Utilities.addServerRuntime(fpWAR, "jst.web", Constants.JST_WEB_VERSION), new SubProgressMonitor(monitor,1));
+			
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion(Constants.JST_WEB_VERSION), null, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wst.jsdt.web").getVersion(Constants.WST_JSDT_WEB_VERSION), null, null);
 			// Facets de weblogic
-			fpWAR.installProjectFacet(
-					ProjectFacetsManager.getProjectFacet("wls.web").getVersion("10.3.1"), null, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.web").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
+			fpWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
+				ProjectFacetsManager.getProjectFacet("jst.java"),
+				ProjectFacetsManager.getProjectFacet("jst.web")
+			})));
+
 		} catch (Exception e) {
 			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -728,21 +726,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					"No tiene OEPE con WebLogic instalado para el WAR!",
 					IMessageProvider.ERROR);
 		}
-
-		// Añade el runTime de Oracle
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.web").getVersion("2.5"))){
-				fpWAR.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
-			}
-		}
-		fpWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
-				ProjectFacetsManager.getProjectFacet("jst.java"),
-				ProjectFacetsManager.getProjectFacet("jst.web")
-			})));
-		
 		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
@@ -912,8 +895,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 * @return proyecto tipo xxxEAR
 	 * @throws Exception
 	 */
-	private IProject createProjectEAR(IWorkspaceRoot root,
-			boolean locationCheck, String locationText, Map<String, Object> context, String appType, IProgressMonitor monitor) throws Exception {
+	private IProject createProjectEAR(IWorkspaceRoot root, boolean locationCheck, String locationText, Map<String, Object> context, String appType, IProgressMonitor monitor) throws Exception {
+
 		
 		String path = "";
 		String pathEar = Activator.getDefault().getPreferenceStore()
@@ -921,31 +904,25 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EAR;
 
 		// Crea el proyecto de xxxEAR
-		IProject projectEAR = root.getProject((String)context.get(Constants.EAR_NAME_PATTERN));
-		// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
-		if (locationCheck){
-			projectEAR.create(null);
-			projectEAR.open(null);
-		}else{
-			projectEAR = ProjectWorker.createProjectLocation(projectEAR, locationText, true);			
-		}
-
-		IFacetedProject fpEAR = ProjectFacetsManager.create(projectEAR.getProject(), true, null);
-		fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ear").getVersion("5.0"), null, null);
-		fpEAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{ProjectFacetsManager.getProjectFacet("jst.ear")})));
-		
-		// Añade el runTime de Oracle
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.ear"))){
-				fpEAR.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
-			}
-		}
-		
+		IProject projectEAR = null;
 		try {
-				fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ear").getVersion("10.3.1"), null, null);
+			projectEAR = root.getProject((String)context.get(Constants.EAR_NAME_PATTERN));
+			// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
+			if (locationCheck){
+				projectEAR.create(null);
+				projectEAR.open(null);
+			}else{
+				projectEAR = ProjectWorker.createProjectLocation(projectEAR, locationText, true);			
+			}
+	
+			IFacetedProject fpEAR = ProjectFacetsManager.create(projectEAR.getProject(), true, null);
+			// Añade el runTime de Oracle
+			fpEAR.addTargetedRuntime(Utilities.addServerRuntime(fpEAR, "jst.ear", Constants.JST_EAR_VERSION), new SubProgressMonitor(monitor,1));			
+			
+			fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ear").getVersion(Constants.JST_EAR_VERSION), null, null);
+			fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ear").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
+			fpEAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{ProjectFacetsManager.getProjectFacet("jst.ear")})));
+					
 		} catch (Exception e) {
 			consola.println("No tiene OEPE con WebLogic instalado para EAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -953,7 +930,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					"No tiene OEPE con WebLogic instalado para el EAR!",
 					IMessageProvider.ERROR);
 		}
-
+		
 		// Detecta la localización del fichero de configuración de maven "settings.xml"
 		ProjectWorker.configSettingsMaven(context);
 		
@@ -993,44 +970,56 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 * @return proyecto tipo xxxEAR
 	 * @throws Exception
 	 */
-	private IProject createProjectEJB(IWorkspaceRoot root,
-			boolean locationCheck, String locationText, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+	private IProject createProjectEJB(IWorkspaceRoot root, boolean locationCheck, String locationText, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
 		
-
-		
-		// Crea el proyecto de xxxEAR
-		IProject projectEJB = root.getProject((String)context.get(Constants.EJB_NAME_PATTERN));
-		// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
-		if (locationCheck){
-			projectEJB.create(null);
-			projectEJB.open(null);
-		}else{
-			projectEJB = ProjectWorker.createProjectLocation(projectEJB, locationText, true);			
-		}
+		// Crea el proyecto de xxxEJB
+		IProject projectEJB = null; 
+		try {
+			projectEJB = root.getProject((String)context.get(Constants.EJB_NAME_PATTERN));
+			// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
+			if (locationCheck){
+				projectEJB.create(null);
+				projectEJB.open(null);
+			}else{
+				projectEJB = ProjectWorker.createProjectLocation(projectEJB, locationText, true);			
+			}
 	
+			IFacetedProject fpEJB = ProjectFacetsManager.create(projectEJB.getProject(), true, null);
+			// Añade el runTime de Oracle
+			fpEJB.addTargetedRuntime(Utilities.addServerRuntime(fpEJB, "jst.ejb", Constants.JST_EJB_VERSION), new SubProgressMonitor(monitor,1));
+			
+			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
+			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ejb").getVersion(Constants.JST_EJB_VERSION), null, null);
+			// Facets de weblogic
+			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ejb").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
+			
+			fpEJB.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
+				ProjectFacetsManager.getProjectFacet("jst.ejb"),
+				ProjectFacetsManager.getProjectFacet("jst.java")
+			})));
 
-		IFacetedProject fpEJB = ProjectFacetsManager.create(projectEJB.getProject(), true, null);
-		fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion("1.6"), null, null);
-		fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ejb").getVersion("3.0"), null, null);
+		} catch (Exception e) {
+			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
+			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
+			page.setMessage(
+					"No tiene OEPE con WebLogic instalado para el EJB!",
+					IMessageProvider.ERROR);
+		}
 		
-		//asignamos la carpeta ejbModuke como la del source
+		//asignamos la carpeta ejbModule como la del source
 		final IJavaProject javaP = JavaCore.create(projectEJB);
 		removeAllSourceFolders(javaP);
-	//	projectEJB.build(arg0, arg1);
 		IFolder borrarCarpeta = projectEJB.getFolder("src");
 		borrarCarpeta.deleteMarkers("src", true, IResource.DEPTH_ZERO);
 		borrarCarpeta.delete( true, null);
 		projectEJB.build(IncrementalProjectBuilder.CLEAN_BUILD,null);
 		ProjectWorker.refresh(projectEJB);
-		// Set ejbModule folder (created during jst.ejb facet installation) as source folder
+
 		final IFolder srcFolder = projectEJB.getFolder("ejbModule");
 		final IClasspathEntry ejbModuleCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
-		//addToClasspath(JavaCore.create(projectEJB), ejbModuleCpEntry);
-//		IClasspathEntry[] oldEntries = JavaCore.create(projectEJB).getRawClasspath();
-//		IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
 		ProjectWorker.addToClasspath(JavaCore.create(projectEJB), ejbModuleCpEntry);		
 			
-		 String pathEJB = Activator.getDefault().getPreferenceStore()
+		String pathEJB = Activator.getDefault().getPreferenceStore()
 			.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 			+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB;
 		String path =  projectEJB.getLocation().toString() + "/.settings";
@@ -1039,10 +1028,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		//ProjectWorker.copyFile(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		//INCLUIR MODULES Y MODULES_EXTRA EN LA CONFIGURACIÓN DE Weblogic System Library del proyecto
 		ProjectWorker.createFileTemplate(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-						
+
 		path = projectEJB.getLocation().toString();
 		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
-
 				
 		// Añade la configuración de PMD
 		path =  projectEJB.getLocation().toString();
@@ -1051,12 +1039,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		// Añade la configuración de checkstyle
 		ProjectWorker.copyFile(pathEJB, path, ".checkstyle", context);
 	
-		// Añade el runTime de Oracle
 		try {
 			// Añade el nature de PMD al proyecto
-			//ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.runtime.pmdNature");
 			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		
 		} catch (Exception e) {
 			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -1072,55 +1057,21 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		try {
 			ProjectWorker.addEjbModuleEARApplication(locationText+"EAR/EarContent/META-INF/",new File(locationText+"EAR/EarContent/META-INF/application.xml"),context );
-		
 		} catch (Exception e) {
 			consola.println("Error en la actualización del application.xml!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
 		
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.ejb"))){
-				fpEJB.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
-			}
-		}
-		
-		try {
-			// Facets de weblogic
-			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ejb").getVersion("10.3.1"), null, null);
-		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EJB!",
-					IMessageProvider.ERROR);
-		}
-		
-		fpEJB.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
-				ProjectFacetsManager.getProjectFacet("jst.ejb"),
-				ProjectFacetsManager.getProjectFacet("jst.java")
-			})));
-		
 		//Organiza las librerias que debe tener un proyecto EJB
 		ProjectWorker.organizeEJBLibraries(projectEJB, context, monitor);
-		
-		
 		return projectEJB;
 	}
 	
-	
-
-
-
 	private static void removeAllSourceFolders(final IJavaProject javaP) throws JavaModelException
 	 	{
 	 		final List<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();
-	 		for(IClasspathEntry cpEntry : javaP.getRawClasspath())
-	 		{
-	 			if(cpEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE)
-	 			{
+	 		for(IClasspathEntry cpEntry : javaP.getRawClasspath()){
+	 			if(cpEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE){
 	 				continue;
 	 			}
 	 			newClasspath.add(cpEntry);

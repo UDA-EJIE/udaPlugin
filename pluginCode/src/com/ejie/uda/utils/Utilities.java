@@ -3,13 +3,20 @@ package com.ejie.uda.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
+import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
+import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 
 import com.ejie.uda.exporters.Reveng;
 
@@ -277,4 +284,22 @@ public class Utilities {
 		}
 		return nameBBDD.toString();
 	}
+	
+	
+	public static IRuntime addServerRuntime(IFacetedProject fpProject, String facet, String version) throws CoreException {
+		
+		IRuntime runtime = null;
+		fpProject = ProjectFacetsManager.create(fpProject.getProject(), true, null);
+		// Añade el runTime de Oracle
+		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
+		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
+			runtime = (IRuntime) iterator.next();
+			if (runtime.getName().compareToIgnoreCase(Constants.WEBLOGIC_SERVER_RUNTIME_NAME)==0 
+					&& runtime.supports(ProjectFacetsManager.getProjectFacet(facet).getVersion(version))){
+				return runtime;
+			}
+		}
+		return runtime;
+	}
+	
 }

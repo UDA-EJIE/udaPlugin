@@ -250,19 +250,45 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 	private IProject createProjectEJB(IWorkspaceRoot root,
 			 Map<String, Object> context, IProgressMonitor monitor) throws Exception {
 		
-
-		
-		// Crea el proyecto de xxxEAR
-		IProject projectEJB = root.getProject((String)context.get(Constants.EJB_NAME_PATTERN));
-		// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
-		projectEJB.create(null);
-		projectEJB.open(null);
+		// Crea el proyecto de xxxEJB
+		IProject projectEJB = null;
+		try {
+			projectEJB = root.getProject((String)context.get(Constants.EJB_NAME_PATTERN));
+			// Verifica si crea el proyecto en el Workspace o en la ruta indicada  por el usuario
+			projectEJB.create(null);
+			projectEJB.open(null);
 	
-
-		IFacetedProject fpEJB = ProjectFacetsManager.create(projectEJB.getProject(), true, null);
-		fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion("1.6"), null, null);
-		fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ejb").getVersion("3.0"), null, null);
-		
+			IFacetedProject fpEJB = ProjectFacetsManager.create(projectEJB.getProject(), true, null);
+			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
+			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ejb").getVersion(Constants.JST_EJB_VERSION), null, null);
+			// Facets de weblogic
+			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ejb").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
+			// Añade el runTime de Oracle
+			fpEJB.addTargetedRuntime(Utilities.addServerRuntime(fpEJB, "jst.ejb", Constants.JST_EJB_VERSION), new SubProgressMonitor(monitor,1));
+			
+			/*
+			Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
+			for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
+				IRuntime runtime = (IRuntime) iterator.next();
+				
+				if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.ejb"))){
+					fpEJB.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
+				}
+			}
+			*/
+			
+			fpEJB.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
+					ProjectFacetsManager.getProjectFacet("jst.ejb"),
+					ProjectFacetsManager.getProjectFacet("jst.java")
+				})));
+		} catch (Exception e) {
+			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
+			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
+			page.setMessage(
+					"No tiene OEPE con WebLogic instalado para el EJB!",
+					IMessageProvider.ERROR);
+		}
+	
 		//asignamos la carpeta ejbModuke como la del source
 		final IJavaProject javaP = JavaCore.create(projectEJB);
 		removeAllSourceFolders(javaP);
@@ -282,15 +308,15 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		 String pathEJB = Activator.getDefault().getPreferenceStore()
 			.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 			+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB;
-		String path =  projectEJB.getLocation().toString() + "//.settings";
-		ProjectWorker.copyFile(pathEJB, path, "org.eclipse.jdt.ui.prefs", context);
+		String path =  projectEJB.getLocation().toString() + "/.settings";
+		ProjectWorker.copyFile(pathEJB+"/.settings/", path, "org.eclipse.jdt.ui.prefs", context);
 
 		//ProjectWorker.copyFile(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		//INCLUIR MODULES Y MODULES_EXTRA EN LA CONFIGURACIÓN DE Weblogic System Library del proyecto
-		ProjectWorker.createFileTemplate(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
+		ProjectWorker.createFileTemplate(pathEJB+"/.settings/", path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		
 		path = projectEJB.getLocation().toString();
-		ProjectWorker.createFileTemplate(pathEJB, path +"\\ejbModule\\META-INF\\", "ejb-jar.xml", context); 
+		ProjectWorker.createFileTemplate(pathEJB+"/ejbModule/META-INF/", path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
 
 		// Añade la configuración de PMD
 		path =  projectEJB.getLocation().toString();
@@ -298,7 +324,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		// Añade la configuración de checkstyle
 		ProjectWorker.copyFile(pathEJB, path, ".checkstyle", context);
 	
-		// Añade el runTime de Oracle
+
 		try {
 			// Añade el nature de PMD al proyecto
 			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
@@ -325,32 +351,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 			consola.println("Error en la actualización del application.xml!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
-		
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.ejb"))){
-				fpEJB.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
-			}
-		}
-		
-		try {
-			// Facets de weblogic
-			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ejb").getVersion("10.3.1"), null, null);
-		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EJB!",
-					IMessageProvider.ERROR);
-		}
-		
-		fpEJB.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
-				ProjectFacetsManager.getProjectFacet("jst.ejb"),
-				ProjectFacetsManager.getProjectFacet("jst.java")
-			})));
-		
+				
 		//Organiza las librerias que debe tener un proyecto EJB
 		ProjectWorker.organizeEJBLibraries(projectEJB, context, monitor);
 		

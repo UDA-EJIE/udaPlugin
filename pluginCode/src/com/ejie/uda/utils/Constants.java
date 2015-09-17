@@ -9,6 +9,16 @@ public class Constants {
 	public static final String ENCODING_UTF8 = "UTF-8";
 	public static final String ENCODING_ISO = "ISO-8859-1";
 	
+	//
+	public static final String WEBLOGIC_SERVER_RUNTIME_NAME = "Oracle WebLogic Server 11gR1 PatchSet 4";
+	public static final String WEBLOGIC_SERVER_VERSION = "10.3.5";
+	public static final String JST_JAVA_VERSION = "1.6";
+	public static final String JST_UTILITY_VERSION = "1.0";
+	public static final String JST_WEB_VERSION = "2.5";
+	public static final String WST_JSDT_WEB_VERSION = "1.0";
+	public static final String JST_EAR_VERSION = "5.0";
+	public static final String JST_EJB_VERSION = "3.0";
+	
 	//Plug-in ID
 	public static final String PLUGIN_ID = "com.ejie.uda";
 	

@@ -292,41 +292,41 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_WAR;
 
 		// Crea el proyecto de xxxWAR
-		IProject projectWAR = root.getProject((String)context.get(Constants.WAR_NAME_PATTERN));
-		projectWAR.create(null);
-		projectWAR.open(null);
-
-		// Lo genera como un Dinamic Project
-		IFacetedProject fpWAR = ProjectFacetsManager.create(projectWAR.getProject(), true, null);
-		fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion("1.6"), null, null);
-		fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion("2.5"), null, null);
-		fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wst.jsdt.web").getVersion("1.0"), null, null);
+		IProject projectWAR = null;
 		try {
+			projectWAR = root.getProject((String)context.get(Constants.WAR_NAME_PATTERN));
+			projectWAR.create(null);
+			projectWAR.open(null);
+	
+			// Lo genera como un Dinamic Project
+			IFacetedProject fpWAR = ProjectFacetsManager.create(projectWAR.getProject(), true, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion(Constants.JST_WEB_VERSION), null, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wst.jsdt.web").getVersion(Constants.WST_JSDT_WEB_VERSION), null, null);
 			// Facets de weblogic
-			fpWAR.installProjectFacet(
-					ProjectFacetsManager.getProjectFacet("wls.web").getVersion("10.3.1"), null, null);
+			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.web").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
+		
+			// Añade el runTime de Oracle
+			fpWAR.addTargetedRuntime(Utilities.addServerRuntime(fpWAR, "jst.web", Constants.JST_WEB_VERSION), new SubProgressMonitor(monitor,1));
+			/*
+			Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
+			for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
+				IRuntime runtime = (IRuntime) iterator.next();
+				
+				if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.web").getVersion(Constants.JST_WEB_VERSION))){
+					fpWAR.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
+				}		}
+	
+			*/
+			fpWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
+					ProjectFacetsManager.getProjectFacet("jst.java"),
+					ProjectFacetsManager.getProjectFacet("jst.web")
+				})));
 		} catch (Exception e) {
 			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el WAR!",
-					IMessageProvider.ERROR);
+			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
-
-		// Añade el runTime de Oracle
-		Set<IRuntime> runtimes = RuntimeManager.getRuntimes();
-		for (Iterator<IRuntime> iterator = runtimes.iterator(); iterator.hasNext();) {
-			IRuntime runtime = (IRuntime) iterator.next();
-			
-			if (runtime.getName().contains("WebLogic") && runtime.supports(ProjectFacetsManager.getProjectFacet("jst.web").getVersion("2.5"))){
-				fpWAR.addTargetedRuntime(runtime, new SubProgressMonitor(monitor,1));
-			}
-		}
-		fpWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
-				ProjectFacetsManager.getProjectFacet("jst.java"),
-				ProjectFacetsManager.getProjectFacet("jst.web")
-			})));
-		
 		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
@@ -566,18 +566,23 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 
 			//i18n
 			String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
+			String pathRup = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup/resources");
 			String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
 			if (languages.indexOf("es")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_es.json", context);
 			}
 			if (languages.indexOf("eu")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_eu.json", context);
 			}
 			if (languages.indexOf("en")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_en.json", context);
 			}
 			if (languages.indexOf("fr")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_fr.json", context);
 			}
 			
 			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));

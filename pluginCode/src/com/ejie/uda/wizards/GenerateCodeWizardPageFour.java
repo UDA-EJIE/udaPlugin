@@ -217,7 +217,11 @@ public class GenerateCodeWizardPageFour extends WizardPage {
 				 chkIdXlNetsAux = chkIdXlNetsAux.substring(1,chkIdXlNetsAux.length());
 			}
 			if (idSeguridad.substring(idSeguridad.length()-1, idSeguridad.length()).equals(";")){
-				chkIdXlNetsAux=chkIdXlNetsAux.substring(0, chkIdXlNetsAux.length()-1);
+				if (chkIdXlNetsAux.length()==0){ //Solo se ha informado un ";" y chkIdXlNetsAux aquí es ""
+					return "";
+				}else{
+					chkIdXlNetsAux=chkIdXlNetsAux.substring(0, chkIdXlNetsAux.length()-1);
+				}
 			}
 			
 			String rolesAnt= chkIdXlNetsAux.replace(";", "','ROLE_");

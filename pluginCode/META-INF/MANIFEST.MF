@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: UDA - Utilidades de Desarrollo de Aplicaciones
 Bundle-SymbolicName: com.ejie.uda;singleton:=true
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: com.ejie.uda.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

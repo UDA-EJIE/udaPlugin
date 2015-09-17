@@ -78,23 +78,35 @@ public static String[] getMetodCaracteristics(Method method) {
 	   String tipoRetorno = "";
 	   tipoRetorno =  method.getReturnType().getName();
 	   String tipoSimpleName = "";
-	   if (!method.getReturnType().isPrimitive() &&   !method.getReturnType().getName().equals("void")){
+	   if (method.getReturnType().isArray()){
+		   tipoRetorno = tipoRetorno.substring(2,tipoRetorno.length()-1);
+		   tipoSimpleName = method.getReturnType().getName().substring(method.getReturnType().getName().lastIndexOf(".")+1,method.getReturnType().getName().length()-1)+"[]";
+	   }else if (!method.getReturnType().isPrimitive() &&   !method.getReturnType().getName().equals("void")){
 		    tipoSimpleName = method.getReturnType().getName().substring(method.getReturnType().getName().lastIndexOf(".")+1,method.getReturnType().getName().length());
 	   }else{
 		   tipoSimpleName= method.getReturnType().getName();
 	   }
 	  
- 	   Type[] parametros= method.getGenericParameterTypes();
- 	   List<Type> listaParam= new ArrayList<Type>(Arrays.asList(parametros)) ;
- 	   Iterator iterador = listaParam.iterator();
- 	   String auxiliar="";
- 	   while (iterador.hasNext()){
- 		     String aux= iterador.next().toString();
- 		     if (!aux.toUpperCase().endsWith("TRANSACTIONMETADATA")){
- 		    	 auxiliar = auxiliar + aux +";";
- 		     }
- 	   }
-	   String[] lista={methodName,tipoRetorno,tipoSimpleName,auxiliar};
+	   //Parametros
+  	   String parametros = "";
+  	   for (Class<Type> tipo : (Class<Type>[]) method.getGenericParameterTypes()) {
+  		   if (!tipo.toString().endsWith("x38.remote.TransactionMetadata")){
+  			   parametros = parametros + tipo.getCanonicalName() +";";
+  		   }
+  	   }
+	   
+  	 //Excepciones
+  	   String excepciones = "";
+  	   String fullExcepciones = "";
+  	   for (Class<Type> excepcion : (Class<Type>[]) method.getExceptionTypes()) {
+  		   excepciones = excepciones + excepcion.getCanonicalName().substring(excepcion.getCanonicalName().lastIndexOf(".")+1,excepcion.getCanonicalName().length()) + ", ";
+  		   fullExcepciones =  fullExcepciones + excepcion.getCanonicalName() + ";";
+  	   }
+  	   if (!excepciones.equals("")){
+  		   excepciones = excepciones.substring(0, excepciones.length()-2);
+  	   }
+  	   
+	   String[] lista={methodName,tipoRetorno,tipoSimpleName,parametros,excepciones,fullExcepciones};
 	   return lista;
 
 }
