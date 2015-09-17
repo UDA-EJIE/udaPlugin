@@ -66,7 +66,7 @@ public class GenerateCodeWizardPageThree extends WizardPage {
 	private Group presentationGroup;
 	private Group inyectionGroup;
 	private Button radAnot;
-	private Button radXml;
+	//private Button radXml;
 	
 	/**
 	 * Primera ventana del Wizard de Plugin, donde se selecciona
@@ -120,10 +120,10 @@ public class GenerateCodeWizardPageThree extends WizardPage {
 			radAnot.setLayoutData(new GridData (SWT.CENTER, SWT.FILL, true, true,1,1));
 		
 			//XML
-			radXml = new Button(inyectionGroup, SWT.RADIO);
-			radXml.setText("XML");
-			radXml.setSelection(false);
-			radXml.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, true,1,1));
+//			radXml = new Button(inyectionGroup, SWT.RADIO);
+//			radXml.setText("XML");
+//			radXml.setSelection(false);
+//			radXml.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, true,1,1));
 
 			// Salto de línea
 		hiddenLabel= new Label(container, SWT.NULL);
@@ -318,9 +318,9 @@ public class GenerateCodeWizardPageThree extends WizardPage {
 	 * 
 	 * @return true si seleccionado, false ecc.
 	 */
-	public boolean getRadXml() {
-		return radXml.getSelection();
-	}
+//	public boolean getRadXml() {
+//		return radXml.getSelection();
+//	}
 	/**
 	 * Recupera el proyecto EARClasses
 	 * 

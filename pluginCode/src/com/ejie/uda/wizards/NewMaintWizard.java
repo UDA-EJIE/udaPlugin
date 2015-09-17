@@ -155,6 +155,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		addPage(pageTwo);
 		addPage(pageThree);
 		addPage(pageFour);
+		
 	}
 	
 	/**
@@ -231,17 +232,14 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			for (Iterator<GridColumn> iterator = gridColumns.iterator(); iterator.hasNext();) {
 				GridColumn gridColumn = (GridColumn) iterator.next();
 
-				if (gridColumn.isActivated()){
+				if (gridColumn.getActivated()){
 					if (Utilities.isBlank(gridColumn.getName())){
 						pageFour.setMessage("El campo 'Name' de la columna " + gridColumn.getColumnName() + " es obligatorio", IMessageProvider.ERROR);
 						return false;
 					}else if (Utilities.isBlank(gridColumn.getLabel())){
 						pageFour.setMessage("El campo 'Label' de la columna " + gridColumn.getColumnName() + " es obligatorio", IMessageProvider.ERROR);
 						return false;
-					}else if (Utilities.isBlank(gridColumn.getIndex())){
-						pageFour.setMessage("El campo 'Index' de la columna " + gridColumn.getColumnName() + " es obligatorio", IMessageProvider.ERROR);
-						return false;
-					}	
+					}
 				}
 			}
 		}
@@ -355,7 +353,6 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		
 		monitor.worked(1);
 		
-		
 		// Recupera el Workspace
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// Recupero el proyecto de Statics de UDA
@@ -390,7 +387,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		for (Iterator<GridColumn> iterator = gridColumns.iterator(); iterator.hasNext();) {
 			GridColumn gridColumn = (GridColumn) iterator.next();
 			
-			if (gridColumn.isActivated()){
+			if (gridColumn.getActivated()){
 				filter.add(gridColumn);
 			}
 		}

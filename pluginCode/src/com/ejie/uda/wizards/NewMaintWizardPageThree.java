@@ -18,6 +18,7 @@ package com.ejie.uda.wizards;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -32,8 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import com.ejie.uda.operations.DataBaseWorker;
@@ -51,27 +50,12 @@ public class NewMaintWizardPageThree extends WizardPage {
 	private Button[] radios;
 	private Text urlText;
 	private Text aliasText;
-	private Button simpleSelectCheck;
-	private Button multiSelectCheck;
-	private Text widthText;
-	private Text pagerNameText;
 	private Button loadOnStartUpCheck;
-	private Text rowNumText;
-	private Button sortableCheck;
 	private Combo sortOrderCombo;
 	private Combo sortNameCombo;
-	private Button rowEditCheck;
-	// Eventos del grid
-	private Text beforeRequestText;
-	private Text loadBeforeSendText;
-	private Text gridCompleteText;
-	private Text loadCompleteText;
-	private Text ondblclickRowText;
-	private Text onSelectRowText;
-	private Text onSelectAllText;
 	
 	// Contenedores
-	private Composite containerPropertiesTab;
+	private Composite containerProperties;
 	private ScrolledComposite containerTables;
 	private Composite containerRadios;
 	private ConnectionData conData;
@@ -93,255 +77,91 @@ public class NewMaintWizardPageThree extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		
-		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new GridLayout(2, true));
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new GridLayout(4, true));
+		container.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
 		// Descripción de la operación
 		Label descLabel = new Label(container, SWT.NULL);
-		descLabel.setText("Seleccione la entidad a mantener");
-		descLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		descLabel.setText("Seleccione la entidad a mantener y defina sus propiedades");
+		descLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 		
-		// Salto de línea
-		Label hiddenLabel= new Label(container, SWT.NULL);
-		hiddenLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		// Descripción de la operación
+		Label auxLabel = new Label(container, SWT.NULL);
+		auxLabel.setText("(*) Campos obligatorios");
+		auxLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
-	    // Contenedor del tablas/entidades
-		containerTables = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL);
-		containerTables.setLayout(new GridLayout(1, false));
-		containerTables.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		// Contenedor del tablas/entidades
+		containerTables = new ScrolledComposite(container, SWT.H_SCROLL	| SWT.V_SCROLL | SWT.BORDER);
+		containerTables.setLayout(new GridLayout(1, true));
+		//gd_containerTables.widthHint = 158;
+		containerTables.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
 		// Inicializa el contenedor de radios
 		containerRadios = new Composite(containerTables, SWT.NONE);
 		
-		// Pestañas de propiedades y eventos
-		final TabFolder tabFolder = new TabFolder(container, SWT.NULL);
-		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
-
-		TabItem propertiesTab = new TabItem(tabFolder, SWT.NULL);
-		propertiesTab.setText("Propiedades");
-		propertiesTab.setToolTipText("Propiedades");
-		
-		TabItem eventsTab = new TabItem(tabFolder, SWT.NULL);
-		eventsTab.setText("Eventos");
-		eventsTab.setToolTipText("Eventos");
-		
-		// Contenedor de la pestaña de propiedades
-		containerPropertiesTab = new Composite(tabFolder, SWT.NULL);
-		containerPropertiesTab.setLayout(new GridLayout(2, false));
+		// Contenedor de propiedades
+		containerProperties = new Composite(container, SWT.BORDER);
+		containerProperties.setLayout(new GridLayout(3, false));
+		containerProperties.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		
 		// Propiedad URL 
-		Label urlLabel = new Label(containerPropertiesTab, SWT.NULL);
-		urlLabel.setText("URL:");
+		Label urlLabel = new Label(containerProperties, SWT.NULL);
+		urlLabel.setText("URL(*):");
 		urlLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
+
 		// Campo texto URL
-		urlText = new Text(containerPropertiesTab, SWT.BORDER | SWT.SINGLE);
+		urlText = new Text(containerProperties, SWT.BORDER | SWT.SINGLE);
 		urlText.setToolTipText("Define la url a través de la cual se carga el grid");
-		urlText.setEnabled(false);
 		urlText.setText("../[nombre entidad]");
-		urlText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1 ,1));
+		urlText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
 		
-		// Propiedad URL 
-		Label aliasLabel = new Label(containerPropertiesTab, SWT.NULL);
-		aliasLabel.setText("Alias:");
+		// Propiedad alias 
+		Label aliasLabel = new Label(containerProperties, SWT.NULL);
+		aliasLabel.setText("Alias(*):");
 		aliasLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Campo texto URL
-		aliasText = new Text(containerPropertiesTab, SWT.BORDER | SWT.SINGLE);
+
+		// Campo texto alias
+		aliasText = new Text(containerProperties, SWT.BORDER | SWT.SINGLE);
 		aliasText.setToolTipText("Define un alias a la entidad generada");
-		aliasText.setText("");
-		aliasText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1 ,1));
-		
-		// Propiedad anchura
-		Label widthLabel = new Label(containerPropertiesTab, SWT.NULL);
-		widthLabel.setText("Anchura:");
-		widthLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Campo texto anchura
-		widthText = new Text(containerPropertiesTab, SWT.BORDER | SWT.SINGLE);
-		widthText.setToolTipText("Define la anchura del grid");
-		widthText.setText("600");
-		widthText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1 ,1));
-		
-		// Propiedad capa paginacion
-		Label pagerNameLabel = new Label(containerPropertiesTab, SWT.NULL);
-		pagerNameLabel.setText("Capa de paginación:");
-		pagerNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		// Campo texto capa de paginación
-		pagerNameText = new Text(containerPropertiesTab, SWT.BORDER | SWT.SINGLE);
-		pagerNameText.setToolTipText("Indica el elemento HTML que contiene la paginación de resultados del grid");
-		pagerNameText.setText("pager");
-		pagerNameText.setEnabled(false);
-		pagerNameText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1 ,1));
+		aliasText.setText("[nombre entidad]");
+		aliasText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
 		
 		// Propiedad inicio ventana
-		Label loadOnStartUpLabel = new Label(containerPropertiesTab, SWT.NULL);
-		loadOnStartUpLabel.setText("Cargar al inicio de la ventana:");
+		Label loadOnStartUpLabel = new Label(containerProperties, SWT.NULL);
+		loadOnStartUpLabel.setText("Cargar al inicio de la ventana:  ");
 		loadOnStartUpLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
+
 		// Campo check inicio ventana
-		loadOnStartUpCheck = new Button(containerPropertiesTab, SWT.CHECK);
+		loadOnStartUpCheck = new Button(containerProperties, SWT.CHECK);
 		loadOnStartUpCheck.setSelection(true);
 		loadOnStartUpCheck.setToolTipText("Indica si se cargará el grid a la hora de crearlo o se deberá invocar al reloadGrid para cargarlos");
-		loadOnStartUpCheck.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
+		loadOnStartUpCheck.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
 		
-		// Propiedad Número de filas
-		Label rowNumLabel = new Label(containerPropertiesTab, SWT.NULL);
-		rowNumLabel.setText("Número de filas:");
-		rowNumLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Campo texto de Número de filas
-		rowNumText = new Text(containerPropertiesTab, SWT.BORDER | SWT.SINGLE);
-		rowNumText.setToolTipText("Define el Número de elementos en cada página del grid");
-		rowNumText.setText("10");
-		rowNumText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1 ,1));
-
-		// Propiedad ordenable
-		Label sortableLabel = new Label(containerPropertiesTab, SWT.NULL);
-		sortableLabel.setText("Columnas ordenables:");
-		sortableLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Campo check inicio ventana
-		sortableCheck = new Button(containerPropertiesTab, SWT.CHECK);
-		sortableCheck.setSelection(true);
-		sortableCheck.setToolTipText("Indica si las columnas del grid son ordenables o no arrastrándolas con el ratón");
-		sortableCheck.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
-
 		// Propiedad tipo de ordenación
-		Label sortOrderLabel = new Label(containerPropertiesTab, SWT.NULL);
+		Label sortOrderLabel = new Label(containerProperties, SWT.NULL);
 		sortOrderLabel.setText("Ordenación:");
-		sortOrderLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
+		sortOrderLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+
 		// Campo combo de tipo de ordenación
-		sortOrderCombo = new Combo(containerPropertiesTab, SWT.READ_ONLY);
+		sortOrderCombo = new Combo(containerProperties, SWT.READ_ONLY);
 		sortOrderCombo.add("asc");
 		sortOrderCombo.add("desc");
 		sortOrderCombo.select(0);
 		sortOrderCombo.setToolTipText("Indica el orden (ascendente o descendente) de la columna por la que ordenar el grid en su primera carga");
-		sortOrderCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
 
+		Label hiddenLabel = new Label(containerProperties, SWT.NONE);
+		hiddenLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		
 		// Propiedad ordenación por
-		Label sortNameLabel = new Label(containerPropertiesTab, SWT.NULL);
+		Label sortNameLabel = new Label(containerProperties, SWT.NULL);
 		sortNameLabel.setText("Ordenación por:");
-		sortNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		
-		// Combo de ordenación por columnas
-		sortNameCombo = new Combo(containerPropertiesTab, SWT.READ_ONLY);
-		sortNameCombo.setToolTipText("Indica el nombre de la columna por el que ordenar la primera vez que se carga el grid");
-		sortNameCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-		
-		// Propiedad selección simple
-		Label simpleSelectLabel = new Label(containerPropertiesTab, SWT.NULL);
-		simpleSelectLabel.setText("Selección simple:");
-		simpleSelectLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Radio button para Multi
-		simpleSelectCheck = new Button(containerPropertiesTab, SWT.RADIO);
-		simpleSelectCheck.setSelection(true);
-		simpleSelectCheck.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
-		
-		// Propiedad multiselector
-		Label multiSelectLabel = new Label(containerPropertiesTab, SWT.NULL);
-		multiSelectLabel.setText("Multiselección:");
-		multiSelectLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-//		// Campo check inicio ventana
-//		multiSelectCheck = new Button(containerPropertiesTab, SWT.CHECK);
-//		multiSelectCheck.setSelection(false);
-//		multiSelectCheck.setToolTipText("Indica si el grid está en modo multiselección o no");
-//		multiSelectCheck.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
-		// Radio button para Multi
-		multiSelectCheck = new Button(containerPropertiesTab, SWT.RADIO);
-		multiSelectCheck.setSelection(false);
-		multiSelectCheck.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
+		sortNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		// Propiedad líneas editables
-		Label rowEditLabel = new Label(containerPropertiesTab, SWT.NULL);
-		rowEditLabel.setText("Edición en línea:");
-		rowEditLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-//		// Campo check inicio ventana
-//		rowEditCheck = new Button(containerPropertiesTab, SWT.CHECK);
-//		rowEditCheck.setSelection(false);
-//		rowEditCheck.setToolTipText("Propiedad que indica si las líneas del grid son editables");
-//		rowEditCheck.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
-		// Radio button Ed.Linea
-		rowEditCheck = new Button(containerPropertiesTab, SWT.RADIO);
-		rowEditCheck.setSelection(false);
-		rowEditCheck.setLayoutData(new GridData (SWT.LEFT, SWT.CENTER, false, false, 1 ,1));
-		
-		
-		//Añade el contenedor a la pestaña de propiedades
-		propertiesTab.setControl(containerPropertiesTab);
-		
-		///////////////////////////////
-		// Contenedor del tab de eventos
-		////////////////////////////////
-		Composite containerEventsTab = new Composite(tabFolder, SWT.NULL);
-		containerEventsTab.setLayout(new GridLayout(4, false));
-		
-		// Generación del evento beforeRequest
-		Label beforeRequestLabel = new Label(containerEventsTab, SWT.NULL);
-		beforeRequestLabel.setText("beforeRequest:");
-		beforeRequestLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento beforeRequest
-		beforeRequestText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		beforeRequestText.setToolTipText("Nombre de la Función que se ejecuta antes de solicitar una petición");
-		beforeRequestText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Generación del evento loadBeforeSend
-		Label loadBeforeSendLabel = new Label(containerEventsTab, SWT.NULL);
-		loadBeforeSendLabel.setText("loadBeforeSend:");
-		loadBeforeSendLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento loadBeforeSend
-		loadBeforeSendText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		loadBeforeSendText.setToolTipText("Un pre-callback para modificar el objeto XMLHttpRequest antes de ser enviado");
-		loadBeforeSendText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Generación del evento gridComplete
-		Label gridCompleteLabel = new Label(containerEventsTab, SWT.NULL);
-		gridCompleteLabel.setText("gridComplete:");
-		gridCompleteLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento gridComplete
-		gridCompleteText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		gridCompleteText.setToolTipText("Nombre de la Función que se ejecuta despuás que todos los datos están cargados en el grid \ny todos los demás procesos se han completado");
-		gridCompleteText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Generación del evento loadComplete
-		Label loadCompleteLabel = new Label(containerEventsTab, SWT.NULL);
-		loadCompleteLabel.setText("loadComplete:");
-		loadCompleteLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento loadComplete
-		loadCompleteText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		loadCompleteText.setToolTipText("Nombre de la Función que se ejecuta inmediatamente después de cada petición al servidor");
-		loadCompleteText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Generación del evento ondblclickRow
-		Label ondblclickRowLabel = new Label(containerEventsTab, SWT.NULL);
-		ondblclickRowLabel.setText("ondblclickRow:");
-		ondblclickRowLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento ondblclickRow
-		ondblclickRowText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		ondblclickRowText.setToolTipText("Nombre de la Función que se ejecuta inmediatamente después de un doble click sobre una fila del grid");
-		ondblclickRowText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Generación del evento onSelectRow
-		Label onSelectRowLabel = new Label(containerEventsTab, SWT.NULL);
-		onSelectRowLabel.setText("onSelectRow:");
-		onSelectRowLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento onSelectRow
-		onSelectRowText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		onSelectRowText.setToolTipText("Nombre de la Función que se ejecuta inmediatamente después de un click sobre una fila del grid");
-		onSelectRowText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Generación del evento onSelectAll
-		Label onSelectAllLabel = new Label(containerEventsTab, SWT.NULL);
-		onSelectAllLabel.setText("onSelectAll:");
-		onSelectAllLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2 ,1));
-		
-		// Campo texto del nombre de la funcion del evento onSelectAll
-		onSelectAllText = new Text(containerEventsTab, SWT.BORDER | SWT.SINGLE);
-		onSelectAllText.setToolTipText("Nombre de la Función que se ejecuta cuando el grid es de múltiple selección y \nse selecciona el check de selección múltiple del grid");
-		onSelectAllText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
-		
-		// Añade el contenedor a la pestaña de eventos
-		eventsTab.setControl(containerEventsTab);
-		
+		// Combo de ordenación por columnas
+		sortNameCombo = new Combo(containerProperties, SWT.READ_ONLY);
+		sortNameCombo.setToolTipText("Indica el nombre de la columna por el que ordenar la primera vez que se carga el grid");
+		new Label(containerProperties, SWT.NONE);
+
 		// Pasa el control al contenedor
 		setControl(container);
 	}
@@ -362,7 +182,18 @@ public class NewMaintWizardPageThree extends WizardPage {
 	 */
 	public IWizardPage getNextPage() {
 		
-    	if (conData == null){
+		//Validaciones campos obligatorios
+		if (Utilities.isBlank(urlText.getText())){
+				this.setMessage("El campo 'URL' para la entidad seleccionada es obligatorio", IMessageProvider.ERROR);
+				return null;
+		}
+
+		if (Utilities.isBlank(aliasText.getText())){
+			this.setMessage("El campo 'Alias' para el mantenimiento de la entidad seleccionada es obligatorio", IMessageProvider.ERROR);
+			return null;
+	}
+
+		if (conData == null){
 			setErrorMessage("Error en los datos de conexión");
 			return getWizard().getContainer().getCurrentPage();
 		}
@@ -410,53 +241,14 @@ public class NewMaintWizardPageThree extends WizardPage {
 		if (aliasText != null){
 			grid.setAlias(aliasText.getText());	
 		}
-		if (widthText != null){
-			grid.setWidth(widthText.getText());	
-		}
-		if (pagerNameText != null){
-			grid.setPagerName(pagerNameText.getText());	
-		}
 		if (loadOnStartUpCheck != null){
 			grid.setLoadOnStartUp(loadOnStartUpCheck.getSelection());	
-		}
-		if (rowNumText != null){
-			grid.setRowNum(rowNumText.getText());	
-		}
-		if (sortableCheck != null){
-			grid.setSortable(sortableCheck.getSelection());	
 		}
 		if (sortOrderCombo != null){
 			grid.setSortOrder(sortOrderCombo.getText());	
 		}
 		if (sortNameCombo != null){
 			grid.setSortName(sortNameCombo.getText());	
-		}
-		if (multiSelectCheck != null){
-			grid.setMultiSelect(multiSelectCheck.getSelection());	
-		}
-		if (rowEditCheck != null){
-			grid.setRowEdit(rowEditCheck.getSelection());	
-		}
-		if (beforeRequestText != null){
-			grid.setBeforeRequest(beforeRequestText.getText());	
-		}
-		if (loadBeforeSendText != null){
-			grid.setLoadBeforeSend(loadBeforeSendText.getText());	
-		}
-		if (gridCompleteText != null){
-			grid.setGridComplete(gridCompleteText.getText());	
-		}
-		if (loadCompleteText != null){
-			grid.setLoadComplete(loadCompleteText.getText());	
-		}
-		if (ondblclickRowText != null){
-			grid.setOndblClickRow(ondblclickRowText.getText());	
-		}
-		if (onSelectAllText != null){
-			grid.setOnSelectAll(onSelectAllText.getText());	
-		}
-		if (onSelectRowText != null){
-			grid.setOnSelectRow(onSelectRowText.getText());	
 		}
 		
 		return grid;
@@ -518,6 +310,7 @@ public class NewMaintWizardPageThree extends WizardPage {
 							setColumnsCombo(conData, widButton.getText());
 							//Inicializa el campo de URL
 							urlText.setText("../" + widButton.getText().replace("_", "").toLowerCase());
+							aliasText.setText(widButton.getText().replace("_", "").toLowerCase());
 				        }
 					}
 				};
@@ -538,6 +331,7 @@ public class NewMaintWizardPageThree extends WizardPage {
 					setColumnsCombo(conData, radios[0].getText());
 					//Inicializa el campo de URL
 					urlText.setText("../" + radios[0].getText().replace("_", "").toLowerCase());					
+					aliasText.setText(radios[0].getText().replace("_", "").toLowerCase());
 				}
 			}
 		}
@@ -630,53 +424,6 @@ public class NewMaintWizardPageThree extends WizardPage {
      */
     protected boolean validatePage() {
     	
-    	setErrorMessage(null);
-	
-		if (rowNumText != null && !Utilities.isBlank(rowNumText.getText()) && !Utilities.validateNumber(rowNumText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'Número de filas'");
-			return false;
-		}
-		
-		if (beforeRequestText != null && !Utilities.isBlank(beforeRequestText.getText()) && !Utilities.validateText(beforeRequestText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'beforeRequest'");
-			return false;
-		}
-		
-		if (loadBeforeSendText != null && !Utilities.isBlank(loadBeforeSendText.getText()) && !Utilities.validateText(loadBeforeSendText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'loadBeforeSend'");
-			return false;
-		}
-		
-		if (gridCompleteText != null && !Utilities.isBlank(gridCompleteText.getText()) && !Utilities.validateText(gridCompleteText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'gridComplete'");
-			return false;
-		}
-		
-		if (loadCompleteText != null && !Utilities.isBlank(loadCompleteText.getText()) && !Utilities.validateText(loadCompleteText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'loadComplete'");
-			return false;
-		}
-		
-		if (loadCompleteText != null && !Utilities.isBlank(loadCompleteText.getText()) && !Utilities.validateText(loadCompleteText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'loadComplete'");
-			return false;
-		}
-		
-		if (ondblclickRowText != null && !Utilities.isBlank(ondblclickRowText.getText()) && !Utilities.validateText(ondblclickRowText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'ondblclickRow'");
-			return false;
-		}
-		
-		if (onSelectRowText != null && !Utilities.isBlank(onSelectRowText.getText()) && !Utilities.validateText(onSelectRowText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'onSelectRow'");
-			return false;
-		}
-		
-		if (onSelectAllText != null && !Utilities.isBlank(onSelectAllText.getText()) && !Utilities.validateText(onSelectAllText.getText())) {
-			setErrorMessage("Caracteres no válidos para en campo 'onSelectAllText'");
-			return false;
-		}
-		
         setErrorMessage(null);
         setMessage("Este Wizard genera un nuevo mantenimiento para una aplicación UDA");
         return true;
@@ -684,22 +431,10 @@ public class NewMaintWizardPageThree extends WizardPage {
     
  
 	public boolean getConfirmation() {
-		boolean askConfirmation = false;
-		//String packageName = "";
-		if (Utilities.isBlank(aliasText.getText())) {
-			askConfirmation = true;
-		}
 
-		if (askConfirmation) {
-			boolean b = MessageDialog
-					.openConfirm(
-							getShell(),
-							"Confirmación",
-							"Si ya existe un mantenimiento sobre la entidad seleccionada, se sobreescribirá a menos que se defina un 'alias' específico. ¿Desea Continuar?");
-			return b;
-		} else {
-			return true;
-		}
+		boolean b = MessageDialog.openConfirm(getShell(),"Confirmación",
+							"Si ya existe un mantenimiento sobre la entidad seleccionada con ese 'alias', se sobreescribirá. ¿Desea Continuar?");
+		return b;
 }
 	
 }

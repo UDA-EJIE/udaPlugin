@@ -29,6 +29,11 @@ public class TreeNode implements Comparable<TreeNode> {
 	private boolean isComposite;
 	private boolean isPrimaryKey;
 	private String referenceClass;
+
+	private String JDBCTypeName;
+	private int length;
+	private int scale;
+	private int precision;
 	
 	private boolean isMN;
 
@@ -47,11 +52,23 @@ public class TreeNode implements Comparable<TreeNode> {
 		this.nameBBDD = nameBBDD;
 	}
 	
-	public TreeNode(String name, String type,String nameBBDD, boolean isMN) {
+	public TreeNode(String name, String type, String nameBBDD, boolean isMN) {
 		this.name = name;
 		this.type = type;
 		this.nameBBDD = nameBBDD;
 		this.isMN  = isMN;
+	}
+
+	public TreeNode(String name, String type, String nameBBDD, 
+			String JDBCTypeName, int length, int scale, int precision) {
+		this.name = name;
+		this.type = type;
+		this.nameBBDD = nameBBDD;
+
+		this.JDBCTypeName = JDBCTypeName;
+		this.length = length;
+		this.scale = scale;
+		this.precision = precision;
 	}
 
 	public TreeNode getParent() {
@@ -154,6 +171,62 @@ public class TreeNode implements Comparable<TreeNode> {
 
 	public void setReferenceClass(String referenceClass) {
 		this.referenceClass = referenceClass;
+	}
+
+	/**
+	 * @return the jDBCTypeName
+	 */
+	public String getJDBCTypeName() {
+		return JDBCTypeName;
+	}
+
+	/**
+	 * @param jDBCTypeName the jDBCTypeName to set
+	 */
+	public void setJDBCTypeName(String jDBCTypeName) {
+		JDBCTypeName = jDBCTypeName;
+	}
+
+	/**
+	 * @return the length
+	 */
+	public int getLength() {
+		return length;
+	}
+
+	/**
+	 * @param length the length to set
+	 */
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	/**
+	 * @return the scale
+	 */
+	public int getScale() {
+		return scale;
+	}
+
+	/**
+	 * @param scale the scale to set
+	 */
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	/**
+	 * @return the precision
+	 */
+	public int getPrecision() {
+		return precision;
+	}
+
+	/**
+	 * @param precision the precision to set
+	 */
+	public void setPrecision(int precision) {
+		this.precision = precision;
 	}
 
 	public boolean isCheckedChildren() {

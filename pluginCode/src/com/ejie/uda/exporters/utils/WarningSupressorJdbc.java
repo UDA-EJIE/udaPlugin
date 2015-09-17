@@ -44,22 +44,19 @@ public class WarningSupressorJdbc {
 	private final static Logger log = Logger.getLogger(PojoUtils.class);
 	private static Cfg2JavaTool c2j = new Cfg2JavaTool();
 
-	public WarningSupressorJdbc() {
-
-	}
+	public WarningSupressorJdbc() {}
 	
 
-	public String getGetterSignature(Property p,POJOClass pojo)
-	   {
+	public String getGetterSignature(Property p,POJOClass pojo) {
 	     String prefix = (typeConverter(getJavaTypeName(p, false,false),false).equals("boolean")) ? "is" : "get";
 	     return prefix + BasicPOJOClass.beanCapitalize(p.getName());
-	   }
+	}
 	
 	public static String typeConverter(String type,boolean generateImports) {
-		try {
 
+		try {
 			String typeAux = "";
-			if (generateImports){
+			if (generateImports) {
 				if (type.toUpperCase().endsWith("BYTE")
 						|| type.toUpperCase().endsWith("LONG")
 						|| type.toUpperCase().endsWith("SHORT")) {
@@ -67,60 +64,53 @@ public class WarningSupressorJdbc {
 				} else if (type.toUpperCase().endsWith("CHARACTER")
 						|| type.toUpperCase().endsWith("STRING")) {
 					typeAux = "String";
-			} else if (type.toUpperCase().endsWith("JAVA.IO.SERIALIZABLE")) {
-				typeAux = "Object";
-				}  else if (type.toUpperCase().endsWith("Date")) {
-					typeAux = "java.sql.Date";
-				}else if (type.toUpperCase().endsWith("JAVA.UTIL.SET")) {
-					typeAux = "java.util.List";
-				} else if (type.toUpperCase().endsWith("JAVA.MATH.BIGDECIMAL")) {
-					typeAux = "java.math.BigDecimal";
+				} else if (type.toUpperCase().endsWith("DATE") || type.toUpperCase().endsWith("TIMESTAMP")) {
+					typeAux = "java.util.Date";
 				} else if (type.toUpperCase().endsWith("BOOLEAN")) {
 					typeAux = "Boolean";
-				} else if (type.toUpperCase().endsWith("INT")) {
-						typeAux = "Integer";
-				} else if (type.toUpperCase().endsWith("FLOAT")) {
-					typeAux = "Float";						
-				} else {
-					typeAux = type;
-				}
-			}else{
-				if (type.toUpperCase().endsWith("BYTE")
-						|| type.toUpperCase().endsWith("LONG")
-						|| type.toUpperCase().endsWith("SHORT")) {
-					typeAux = "Long";
-				} else if (type.toUpperCase().endsWith("CHARACTER")
-						|| type.toUpperCase().endsWith("STRING")) {
-					typeAux = "String";
-				} else if (type.toUpperCase().endsWith("SERIALIZABLE")
-						) {
-					typeAux = "Object";
-				} else if (//type.toUpperCase().contains("SERIALIZABLE")
-						   //||
-						   type.toUpperCase().endsWith("TIMESTAMP")) {
-					typeAux = "Timestamp";
-				} else if (type.toUpperCase().endsWith("Date")) {
-						typeAux = "Date";	
-				} else if (type.toUpperCase().contains("JAVA.UTIL.SET")) {
-					typeAux = "List";
-				} else if (type.toUpperCase().contains("JAVA.MATH.BIGDECIMAL")) {
-					typeAux = "BigDecimal";
-				} else if (type.toUpperCase().endsWith("BOOLEAN")) {
-					typeAux = "Boolean";
-				} else if (type.toUpperCase().contains("CLOB")) {
-					typeAux = "Clob";
-				}else if (type.toUpperCase().contains("BLOB")) {
-					typeAux = "Blob";
-				}else if (type.toUpperCase().endsWith("DATE")) {
-					typeAux = "Date";
 				} else if (type.toUpperCase().endsWith("INT")) {
 					typeAux = "Integer";
 				} else if (type.toUpperCase().endsWith("FLOAT")) {
-					typeAux = "Float";					
-				}else {
+					typeAux = "Float";
+				} else if (type.toUpperCase().endsWith("JAVA.MATH.BIGDECIMAL")) {
+					typeAux = "java.math.BigDecimal";					
+				} else if (type.toUpperCase().endsWith("JAVA.UTIL.SET")) {
+					typeAux = "java.util.List";
+				} else if (type.toUpperCase().endsWith("JAVA.IO.SERIALIZABLE")) {
+					typeAux = "Object";
+				} else {
 					typeAux = type;
 				}
+			} else {
+				if (type.toUpperCase().endsWith("BYTE")
+						|| type.toUpperCase().endsWith("LONG")
+						|| type.toUpperCase().endsWith("SHORT")) {
+					typeAux = "Long";
+				} else if (type.toUpperCase().endsWith("CHARACTER")
+						|| type.toUpperCase().endsWith("STRING")) {
+					typeAux = "String";
+				} else if (type.toUpperCase().endsWith("DATE") || type.toUpperCase().endsWith("TIMESTAMP")) {
+					typeAux = "Date";
+				} else if (type.toUpperCase().endsWith("BOOLEAN")) {
+					typeAux = "Boolean";
+				} else if (type.toUpperCase().endsWith("INT")) {
+					typeAux = "Integer";
+				} else if (type.toUpperCase().endsWith("FLOAT")) {
+					typeAux = "Float";
+				} else if (type.toUpperCase().contains("JAVA.MATH.BIGDECIMAL")) {
+					typeAux = "BigDecimal";
+				} else if (type.toUpperCase().contains("CLOB")) {
+					typeAux = "Clob";
+				} else if (type.toUpperCase().contains("BLOB")) {
+					typeAux = "Blob";
+				} else if (type.toUpperCase().contains("JAVA.UTIL.SET")) {
+					typeAux = "List";
+				} else if (type.toUpperCase().endsWith("SERIALIZABLE")) {
+					typeAux = "Object";
+				} else {
+					typeAux = type;
 				}
+			}
 			return typeAux;
 		} catch (Exception e) {
 			log.error("Error:" + e.getMessage());
@@ -132,9 +122,8 @@ public class WarningSupressorJdbc {
 		try {
 
 			String typeAux = "";
-				if (type.toUpperCase().endsWith("INTEGER"))
-						 {
-					typeAux = "Int";						
+				if (type.toUpperCase().endsWith("INTEGER")){
+					typeAux = "Int";
 				} else {
 					typeAux = type;
 				}
@@ -205,14 +194,11 @@ public class WarningSupressorJdbc {
 				while (col.hasNext()){
 					Column columna= col.next();
 					String valor = JDBCToHibernateTypeHelper.getJDBCTypeName(columna.getSqlTypeCode().intValue());
-
 					if (valor.equals("BIT")){
 						importType="Integer";
 					}
-					
 				}
 			}	
-		
 			return importType;
 		}
 
@@ -230,7 +216,6 @@ public class WarningSupressorJdbc {
 				if (valor.equals("BIT")){
 					tipoImport="Integer";
 				}
-				
 			}
 		}	
 		return importContext.importType(tipoImport);
@@ -279,27 +264,23 @@ public class WarningSupressorJdbc {
 				log.warn(msg + ". Falling back to typename: " + typename);
 				return typeConverter(typename,generateImports);
 			}
-
 			return null;
 		}
 	}
 
 	private String getJavaTypeName(Value value, boolean preferRawTypeNames,boolean generateImports) {
 		if ( value.accept(new JavaTypeFromValueVisitor()).toString().toUpperCase().endsWith("SERIALIZABLE")){
-			return ((String) value
-					.accept(new JavaTypeFromValueVisitor()));	
+			return ((String) value.accept(new JavaTypeFromValueVisitor()));	
 		}
-		return typeConverter(((String) value
-				.accept(new JavaTypeFromValueVisitor())),generateImports);
+		return typeConverter(((String) value.accept(new JavaTypeFromValueVisitor())),generateImports);
 	}
 
 	private String toName(Class c) {
 		if (c.isArray()) {
 			Class a = c.getComponentType();
-
 			return a.getName() + "[]";
 		}
-
 		return c.getName();
 	}
+	
 }

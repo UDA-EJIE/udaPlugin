@@ -88,13 +88,14 @@ public class NewMaintWizardPageOne extends WizardPage {
 	public void createControl(Composite parent) {
 		
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(3, false));
+		GridLayout gl_container = new GridLayout();
+		container.setLayout(gl_container);
 		
 		// Descripción de la operación
 		Label descLabel= new Label(container, SWT.NULL);
-		descLabel.setText("Seleccione el WAR al que se quiere Añadir el mantenimiento y configure una conexión a la base de datos");
+		descLabel.setText("Seleccione el WAR al que se quiere añadir el mantenimiento y configure una conexión a la base de datos");
 		descLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-		
+
 		// Salto de línea
 		Label hiddenLabel= new Label(container, SWT.NULL);
 		hiddenLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
@@ -247,6 +248,9 @@ public class NewMaintWizardPageOne extends WizardPage {
 		//botón para probar la conexión configurada
 		Button testConnectionButton = new Button(connectionGroup, SWT.NONE);
 		testConnectionButton.setText("Probar conexión");
+		new Label(connectionGroup, SWT.NONE);
+		new Label(connectionGroup, SWT.NONE);
+		new Label(connectionGroup, SWT.NONE);
 		testConnectionButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				if (!Utilities.isBlank(getSidText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())
@@ -276,8 +280,11 @@ public class NewMaintWizardPageOne extends WizardPage {
 		
 		//Asigna el foco inicial
 		sidText.setFocus();
-		
+
 		setControl(container);
+		/**************************************************************************************************
+		getShell().setBounds(100, 100, 650, 850);
+		***************************************************************************************************/
 	}
 	
 	/**

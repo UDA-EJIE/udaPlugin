@@ -21,51 +21,45 @@ public class GridColumn {
 	// Propiedades de la columna de un grid
 	private String tableName;
 	private String columnName;
+
+	// INTEGER, SQLXML, BLOB, VARBINARY, OTHER, DATALINK, LONGNVARCHAR, NCHAR,
+	// LONGVARBINARY, NULL, CLOB, CHAR, VARCHAR, STRUCT, FLOAT, NUMERIC, NCLOB,
+	// REF, REAL, TIME, BOOLEAN, DECIMAL, LONGVARCHAR, BIGINT, JAVA_OBJECT,
+	// ROWID, TINYINT, DOUBLE, BIT, BINARY, DATE, NVARCHAR, DISTINCT, TIMESTAMP,
+	// ARRAY, SMALLINT
+	private String JDBCTypeName;
+	private int length;
+	private int scale;
+	private int precision;
+
+	// Propiedades básicas
+	private String name;
+	private String label;
 	private String align;
 	private int alignIndex;
-	private boolean editable;
-	private boolean hidden;
-	private String index;
-	private String label;
-	private String name;
-	private boolean resizable;
-	private boolean sortable;
-	private boolean title;
 	private String width;
-	private String unformat;
+	private boolean editable;
+
+	// Propiedades avanzadas
 	private String editType;
 	private int editTypeIndex;
+	private String rupType;
 	private String firstSortOrder;
 	private int firstSortOrderIndex;
 	private boolean fixed;
-	private String rupType;
+	private boolean hidden;
+	private boolean resizable;
+	private boolean sortable;
 
-	// Grupo editOptions
-	private String valueEditOptions;
-	private String dataUrlEditOptions;
-	private String buildSelectEditOptions;
-	private String defaultValueEditOptions;
-	private String otherOptionsEditOptions;
-	
-	//	Grupo formatter;
-	private String formatter;
-	private int formatterIndex;
-	private String formatOptions;
-	
 	// Grupo editRules
 	private boolean enableEditRules;
 	private boolean editHiddenEditRules;
 	private boolean requiredEditRules;
-	private boolean numberEditRules;
-	private boolean integerEditRules;
+	// "",number,integer,email,url,date,time
+	private String typeEditRules;
+	private int typeEditRulesIndex;
 	private String minValueEditRules;
 	private String maxValueEditRules;
-	private boolean emailEditRules;
-	private boolean urlEditRules;
-	private boolean dateEditRules;
-	private boolean timeEditRules;
-	private boolean customEditRules;
-	private String customFuncEditRules;
 	
 	//Propiedad de activación
 	private boolean activated;
@@ -78,61 +72,38 @@ public class GridColumn {
 		
 	}
 			
-	public GridColumn(String tableName, String columnName, String align, int alignIndex, boolean editable, String rupType, String valueEditOptions,
-			String dataUrlEditOptions, String buildSelectEditOptions,
-			String defaultValueEditOptions, String otherOptionsEditOptions,
-			boolean enableEditRules, boolean editHiddenEditRules, boolean requiredEditRules,
-			boolean numberEditRules, boolean integerEditRules,
+	public GridColumn(String tableName, String columnName, String align,
+			int alignIndex, boolean editable, String rupType,  
+			boolean enableEditRules, boolean editHiddenEditRules,
+			boolean requiredEditRules, String typeEditRules,
 			String minValueEditRules, String maxValueEditRules,
-			boolean emailEditRules, boolean urlEditRules,
-			boolean dateEditRules, boolean timeEditRules,
-			boolean customEditRules, String customFuncEditRules,
-			String editType, int editTypeIndex, String firstSortOrder, int firstSortOrderIndex, boolean fixed,
-			String formatter, int formatterIndex, String formatOptions, boolean hidden,
+			String editType, int editTypeIndex, String firstSortOrder,
+			int firstSortOrderIndex, boolean fixed, boolean hidden,
 			String index, String label, String name, boolean resizable,
-			boolean sortable, boolean title, String width,
-			String unformat, boolean activated) {
+			boolean sortable, String width, boolean activated) {
 		this.tableName = tableName;
 		this.columnName = columnName;
 		this.align = align;
 		this.alignIndex = alignIndex;
 		this.editable = editable;
 		this.rupType = rupType;
-		this.valueEditOptions = valueEditOptions;
-		this.dataUrlEditOptions = dataUrlEditOptions;
-		this.buildSelectEditOptions = buildSelectEditOptions;
-		this.defaultValueEditOptions = defaultValueEditOptions;
-		this.otherOptionsEditOptions = otherOptionsEditOptions;
 		this.enableEditRules = enableEditRules;
 		this.editHiddenEditRules = editHiddenEditRules;
 		this.requiredEditRules = requiredEditRules;
-		this.numberEditRules = numberEditRules;
-		this.integerEditRules = integerEditRules;
+		this.typeEditRules = typeEditRules;
 		this.minValueEditRules = minValueEditRules;
 		this.maxValueEditRules = maxValueEditRules;
-		this.emailEditRules = emailEditRules;
-		this.urlEditRules = urlEditRules;
-		this.dateEditRules = dateEditRules;
-		this.timeEditRules = timeEditRules;
-		this.customEditRules = customEditRules;
-		this.customFuncEditRules = customFuncEditRules;
 		this.editType = editType;
 		this.editTypeIndex = editTypeIndex;
 		this.firstSortOrder = firstSortOrder;
 		this.firstSortOrderIndex = firstSortOrderIndex;
 		this.fixed = fixed;
-		this.formatter = formatter;
-		this.formatterIndex = formatterIndex;
-		this.formatOptions = formatOptions;
 		this.hidden = hidden;
-		this.index = index;
 		this.label = label;
 		this.name = name;
 		this.resizable = resizable;
 		this.sortable = sortable;
-		this.title = title;
 		this.width = width;
-		this.unformat = unformat;
 		this.activated = activated;
 	}
 
@@ -152,6 +123,62 @@ public class GridColumn {
 		this.columnName = columnName;
 	}
 
+	/**
+	 * @return the jDBCTypeName
+	 */
+	public String getJDBCTypeName() {
+		return JDBCTypeName;
+	}
+
+	/**
+	 * @param jDBCTypeName the jDBCTypeName to set
+	 */
+	public void setJDBCTypeName(String jDBCTypeName) {
+		JDBCTypeName = jDBCTypeName;
+	}
+
+	/**
+	 * @return the length
+	 */
+	public int getLength() {
+		return length;
+	}
+
+	/**
+	 * @param length the length to set
+	 */
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	/**
+	 * @return the scale
+	 */
+	public int getScale() {
+		return scale;
+	}
+
+	/**
+	 * @param scale the scale to set
+	 */
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	/**
+	 * @return the precision
+	 */
+	public int getPrecision() {
+		return precision;
+	}
+
+	/**
+	 * @param precision the precision to set
+	 */
+	public void setPrecision(int precision) {
+		this.precision = precision;
+	}
+
 	public String getAlign() {
 		return align;
 	}
@@ -168,7 +195,7 @@ public class GridColumn {
 		this.alignIndex = alignIndex;
 	}
 
-	public boolean isEditable() {
+	public boolean getEditable() {
 		return editable;
 	}
 
@@ -185,47 +212,7 @@ public class GridColumn {
 	}
 
 	
-	public String getValueEditOptions() {
-		return valueEditOptions;
-	}
-
-	public void setValueEditOptions(String valueEditOptions) {
-		this.valueEditOptions = valueEditOptions;
-	}
-
-	public String getDataUrlEditOptions() {
-		return dataUrlEditOptions;
-	}
-
-	public void setDataUrlEditOptions(String dataUrlEditOptions) {
-		this.dataUrlEditOptions = dataUrlEditOptions;
-	}
-
-	public String getBuildSelectEditOptions() {
-		return buildSelectEditOptions;
-	}
-
-	public void setBuildSelectEditOptions(String buildSelectEditOptions) {
-		this.buildSelectEditOptions = buildSelectEditOptions;
-	}
-
-	public String getDefaultValueEditOptions() {
-		return defaultValueEditOptions;
-	}
-
-	public void setDefaultValueEditOptions(String defaultValueEditOptions) {
-		this.defaultValueEditOptions = defaultValueEditOptions;
-	}
-
-	public String getOtherOptionsEditOptions() {
-		return otherOptionsEditOptions;
-	}
-
-	public void setOtherOptionsEditOptions(String otherOptionsEditOptions) {
-		this.otherOptionsEditOptions = otherOptionsEditOptions;
-	}
-
-	public boolean isEnableEditRules() {
+	public boolean getEnableEditRules() {
 		return enableEditRules;
 	}
 
@@ -241,7 +228,7 @@ public class GridColumn {
 		this.editHiddenEditRules = editHiddenEditRules;
 	}
 
-	public boolean isRequiredEditRules() {
+	public boolean getRequiredEditRules() {
 		return requiredEditRules;
 	}
 
@@ -249,22 +236,22 @@ public class GridColumn {
 		this.requiredEditRules = requiredEditRules;
 	}
 
-	public boolean isNumberEditRules() {
-		return numberEditRules;
+	public String getTypeEditRules() {
+		return typeEditRules;
 	}
 
-	public void setNumberEditRules(boolean numberEditRules) {
-		this.numberEditRules = numberEditRules;
+	public void setTypeEditRules(String typeEditRules) {
+		this.typeEditRules = typeEditRules;
 	}
 
-	public boolean isIntegerEditRules() {
-		return integerEditRules;
+	public int getTypeEditRulesIndex() {
+		return typeEditRulesIndex;
 	}
 
-	public void setIntegerEditRules(boolean integerEditRules) {
-		this.integerEditRules = integerEditRules;
+	public void setTypeEditRulesIndex(int typeEditRulesIndex) {
+		this.typeEditRulesIndex = typeEditRulesIndex;
 	}
-
+	
 	public String getMinValueEditRules() {
 		return minValueEditRules;
 	}
@@ -279,54 +266,6 @@ public class GridColumn {
 
 	public void setMaxValueEditRules(String maxValueEditRules) {
 		this.maxValueEditRules = maxValueEditRules;
-	}
-
-	public boolean isEmailEditRules() {
-		return emailEditRules;
-	}
-
-	public void setEmailEditRules(boolean emailEditRules) {
-		this.emailEditRules = emailEditRules;
-	}
-
-	public boolean isUrlEditRules() {
-		return urlEditRules;
-	}
-
-	public void setUrlEditRules(boolean urlEditRules) {
-		this.urlEditRules = urlEditRules;
-	}
-
-	public boolean isDateEditRules() {
-		return dateEditRules;
-	}
-
-	public void setDateEditRules(boolean dateEditRules) {
-		this.dateEditRules = dateEditRules;
-	}
-
-	public boolean isTimeEditRules() {
-		return timeEditRules;
-	}
-
-	public void setTimeEditRules(boolean timeEditRules) {
-		this.timeEditRules = timeEditRules;
-	}
-
-	public boolean isCustomEditRules() {
-		return customEditRules;
-	}
-
-	public void setCustomEditRules(boolean customEditRules) {
-		this.customEditRules = customEditRules;
-	}
-
-	public String getCustomFuncEditRules() {
-		return customFuncEditRules;
-	}
-
-	public void setCustomFuncEditRules(String customFuncEditRules) {
-		this.customFuncEditRules = customFuncEditRules;
 	}
 
 	public String getEditType() {
@@ -361,7 +300,7 @@ public class GridColumn {
 		this.firstSortOrderIndex = firstSortOrderIndex;
 	}
 	
-	public boolean isFixed() {
+	public boolean getFixed() {
 		return fixed;
 	}
 
@@ -369,44 +308,13 @@ public class GridColumn {
 		this.fixed = fixed;
 	}
 	
-	public String getFormatter() {
-		return formatter;
-	}
 
-	public void setFormatter(String formatter) {
-		this.formatter = formatter;
-	}
-	
-	public int getFormatterIndex() {
-		return formatterIndex;
-	}
-
-	public void setFormatterIndex(int formatterIndex) {
-		this.formatterIndex = formatterIndex;
-	}
-
-	public String getFormatOptions() {
-		return formatOptions;
-	}
-
-	public void setFormatOptions(String formatOptions) {
-		this.formatOptions = formatOptions;
-	}
-
-	public boolean isHidden() {
+	public boolean getHidden() {
 		return hidden;
 	}
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
-	}
-
-	public String getIndex() {
-		return index;
-	}
-
-	public void setIndex(String index) {
-		this.index = index;
 	}
 
 	public String getLabel() {
@@ -441,14 +349,6 @@ public class GridColumn {
 		this.sortable = sortable;
 	}
 
-	public boolean isTitle() {
-		return title;
-	}
-
-	public void setTitle(boolean title) {
-		this.title = title;
-	}
-
 	public String getWidth() {
 		return width;
 	}
@@ -457,15 +357,7 @@ public class GridColumn {
 		this.width = width;
 	}
 
-	public String getUnformat() {
-		return unformat;
-	}
-
-	public void setUnformat(String unformat) {
-		this.unformat = unformat;
-	}
-
-	public boolean isActivated() {
+	public boolean getActivated() {
 		return activated;
 	}
 
@@ -478,219 +370,30 @@ public class GridColumn {
 		setAlignIndex(0);
 		setEditable(true);
 		
-		setValueEditOptions("");
-		setDataUrlEditOptions("");
-		setBuildSelectEditOptions("");
-		setDefaultValueEditOptions("");
-		setOtherOptionsEditOptions("");
-		
 		setEnableEditRules(false);
 		setEditHiddenEditRules(false);
 		setRequiredEditRules(false);
-		setNumberEditRules(false);
-		setIntegerEditRules(false);
+		setTypeEditRules("");
+		setTypeEditRulesIndex(0);
 		setMinValueEditRules("");
 		setMaxValueEditRules("");
-		setEmailEditRules(false);
-		setUrlEditRules(false);
-		setDateEditRules(false);
-		setTimeEditRules(false);
-		setCustomEditRules(false);
-		setCustomFuncEditRules("");
 		
 		setEditType("text");
 		setEditTypeIndex(0);
 		setRupType("");
 		setFirstSortOrder("");
 		setFirstSortOrderIndex(0);
+		
 		setFixed(false);
-		
-		setFormatter("");
-		setFormatterIndex(0);
-		
-		setFormatOptions("");
-		
 		setHidden(false);
-		setIndex("");
 		setLabel("");
 		setResizable(true);
 		setSortable(true);
-		setTitle(true);
 		setWidth("150");
 		
 		setName("");
-		setUnformat("");
 		
 		setActivated(true);
 	}
-	
-	public String printProperties(){
-		
-		StringBuffer properties = new StringBuffer();
-		
-		properties.append("{");
-		if (!Utilities.isBlank(getName())){
-			properties.append(" name: \"" + getName() + "\",");
-		}
-		if (!Utilities.isBlank(getLabel())){
-			if (getLabel().startsWith("$")){
-				properties.append("\n\t\t\t\tlabel: " + getLabel() + ",");
-			}else{
-				properties.append("\n\t\t\t\tlabel: \"" + getLabel() + "\",");	
-			}
-		}
-		if (!Utilities.isBlank(getIndex())){
-			properties.append("\n\t\t\t\tindex: \"" + getIndex() + "\",");
-		}
-		if (!Utilities.isBlank(getWidth())){
-			properties.append("\n\t\t\t\twidth: \"" + getWidth() + "\",");
-		}
-		properties.append("\n\t\t\t\teditable: " + isEditable() + ",");
-		if (!Utilities.isBlank(getEditType())){
-			if ("Combo".equalsIgnoreCase(getEditType())){
-				properties.append("\n\t\t\t\tedittype: \"select\",");
-				setRupType("combo");
-			}else if ("Autocomplete".equalsIgnoreCase(getEditType())){
-				properties.append("\n\t\t\t\tedittype: \"text\",");
-				setRupType("autocomplete");
-			}else if ("Datepicker".equalsIgnoreCase(getEditType())){
-				properties.append("\n\t\t\t\tedittype: \"text\",");
-				setRupType("datepicker");
-			}else{
-				properties.append("\n\t\t\t\tedittype: \"" + getEditType().toLowerCase() + "\",");
-				setRupType("");
-			}
-		}
-		if (!Utilities.isBlank(getFirstSortOrder())){
-			properties.append("\n\t\t\t\truptype: \"" + getRupType() + "\",");
-		}
-		if (!Utilities.isBlank(getAlign()) && !"left".equalsIgnoreCase(getAlign())){
-			properties.append("\n\t\t\t\talign: \"" + getAlign() + "\",");
-		}	
-		if (!Utilities.isBlank(getFirstSortOrder())){
-			properties.append("\n\t\t\t\tfirstsortorder: \"" + getFirstSortOrder() + "\",");
-		}
-		if (!Utilities.isBlank(getUnformat())){
-			properties.append("\n\t\t\t\tunformat: \"" + getUnformat() + "\",");
-		}
-		if (isFixed()){
-			properties.append("\n\t\t\t\tfixed: " + isFixed() + ",");
-		}
-		if (isHidden()){
-			properties.append("\n\t\t\t\thidden: " + isHidden() + ",");
-		}
-		if (!isResizable()){
-			properties.append("\n\t\t\t\tresizable: " + isResizable() + ",");
-		}
-		if (!isSortable()){
-			properties.append("\n\t\t\t\tsortable: " + isSortable() + ",");
-		}
-		if (!isTitle()){
-			properties.append("\n\t\t\t\ttitle: " + isTitle() + "},");
-		}
-		
-		////Quita la última coma sobrante
-		//properties = new StringBuffer(Utilities.removeFinalComma(properties.toString()));
-		
-		if (!Utilities.isBlank(getValueEditOptions()) || !Utilities.isBlank(getDataUrlEditOptions()) 
-				|| !Utilities.isBlank(getBuildSelectEditOptions()) || !Utilities.isBlank(getDefaultValueEditOptions())
-				|| !Utilities.isBlank(getOtherOptionsEditOptions())){
-			properties.append("\n\t\t\t\teditoptions: {");
-			
-			if (!Utilities.isBlank(getDataUrlEditOptions())){
-				properties.append("\n\t\t\t\t\tdataUrl:\"" + getDataUrlEditOptions() + "\",");
-			}
-			if (!Utilities.isBlank(getBuildSelectEditOptions())){
-				properties.append("\n\t\t\t\t\tbuildSelect:\"" + getBuildSelectEditOptions() + "\",");
-			}
-			if (!Utilities.isBlank(getDefaultValueEditOptions())){
-				properties.append("\n\t\t\t\t\tdefaultValue:\"" + getDefaultValueEditOptions() + "\",");
-			}
-			if (!Utilities.isBlank(getValueEditOptions())){
-				properties.append("\n\t\t\t\t\tvalue:\"" + getValueEditOptions() + "\",");
-			}
-			if (!Utilities.isBlank(getOtherOptionsEditOptions())){
-				properties.append("\n\t\t\t\t\t" + getOtherOptionsEditOptions() + "\",");
-			}
-			//Quita la última coma sobrante
-			properties = new StringBuffer(Utilities.removeFinalComma(properties.toString()));
-			//TODO escapar other options?
-			properties.append("\n\t\t\t\t},");
-		}
-		
-		if (!Utilities.isBlank(getFormatter()) && !Utilities.isBlank(getFormatOptions())){
-			properties.append("\n\t\t\t\t\tformatter: {");
-			
-			if (!Utilities.isBlank(getFormatter())){
-				properties.append("\n\t\t\t\t\t\t" + getFormatter() + ": " + getBuildSelectEditOptions());
-			}
-			//TODO escapar other options?
-			properties.append("\n\t\t\t\t\t},");
-		}
-		
-		if (isEnableEditRules()){
-			properties.append("\n\t\t\t\t\teditrules: {");
-			
-			properties.append("\n\t\t\t\t\t\trequired:" + isRequiredEditRules() + ",");
-			
-			if (!Utilities.isBlank(getMinValueEditRules())){
-				properties.append("\n\t\t\t\t\t\tminValue:" + getMinValueEditRules() + ",");
-			}
-			if (!Utilities.isBlank(getMaxValueEditRules())){
-				properties.append("\n\t\t\t\t\t\tmaxValue:" + getMaxValueEditRules() + ",");
-			}
-			if (!Utilities.isBlank(getCustomFuncEditRules())){
-				properties.append("\n\t\t\t\t\t\tcustom_func:\"" + getCustomFuncEditRules() + "\",");
-			}
-			properties.append("\n\t\t\t\t\t\tedithidden:" + isEditHiddenEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\tnumber:" + isNumberEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\tinteger:" + isIntegerEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\tinteger:" + isIntegerEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\temail:" + isEmailEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\turl:" + isUrlEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\tdate:" + isDateEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\ttime:" + isTimeEditRules() + ",");
-			properties.append("\n\t\t\t\t\t\tcustom" + isCustomEditRules() + ",");
-			
-			//Quita la última coma sobrante
-			properties = new StringBuffer(Utilities.removeFinalComma(properties.toString()));
-			
-			properties.append("\n\t\t\t\t\t},");	
-		}
-		
-		//Quita la última coma sobrante
-		properties = new StringBuffer(Utilities.removeFinalComma(properties.toString()));
-		properties.append("\n\t\t\t}");
-		
-		return properties.toString(); 
-	}
-	
-	public String getColumnSearchForm(){
-		
-		String searchFormCode = "";
-			
-		if (isActivated() && ("Text".equalsIgnoreCase(getEditType()) || "Textarea".equalsIgnoreCase(getEditType())
-				|| "Checkbox".equalsIgnoreCase(getEditType()) || "Select".equalsIgnoreCase(getEditType()) || "Combo".equalsIgnoreCase(getEditType())
-				|| "Autocomplete".equalsIgnoreCase(getEditType()) || "Datepicker".equalsIgnoreCase(getEditType()))){
 
-			searchFormCode = "\n\t\t\t\t\t\t<div class=\"formulario_linea_izda_float\">";
-			searchFormCode += "\n\t\t\t\t\t\t\t<label class=\"formulario_linea_label\" for=\""+ getName() +"_search \">" + getLabel() + ":</label>";
-			
-			if ("Text".equalsIgnoreCase(getEditType())){
-				searchFormCode += "\n\t\t\t\t\t\t\t<input type=\"text\" name=\"" + getName() + "\" class=\"formulario_linea_input\" id=\"" + getName() + "_search\" />";
-			}else if ("Textarea".equalsIgnoreCase(getEditType())){
-				searchFormCode += "\n\t\t\t\t\t\t\t<textarea name=\"" + getName() + "\" class=\"formulario_linea_input\" id=\"" + getName() + "_search\"></textarea>";
-			}else if ("Checkbox".equalsIgnoreCase(getEditType())){
-				searchFormCode += "\n\t\t\t\t\t\t\t<input type=\"checkbox\" name=\"" + getName() + "\" class=\"formulario_linea_input\" id=\"" + getName() + "_search\" />";
-			}else if ("Select".equalsIgnoreCase(getEditType()) || "Combo".equalsIgnoreCase(getEditType())){
-				searchFormCode += "\n\t\t\t\t\t\t\t<select name=\"" + getName() + "\" class=\"combo\" id=\"" + getName() + "_search\"></select>";
-			}else if ("Autocomplete".equalsIgnoreCase(getEditType())){
-				searchFormCode += "\n\t\t\t\t\t\t\t<input type=\"text\" name=\"" + getName() + "\" class=\"autocomplete\" id=\"" + getName() + "_search\" />";
-			}else if ("Datepicker".equalsIgnoreCase(getEditType())){
-				searchFormCode += "\n\t\t\t\t\t\t\t<input type=\"text\" name=\"" + getName() + "\" class=\"datepicker\" id=\"" + getName() + "_search\" />";
-			}
-			searchFormCode += "\n\t\t\t\t\t\t</div>";
-		}
-		return searchFormCode;
-	}
 }

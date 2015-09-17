@@ -143,4 +143,11 @@ public class Constants {
 	public static final int MSG_ERROR = 2;
 	public static final int MSG_WARNING = 3;
 	
+	// Otros
+	public static final String SAVE = "SAVE";
+	public static final String SAVE_REPEAT = "SAVE_REPEAT";
+	public static final String INLINE = "INLINE";
+	public static final String DETAIL = "DETAIL";
+	public static final String DATA_TABLE = "DATA_TABLE";
+	
 }

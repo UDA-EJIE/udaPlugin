@@ -481,7 +481,9 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		//LAYOUTS-INCLUDES
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts/includes");
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/rup.scripts.inc", context);
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/rup.scripts.min.inc", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/rup.styles.inc", context);
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/rup.styles.min.inc", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/includes/xxx.scripts.inc", context, "WebContent/WEB-INF/layouts/includes/"+context.get(Constants.CODAPP_PATTERN)+".scripts.inc");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/includes/xxx.styles.inc", context, "WebContent/WEB-INF/layouts/includes/"+context.get(Constants.CODAPP_PATTERN)+".styles.inc");
 		
