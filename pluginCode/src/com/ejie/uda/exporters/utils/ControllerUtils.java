@@ -91,4 +91,29 @@ public class ControllerUtils {
 	public static String getRelationName(String tableName){
 		return Utilities.getRelationName(tableName);
 	}
+	
+	/**
+	 * Método para filtrar los imports del Controller
+	 * @param packageName Nombre del paquete que hay que filtrar
+	 * @param strImports Imports asociados al Controller
+	 * @param classbody Contenido del Controller (texto plano)
+	 * @return
+	 */
+	public static String generateImports(String packageName, String strImports, String classbody){
+ 		StringBuilder retImports = new StringBuilder();
+		String[] imports = strImports.trim().split(";");
+		for (int i = 0; i < imports.length; i++) {
+			if (imports[i].indexOf(packageName)==-1){
+				//Clases que no son de mi paquete (com.ejie.xxx.model) > addAll
+				retImports.append(imports[i]+";");
+			} else {
+				//Clases de mi paquete > comprobar que se usan en un "new clazz()"
+				String clazz = "new " + imports[i].substring(imports[i].lastIndexOf(".")+1) + "()";
+				if (classbody.indexOf(clazz)!=-1){
+					retImports.append(imports[i]+";");
+				}
+			}
+		}
+		return retImports.toString();
+	}
 }

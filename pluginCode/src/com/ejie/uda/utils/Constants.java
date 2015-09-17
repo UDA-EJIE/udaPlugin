@@ -106,8 +106,9 @@ public class Constants {
 	public static final String MAVEN_HOME = "mavenHome";
 	public static final String MAVEN_SETTINGS = "mavenSettings";
 	public static final String MAVEN_REPOSITORY = "mavenRepository";
-	public static final String PATH_CONFIG = "C:/config/dominio_desa/";
-	public static final String PATH_DATOS = "C:/datos/";
+	public static final String UNIDAD_HD = (System.getProperties().getProperty("file.separator").compareTo("\\")==0 ? "C:":"");
+	public static final String PATH_CONFIG = "/config/dominio_desa/";
+	public static final String PATH_DATOS = "/datos/";
 	public static final String PREF_DEFAULT_BUILD_PATH= "/build/classes";
 	public static final String PREF_DEFAULT_EAR_LIBS= "/EarContent/APP-INF/lib";
 	

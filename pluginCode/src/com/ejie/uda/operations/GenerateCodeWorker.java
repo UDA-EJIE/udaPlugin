@@ -93,7 +93,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void modelExporter(JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean isJPA) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 
 		ModelExporter modelExporter = new ModelExporter(jmdc, sourceDir);
 		modelExporter.setTemplatePath(templates);
@@ -107,7 +107,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void persistenceExporter(JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 		
 		PersistenceExporter persistenceExporter = new PersistenceExporter(jmdc, sourceDir);
 		persistenceExporter.setTemplatePath(templates);
@@ -121,7 +121,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void daoExporter(JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck, boolean isJPA) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 		
 		DaoExporter daoExporter = new DaoExporter(jmdc, sourceDir);
 		daoExporter.setTemplatePath(templates);
@@ -140,7 +140,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void daoDIExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 		
 		DaoDIExporter daoDIExporter = new DaoDIExporter(jmdc, sourceDir);
 		daoDIExporter.setTemplatePath(templates);
@@ -159,7 +159,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void serviceExporter(JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck, boolean isJPA) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 
 		ServiceExporter serviceExporter = new ServiceExporter(jmdc, sourceDir);
 		serviceExporter.setTemplatePath(templates);
@@ -178,7 +178,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void serviceDIExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck, boolean isJPA) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 
 		ServiceDIExporter serviceDIExporter = new ServiceDIExporter(jmdc, sourceDir);
 		serviceDIExporter.setTemplatePath(templates);
@@ -198,7 +198,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void controllerExporter(JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotControlCheck, boolean isJPA) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\src\\");
+		File sourceDir = new File(pathProject + "/src/");
 		
 		ControllerExporter controllerExporter = new ControllerExporter(jmdc, sourceDir);
 		controllerExporter.setTemplatePath(templates);
@@ -217,7 +217,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void jacksonExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotControlCheck, String appName) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\");
+		File sourceDir = new File(pathProject + "/");
 		
 		JacksonExporter jacksonExporter = new JacksonExporter(jmdc, sourceDir);
 		jacksonExporter.setTemplatePath(templates);
@@ -231,7 +231,7 @@ public class GenerateCodeWorker {
 	 */
 	public static void controllerDIExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotControlCheck, String appName) {
 		String[] templates = new String[] { pathTemplates };
-		File sourceDir = new File(pathProject + "\\");
+		File sourceDir = new File(pathProject + "/");
 		
 		ControllerDIExporter controllerDIExporter = new ControllerDIExporter(jmdc, sourceDir);
 		controllerDIExporter.setTemplatePath(templates);

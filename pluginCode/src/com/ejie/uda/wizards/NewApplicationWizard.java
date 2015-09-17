@@ -365,9 +365,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.refresh(projectEAR);
 		monitor.worked(1);
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
-		consola.println("Ubicación de logs de la aplicación: " + Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log" , Constants.MSG_INFORMATION);
+		consola.println("Ubicación de logs de la aplicación: " + Constants.UNIDAD_HD + Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log" , Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
-		consola.println("Para revisar la configuración del log en " + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
+		consola.println("Para revisar la configuración del log en " + Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
 		consola.println("- el servidor Weblogic Server 10.3.5 ", Constants.MSG_INFORMATION);
@@ -399,10 +399,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		IProject projectConfig = root.getProject((String)context.get(Constants.CONFIG_NAME_PATTERN));
 
 		// Crea la carpeta datos del proyecto, donde estarán los logs
-		ProjectWorker.createFolder(Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log");
+		ProjectWorker.createFolder(Constants.UNIDAD_HD + Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log");
 		
 		// Crea la carpeta configuracián del proyecto, donde estarán los .properties
-		path = Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN);
+		path = Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN);
 			
 		//Crea el proyecto en la ruta indicada
 		projectConfig = ProjectWorker.createProjectLocation(projectConfig, path, false);
