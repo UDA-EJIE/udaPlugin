@@ -399,10 +399,10 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/tiles-jsp.tld", context);
 		
 		//VIEWS
-		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views");
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/views/welcome.jsp", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/views/error.jsp", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/views/accessDenied.jsp", context);
+		ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views");
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/welcome.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/error.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/accessDenied.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/tiles.xml", context);
 		
 		// Añade las carpetas de test para la generación de pruebas de calidad

@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ import com.ejie.uda.Activator;
 import com.ejie.uda.exporters.utils.ControllerUtils;
 import com.ejie.uda.exporters.utils.SkeletonUtils;
 import com.ejie.uda.exporters.utils.StubClassUtils;
-import com.ejie.uda.exporters.utils.UdaDynamicProxy;
 import com.ejie.uda.operations.ProjectWorker;
 import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
@@ -429,20 +427,21 @@ public static  List<String[]> getClassesEJB3( String fileName,
 
 		Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(
 						fileName);
-     Map<?, ?> identity = new HashMap<Object, Object>();
-     Proxy someServiceImpl = null;
+     //Map<?, ?> identity = new HashMap<Object, Object>();
+     //Proxy someServiceImpl = null;
      List<String[]> list = new ArrayList<String[]>();
      boolean bol = true;
 
-   try {
-     	someServiceImpl = (Proxy) UdaDynamicProxy.newInstance(identity, new Class[]
-                { clazz },ClassLoader.getSystemClassLoader());
-     }catch(Exception e){
-         e.printStackTrace();
-        logger.error("", e);
-         
-     }
-    	    Method[] methods = someServiceImpl.getClass().getDeclaredMethods();
+//   try {
+//     	someServiceImpl = (Proxy) UdaDynamicProxy.newInstance(identity, new Class[]
+//                { clazz },ClassLoader.getSystemClassLoader());
+//     }catch(Exception e){
+//         e.printStackTrace();
+//        logger.error("", e);
+//         
+//     }
+    	    //Method[] methods = someServiceImpl.getClass().getDeclaredMethods();
+     Method[] methods = clazz.getDeclaredMethods();
           for(Method met:methods){
           	for(String str:genericMethods){
           		//if(str.equalsIgnoreCase(met.toGenericString())){
@@ -740,7 +739,7 @@ public void insertStringInFile
 		 // añadimo el nuevo Stub
 		 if ((Boolean) context.get("isEjb3")){
 				String key= context.get("nameServer")+"."+context.get("serviceName")+ "SkeletonRemote.jndi";
-				out.println(key + " = "+(String) context.get("jndiName") );
+				out.println(key + " = "+(String) context.get("jndiName") + "#" + (String)context.get("namePackageEjb")+ "." + (String)context.get("serviceName")+ "SkeletonRemote");
 			}else{
 				String key= context.get("nameServer")+"."+context.get("serviceName")+ "Home.jndi";
 				out.println(key + " = "+(String) context.get("jndiName") );

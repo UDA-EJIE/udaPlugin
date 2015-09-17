@@ -414,21 +414,17 @@ public class DaoUtilsJdbcAux {
 								 	
 							    Iterator<Column> subCamposCol = auxiliar2.getColumnIterator();
 							   
-								 if (!c2j.isComponent(subclassMapeo.getIdentifier())){
-									 while (subCamposCol.hasNext()){
-										 Column auxCol=subCamposCol.next();
-										 resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
-										 
-									 }
-									
-								 }else{
-									 while (subCamposCol.hasNext()){
-										 Column auxCol=subCamposCol.next();
-										 resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
-										 
-									 }
-									
-								 }
+							    while (subCamposCol.hasNext()){
+							    	Column auxCol=subCamposCol.next();
+							    	String campo = "t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase();
+							    	//Evitar relaciones sobre sí mismo
+							    	if (!resultSelectMany.contains(campo)){
+							    		//resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
+							    		resultSelectManyNiv2.add(campo);
+							    	}
+								}
+																		
+								 
 							}	
 					 }
 				
@@ -1077,21 +1073,18 @@ public List<String> camposSelectFindDinamyc(POJOClass pojo, Configuration cfg){
 							//Generamos el constructor unicamente utilizando la primaria de los hijos 
 							PersistentClass subclassMapeo = cfg.getClassMapping(propiedad.getType().getName());//auxiliar2.getValue().getReferencedEntityName());
 							String nombreSubclassMapeo = ControllerUtils.findNameFromEntity(subclassMapeo.getClassName());
-						   	 pojo.importType(pojo.getPackageName()+".model."+ nombreSubclassMapeo);						   	
+						   	pojo.importType(pojo.getPackageName()+".model."+ nombreSubclassMapeo);						   	
 						    Iterator<Column> subCamposCol = auxiliar2.getColumnIterator();
-							 if (!c2j.isComponent(subclassMapeo.getIdentifier())){
-								 while (subCamposCol.hasNext()){
-									 Column auxCol=subCamposCol.next();
-									 resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
-								 }
-								//30/03/2011
-							 }else{//tercera clase compuesta
-								 while (subCamposCol.hasNext()){
-									 Column auxCol=subCamposCol.next();
-									 resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
-								 }
-								 
-							 }//30/03/2011
+						 	while (subCamposCol.hasNext()){
+						 		Column auxCol=subCamposCol.next();
+						 		String campo = "t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase();
+						    	//Evitar relaciones sobre sí mismo
+						    	if (!resultSelectMany.contains(campo)){
+						    		//resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
+						    		resultSelectManyNiv2.add(campo);
+						    	}
+							}
+							
 						}	
 				 }
 			
@@ -1361,7 +1354,8 @@ public List<String> selectFieldsMN(POJOClass pojo, Configuration cfg, Property p
 			Property columnas = columnasHijos.next();
 			if (!c2h.isCollection(columnas)  && !c2h.isManyToOne(columnas)){
 				String propiedadName = ControllerUtils.findHibernateName(columnas.getName());
-				result.add( "t2."+ columnas.getName()+" "+ propiedadName.toUpperCase());
+				String valor = ControllerUtils.findDataBaseName(columnas.getName());
+				result.add( "t2."+ valor+" "+ propiedadName.toUpperCase());
 			}
 		}
 		return result;

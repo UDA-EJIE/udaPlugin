@@ -122,12 +122,12 @@ public class RVCopyWorker {
      * @param dstDir
      * @throws IOException
      */
-    public static void deleteDirectoryContent(File dir) throws IOException {
+    public static void deleteDirectoryContent(File dir, boolean recursive) throws IOException {
         String[] children = dir.list();
         for (int i=0; i<children.length; i++) {
         	File file = new File(dir, children[i]);
-        	if (file.isDirectory()){
-        		deleteDirectoryContent(file);
+        	if (file.isDirectory() && recursive){
+        		deleteDirectoryContent(file, recursive);
         	}
         	file.delete();
         }

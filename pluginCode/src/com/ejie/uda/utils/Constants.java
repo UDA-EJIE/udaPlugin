@@ -87,7 +87,7 @@ public class Constants {
 	public static final String PREF_DEFAULT_EAR_LIBS= "/EarContent/APP-INF/lib";
 	
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP = "/rup";
-	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC = "/aplic";
+	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC = "/xxx";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_WEB_INF = "/WEB-INF";
 	
 	public static final String SERVER_JNI_NAMING = "java.naming.provider.url";

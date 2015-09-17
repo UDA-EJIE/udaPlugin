@@ -168,7 +168,7 @@ public class DataBaseWorker {
 		return schema;
 	}
 	
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	//Necesario para los métodos de gestión de tablas de relaciones M:N
 	public static TreeRelation getSchemaTreeWithMN(ConnectionData conData){
 
@@ -202,16 +202,13 @@ public class DataBaseWorker {
 						for (TreeRelation relaciones: listaSch){
 							if (relaciones.getName().equals(tablaMN)){
 								nuevaTupla = relaciones;
-								TreeRelation tabla = new TreeRelation( tablaMN, "table");
-								//nuevaTupla.addChild(child);
 								encontrado=true;
 								break;
 							}
 							
 						}
 						if (!encontrado){
-							 nuevaTupla = new TreeRelation( collection.getCollectionTable().getName(), "table");
-							
+							nuevaTupla = new TreeRelation( collection.getCollectionTable().getName(), "table", collection.getCollectionTable().getName());
 						}
 						
 						nuevaTupla.addChild(tableAsoc);

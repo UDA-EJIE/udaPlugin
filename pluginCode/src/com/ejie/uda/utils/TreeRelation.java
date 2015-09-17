@@ -5,6 +5,7 @@ import java.util.List;
 
 public class TreeRelation {
 	private String name;
+	private String nameBBDD;
 	private List<TreeRelation> children = new ArrayList<TreeRelation>();
 	private TreeRelation parent;
 	private String type;
@@ -13,9 +14,15 @@ public class TreeRelation {
 		this.name = name;
 	}
 	
-	public TreeRelation(String nameBBDD, String type) {
-		this.name = nameBBDD;
+	public TreeRelation(String name, String type) {
+		this.name = name;
 		this.type = type;
+	}
+	
+	public TreeRelation(String name, String type, String nameBBDD) {
+		this.name = name;
+		this.type = type;
+		this.nameBBDD = nameBBDD;
 	}
 	public String getName() {
 		return name;
@@ -49,6 +56,14 @@ public class TreeRelation {
 	
 	public List<TreeRelation> getChildren() {
 		return children;
+	}
+
+	public String getNameBBDD() {
+		return nameBBDD;
+	}
+
+	public void setNameBBDD(String nameBBDD) {
+		this.nameBBDD = nameBBDD;
 	}
 
 }

@@ -497,7 +497,7 @@ public class GenerateCodeWizardPageThree extends WizardPage {
 			final IProject projectWar = getWarProject();
 			boolean isJPAEARClasses = (projectEARClasses != null)?GenerateCodeWizard.isJPAProjectEARClasses(projectEARClasses):false;
 			boolean isJPAWar = (projectWar!= null)?GenerateCodeWizard.isJPAProjectWar(projectWar):false;;
-			if (isJPAEARClasses != isJPAWar){
+			if (projectEARClasses!=null && projectWar!=null && (isJPAEARClasses != isJPAWar)){
 				setMessage("Los dos proyectos seleccionados no tienen la misma tecnologia", IMessageProvider.ERROR);
 				return getWizard().getContainer().getCurrentPage();
 			} else{

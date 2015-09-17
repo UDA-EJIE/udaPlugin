@@ -1,5 +1,7 @@
 package com.ejie.uda.exporters.utils;
 
+import com.ejie.uda.utils.Utilities;
+
 
 
 
@@ -70,5 +72,8 @@ public class ControllerUtils {
 		}
 		return nombre;
 	}
-	
+
+	public static String getRelationName(String tableName){
+		return Utilities.getRelationName(tableName);
+	}
 }

@@ -25,6 +25,7 @@ import com.ejie.uda.utils.ContentProvider;
 import com.ejie.uda.utils.TableLabelProvider;
 import com.ejie.uda.utils.TreeNode;
 import com.ejie.uda.utils.TreeRelation;
+import com.ejie.uda.utils.Utilities;
 
 /**
  *  Clase la cual define la segunda pantalla del asistente "Generar código de negocio y control"
@@ -233,7 +234,7 @@ public class GenerateCodeWizardPageTwo extends WizardPage {
 
 					}
 					if (encontrado){
-						TreeNode tablaMN =  new TreeNode(treeRelationTable.getName(),"table",treeRelationTable.getName());
+						TreeNode tablaMN =  new TreeNode(Utilities.getRelationName (treeRelationTable.getName()), "table", treeRelationTable.getNameBBDD(), true);
 						filterTreeNodes.add(tablaMN);
 					}	
 				}	

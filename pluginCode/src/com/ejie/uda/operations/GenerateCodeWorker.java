@@ -3,7 +3,10 @@ package com.ejie.uda.operations;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
@@ -249,6 +252,7 @@ public class GenerateCodeWorker {
 		StringBuffer xmlLog = new StringBuffer();
 		List<TreeNode> treeNodesColumns;
 		List<TreeNode> treeNodesComposite;
+		Map<String, String> listaMN = new HashMap<String, String>();
 		
 		xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		xml.append(System.getProperty("line.separator"));
@@ -277,8 +281,14 @@ public class GenerateCodeWorker {
 		
 		for (TreeNode treeNodeTable : schemaFilter) {
 			
-			xmlLog.append(System.getProperty("line.separator"));
-			xmlLog.append("\t" + treeNodeTable.getName() + " [" + treeNodeTable.getNameBBDD() + "]");
+			if (!treeNodeTable.isMN()){
+				xmlLog.append(System.getProperty("line.separator"));
+				xmlLog.append("\t" + treeNodeTable.getName() + " [" + treeNodeTable.getNameBBDD() + "]");
+			} else {
+				if (listaMN.get(treeNodeTable.getName())==null){
+					listaMN.put(treeNodeTable.getName(), treeNodeTable.getNameBBDD());
+				}
+			}
 			
 			if (!treeNodeTable.isCheckedChildren()){
 
@@ -315,6 +325,16 @@ public class GenerateCodeWorker {
 				xml.append("\t</table>");
 				xml.append(System.getProperty("line.separator"));
 			} 
+		}
+		
+		if (!listaMN.isEmpty()){
+			xmlLog.append(System.getProperty("line.separator"));
+			xmlLog.append("Tablas implicadas en relaciones M-N:");
+			for (Iterator<String> iterator = listaMN.keySet().iterator(); iterator.hasNext();) {
+				String tableName = (String) iterator.next();
+				xmlLog.append(System.getProperty("line.separator"));
+				xmlLog.append("\t" + tableName + " [" + listaMN.get(tableName) + "]");
+			}
 		}
 		
 		xml.append("</hibernate-reverse-engineering>");

@@ -23,7 +23,7 @@ public class Reveng extends DelegatingReverseEngineeringStrategy  {
 	
     private ReverseEngineeringStrategy delegate;
     private ReverseEngineeringRuntimeInfo runtimeInfo;
-    private static HashMap<String,String> synonymous;
+    public static HashMap<String,String> synonymous;
    
     //Constructor
     public Reveng(ReverseEngineeringStrategy delegate) {

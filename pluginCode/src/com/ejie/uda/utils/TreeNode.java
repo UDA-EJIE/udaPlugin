@@ -14,6 +14,8 @@ public class TreeNode implements Comparable<TreeNode> {
 	private boolean isComposite;
 	private boolean isPrimaryKey;
 	private String referenceClass;
+	
+	private boolean isMN;
 
 	public TreeNode(String name) {
 		this.name = name;
@@ -28,6 +30,13 @@ public class TreeNode implements Comparable<TreeNode> {
 		this.name = name;
 		this.type = type;
 		this.nameBBDD = nameBBDD;
+	}
+	
+	public TreeNode(String name, String type,String nameBBDD, boolean isMN) {
+		this.name = name;
+		this.type = type;
+		this.nameBBDD = nameBBDD;
+		this.isMN  = isMN;
 	}
 
 	public TreeNode getParent() {
@@ -96,6 +105,10 @@ public class TreeNode implements Comparable<TreeNode> {
 		 this.type = type;
 	}
 
+	public boolean isMN() {
+		return isMN;
+	}
+	
 	public boolean isChecked() {
 		return isChecked;
 	}

@@ -289,7 +289,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 
 		// Crea el proyecto xxxStatics
 		monitor.setTaskName("Creando proyecto Statics...");
-		IProject projectStatics = createProjectStatics(root, locationCheck, locationText, context, monitor);
+		IProject projectStatics = createProjectStatics(root, locationCheck, locationText, appType, context, monitor);
 		monitor.worked(1);
 		
 		// Crea el proyecto xxxEARClasses
@@ -299,7 +299,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		// Crea el proyecto de xxxEAR
 		monitor.setTaskName("Creando proyecto EAR...");
-		IProject projectEAR = createProjectEAR(root, locationCheck, locationText, context, monitor);
+		IProject projectEAR = createProjectEAR(root, locationCheck, locationText, context, appType, monitor);
 		monitor.worked(1);
 		
 		// Crea el proyecto de xxxWAR
@@ -383,7 +383,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 * @return proyecto tipo xxxStatics
 	 * @throws Exception
 	 */
-	private IProject createProjectStatics(IWorkspaceRoot root, boolean locationCheck, String locationText, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+	private IProject createProjectStatics(IWorkspaceRoot root, boolean locationCheck, String locationText, String appType, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
 		
 		String pathStatics = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS;
 		
@@ -426,64 +426,60 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				ProjectFacetsManager.getProjectFacet("jst.web")
 			})));
 		
-//		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
-//		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
-//		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
-//		ProjectWorker.addToClasspath(JavaCore.create(projectStatics), userLibCpEntry);		
 		
-				
-//		//Organiza las librerias que debe tener un proyecto WAR
-//		ProjectWorker.organizeWARLibraries(projectStatics, context, monitor);
-				
-		// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
-		String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
-		String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
-		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
+		/* rup */
+			// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
+			String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
+			String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
+			RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
+			
+			//Borramos el directorio de resources
+			RVCopyWorker.deleteDirectoryContent(new File(path+"/resources"), false);
+			
+			//i18n
+			String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
+			if (languages.indexOf("es")!=-1){
+				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_es.json", context);
+			}
+			if (languages.indexOf("eu")!=-1){
+				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_eu.json", context);
+			}
+			if (languages.indexOf("en")!=-1){
+				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_en.json", context);
+			}
+			if (languages.indexOf("fr")!=-1){
+				ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_fr.json", context);
+			}
 		
-		//Borramos el directorio de resources
-		RVCopyWorker.deleteDirectoryContent(new File(path+"/resources"));
-		
-		//i18n
-		String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
-		if (languages.indexOf("es")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_es.json", context);
-		}
-		if (languages.indexOf("eu")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_eu.json", context);
-		}
-		if (languages.indexOf("en")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_en.json", context);
-		}
-		if (languages.indexOf("fr")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_fr.json", context);
-		}
-		
-		// Copia la configuración específica de la aplicación en la carpeta WebContent/codapp del proyecto Statics
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN));
-		pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC;
-		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
-		ProjectWorker.refresh(projectStatics);
-
-		//Styles
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
-		new File (path+"/xxx.css").delete();
-		ProjectWorker.copyFile(pathStatics, path, "aplic/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
+		/* xxx */
+			// Copia la configuración específica de la aplicación en la carpeta WebContent/codapp del proyecto Statics
+			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN));
+			pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC;
+			RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
+			//Crear carpeta de statics para la aplicación
+			ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
+			ProjectWorker.refresh(projectStatics);
 	
-		//i18n
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
-		RVCopyWorker.deleteDirectoryContent(new File(path));
-		if (languages.indexOf("es")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
-		}
-		if (languages.indexOf("eu")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
-		}
-		if (languages.indexOf("en")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
-		}
-		if (languages.indexOf("fr")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "aplic/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
-		}
+			//Styles
+			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
+			new File (path+"/xxx.css.ftl").delete();
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
+		
+			//i18n
+			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
+			RVCopyWorker.deleteDirectoryContent(new File(path), false);
+			if (languages.indexOf("es")!=-1){
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+			}
+			if (languages.indexOf("eu")!=-1){
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+			}
+			if (languages.indexOf("en")!=-1){
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+			}
+			if (languages.indexOf("fr")!=-1){
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+			}
 		
 		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
 		ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
@@ -819,10 +815,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/tiles-jsp.tld", context);
 		
 		//VIEWS
-		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views");
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/views/welcome.jsp", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/views/error.jsp", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/views/accessDenied.jsp", context);
+		ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views");
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/welcome.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/error.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/accessDenied.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/tiles.xml", context);
 		
 		// Añade las carpetas de test para la generación de pruebas de calidad
@@ -864,14 +860,25 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/language.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menu.jsp", context);
 
-		if (Constants.LAYOUT_HORIZONTAL.equalsIgnoreCase(layout)){
-			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/template.jsp", context);
-		}else if (Constants.LAYOUT_VERTICAL.equalsIgnoreCase(layout)){
-			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateVertical.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
-		}else if (Constants.LAYOUT_MIXTO.equalsIgnoreCase(layout)){
-			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateMixto.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
-			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menuMixto.jsp", context);
-		}	
+		if(Constants.APP_TYPE_INTRANET.equalsIgnoreCase(appType)){
+			if (Constants.LAYOUT_HORIZONTAL.equalsIgnoreCase(layout)){
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/template.jsp", context);
+			}else if (Constants.LAYOUT_VERTICAL.equalsIgnoreCase(layout)){
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateVertical.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
+			}else if (Constants.LAYOUT_MIXTO.equalsIgnoreCase(layout)){
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateMixto.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menuMixto.jsp", context);
+			}	
+		} else {
+			if (Constants.LAYOUT_HORIZONTAL.equalsIgnoreCase(layout)){
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/template_portal.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
+			}else if (Constants.LAYOUT_VERTICAL.equalsIgnoreCase(layout)){
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateVertical_portal.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
+			}else if (Constants.LAYOUT_MIXTO.equalsIgnoreCase(layout)){
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateMixto_portal.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
+				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menuMixto.jsp", context);
+			}	
+		}
 			
 		if(Constants.APP_TYPE_INTRANET.equalsIgnoreCase(appType)){
 			ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/footer.jsp", context);
@@ -906,7 +913,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 * @throws Exception
 	 */
 	private IProject createProjectEAR(IWorkspaceRoot root,
-			boolean locationCheck, String locationText, Map<String, Object> context, IProgressMonitor monitor) throws Exception {
+			boolean locationCheck, String locationText, Map<String, Object> context, String appType, IProgressMonitor monitor) throws Exception {
 		
 		String path = "";
 		String pathEar = Activator.getDefault().getPreferenceStore()
@@ -971,7 +978,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = AntCorePlugin.getPlugin().getPreferences().getAntHome() + "/lib";
 		String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 		ProjectWorker.copyFile(pathTemplates, path, "maven-ant-tasks-2.1.1.jar", context);
-		
+
+		// Copia el parseador de estilos para aplicaciones de INTERNET
+		ProjectWorker.copyFile(pathTemplates + "/staticsTools", path, "com.ejie.uda.statics.tools.jar", context);
+		ProjectWorker.copyFile(pathTemplates + "/staticsTools", path, "com.ejie.uda.statics.tools.style_hacks", context);
 		return projectEAR;
 	}
 	

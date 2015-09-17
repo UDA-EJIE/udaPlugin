@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.ejie.uda.exporters.Reveng;
+
 public class Utilities {
 	
 	private final static Logger logger = Logger.getLogger(Utilities.class);
@@ -256,9 +258,23 @@ public class Utilities {
 	 * Método que devuelve el código de la aplicación
 	 * 
 	 * @param name - Nombre del proyecto
-	 * @return - nombre de la aplicación
+	 * @return - Nombre de la aplicación
 	 */
 	public static String getAppName(String name){
 		return name.split("[A-Z]")[0];
+	}
+	
+	/**
+	 * Método que devuelve el sinónimo de la tabla de la relación M:N
+	 * @param tableName - Nombre tabla (ej. X2100T00)
+	 * @return - Nombre del sinónimo (ej. PetsSpecialties)
+	 */
+	public static String getRelationName(String tableName){
+		StringBuffer nameBBDD = new StringBuffer();
+		String[] arrNames = Reveng.synonymous.get(tableName).split("_");
+		for (int i = 0; i < arrNames.length; i++) {
+			nameBBDD.append(Utilities.camelCase(arrNames[i].toLowerCase()));
+		}
+		return nameBBDD.toString();
 	}
 }
