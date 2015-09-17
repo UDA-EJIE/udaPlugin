@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name
+Bundle-Name: com.ejie.uda
 Bundle-SymbolicName: com.ejie.uda;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: com.ejie.uda.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -55,7 +55,6 @@ Import-Package: com.ejie.uda,
  org.eclipse.wst.common.project.facet.core,
  org.hibernate.eclipse.console.workbench.xpl
 Bundle-ClassPath: .,
- lib/htejie.jar,
  lib/ejb-api-3.0.jar
 Export-Package: com.ejie.uda,
  javax.ejb

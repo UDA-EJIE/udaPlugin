@@ -32,50 +32,50 @@
 				icon="icons/uda.gif"
 				name="1. Crear nueva aplicación"
 				category="UDA wizard" 
-				class="com.ejie.uda.wizard.NewApplicationWizard"
-				id="com.ejie.uda.wizard.NewApplicationWizard">
+				class="com.ejie.uda.wizards.NewApplicationWizard"
+				id="com.ejie.uda.wizards.NewApplicationWizard">
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
 				name="4. Añadir proyecto WAR"
 				category="UDA wizard"
-				class="com.ejie.uda.wizard.AddWarApplicationWizard"
-				id="com.ejie.uda.wizard.AddWarApplicationWizard">
+				class="com.ejie.uda.wizards.AddWarApplicationWizard"
+				id="com.ejie.uda.wizards.AddWarApplicationWizard">
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
 				name="2. Generar código de negocio y control"
 				category="UDA wizard"
-				class="com.ejie.uda.wizard.GenerateCodeWizard"
-				id="com.ejie.uda.wizard.GenerateCodeWizard">
+				class="com.ejie.uda.wizards.GenerateCodeWizard"
+				id="com.ejie.uda.wizards.GenerateCodeWizard">
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
 				name="3. Generar mantenimiento"
 				category="UDA wizard"
-				class="com.ejie.uda.wizard.NewMaintWizard"
-				id="com.ejie.uda.wizard.NewMaintWizard">
+				class="com.ejie.uda.wizards.NewMaintWizard"
+				id="com.ejie.uda.wizards.NewMaintWizard">
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
 				name="7. Generar código para EJB Servidor"
 				category="UDA wizard"
-				class="com.ejie.uda.wizard.GenerateSkeletonWizard"
-				id="com.ejie.uda.wizard.GenerateSkeletonWizard">
+				class="com.ejie.uda.wizards.GenerateSkeletonWizard"
+				id="com.ejie.uda.wizards.GenerateSkeletonWizard">
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
 				name="6. Generar código para EJB Cliente"
 				category="UDA wizard"
-				class="com.ejie.uda.wizard.GenerateStubWizard"
-				id="com.ejie.uda.wizard.GenerateStubWizard">
+				class="com.ejie.uda.wizards.GenerateStubWizard"
+				id="com.ejie.uda.wizards.GenerateStubWizard">
 		</wizard>
 		<wizard  
 				icon="icons/uda.gif"
 				name="5. Añadir proyecto EJB"
 				category="UDA wizard"
-				class="com.ejie.uda.wizard.AddEjbApplicationWizard"
-				id="com.ejie.uda.wizard.AddEjbApplicationWizard">
+				class="com.ejie.uda.wizards.AddEjbApplicationWizard"
+				id="com.ejie.uda.wizards.AddEjbApplicationWizard">
 		</wizard>
 	</extension>
 	<extension
@@ -89,12 +89,6 @@
 	<extension
 			point="org.eclipse.core.runtime.preferences">
 		<initializer class="com.ejie.uda.preferences.Initializer"/>
-	</extension>
-	<extension
-			point="org.eclipse.help.contexts">
-		<contexts
-			file="contexts.xml">
-		</contexts>
 	</extension>
 	<extension point="org.eclipse.wst.common.snippets.SnippetContributions">
 		<category

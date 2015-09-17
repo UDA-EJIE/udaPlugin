@@ -6,8 +6,7 @@
 			<accessrule kind="accessible" pattern="org/eclipse/jst/j2ee/**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry kind="src" path="logic"/>
-	<classpathentry exported="true" kind="lib" path="lib/htejie.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ejb-api-3.0.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/ejb-api-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
