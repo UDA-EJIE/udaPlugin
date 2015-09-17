@@ -670,7 +670,7 @@ public class NewMaintWizardPageThree extends WizardPage {
  
 	public boolean getConfirmation() {
 		boolean askConfirmation = false;
-		String packageName = "";
+		//String packageName = "";
 		if (Utilities.isBlank(aliasText.getText())) {
 			askConfirmation = true;
 		}

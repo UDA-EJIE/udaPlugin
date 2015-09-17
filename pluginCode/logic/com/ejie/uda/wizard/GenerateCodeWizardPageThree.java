@@ -621,8 +621,8 @@ public boolean getConfirmation(){
 	}
 }
 private boolean findDirectory( File directory){
-	 List<Class> classes = new ArrayList<Class>();
-     List<String> servicios = new ArrayList<String>();
+//	 List<Class> classes = new ArrayList<Class>();
+//   List<String> servicios = new ArrayList<String>();
      if (!directory.exists()) {
      	return false;
      }else{

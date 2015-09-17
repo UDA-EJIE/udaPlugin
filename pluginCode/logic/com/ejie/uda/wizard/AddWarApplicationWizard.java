@@ -40,7 +40,6 @@ import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.ProjectWorker;
 import com.ejie.uda.operations.PropertiesWorker;
-import com.ejie.uda.operations.RVCopyWorker;
 import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
 import com.ejie.uda.utils.Utilities;
@@ -98,7 +97,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		final String layout = page.getDispositionCombo();
 		final String appType = page.getAppTypeCombo();
 		final String category = page.getCategoryCombo();
-		final boolean examples = page.getExamplesCheck();
 		final String defaultLanguage = page.getLanguageCombo();
 		final String languages = page.getLanguages();
 		final String languagesWithoutQuotes = page.getLanguagesWithoutQuotes();
@@ -174,7 +172,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 				try {
 					monitor.beginTask("Añadiendo WAR a la aplicación", 2);
 					// Inicia tratamiento del plugin
-					doFinish(monitor, warName, projectEAR, radSpringJDBC, radJPA, idSecurity, layout, appType, category, examples, languages, defaultLanguage, languagesWithoutQuotes);
+					doFinish(monitor, warName, projectEAR, radSpringJDBC, radJPA, idSecurity, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes);
 				} catch (Exception e) {
 					errorMessage = e.getLocalizedMessage();
 					throw new CoreException(null);
@@ -208,7 +206,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 	 */
 	private void doFinish(IProgressMonitor monitor, String warName, IProject projectEAR, boolean radSpringJDBC,
 			boolean radJPA, String idSecurity, String layout, String appType, String category, 
-			boolean examples, String languages, String defaultLanguage, String languagesWithoutQuotes) throws Exception {
+			String languages, String defaultLanguage, String languagesWithoutQuotes) throws Exception {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
@@ -238,7 +236,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.CODROLE_PATTERN, "UDA");
 		context.put("codroleAux", "hasRole('ROLE_UDA')");
 		context.put("listaClases", "");
-		context.put(Constants.RUP_EXAMPLE, examples);
 		context.put(Constants.LAYOUT_PATTERN, layout.toLowerCase());
 		context.put(Constants.LANGUAGES_PATTERN, languages);
 		context.put(Constants.LANGUAGES_WITHOUT_QUOTES_PATTERN, languagesWithoutQuotes);
@@ -251,7 +248,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		
 		// Crea el proyecto de xxxWAR
 		monitor.setTaskName("Creando el proyecto WAR...");
-		IProject projectWAR = createProjectWAR(root, radJPA, layout, appType, category, examples, context, monitor);
+		IProject projectWAR = createProjectWAR(root, radJPA, layout, appType, category, context, monitor);
 		monitor.worked(1);
 		consola.println("Proyecto WAR generado.", Constants.MSG_INFORMATION);
 		
@@ -285,7 +282,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 	 * @throws Exception
 	 */
 	private IProject createProjectWAR(IWorkspaceRoot root, boolean radJPA,
-			String layout, String appType, String category, boolean examples,
+			String layout, String appType, String category,
 			Map<String, Object> context, IProgressMonitor monitor) throws Exception {
 
 		String path = "";
@@ -518,28 +515,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		// Copia la página de Inicio
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views");
 		ProjectWorker.copyFile(pathWar, path, "welcome.jsp", context, "welcome.jsp");
-		
-		// Crear ejemplo de RUP si marcado en pantalla
-		if (examples){
-			path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views");
-			ProjectWorker.copyFile(pathWar, path, "welcomeRUP.jsp", context);
-			
-			String pathExamples = pathWar + "\\rup";
-			String pathDestination = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts/rup");
-			RVCopyWorker.copyDirectoryTemplate(new File(pathExamples), new File(pathDestination), context);
-			
-			pathExamples = pathWar + "\\ejemplos";
-			pathDestination = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views/ejemplos");
-			RVCopyWorker.copyDirectoryTemplate(new File(pathExamples), new File(pathDestination), context);
-			
-			pathExamples = pathWar + "\\ejemplosControllers";
-			path = ProjectWorker.createGetFolderPath(projectWAR, "src/com");
-			path = ProjectWorker.createGetFolderPath(projectWAR, "src/com/ejie");
-			path = ProjectWorker.createGetFolderPath(projectWAR, "src/com/ejie/" + context.get(Constants.CODAPP_PATTERN));
-			path = ProjectWorker.createGetFolderPath(projectWAR, "src/com/ejie/" + context.get(Constants.CODAPP_PATTERN) + "/control");			
-			pathDestination = ProjectWorker.createGetFolderPath(projectWAR, "src/com/ejie/" + context.get(Constants.CODAPP_PATTERN) + "/control/ejemplos");
-			RVCopyWorker.copyDirectoryTemplate(new File(pathExamples), new File(pathDestination), context);
-		}
 		
 		return projectWAR;	
 	}

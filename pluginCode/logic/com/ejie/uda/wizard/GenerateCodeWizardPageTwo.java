@@ -170,7 +170,7 @@ public class GenerateCodeWizardPageTwo extends WizardPage {
 		TreeNode rootTreeNodes = (TreeNode)schemaCheckboxTree.getInput();
 		List<TreeRelation> treeRelation = new ArrayList<TreeRelation>(0);
 		TreeRelation rootTreeRelation = getSchemaMNTree();
-		List<TreeRelation> listTreeRelationList = null;
+		//List<TreeRelation> listTreeRelationList = null;
 		List<String> auxiliarTabla = new ArrayList<String>(0);
 		
 		//miramos en las tablas seleccionadas si tienen alguna m:n relacionada
@@ -210,10 +210,10 @@ public class GenerateCodeWizardPageTwo extends WizardPage {
 		if (rootTreeRelation!=null){
 			treeRelation = rootTreeRelation.getChildren();
 			List<TreeRelation> treeRelationChildren = null;
-			String nombreMN=null;
+			//String nombreMN=null;
 			for (TreeRelation treeRelationTable : treeRelation ) { 	
 					boolean encontrado=true;
-					nombreMN = treeRelationTable.getName();
+					//nombreMN = treeRelationTable.getName();
 					treeRelationChildren = treeRelationTable.getChildren() ;
 					for (TreeRelation treeRelationChild : treeRelationChildren ) { 
 						//para cada hijo miramos si esta seleccionado. si no estan todas las tablas seleccionadas, no la incluimos

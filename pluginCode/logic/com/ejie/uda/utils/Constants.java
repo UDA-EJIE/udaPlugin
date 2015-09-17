@@ -96,8 +96,6 @@ public class Constants {
 	public static final String DEFAULT_SERVER_JNI_NAMING = "t3://127.0.0.1:7001";
 	public static final String DEFAULT_SERVER_FACTORY = "weblogic.jndi.WLInitialContextFactory";
 	
-	public static final String RUP_EXAMPLE = "isexamples";
-	
 	//Preferencias jar
 	public static final String PREF_DEFAULT_X38_LIBS= "x38ShLibClasses";
 	public static final String PREF_DEFAULT_UDA_JAR= "uda";

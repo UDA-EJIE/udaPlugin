@@ -73,7 +73,7 @@ public class GenerateSkeletonWizardPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 4;
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		//GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		GridData gd3 = new GridData(GridData.FILL_HORIZONTAL);
 		gd3.horizontalSpan = 3;
 		
@@ -244,7 +244,7 @@ public class GenerateSkeletonWizardPage extends WizardPage {
 	}
     private static List<String> findClasses(File directory, String packageName) throws ClassNotFoundException
 	{
-        List<Class> classes = new ArrayList<Class>();
+        //List<Class> classes = new ArrayList<Class>();
         List<String> servicios = new ArrayList<String>();
         if (!directory.exists()) {
 
@@ -256,7 +256,7 @@ public class GenerateSkeletonWizardPage extends WizardPage {
         	String fileName = file.getName();
             if (fileName.endsWith(".java") && !fileName.contains("$") && fileName.contains("Service") && !fileName.endsWith("Impl.java")) {
             	String name = "" ;
-            	Class _class;
+            	//Class _class;
 				try {		
 					name = packageName + '.' + fileName.substring(0, fileName.length() - 5);
 				} catch (Exception e) {
@@ -301,8 +301,8 @@ public class GenerateSkeletonWizardPage extends WizardPage {
 		IProject[] projectsEARClasses;
 
 		projectsEARClasses = EarUtilities.getAllProjectsInWorkspaceOfType("jst.java");
-		List listaEar=Arrays.asList(projectsEARClasses);
-		Iterator itEarClasses=listaEar.iterator();
+		List<?> listaEar=Arrays.asList(projectsEARClasses);
+		Iterator<?> itEarClasses=listaEar.iterator();
 		String nombreApp = getAppName(ejbProy)+ Constants.EARCLASSES_NAME;
 		while (itEarClasses.hasNext()){
 			IProject earClass= (IProject) itEarClasses.next();
@@ -451,8 +451,8 @@ public class GenerateSkeletonWizardPage extends WizardPage {
 		return false;	 
 	}
 	private boolean findDirectory( File directory){
-		 List<Class> classes = new ArrayList<Class>();
-	     List<String> servicios = new ArrayList<String>();
+//		 List<Class> classes = new ArrayList<Class>();
+//	     List<String> servicios = new ArrayList<String>();
 	     if (!directory.exists()) {
 	     	return false;
 	     }else{

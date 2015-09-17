@@ -27,8 +27,8 @@ public class GenerateCodeWizardPageFour extends WizardPage {
 	private Group xlnetsParamsGroup;
 	private Button radNoSec;
 	private Button radXLNets;
-	private Button radAnotControl;
-	private Button radXmlControl;
+	//private Button radAnotControl;
+	//private Button radXmlControl;
 	private Text idSecurityText;
 	private Text idSecurityTextAux;
 	
@@ -219,7 +219,7 @@ public class GenerateCodeWizardPageFour extends WizardPage {
 	/**********************/
 	
 	private String getTextIsSeguridad(String idSeguridad){
-		String resultado="";
+		//String resultado="";
 		if (!idSeguridad.equals("")){
 			String chkIdXlNetsAux =idSeguridad;
 			if (idSeguridad.substring(0, 1).equals(";")){

@@ -430,7 +430,7 @@ public class GenerateStubWizardPage extends WizardPage {
 	private String handleBrowseService() {
 		List<String> libraries=new ArrayList<String>();
 		List<String> librerias = Utilities.findFileEndsLike(new File( getProjectEARLocation() + Constants.PREF_DEFAULT_EAR_LIBS),"Remoting");
-		Iterator itLib = librerias.iterator();
+		Iterator<?> itLib = librerias.iterator();
 		while (itLib.hasNext()){
 			String nombreLib= (String) itLib.next();
 			String ruta =  getProjectEARLocation() + Constants.PREF_DEFAULT_EAR_LIBS+"\\" +nombreLib;
@@ -485,8 +485,8 @@ public class GenerateStubWizardPage extends WizardPage {
 		IProject[] projectsEARClasses;
 
 		projectsEARClasses = EarUtilities.getAllProjectsInWorkspaceOfType("jst.java");
-		List listaEar=Arrays.asList(projectsEARClasses);
-		Iterator itEarClasses=listaEar.iterator();
+		List<?> listaEar=Arrays.asList(projectsEARClasses);
+		Iterator<?> itEarClasses=listaEar.iterator();
 		String nombreApp = getAppName(ejbProy)+ Constants.EARCLASSES_NAME;
 		while (itEarClasses.hasNext()){
 			IProject earClass= (IProject) itEarClasses.next();
@@ -672,9 +672,9 @@ public String getEjbName(){
 	public void setWorkspacePath(String locationFinal){
 		  this.workspacePath=locationFinal;
 		}
-	public static List getClasseNamesInPackage
+	public static List<String> getClasseNamesInPackage
     (String jarName, boolean isEJBThree ){
-  ArrayList classes = new ArrayList ();
+  ArrayList<String> classes = new ArrayList<String> ();
 
   try{
     JarInputStream jarFile = new JarInputStream
@@ -736,8 +736,8 @@ public String getEjbName(){
 		return false;	 
 	}
 	private boolean findDirectory( File directory){
-		 List<Class> classes = new ArrayList<Class>();
-	     List<String> servicios = new ArrayList<String>();
+		 //List<Class> classes = new ArrayList<Class>();
+	     //List<String> servicios = new ArrayList<String>();
 	     if (!directory.exists()) {
 	     	return false;
 	     }else{

@@ -15,7 +15,6 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,8 +30,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -68,7 +65,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 	private ISelection selection;
 	private String errorMessage;
 	private String summary;
-	private static final Class[] parameters = new Class[]{URL.class};
+	private static final Class<?>[] parameters = new Class[]{URL.class};
 	private static final String[] genericMethods = {"equals(java.lang.Object)", "toString()", "hashCode()","remove() throws java.rmi.RemoteException,javax.ejb.RemoveException","getEJBHome() throws java.rmi.RemoteException","getPrimaryKey() throws java.rmi.RemoteException","getHandle() throws java.rmi.RemoteException","isIdentical(javax.ejb.EJBObject) throws java.rmi.RemoteException"};
 
 	private static StubClassUtils getStub= new StubClassUtils();
@@ -344,11 +341,11 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		context.put("earClassesPath",earClassesProyPath);
 		
 		// Recupera el Workspace para crear los proyectos
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		//IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if (addNeededLibraries(earProyPath,isEjb3)){
 			if(!isEjb3) {
 				context.put("serviceName", serviceName.replace("Home", ""));
-				List<String[]> metodos = getStub.getClasses((String) context.get("serviceName"));
+				List<String[]> metodos = StubClassUtils.getClasses((String) context.get("serviceName"));
 				context.put("methods",metodos);
 			}else{
 				List<String[]> metodos = getClassesEJB3(serviceName.replace("Home", ""),earProyPath);
@@ -451,8 +448,8 @@ public static  List<String[]> getClassesEJB3( String fileName,
           		}            		
           	}
           	if (bol){
-              	String str = met.toGenericString();
-              	String[] auxiliar = getStub.getMetodCaracteristics(met);
+              	//String str = met.toGenericString();
+              	String[] auxiliar = StubClassUtils.getMetodCaracteristics(met);
           		if (auxiliar!=null){
           			list.add(auxiliar);
           		}	
@@ -578,15 +575,15 @@ public static  List<String[]> getClassesEJB3( String fileName,
     * Borrado de fichero
     * @param fileName - nombreFichero
     */   
-   private static void fileDelete(String fileName){
+   /*private static void fileDelete(String fileName){
 	  File f = new File(fileName);
 
 	  if (f.exists()){	
 		  if (f.isDirectory()) {
 		    String[] files = f.list();
 		    if (files.length > 0){
-		    	List filesList= Arrays.asList(files);
-		    	Iterator it = filesList.iterator();
+		    	List<String> filesList= Arrays.asList(files);
+		    	Iterator<String> it = filesList.iterator();
 		    	while (it.hasNext()){
 		    		String name=(String) it.next();
 		    		if (name.startsWith(Constants.PREF_DEFAULT_UDA_JAR) && name.endsWith(".jar")){
@@ -595,9 +592,10 @@ public static  List<String[]> getClassesEJB3( String fileName,
 		    	}
 		    }	
 		  }
-		  boolean success = f.delete();	
+		  //boolean success = f.delete();
+		  f.delete();
 	  } 
-  }
+  }*/
    /**
     * añade al classpath las librerias necesarias
     * @param earPath - path proyecto EAR
@@ -613,7 +611,7 @@ public boolean addNeededLibraries(String earPath,boolean isEjb3) throws IOExcept
 		addFile(earPath + Constants.PREF_DEFAULT_EAR_LIBS+"\\"+x38JarName);
 		//Add libraries where name like '%Remoting.jar'
 		List<String> librerias = Utilities.findFileEndsLike(new File(earPath + Constants.PREF_DEFAULT_EAR_LIBS),"Remoting");
-		Iterator itLib = librerias.iterator();
+		Iterator<String> itLib = librerias.iterator();
 		while (itLib.hasNext()){
 			String nombreLib= (String) itLib.next();
 			addFile(earPath+ Constants.PREF_DEFAULT_EAR_LIBS+"\\" +nombreLib);

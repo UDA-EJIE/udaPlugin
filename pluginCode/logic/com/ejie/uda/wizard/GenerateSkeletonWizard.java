@@ -29,9 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.tools.ant.DirectoryScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -64,7 +62,7 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
 	private ISelection selection;
 	private String errorMessage;
 	private String summary;
-	private static final Class[] parameters = new Class[]{URL.class};
+	private static final Class<?>[] parameters = new Class[]{URL.class};
 	private static final String[] genericMethods = {"public final boolean $Proxy0.equals(java.lang.Object)", "public final java.lang.String $Proxy0.toString()", "public final int $Proxy0.hashCode()"};
 	private SkeletonUtils skeletonUtils= new SkeletonUtils();
 	private ControllerUtils ctrUtils = new ControllerUtils();
@@ -236,7 +234,7 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
 		
 			
 		// Recupera el Workspace para crear los proyectos
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		//IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		String path = earClassesProyPath + Constants.PREF_DEFAULT_BUILD_PATH;
 		List<String[]> metodos = getClasses(packageName, serviceName,path,earProyPath,workspacePath);
 		createSkeletonRemoting(metodos,ejbProyPath,context);
@@ -351,8 +349,8 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
           		}            		
           	}
           	if (bol){
-              	String str = met.toGenericString();
-              	String str2 = str.replace("$Proxy0.", "");
+              	//String str = met.toGenericString();
+              	//String str2 = str.replace("$Proxy0.", "");
               	String[] auxiliar = getMetodCaracteristics(met);
           		if (auxiliar!=null){
           			list.add(auxiliar);
@@ -384,7 +382,7 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
 		  
 	  	   Type[] parametros= method.getGenericParameterTypes();
 	  	   List<Type> listaParam= new ArrayList<Type>(Arrays.asList(parametros)) ;
-	  	   Iterator iterador = listaParam.iterator();
+	  	   Iterator<?> iterador = listaParam.iterator();
 	  	   String auxiliar="";
 	  	   while (iterador.hasNext()){
 	  			 auxiliar = auxiliar +iterador.next().toString()+";";
@@ -491,8 +489,8 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
 		  if (f.isDirectory()) {
 		    String[] files = f.list();
 		    if (files.length > 0){
-		    	List filesList= Arrays.asList(files);
-		    	Iterator it = filesList.iterator();
+		    	List<?> filesList= Arrays.asList(files);
+		    	Iterator<?> it = filesList.iterator();
 		    	while (it.hasNext()){
 		    		String name=(String) it.next();
 		    		if (name.startsWith(Constants.PREF_DEFAULT_UDA_JAR) && name.endsWith(".jar")){
@@ -503,7 +501,8 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
 		  }
 	
 	
-		  boolean success = f.delete();	
+		  //boolean success = f.delete();
+		  f.delete();
 	  } 
   }
   /**

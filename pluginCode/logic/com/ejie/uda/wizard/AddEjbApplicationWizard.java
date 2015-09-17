@@ -274,8 +274,8 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		// Set ejbModule folder (created during jst.ejb facet installation) as source folder
 		final IFolder srcFolder = projectEJB.getFolder("ejbModule");
 		final IClasspathEntry ejbModuleCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
-		IClasspathEntry[] oldEntries = JavaCore.create(projectEJB).getRawClasspath();
-		IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
+		//IClasspathEntry[] oldEntries = JavaCore.create(projectEJB).getRawClasspath();
+		//IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
 		addToClasspath(JavaCore.create(projectEJB), ejbModuleCpEntry);
 
 			
@@ -447,7 +447,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 	 * @param projectEar - proyecto EAR contenedor
 	 * @return - encontrado
 	 */
-	private boolean existsEJB(IProject projectEar){
+	/*private boolean existsEJB(IProject projectEar){
 		boolean found=false;
 		String codApp= projectEar.getName().replace(Constants.EAR_NAME, "");
 		IProject[] projectos=ResourcesPlugin.getWorkspace().getRoot().getProjects();
@@ -459,7 +459,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 			}
 		}
 		return found;
-	}
+	}*/
 	private IProject getProject(String projectName) {
 
 		IProject projectsEARClasses;

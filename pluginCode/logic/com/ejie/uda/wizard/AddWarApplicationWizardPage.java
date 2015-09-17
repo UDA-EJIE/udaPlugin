@@ -43,7 +43,6 @@ public class AddWarApplicationWizardPage extends WizardPage {
 	private Button verticalRadio;
 	private Button mixtoRadio;
 	private Combo categoryCombo;
-//	private Button examplesCheck;
 	private Combo languageCombo;
 	private Button esLanguageCheck; 
 	private Button euLanguageCheck;
@@ -145,12 +144,6 @@ public class AddWarApplicationWizardPage extends WizardPage {
 		Label labelHide2 = new Label(container, SWT.NULL);
 		labelHide2.setVisible(false);
 
-		// Check box para generar ejemplos de código
-//		examplesCheck = new Button(container, SWT.CHECK);
-//		examplesCheck.setText("Generar ejemplos de código");
-//		examplesCheck.setSelection(false);
-//		examplesCheck.setLayoutData(gd3);
-		
 		// Salto de línea
 		labelLine = new Label(container, SWT.NULL);
 		labelLine.setLayoutData(gd3);
@@ -490,17 +483,6 @@ public class AddWarApplicationWizardPage extends WizardPage {
 		} else {
 			return "";
 		}
-	}
-
-	/**
-	 * Recupera el valor del check de ejemplos de pantallas
-	 * 
-	 * @return true si seleccionado, false ecc.
-	 */
-	public boolean getExamplesCheck() {
-		// De momento no se quiere generar ejemplos desde la nueva aplicacion
-//		return examplesCheck.getSelection();
-		return false;
 	}
 
 	/**

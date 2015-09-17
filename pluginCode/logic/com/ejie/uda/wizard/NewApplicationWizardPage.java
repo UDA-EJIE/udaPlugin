@@ -221,12 +221,6 @@ public class NewApplicationWizardPage extends WizardPage {
 		warFullNameText.setEnabled(false);
 		warFullNameText.setLayoutData(gd4);
 		
-//		// Check box para generar ejemplos de código
-//		examplesCheck = new Button(container, SWT.CHECK);
-//		examplesCheck.setText("Generar ejemplos de código");
-//		examplesCheck.setSelection(false);
-//		examplesCheck.setLayoutData(gd5);
-		
 		// Salto de línea
 		labelLine = new Label(container, SWT.NULL);
 		labelLine.setLayoutData(gd5);
@@ -719,17 +713,6 @@ public class NewApplicationWizardPage extends WizardPage {
 		} else {
 			return "";
 		}
-	}
-
-	/**
-	 * Recupera el valor del check de ejemplos de pantallas
-	 * 
-	 * @return true si seleccionado, false ecc.
-	 */
-	public boolean getExamplesCheck() {
-		// De momento no se quiere generar ejemplos desde la nueva aplicacion
-//		return examplesCheck.getSelection();
-		return false;
 	}
 
 	/**
