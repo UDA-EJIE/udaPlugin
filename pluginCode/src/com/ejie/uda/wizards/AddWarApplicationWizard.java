@@ -1,3 +1,18 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.wizards;
 
 import java.io.File;
@@ -5,9 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -34,12 +47,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
-import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
-import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.ProjectWorker;
-import com.ejie.uda.operations.PropertiesWorker;
 import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
 import com.ejie.uda.utils.Utilities;
@@ -366,12 +376,13 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		//Spring
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/spring");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/app-config.xml", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/spring/log-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/jackson-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/log-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/mvc-config.xml", context);
 		context.put("listaClases", "");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-config.xml", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/spring/security-core-config.xml", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/spring/validation-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-core-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/validation-config.xml", context);
 		//context.put("listaClases", "");
 		
 		//i18n
@@ -395,6 +406,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/c.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/fmt.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/security.tld", context);
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring-form.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/tiles-jsp.tld", context);
 		
@@ -438,11 +450,11 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		
 		//LAYOUTS
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/errorTemplate.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/language.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menu.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateError.jsp", context);
 
 		if (Constants.LAYOUT_HORIZONTAL.equalsIgnoreCase(layout)){
 			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/template.jsp", context);
@@ -484,7 +496,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 	 */
 	private boolean isPersistenceJPA(IFile persistence){
 		try {
-			return Utilities.searchString(persistence.getLocation().toString(), "persistence");
+			return Utilities.searchString(persistence.getLocation().toString(), "eclipse.persistence");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return false;
@@ -532,20 +544,22 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 	 */
 	private void setWarInConfigProject(Map<String, Object> context){
 		
-		String codApp = (String)context.get(Constants.CODAPP_PATTERN);
-		String warName = (String)context.get(Constants.WAR_NAME_PATTERN);
-		String layout = (String)context.get(Constants.LAYOUT_PATTERN);
-		String defaultLanguage = (String)context.get(Constants.DEFAULT_LANGUAGE_PATTERN);
+		//NOTA: Ya no se generan las propiedades en el fichero properties si no en el mvc-config.xml
 		
-		IProject projectConfig = ResourcesPlugin.getWorkspace().getRoot().getProject(codApp + Constants.CONFIG_NAME);
-		String path = projectConfig.getLocation().toString();
-		PropertiesWorker configProperties = new PropertiesWorker(codApp + ".properties", path);
-
-		if (configProperties != null && !Utilities.isBlank(warName) && !Utilities.isBlank(defaultLanguage) && !Utilities.isBlank(layout)){
-			configProperties.writeProperty(warName + ".default.language", defaultLanguage);
-			configProperties.writeProperty(warName + ".default.layout", layout);
-			configProperties.saveProperties();//Guardar las propiedades en el fichero
-		}
+//		String codApp = (String)context.get(Constants.CODAPP_PATTERN);
+//		String warName = (String)context.get(Constants.WAR_NAME_PATTERN);
+//		String layout = (String)context.get(Constants.LAYOUT_PATTERN);
+//		String defaultLanguage = (String)context.get(Constants.DEFAULT_LANGUAGE_PATTERN);
+//		
+//		IProject projectConfig = ResourcesPlugin.getWorkspace().getRoot().getProject(codApp + Constants.CONFIG_NAME);
+//		String path = projectConfig.getLocation().toString();
+//		PropertiesWorker configProperties = new PropertiesWorker(codApp + ".properties", path);
+//
+//		if (configProperties != null && !Utilities.isBlank(warName) && !Utilities.isBlank(defaultLanguage) && !Utilities.isBlank(layout)){
+//			configProperties.writeProperty(warName + ".default.language", defaultLanguage);
+//			configProperties.writeProperty(warName + ".default.layout", layout);
+//			configProperties.saveProperties();//Guardar las propiedades en el fichero
+//		}
 	}
 	
 	

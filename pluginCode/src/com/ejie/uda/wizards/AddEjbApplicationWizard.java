@@ -1,3 +1,18 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.wizards;
 
 import java.io.File;
@@ -6,10 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -39,8 +52,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
-import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
-import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.ProjectWorker;

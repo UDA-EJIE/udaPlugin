@@ -1,3 +1,18 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.wizards;
 
 import java.io.File;
@@ -274,29 +289,45 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 		//Lector de BD
 		JDBCMetaDataConfiguration jmdc = null;
 		
+		/**
+		 * EARClasses
+		 */
 		if (projectEARClasses != null){
 			
 			monitor.setTaskName("Generando código para las capa de negocio...");
 			
 			String pathProject =  projectEARClasses.getLocation().toString();
-		
 			String appName = Utilities.getAppName(projectEARClasses.getName()); 
 			
 			if (jmdc==null){
 				jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
 			}
 			
+			/**
+			 * MODEL
+			 */
 			if (dataModelCheck){
 				GenerateCodeWorker.modelExporter(jmdc, pathTemplates, pathProject, isJPA);
-				
 			}
+
+			/**
+			 * DAO
+			 */
 			if (daoCheck){
+				if (!annotCheck){
+					GenerateCodeWorker.daoDIExporter(jmdc, pathTemplates, pathProject,annotCheck);
+				}
 				GenerateCodeWorker.daoExporter(jmdc, pathTemplates, pathProject, annotCheck, isJPA);
-				GenerateCodeWorker.daoContextExporter(jmdc, pathTemplates, pathProject,annotCheck);
 			}
+			
+			/**
+			 * SERVICE
+			 */
 			if (serviceCheck){
 				GenerateCodeWorker.serviceExporter(jmdc, pathTemplates, pathProject,annotCheck, isJPA);
-				GenerateCodeWorker.serviceContextExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
+				if (!annotCheck){
+					GenerateCodeWorker.serviceDIExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
+				}
 				String path = ProjectWorker.createGetFolderPath(projectEARClasses, "src/spring");
 				Map<String, Object> context = new HashMap<String, Object>();
 				if (chkIdXlNets.equals("")){
@@ -319,9 +350,24 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 				.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EARCLASSES;
 				ProjectWorker.copyFile(pathEARClasses, path, "src/spring/security-config.xml.ftl", context);
-				
-						
 			}
+			
+			if (!annotCheck){
+				if (daoCheck && !serviceCheck){
+					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+						+ "/generateCode/dao/";
+					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+				} else if (!daoCheck && serviceCheck){
+					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+						+ "/generateCode/service/";
+					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+				} else if (daoCheck && serviceCheck){
+					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+						+ "/generateCode/";
+					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+				}
+			}
+			
 			
 			if (isJPA && (dataModelCheck || daoCheck || serviceCheck)){
 			  GenerateCodeWorker.persistenceExporter(jmdc, pathTemplates, pathProject);
@@ -343,31 +389,22 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 				}
 			}	
 			
-//			if (isJPA && dataModelCheck){
-//				// Ejecutamos el target de la tarea Ant indicado
-//				monitor.setTaskName("Ejecutando Ant de metadatos.");
-//			//01/04/2011	AntTaskWorker.executeOperation(pathProject, "main");
-//				if(monitor.isCanceled()){
-//					throw new OperationCanceledException("operación cancelada por el usuario");
-//				}
-//				monitor.worked(1);
-//				consola.println("Tarea Ant de metadatos de EARClasses lanzado.", Constants.MSG_INFORMATION);				
-//			}
-			
 			// Actualiza el proyecto al finalizar la ejecución
 			ProjectWorker.refresh(projectEARClasses);
 			try{
 				projectEARClasses.build(IncrementalProjectBuilder.AUTO_BUILD,null);
 				ProjectWorker.refresh(projectEARClasses);
 			}catch(Exception e){
-//				System.out.println("Build automatically activo");
 			}
 		}
 		
+		
+		/**
+		 * WAR
+		 */
 		if (projectWar != null){
 			monitor.setTaskName("Generando código para las capa de presentación...");
 			String pathProject =  projectWar.getLocation().toString();
-			
 			String appName = Utilities.getAppName(projectWar.getName()); 
 			
 			if (jmdc==null){
@@ -376,7 +413,15 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			
 			if (controllerCheck){
 				GenerateCodeWorker.controllerExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
-				GenerateCodeWorker.controllerContextExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
+				GenerateCodeWorker.jacksonExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
+				
+				if (!annotCheck){
+					GenerateCodeWorker.controllerDIExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
+					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+						+ "/generateCode/controller/";
+					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/WebContent/WEB-INF/spring/", "app-config.xml", null);
+				}
+
 				//miramos si es entorno ejie
 				if (Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE).equals("true")){
 					GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, chkXLNets, chkIdXlNets);

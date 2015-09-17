@@ -1,7 +1,23 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.exporters;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +35,18 @@ import com.ejie.uda.exporters.utils.ControllerUtils;
 /**
  * Exporter encargado de la generación del fichero mvc-config.xml
  */
-public class ControllerContexExporter extends GenericExporter {
+public class ControllerDIExporter extends GenericExporter {
 
-	private final static Logger logger = Logger.getLogger(ControllerContexExporter.class);
+	private final static Logger logger = Logger.getLogger(ControllerDIExporter.class);
 	
-	public ControllerContexExporter(Configuration cfg, File outputdir) {
+	public ControllerDIExporter(Configuration cfg, File outputdir) {
 		super(cfg, outputdir);
 		init();
 	}
 
 	protected void init() {
-		setTemplateName(TemplatePath.CONTROLLER_CONTEXT_FTL);
-		setFilePattern(TemplatePath.CONTROLLER_CONTEXT_PATTERN);
+		setTemplateName(TemplatePath.DI_FTL);
+		setFilePattern(TemplatePath.DI_PATTERN);
 	}
 
 	public void start() {
@@ -38,25 +54,20 @@ public class ControllerContexExporter extends GenericExporter {
 			String directory = getOutputDirectory().toString();
 			if (directory.toUpperCase().endsWith("WAR")) {
 				Iterator<?> iterator = super.getCfg2JavaTool().getPOJOIterator(super.getConfiguration().getClassMappings());
-				List<String[]> additionalContext = new ArrayList<String[]>();
+				List<String> additionalContext = new ArrayList<String>();
 				while (iterator.hasNext()) {
 					POJOClass element = (POJOClass) iterator.next();
 					PersistentClass clazz = (PersistentClass) element.getDecoratedObject();
 					String nombre = ControllerUtils.findNameFromEntity(clazz.getEntityName());
-					String[] auxiliar = {
-							element.getPackageName() + ".control." + nombre + "Controller",
-							ControllerUtils.stringDecapitalize(nombre) + "Service",
-							ControllerUtils.stringDecapitalize(nombre) 
-					};
-					additionalContext.add(auxiliar);
+					additionalContext.add(nombre);
 				}
+				Collections.sort(additionalContext);
 				
 				String nombreWar = directory.substring(directory.lastIndexOf(File.separator) + 1, directory.length()-3);
 				
 				Properties properties = getProperties();
 				properties.put("listaClases", additionalContext);
 				properties.put("codapp", nombreWar.split("[A-Z]")[0]);
-				properties.put("nombreWar", nombreWar);
 				properties.put("ctrUtils", new ControllerUtils());
 	
 				super.start();

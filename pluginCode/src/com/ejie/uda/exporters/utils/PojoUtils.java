@@ -1,3 +1,18 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.exporters.utils;
 
 import java.util.ArrayList;
@@ -119,7 +134,7 @@ public class PojoUtils {
 				|| tipe.toUpperCase().endsWith("DATE")) {
 			result = "@JsonSerialize(using = JsonDateSerializer.class)";
 			pojo.importType("org.codehaus.jackson.map.annotate.JsonSerialize");
-			pojo.importType("com.ejie.x38.control.JsonDateSerializer");
+			pojo.importType("com.ejie.x38.serialization.JsonDateSerializer");
 		}
 		return result;
 
@@ -131,7 +146,7 @@ public class PojoUtils {
 				|| tipe.toUpperCase().endsWith("DATE")) {
 			result = "@JsonDeserialize(using = JsonDateDeserializer.class)";
 			pojo.importType("org.codehaus.jackson.map.annotate.JsonDeserialize");
-			pojo.importType("com.ejie.x38.control.JsonDateDeserializer");
+			pojo.importType("com.ejie.x38.serialization.JsonDateDeserializer");
 		}
 		return result;
 

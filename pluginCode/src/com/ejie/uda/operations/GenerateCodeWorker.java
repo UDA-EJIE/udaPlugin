@@ -1,3 +1,18 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.operations;
 
 import java.io.ByteArrayInputStream;
@@ -13,15 +28,16 @@ import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.cfg.reveng.OverrideRepository;
 import org.hibernate.cfg.reveng.ReverseEngineeringStrategy;
 
-import com.ejie.uda.exporters.ControllerContexExporter;
+import com.ejie.uda.exporters.ControllerDIExporter;
 import com.ejie.uda.exporters.ControllerExporter;
-import com.ejie.uda.exporters.DaoContextExporter;
+import com.ejie.uda.exporters.DaoDIExporter;
 import com.ejie.uda.exporters.DaoExporter;
+import com.ejie.uda.exporters.JacksonExporter;
 import com.ejie.uda.exporters.ModelExporter;
 import com.ejie.uda.exporters.PersistenceExporter;
 import com.ejie.uda.exporters.Reveng;
 import com.ejie.uda.exporters.SecurityContextExporter;
-import com.ejie.uda.exporters.ServiceContextExporter;
+import com.ejie.uda.exporters.ServiceDIExporter;
 import com.ejie.uda.exporters.ServiceExporter;
 import com.ejie.uda.utils.ConnectionData;
 import com.ejie.uda.utils.ConsoleLogger;
@@ -120,21 +136,21 @@ public class GenerateCodeWorker {
 	}
 	
 	/**
-	 * Lanzamiento daoContextExporter [dao-config.xml]
+	 * Lanzamiento daoDIExporter [daoDI-config.xml]
 	 */
-	public static void daoContextExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck) {
+	public static void daoDIExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck) {
 		String[] templates = new String[] { pathTemplates };
 		File sourceDir = new File(pathProject + "\\src\\");
 		
-		DaoContextExporter daoContextExporter = new DaoContextExporter(jmdc, sourceDir);
-		daoContextExporter.setTemplatePath(templates);
+		DaoDIExporter daoDIExporter = new DaoDIExporter(jmdc, sourceDir);
+		daoDIExporter.setTemplatePath(templates);
 		if (annotCheck){
-			daoContextExporter.getProperties().put("annot", new Long(1));
+			daoDIExporter.getProperties().put("annot", new Long(1));
 		}else{
-			daoContextExporter.getProperties().put("annot", new Long(0));
+			daoDIExporter.getProperties().put("annot", new Long(0));
 		}
 		
-		daoContextExporter.start();
+		daoDIExporter.start();
 	}
 	
 	
@@ -158,22 +174,22 @@ public class GenerateCodeWorker {
 	}
 	
 	/**
-	 * Lanzamiento serviceContextExporter [service-config.xml]
+	 * Lanzamiento serviceDIExporter [serviceDI-config.xml]
 	 */
-	public static void serviceContextExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck, boolean isJPA) {
+	public static void serviceDIExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotCheck, boolean isJPA) {
 		String[] templates = new String[] { pathTemplates };
 		File sourceDir = new File(pathProject + "\\src\\");
 
-		ServiceContextExporter serviceContextExporter = new ServiceContextExporter(jmdc, sourceDir);
-		serviceContextExporter.setTemplatePath(templates);
+		ServiceDIExporter serviceDIExporter = new ServiceDIExporter(jmdc, sourceDir);
+		serviceDIExporter.setTemplatePath(templates);
 		if (annotCheck){
-			serviceContextExporter.getProperties().put("annot", new Long(1));
+			serviceDIExporter.getProperties().put("annot", new Long(1));
 		}else{
-			serviceContextExporter.getProperties().put("annot", new Long(0));
+			serviceDIExporter.getProperties().put("annot", new Long(0));
 		}
-		serviceContextExporter.getProperties().put("isJpa",isJPA);
+		serviceDIExporter.getProperties().put("isJpa",isJPA);
 		
-		serviceContextExporter.start();
+		serviceDIExporter.start();
 	}
 	
 	
@@ -197,22 +213,36 @@ public class GenerateCodeWorker {
 	}
 	
 	/**
-	 * Lanzamiento controllerContextExporter [mvc-config.xml]
+	 * Lanzamiento jacksonExporter [jackson-config.xml]
 	 */
-	public static void controllerContextExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotControlCheck, String appName) {
+	public static void jacksonExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotControlCheck, String appName) {
 		String[] templates = new String[] { pathTemplates };
 		File sourceDir = new File(pathProject + "\\");
 		
-		ControllerContexExporter controllerContexExporter = new ControllerContexExporter(jmdc, sourceDir);
-		controllerContexExporter.setTemplatePath(templates);
-		if (annotControlCheck){
-			controllerContexExporter.getProperties().put("annot", new Long(1));
-		}else{
-			controllerContexExporter.getProperties().put("annot", new Long(0));
-		}
-		controllerContexExporter.getProperties().put("codapp", appName);
+		JacksonExporter jacksonExporter = new JacksonExporter(jmdc, sourceDir);
+		jacksonExporter.setTemplatePath(templates);
+		jacksonExporter.getProperties().put("codapp", appName);
+
+		jacksonExporter.start();
+	}
+	
+	/**
+	 * Lanzamiento controllerDIExporter [diController-config.xml]
+	 */
+	public static void controllerDIExporter (JDBCMetaDataConfiguration jmdc, String pathTemplates, String pathProject, boolean annotControlCheck, String appName) {
+		String[] templates = new String[] { pathTemplates };
+		File sourceDir = new File(pathProject + "\\");
 		
-		controllerContexExporter.start();
+		ControllerDIExporter controllerDIExporter = new ControllerDIExporter(jmdc, sourceDir);
+		controllerDIExporter.setTemplatePath(templates);
+		if (annotControlCheck){
+			controllerDIExporter.getProperties().put("annot", new Long(1));
+		}else{
+			controllerDIExporter.getProperties().put("annot", new Long(0));
+		}
+		controllerDIExporter.getProperties().put("codapp", appName);
+		
+		controllerDIExporter.start();
 	}
 
 	/**

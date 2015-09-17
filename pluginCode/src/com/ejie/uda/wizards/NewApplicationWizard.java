@@ -1,16 +1,27 @@
+/*
+* Copyright 2012 E.J.I.E., S.A.
+*
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Solo podrá usarse esta obra si se respeta la Licencia.
+* Puede obtenerse una copia de la Licencia en
+*
+* http://ec.europa.eu/idabc/eupl.html
+*
+* Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* que establece la Licencia.
+*/
 package com.ejie.uda.wizards;
-
-
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.resources.IFolder;
@@ -43,8 +54,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
-import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
-import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.AntTaskWorker;
@@ -486,6 +495,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN));
 		pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC;
 		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
+		
+		//favicon.ico
+		ProjectWorker.copyFile(pathStatics, path, "favicon.ico", context);
+		
 		//Crear carpeta de statics para la aplicación
 		ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
 		ProjectWorker.refresh(projectStatics);
@@ -513,6 +526,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	
 		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
 		ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
+		ProjectWorker.createFileTemplate(pathStatics, path, "mockLoginAjaxPage.js", context);
+		ProjectWorker.createFileTemplate(pathStatics, path, "mockLoginPage.js", context);
 		
 		
 		// Genera los ficheros de configuración del proyecto
@@ -615,7 +630,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 
 		// Genera los ficheros de configuración del proyecto
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "src");
-		ProjectWorker.copyFile(pathEARClasses, path, "src/beanRefContext.xml", context);
+		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, "src/beanRefContext.xml", context);
 		if (radJPA){
 			context.put("listaClases", "");
 			ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, "src/META-INF/udaPersistence.xml", context);
@@ -628,7 +643,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, "src/spring/log-config.xml", context);
 		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, "src/spring/service-config.xml", context);
 		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, "src/spring/security-config.xml", context);		
-		ProjectWorker.copyFile(pathEARClasses, path, "src/spring/tx-config.xml", context);
+		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, "src/spring/tx-config.xml", context);
 		
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "resources");
 		//ProjectWorker.copyFile(pathEARClasses, path, "messages.properties", context, context.get(Constants.CODAPP_PATTERN) + ".i18n.properties");
@@ -765,12 +780,13 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		//Spring
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/spring");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/app-config.xml", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/spring/log-config.xml", context);
-		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/mvc-config.xml", context);
 		context.put("listaClases", "");
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/jackson-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/log-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/mvc-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-config.xml", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/spring/security-core-config.xml", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/spring/validation-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-core-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/validation-config.xml", context);
 		//context.put("listaClases", "");
 		
 		//i18n
@@ -794,6 +810,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/c.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/fmt.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/security.tld", context);
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring-form.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/tiles-jsp.tld", context);
 		
@@ -803,6 +820,12 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/error.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/accessDenied.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/tiles.xml", context);
+		//MockLogin
+		ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/views/mockLogin");
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginAjaxPage-includes.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginAjaxPage.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage-includes.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage.jsp", context);
 		
 		// Añade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-integration");
@@ -837,11 +860,12 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		//LAYOUTS
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/errorTemplate.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/language.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menu.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateLogin.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateError.jsp", context);
 
 		if(Constants.APP_TYPE_INTRANET.equalsIgnoreCase(appType)){
 			if (Constants.LAYOUT_HORIZONTAL.equalsIgnoreCase(layout)){
@@ -878,6 +902,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		//LAYOUTS-INCLUDES
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts/includes");
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/mockLoginPage.styles.inc", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/includes/mockLoginPage.styles.inc", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/rup.scripts.inc", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/includes/rup.styles.inc", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/includes/xxx.scripts.inc", context, "WebContent/WEB-INF/layouts/includes/"+context.get(Constants.CODAPP_PATTERN)+".scripts.inc");
