@@ -659,7 +659,7 @@ public class GridColumn {
 				|| "Autocomplete".equalsIgnoreCase(getEditType()) || "Datepicker".equalsIgnoreCase(getEditType()))){
 
 			searchFormCode = "\n\t\t\t\t\t\t<div class=\"formulario_linea_izda_float\">";
-			searchFormCode += "\n\t\t\t\t\t\t\t<div class=\"formulario_linea_label\">" + getLabel() + ":</div>";
+			searchFormCode += "\n\t\t\t\t\t\t\t<label class=\"formulario_linea_label\">" + getLabel() + ":</label>";
 			
 			if ("Text".equalsIgnoreCase(getEditType())){
 				searchFormCode += "\n\t\t\t\t\t\t\t<input type=\"text\" name=\"" + getName() + "\" class=\"formulario_linea_input\" id=\"" + getName() + "_search\" />";
