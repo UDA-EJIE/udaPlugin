@@ -152,6 +152,17 @@ public class Utilities {
 	}
 	
 	/**
+	 * Valida el contenido del campo service name del plugin.
+	 * ej: codapp.ejie.eus
+	 * @param text - texto a validar
+	 * @return
+	 */
+	public static boolean validateServiceText(String text) {
+		Pattern pat = Pattern.compile("^([a-zA-Z])(([a-zA-Z0-9]+)\\.){2}([a-zA-Z]{3})");
+		return pat.matcher(text).matches();
+	}
+	
+	/**
 	 * Valida en contenido del campo texto del nombre de un WAR del plugin.
 	 * Sólo permite letras y números
 	 * @param text - texto a validar

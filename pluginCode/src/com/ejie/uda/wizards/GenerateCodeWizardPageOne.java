@@ -42,6 +42,7 @@ import com.ejie.uda.utils.Utilities;
 public class GenerateCodeWizardPageOne extends WizardPage {
 	
 	// Propiedades/Objecto utilizados en la pantalla
+	private Text serviceText;
 	private Text sidText;
 	private Text hostText;
 	private Text portNumberText;
@@ -87,6 +88,18 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 		// Salto de línea
 		Label hiddenLabel= new Label(container, SWT.NULL);
 		hiddenLabel.setLayoutData(gd3);
+		
+		
+		// Campo Service Name de la BBDD
+		Label serviceLabel= new Label(container, SWT.NULL);
+		serviceLabel.setText("&Service Name:");
+		serviceText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		serviceText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(validatePage());
+			}
+		});
+		serviceText.setLayoutData(gd2);
 		
 		// Campo SID de la BBDD
 		Label sidLabel= new Label(container, SWT.NULL);
@@ -188,20 +201,17 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 		//esquemaLabel.setText("NOTA: En algunos SGBD el esquema/catálogo se deben informar en mayúsculas");
 		esquemaLabel.setLayoutData(gd2);	
 				
-//		// Salto de línea
-//		hiddenLabel= new Label(container, SWT.NULL);
-//		hiddenLabel.setLayoutData(gd3);
-		
-		//Botín para probar la conexión configurada
+		//Botón para probar la conexión configurada
 		Button testConnectionButton = new Button(container, SWT.NONE);
 		testConnectionButton.setText("Probar conexión");
 		testConnectionButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				if (!Utilities.isBlank(getSidText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())
+				if (!(Utilities.isBlank(getServiceText()) && Utilities.isBlank(getSidText())) 
+					&& !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())
 					&& !Utilities.isBlank(getUserNameText()) && !Utilities.isBlank(getPasswordText()) && !Utilities.isBlank(getUrlText())
 					&& !Utilities.isBlank(getSchemaText()) && !Utilities.isBlank(getCatalogText())){
 					
-					ConnectionData conData = new ConnectionData(getSidText(), getHostText(), getPortNumberText(), getSchemaText(), getCatalogText(), getUserNameText(), getPasswordText(), getUrlText());
+					ConnectionData conData = new ConnectionData(getServiceText(),getSidText(), getHostText(), getPortNumberText(), getSchemaText(), getCatalogText(), getUserNameText(), getPasswordText(), getUrlText());
 					
 					if (DataBaseWorker.testConnection(conData)){
 						setMessage("Conexión correcta!", IMessageProvider.INFORMATION);
@@ -209,20 +219,16 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 						setMessage("Conexión errónea!", IMessageProvider.ERROR);
 					}
 				}else{
-					setMessage("No hay datos suficientes para probar la conexión!", IMessageProvider.ERROR);
+					setMessage("Faltan datos para probar la conexión!", IMessageProvider.ERROR);
 				}
 			}
 		});
 		
 		// Recupera los valores de la configuración desde el properties
 		getConfigDatabaseProperties();
-	
 		
 		//Asigna el foco inicial
-		sidText.setFocus();
-		
-		
-		
+		serviceText.setFocus();
 		setControl(container);
 	}
 	
@@ -232,8 +238,8 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 	
 	public IWizardPage getNextPage() {
 		
-		if (Utilities.isBlank(getSidText())){
-			setErrorMessage("El campo 'SID' obligatorio");
+		if (Utilities.isBlank(getSidText()) && Utilities.isBlank(getServiceText())){
+			setErrorMessage("Se debe informar el campo 'Service Name' o el 'SID'");
 			return getWizard().getContainer().getCurrentPage();
 		}
     	if (Utilities.isBlank(getHostText())){
@@ -285,6 +291,17 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 	/*************/
 	/*  Getters  */
 	/*************/
+
+	/**
+	 * @return the serviceText
+	 */
+	public String getServiceText() {
+		if (serviceText != null) {
+			return serviceText.getText();
+		} else {
+			return "";
+		}
+	}
 	
 	/**
 	 * Recupera el nombre del SID de BBDD
@@ -393,7 +410,7 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 	public ConnectionData getConnectionData() {
 		ConnectionData conData = null;
 
-		if (!Utilities.isBlank(getSidText())
+		if ( !(Utilities.isBlank(getServiceText()) && Utilities.isBlank(getSidText()))
 				&& !Utilities.isBlank(getHostText())
 				&& !Utilities.isBlank(getPortNumberText())
 				&& !Utilities.isBlank(getUserNameText())
@@ -402,7 +419,7 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 				&& !Utilities.isBlank(getSchemaText())
 				&& !Utilities.isBlank(getCatalogText())) {
 
-			conData = new ConnectionData(getSidText(), getHostText(),
+			conData = new ConnectionData(getServiceText(), getSidText(), getHostText(),
 					getPortNumberText(), getSchemaText(), getCatalogText(), getUserNameText(),
 					getPasswordText(), getUrlText());
 
@@ -414,11 +431,16 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 	/*  Métodos privados  */
 	/**********************/
 	
+	//Si se informa el SID y el Service Name se generará la conexión mediante service name.
 	private String buildUrlConnection(){
 		String url = "";
 		
 		if (!Utilities.isBlank(getSidText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())){
 			url = "jdbc:oracle:thin:@" + getHostText() + ":" + getPortNumberText() + ":" + getSidText();
+		}
+		
+		else if (!Utilities.isBlank(getServiceText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())){
+			url = "jdbc:oracle:thin:@//" + getHostText() + ":" + getPortNumberText() + "/" + getServiceText();
 		}
 		
 		return url;
@@ -434,6 +456,11 @@ public class GenerateCodeWizardPageOne extends WizardPage {
     protected boolean validatePage() {
     	
     	setErrorMessage(null);
+    	
+    	if (!Utilities.isBlank(getServiceText()) && !Utilities.validateServiceText(getServiceText())) {
+			setErrorMessage("El campo 'Service Name' no cumple el formato esperado: codapp.subdominio.dominio");
+			return false;
+		}
     	
     	if (!Utilities.isBlank(getSidText()) && !Utilities.validateText(getSidText())) {
 			setErrorMessage("Caracteres no válidos para en campo 'SID'");
@@ -473,7 +500,7 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 			return false;
 		}
     	
-    	if (Utilities.isBlank(getSidText())
+    	if ((Utilities.isBlank(getServiceText()) && Utilities.isBlank(getSidText()))
 				|| Utilities.isBlank(getHostText())
 				|| Utilities.isBlank(getPortNumberText())
 				|| Utilities.isBlank(getUserNameText())
@@ -499,6 +526,9 @@ public class GenerateCodeWizardPageOne extends WizardPage {
 			PropertiesWorker udaProperties = newMaintWizard.getProperties();
 
 			if (udaProperties != null) {
+				if (!Utilities.isBlank(udaProperties.readValue("service"))) {
+					serviceText.setText(udaProperties.readValue("service"));
+				}
 				if (!Utilities.isBlank(udaProperties.readValue("sid"))) {
 					sidText.setText(udaProperties.readValue("sid"));
 				}

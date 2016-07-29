@@ -445,7 +445,8 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 	private void setConfigDatabaseProperties(ConnectionData conData){
 		
 		if (conData != null && getProperties() != null){
-	    	
+			
+			getProperties().writeProperty("service", conData.getService());
 			getProperties().writeProperty("sid", conData.getSid());
 			getProperties().writeProperty("host", conData.getHost());
 			getProperties().writeProperty("portnumber", conData.getPortNumber());

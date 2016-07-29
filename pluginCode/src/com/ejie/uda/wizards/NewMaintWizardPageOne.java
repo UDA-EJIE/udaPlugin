@@ -59,6 +59,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 	private Button warLocationButton;
 	private IProject warProject;
 	// Propiedades de conexión
+	private Text serviceText;
 	private Text sidText;
 	private Text hostText;
 	private Text portNumberText;
@@ -140,6 +141,17 @@ public class NewMaintWizardPageOne extends WizardPage {
 		connectionGroup.setText("Datos de conexión de la base de datos");
 		connectionGroup.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, false, 3, 1));
 		connectionGroup.setLayout(new GridLayout(4, true));
+
+		// Campo Service Name de la BBDD
+		Label serviceLabel= new Label(container, SWT.NULL);
+		serviceLabel.setText("&Service Name:");
+		serviceText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		serviceText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(validatePage());
+			}
+		});
+		serviceText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		// Campo SID de la BBDD
 		Label sidLabel= new Label(connectionGroup, SWT.NULL);
@@ -253,11 +265,11 @@ public class NewMaintWizardPageOne extends WizardPage {
 		new Label(connectionGroup, SWT.NONE);
 		testConnectionButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				if (!Utilities.isBlank(getSidText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())
+				if (!(Utilities.isBlank(getServiceText()) && Utilities.isBlank(getSidText())) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())
 					&& !Utilities.isBlank(getUserNameText()) && !Utilities.isBlank(getPasswordText()) && !Utilities.isBlank(getUrlText())
 					&& !Utilities.isBlank(getSchemaText()) && !Utilities.isBlank(getCatalogText())){
 					
-					ConnectionData conData = new ConnectionData(getSidText(), getHostText(), getPortNumberText(), getSchemaText(), getCatalogText(), getUserNameText(), getPasswordText(), getUrlText());
+					ConnectionData conData = new ConnectionData(getServiceText(), getSidText(), getHostText(), getPortNumberText(), getSchemaText(), getCatalogText(), getUserNameText(), getPasswordText(), getUrlText());
 					
 					if (DataBaseWorker.testConnection(conData)){
 						setMessage("conexión correcta!", IMessageProvider.INFORMATION);
@@ -265,7 +277,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 						setMessage("conexión errónea!", IMessageProvider.ERROR);
 					}
 				}else{
-					setMessage("No hay datos suficientes para probar la conexión!", IMessageProvider.ERROR);
+					setMessage("Faltan datos para probar la conexión!", IMessageProvider.ERROR);
 				}
 			}
 		});
@@ -307,11 +319,11 @@ public class NewMaintWizardPageOne extends WizardPage {
 			setErrorMessage("Se debe seleccionar algún proyecto tipo WAR para generar el mantenimiento");
 			return getWizard().getContainer().getCurrentPage();
 		}
-		if (Utilities.isBlank(getSidText())){
-			setErrorMessage("El campo 'SID' obligatorio");
+		if (Utilities.isBlank(getSidText()) && Utilities.isBlank(getServiceText())){
+			setErrorMessage("Se debe informar el campo 'Service Name' o el 'SID'");
 			return getWizard().getContainer().getCurrentPage();
 		}
-    	if (Utilities.isBlank(getHostText())){
+		if (Utilities.isBlank(getHostText())){
     		setErrorMessage("El campo 'Host' obligatorio");
     		return getWizard().getContainer().getCurrentPage();
 		}
@@ -385,6 +397,16 @@ public class NewMaintWizardPageOne extends WizardPage {
 	public String getWarLocationText() {
 		if (warLocationText != null) {
 			return warLocationText.getText();
+		} else {
+			return "";
+		}
+	}
+	/**
+	 * @return the serviceText
+	 */
+	public String getServiceText() {
+		if (serviceText != null) {
+			return serviceText.getText();
 		} else {
 			return "";
 		}
@@ -502,7 +524,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 	public ConnectionData getConnectionData() {
 		ConnectionData conData = null;
 
-		if (!Utilities.isBlank(getSidText())
+		if ( !(Utilities.isBlank(getServiceText()) && Utilities.isBlank(getSidText()))
 				&& !Utilities.isBlank(getHostText())
 				&& !Utilities.isBlank(getPortNumberText())
 				&& !Utilities.isBlank(getUserNameText())
@@ -511,7 +533,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 				&& !Utilities.isBlank(getSchemaText())
 				&& !Utilities.isBlank(getCatalogText())) {
 
-			conData = new ConnectionData(getSidText(), getHostText(),
+			conData = new ConnectionData(getServiceText(), getSidText(), getHostText(),
 					getPortNumberText(), getSchemaText(), getCatalogText(), getUserNameText(),
 					getPasswordText(), getUrlText());
 
@@ -526,6 +548,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 	/**
 	 * Construye la url de conexión de la BBDD
 	 * con los campos indicados
+	 * Si se informa el SID y el Service Name se generará la conexión mediante service name.
 	 * 
 	 * @return url de la BBDD
 	 */
@@ -534,6 +557,10 @@ public class NewMaintWizardPageOne extends WizardPage {
 		
 		if (!Utilities.isBlank(getSidText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())){
 			url = "jdbc:oracle:thin:@" + getHostText() + ":" + getPortNumberText() + ":" + getSidText();
+		}
+		
+		else if (!Utilities.isBlank(getServiceText()) && !Utilities.isBlank(getHostText()) && !Utilities.isBlank(getPortNumberText())){
+			url = "jdbc:oracle:thin:@//" + getHostText() + ":" + getPortNumberText() + "/" + getServiceText();
 		}
 		
 		return url;
@@ -553,7 +580,10 @@ public class NewMaintWizardPageOne extends WizardPage {
 			setErrorMessage("Error en la selección del proyecto");
 			return false;
 		}
-    	
+		if (!Utilities.isBlank(getServiceText()) && !Utilities.validateServiceText(getServiceText())) {
+			setErrorMessage("El campo 'Service Name' no cumple el formato esperado: codapp.subdominio.dominio");
+			return false;
+		}
     	if (!Utilities.isBlank(getSidText()) && !Utilities.validateText(getSidText())) {
 			setErrorMessage("Caracteres no válidos para en campo 'SID'");
 			return false;
@@ -592,7 +622,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 			return false;
 		}
     	
-    	if (Utilities.isBlank(getSidText())
+    	if ((Utilities.isBlank(getServiceText()) && Utilities.isBlank(getSidText()))
 				|| Utilities.isBlank(getHostText())
 				|| Utilities.isBlank(getPortNumberText())
 				|| Utilities.isBlank(getUserNameText())
@@ -622,6 +652,9 @@ public class NewMaintWizardPageOne extends WizardPage {
 			PropertiesWorker udaProperties  = newMaintWizard.getProperties();
 			
 			if (udaProperties != null){
+				if (!Utilities.isBlank(udaProperties.readValue("service"))) {
+					serviceText.setText(udaProperties.readValue("service"));
+				}
 				if (!Utilities.isBlank(udaProperties.readValue("sid"))){
 		    		sidText.setText(udaProperties.readValue("sid"));	
 		    	}

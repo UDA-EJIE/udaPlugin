@@ -21,6 +21,7 @@ package com.ejie.uda.utils;
 public class ConnectionData {
 
 	
+	private String service;
 	private String sid;
 	private String host;
 	private String portNumber;
@@ -30,17 +31,15 @@ public class ConnectionData {
 	private String password;
 	private String url;
 	
-	
 
 	/**
 	 * 
 	 */
-	public ConnectionData() {
-		
-	}
+	public ConnectionData() {}
 
-	public ConnectionData(String sid, String host, String portNumber, String schema, String catalog,
+	public ConnectionData(String service, String sid, String host, String portNumber, String schema, String catalog,
 			String userName, String password, String url) {
+		this.service = service;
 		this.sid = sid;
 		this.host = host;
 		this.portNumber = portNumber;
@@ -51,6 +50,14 @@ public class ConnectionData {
 		this.url = url;
 	}
 	
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
 	public String getSid() {
 		return sid;
 	}

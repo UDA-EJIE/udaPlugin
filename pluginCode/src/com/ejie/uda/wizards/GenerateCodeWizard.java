@@ -514,6 +514,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 		
 		if (conData != null && getProperties() != null){
 	    	
+			getProperties().writeProperty("service", conData.getService());
 			getProperties().writeProperty("sid", conData.getSid());
 			getProperties().writeProperty("host", conData.getHost());
 			getProperties().writeProperty("portnumber", conData.getPortNumber());
