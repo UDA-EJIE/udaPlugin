@@ -311,6 +311,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		
 		monitor.setTaskName("Generando mantenimiento...");
 		monitor.worked(1);
+		
 		console.println("Generación del mantenimiento: " + maint.getNameMaint(), Constants.MSG_INFORMATION);
 		console.println("Entidad a mantener: " + entityName, Constants.MSG_INFORMATION);
 		
@@ -325,59 +326,62 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		context.put(Constants.GRID, grid);
 		context.put(Constants.GRID_COLUMNS, filterGridColumnsActivated(gridColumns));
 		
-		final String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
-		
-		String path = "";
-		String pathWar = pathTemplates + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_MAINT;
-		
-		// Añadir las JSP del mantenimiento
-		path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/" + entityName);
-		
-		monitor.setTaskName("Generando JSPs...");
-		
-		ProjectWorker.createFileTemplate(pathWar, path, "maintSimple-includes.jsp", context, entityName + "-includes.jsp");
-		ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.jsp", context, entityName + ".jsp");
-
-		monitor.worked(1);
-		console.println("JSPs generados en el proyecto WAR: " + (String)context.get(Constants.WAR_NAME_PATTERN), Constants.MSG_INFORMATION);
-		console.println("\t" + entityName + "-includes.jsp", Constants.MSG_INFORMATION);
-		console.println("\t" + entityName + ".jsp", Constants.MSG_INFORMATION);
-
-		monitor.setTaskName("Modificando tiles.xml...");
-		console.println("Modificación del fichero de tiles.xml", Constants.MSG_INFORMATION);
-		// Recupera el tiles.xml
-		path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/");
-		File xmlFile = new File(path + "/tiles.xml");
-		//Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
-		editTiles(path, entityName, entityTableName, xmlFile);
-		
-		monitor.worked(1);
-		
-		// Recupera el Workspace
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		// Recupero el proyecto de Statics de UDA
-		IProject projectStatics = root.getProject((String)context.get(Constants.STATICS_PATTERN));
-		
-		if (projectStatics != null){
-			monitor.setTaskName("Generando JavaScript...");
+		try{
 			
-			// Añadir el JS del mantenimiento al proyecto de estáticos
-			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + appCode + "/scripts/" + warName);
-			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.js", context, entityName + ".js");
+			final String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
+			
+			String path = "";
+			String pathWar = pathTemplates + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_MAINT;
+			
+			// Añadir las JSP del mantenimiento
+			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/" + entityName);
+			monitor.setTaskName("Generando JSPs...");
+			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple-includes.jsp", context, entityName + "-includes.jsp");
+			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.jsp", context, entityName + ".jsp");
+			monitor.worked(1);
+			
+			console.println("JSPs generados en el proyecto WAR: " + (String)context.get(Constants.WAR_NAME_PATTERN), Constants.MSG_INFORMATION);
+			console.println("\t" + entityName + "-includes.jsp", Constants.MSG_INFORMATION);
+			console.println("\t" + entityName + ".jsp", Constants.MSG_INFORMATION);
+	
+			monitor.setTaskName("Modificando tiles.xml...");
+			console.println("Modificación del fichero tiles.xml", Constants.MSG_INFORMATION);
+			// Recupera el tiles.xml
+			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/");
+			File xmlFile = new File(path + "/tiles.xml");
+			//Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
+			editTiles(path, entityName, entityTableName, xmlFile);
 			
 			monitor.worked(1);
-			console.println("JavaScript generados en el proyecto de estáticos: " + (String)context.get(Constants.STATICS_PATTERN), Constants.MSG_INFORMATION);
-			console.println("\t" + entityName + ".js", Constants.MSG_INFORMATION);
-			// Refresca el proyecto de Statics
-			ProjectWorker.refresh(projectStatics);
-		}
-		
-		// Refresca el proyecto WAR
-		ProjectWorker.refresh(projectWar);
-		
-		// Visualiza el sumario de tareas
-		this.summary = createSummary(context);
-		
+			
+			// Recupera el Workspace
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			// Recupero el proyecto de Statics de UDA
+			IProject projectStatics = root.getProject((String)context.get(Constants.STATICS_PATTERN));
+			
+			if (projectStatics != null){
+				monitor.setTaskName("Generando JavaScript...");
+				
+				// Añadir el JS del mantenimiento al proyecto de estáticos
+				path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + appCode + "/scripts/" + warName);
+				ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.js", context, entityName + ".js");
+				
+				monitor.worked(1);
+				console.println("JavaScript generado en el proyecto de estáticos: " + (String)context.get(Constants.STATICS_PATTERN), Constants.MSG_INFORMATION);
+				console.println("\t" + entityName + ".js", Constants.MSG_INFORMATION);
+				// Refresca el proyecto de Statics
+				ProjectWorker.refresh(projectStatics);
+			}
+			
+			// Refresca el proyecto WAR
+			ProjectWorker.refresh(projectWar);
+			
+			// Visualiza el sumario de tareas
+			this.summary = createSummary(context);
+		}catch(Exception e){
+			console.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
+		}		
 		console.println("UDA - END", Constants.MSG_INFORMATION);
 	}
 	

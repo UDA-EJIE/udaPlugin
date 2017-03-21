@@ -275,7 +275,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 	private void doFinish(IProgressMonitor monitor, boolean isJPA, IProject projectEARClasses, IProject projectWar, 
 			boolean dataModelCheck, boolean daoCheck, boolean serviceCheck, boolean controllerCheck,boolean annotCheck, 
 			boolean chkXLNets, String chkIdXlNets, List<TreeNode> filterSchema, 
-			ConnectionData conData) throws Exception {
+			ConnectionData conData) throws Exception  {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
@@ -288,160 +288,161 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 		
 		//Lector de BD
 		JDBCMetaDataConfiguration jmdc = null;
-		
-		/**
-		 * EARClasses
-		 */
-		if (projectEARClasses != null){
-			
-			monitor.setTaskName("Generando código para las capa de negocio...");
-			
-			String pathProject =  projectEARClasses.getLocation().toString();
-			String appName = Utilities.getAppName(projectEARClasses.getName()); 
-			
-			if (jmdc==null){
-				jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
-			}
-			
-			/**
-			 * MODEL
-			 */
-			if (dataModelCheck){
-				GenerateCodeWorker.modelExporter(jmdc, pathTemplates, pathProject, isJPA);
-			}
 
+		try{
 			/**
-			 * DAO
+			 * EARClasses
 			 */
-			if (daoCheck){
-				if (!annotCheck){
-					GenerateCodeWorker.daoDIExporter(jmdc, pathTemplates, pathProject,annotCheck);
+			if (projectEARClasses != null){
+				
+				monitor.setTaskName("Generando código para las capa de negocio...");
+				
+				String pathProject =  projectEARClasses.getLocation().toString();
+				String appName = Utilities.getAppName(projectEARClasses.getName()); 
+				
+				if (jmdc==null){
+					jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
 				}
-				GenerateCodeWorker.daoExporter(jmdc, pathTemplates, pathProject, annotCheck, isJPA);
-			}
-			
-			/**
-			 * SERVICE
-			 */
-			if (serviceCheck){
-				GenerateCodeWorker.serviceExporter(jmdc, pathTemplates, pathProject,annotCheck, isJPA);
-				if (!annotCheck){
-					GenerateCodeWorker.serviceDIExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
+				
+				/**
+				 * MODEL
+				 */
+				if (dataModelCheck){
+					GenerateCodeWorker.modelExporter(jmdc, pathTemplates, pathProject, isJPA);
 				}
-				String path = ProjectWorker.createGetFolderPath(projectEARClasses, "src/spring");
-				Map<String, Object> context = new HashMap<String, Object>();
-				if (chkIdXlNets.equals("")){
-					context.put(Constants.CODROLE_PATTERN, "UDA");
-					context.put("codroleAux",  "ROLE_UDA");
-				}else{
-					
-					if (chkIdXlNets.contains("','ROLE")){
-						String firstRole = chkIdXlNets.substring(1,chkIdXlNets.indexOf("',", 0));
-						context.put(Constants.CODROLE_PATTERN, chkIdXlNets);
-						context.put("codroleAux", firstRole);
-					}	else{
-						String firstRole = chkIdXlNets.substring(1,chkIdXlNets.length()-1 );
-						context.put(Constants.CODROLE_PATTERN, chkIdXlNets);
-						context.put("codroleAux",  firstRole);
+	
+				/**
+				 * DAO
+				 */
+				if (daoCheck){
+					if (!annotCheck){
+						GenerateCodeWorker.daoDIExporter(jmdc, pathTemplates, pathProject,annotCheck);
 					}
-					
+					GenerateCodeWorker.daoExporter(jmdc, pathTemplates, pathProject, annotCheck, isJPA);
 				}
-				String pathEARClasses = Activator.getDefault().getPreferenceStore()
-				.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
-				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EARCLASSES;
-				ProjectWorker.copyFile(pathEARClasses, path, "src/spring/security-config.xml.ftl", context);
-			}
-			
-			if (!annotCheck){
-				if (daoCheck && !serviceCheck){
-					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
-						+ "/generateCode/dao/";
-					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
-				} else if (!daoCheck && serviceCheck){
-					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
-						+ "/generateCode/service/";
-					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
-				} else if (daoCheck && serviceCheck){
-					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
-						+ "/generateCode/";
-					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+				
+				/**
+				 * SERVICE
+				 */
+				if (serviceCheck){
+					GenerateCodeWorker.serviceExporter(jmdc, pathTemplates, pathProject,annotCheck, isJPA);
+					if (!annotCheck){
+						GenerateCodeWorker.serviceDIExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
+					}
+					String path = ProjectWorker.createGetFolderPath(projectEARClasses, "src/spring");
+					Map<String, Object> context = new HashMap<String, Object>();
+					if (chkIdXlNets.equals("")){
+						context.put(Constants.CODROLE_PATTERN, "UDA");
+						context.put("codroleAux",  "ROLE_UDA");
+					}else{
+						
+						if (chkIdXlNets.contains("','ROLE")){
+							String firstRole = chkIdXlNets.substring(1,chkIdXlNets.indexOf("',", 0));
+							context.put(Constants.CODROLE_PATTERN, chkIdXlNets);
+							context.put("codroleAux", firstRole);
+						}	else{
+							String firstRole = chkIdXlNets.substring(1,chkIdXlNets.length()-1 );
+							context.put(Constants.CODROLE_PATTERN, chkIdXlNets);
+							context.put("codroleAux",  firstRole);
+						}
+						
+					}
+					String pathEARClasses = Activator.getDefault().getPreferenceStore()
+					.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
+					+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EARCLASSES;
+					ProjectWorker.copyFile(pathEARClasses, path, "src/spring/security-config.xml.ftl", context);
 				}
-			}
-			
-			
-			if (isJPA && (dataModelCheck || daoCheck || serviceCheck)){
-			  GenerateCodeWorker.persistenceExporter(jmdc, pathTemplates, pathProject);
-	    	}
-			
-			monitor.worked(1);
-			consola.println("Código generado para la capa de negocio:", Constants.MSG_INFORMATION);
-			if (dataModelCheck){
-				consola.println("\tModelos -> "+projectEARClasses.getName()+"/com/ejie/" + appName + "/model", Constants.MSG_INFORMATION);	
-			}
-			
-			if (daoCheck){
-				consola.println("\tDAOs -> "+projectEARClasses.getName()+"/com/ejie/" + appName + "/dao", Constants.MSG_INFORMATION);
-			}
-			if (serviceCheck){
-				consola.println("\tServicios -> "+projectEARClasses.getName()+"/com/ejie/" + appName + "/service", Constants.MSG_INFORMATION);
-				if (chkIdXlNets.equals("")){
-					consola.println("\tsecurity-config.xml -> "+projectEARClasses.getName()+"/src/spring", Constants.MSG_INFORMATION);
-				}
-			}	
-			
-			// Actualiza el proyecto al finalizar la ejecución
-			ProjectWorker.refresh(projectEARClasses);
-			try{
-				projectEARClasses.build(IncrementalProjectBuilder.AUTO_BUILD,null);
-				ProjectWorker.refresh(projectEARClasses);
-			}catch(Exception e){
-			}
-		}
-		
-		
-		/**
-		 * WAR
-		 */
-		if (projectWar != null){
-			monitor.setTaskName("Generando código para las capa de presentación...");
-			String pathProject =  projectWar.getLocation().toString();
-			String appName = Utilities.getAppName(projectWar.getName()); 
-			
-			if (jmdc==null){
-				jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
-			}
-			
-			if (controllerCheck){
-				GenerateCodeWorker.controllerExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
-				GenerateCodeWorker.jacksonExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
 				
 				if (!annotCheck){
-					GenerateCodeWorker.controllerDIExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
-					String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
-						+ "/generateCode/controller/";
-					ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/WebContent/WEB-INF/spring/", "app-config.xml", null);
+					if (daoCheck && !serviceCheck){
+						String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+							+ "/generateCode/dao/";
+						ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+					} else if (!daoCheck && serviceCheck){
+						String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+							+ "/generateCode/service/";
+						ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+					} else if (daoCheck && serviceCheck){
+						String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+							+ "/generateCode/";
+						ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/src/", "beanRefContext.xml", null);
+					}
 				}
-
-				//miramos si es entorno ejie
-				if (Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE).equals("true")){
-					GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, chkXLNets, chkIdXlNets);
-				}else{
-					GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, false, chkIdXlNets);
+				
+				
+				if (isJPA && (dataModelCheck || daoCheck || serviceCheck)){
+				  GenerateCodeWorker.persistenceExporter(jmdc, pathTemplates, pathProject);
+		    	}
+				
+				monitor.worked(1);
+				consola.println("Código generado para la capa de negocio:", Constants.MSG_INFORMATION);
+				if (dataModelCheck){
+					consola.println("\tModelos -> "+projectEARClasses.getName()+"/com/ejie/" + appName + "/model", Constants.MSG_INFORMATION);	
 				}
+				
+				if (daoCheck){
+					consola.println("\tDAOs -> "+projectEARClasses.getName()+"/com/ejie/" + appName + "/dao", Constants.MSG_INFORMATION);
+				}
+				if (serviceCheck){
+					consola.println("\tServicios -> "+projectEARClasses.getName()+"/com/ejie/" + appName + "/service", Constants.MSG_INFORMATION);
+					if (chkIdXlNets.equals("")){
+						consola.println("\tsecurity-config.xml -> "+projectEARClasses.getName()+"/src/spring", Constants.MSG_INFORMATION);
+					}
+				}	
+				
+				// Actualiza el proyecto al finalizar la ejecución
+				ProjectWorker.refresh(projectEARClasses);
+				projectEARClasses.build(IncrementalProjectBuilder.AUTO_BUILD,null);
+				ProjectWorker.refresh(projectEARClasses);
 			}
-			monitor.worked(1);
-			consola.println("Código generado para la capa de presentación:", Constants.MSG_INFORMATION);
-			consola.println("\tControllers -> " + projectWar.getName()+"/com/ejie/" + appName + "/control", Constants.MSG_INFORMATION);
-			if (chkIdXlNets.equals("")){
-				consola.println("\tsecurity-config.xml -> " + projectWar.getName() + "/WebContent/WEB-INF/spring", Constants.MSG_INFORMATION);
+			
+			
+			/**
+			 * WAR
+			 */
+			if (projectWar != null){
+				monitor.setTaskName("Generando código para las capa de presentación...");
+				String pathProject =  projectWar.getLocation().toString();
+				String appName = Utilities.getAppName(projectWar.getName()); 
+				
+				if (jmdc==null){
+					jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
+				}
+				
+				if (controllerCheck){
+					GenerateCodeWorker.controllerExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
+					GenerateCodeWorker.jacksonExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
+					
+					if (!annotCheck){
+						GenerateCodeWorker.controllerDIExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
+						String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) 
+							+ "/generateCode/controller/";
+						ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/WebContent/WEB-INF/spring/", "app-config.xml", null);
+					}
+	
+					//miramos si es entorno ejie
+					if (Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE).equals("true")){
+						GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, chkXLNets, chkIdXlNets);
+					}else{
+						GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, false, chkIdXlNets);
+					}
+				}
+				monitor.worked(1);
+				consola.println("Código generado para la capa de presentación:", Constants.MSG_INFORMATION);
+				consola.println("\tControllers -> " + projectWar.getName()+"/com/ejie/" + appName + "/control", Constants.MSG_INFORMATION);
+				if (chkIdXlNets.equals("")){
+					consola.println("\tsecurity-config.xml -> " + projectWar.getName() + "/WebContent/WEB-INF/spring", Constants.MSG_INFORMATION);
+				}
+				// Actualiza el proyecto al finalizar la ejecución
+				ProjectWorker.refresh(projectWar);
 			}
-			// Actualiza el proyecto al finalizar la ejecución
-			ProjectWorker.refresh(projectWar);
-		}
-		
-		// Visualiza el sumario de tareas
-		this.summary = createSummary(chkXLNets);
-		
+			
+			// Visualiza el sumario de tareas
+			this.summary = createSummary(chkXLNets);
+		}catch(Exception e){
+			consola.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
+		}		
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
 	}
 

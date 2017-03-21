@@ -232,7 +232,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			appType = "";
 			category = "";
 		}
-
 		
 		// Contexto del plugin
 		Map<String, Object> context = new HashMap<String, Object>();
@@ -253,36 +252,41 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.WAR_NAME_SHORT_PATTERN, warName);
 		context.put(Constants.PREF_EJIE_PATTERN, Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE));		
 
-		// Recupera el Workspace para crear los proyectos
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		
-		// Crea el proyecto de xxxWAR
-		monitor.setTaskName("Creando el proyecto WAR...");
-		IProject projectWAR = createProjectWAR(root, radJPA, layout, appType, category, context, monitor);
-		monitor.worked(1);
-		consola.println("Proyecto WAR generado.", Constants.MSG_INFORMATION);
-		
-		// Relaciona el proyecto WAR al EAR
-		monitor.setTaskName("Enlazando el WAR a la aplicación...");
-		ProjectWorker.createEARDependency(projectEAR, projectWAR);
-		monitor.worked(1);
-		consola.println("Proyecto WAR enlazado a la aplicación.", Constants.MSG_INFORMATION);
-		
-		// Actualiza la configuración de la aplicación
-		setWarInConfigProject(context);
-		consola.println("Generada la configuración del WAR.", Constants.MSG_INFORMATION);
-		
-		// Actualiza lso estáticos de la aplicación
-		setWarInStaticsProject(context);
-		consola.println("Generada el contenido estático del WAR.", Constants.MSG_INFORMATION);
-		
-		// Actualiza los proyectos al finalizar la ejecución
-		ProjectWorker.refresh(projectWAR);
-		ProjectWorker.refresh(projectEAR);
-		
-		this.summary = createSummary(context);
+		try{
+			// Recupera el Workspace para crear los proyectos
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-		consola.println("UDA - END", Constants.MSG_INFORMATION);
+			// Crea el proyecto de xxxWAR
+			monitor.setTaskName("Creando el proyecto WAR...");
+			IProject projectWAR = createProjectWAR(root, radJPA, layout, appType, category, context, monitor);
+			monitor.worked(1);
+			consola.println("Proyecto WAR generado.", Constants.MSG_INFORMATION);
+			
+			// Relaciona el proyecto WAR al EAR
+			monitor.setTaskName("Enlazando el WAR a la aplicación...");
+			ProjectWorker.createEARDependency(projectEAR, projectWAR);
+			monitor.worked(1);
+			consola.println("Proyecto WAR enlazado a la aplicación.", Constants.MSG_INFORMATION);
+			
+			// Actualiza la configuración de la aplicación
+			setWarInConfigProject(context);
+			consola.println("Generada la configuración del WAR.", Constants.MSG_INFORMATION);
+			
+			// Actualiza lso estáticos de la aplicación
+			setWarInStaticsProject(context);
+			consola.println("Generada el contenido estático del WAR.", Constants.MSG_INFORMATION);
+			
+			// Actualiza los proyectos al finalizar la ejecución
+			ProjectWorker.refresh(projectWAR);
+			ProjectWorker.refresh(projectEAR);
+			
+			this.summary = createSummary(context);
+	
+		}catch(Exception e){
+			consola.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
+		}
+		consola.println("UDA - END", Constants.MSG_INFORMATION);	
 	}
 
 	/**
@@ -345,11 +349,12 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		//Organiza las librerias que debe tener un proyecto EARClasses
 		ProjectWorker.organizeWARLibraries(projectWAR, context, monitor);
 		
+		/*
 		//PMD y CheckStyle
 		path =  projectWAR.getLocation().toString();
 		ProjectWorker.copyFile(pathWar, path, ".pmd", context);
 		ProjectWorker.copyFile(pathWar, path, ".checkstyle", context);
-		
+		*/
 		//Ruta para las plantillas que se deben procesar (.ftl)
 		String pathFileTemplate = projectWAR.getLocation().toString();
 	
@@ -429,7 +434,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
-		
+		/*
 		try {
 			// Añade el nature de PMD al proyecto
 			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
@@ -447,6 +452,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
+		*/
 		
 		//LAYOUTS
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");

@@ -238,21 +238,27 @@ public class GenerateSkeletonWizard extends Wizard implements INewWizard {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
+		
 		Map<String, Object> context = new HashMap<String, Object>();
 		context.put(Constants.EJB_NAME_PATTERN, ejbProyName);
 		context.put(Constants.PACKAGE_PATTERN, packageName);
 		context.put("serviceName", serviceName);
 		context.put("jndiName",jndiName);
 		context.put("isJpa",isJPAEARClasses);
-			
-		// Recupera el Workspace para crear los proyectos
-		String path = earClassesProyPath + Constants.PREF_DEFAULT_BUILD_PATH;
-		List<String[]> metodos = getClasses(packageName, serviceName,path,earProyPath,workspacePath);
-		createSkeletonRemoting(metodos,ejbProyPath,context);
-		createSkeleton(metodos,ejbProyPath,context);
-		editXMLFile(ejbProyPath+ "/ejbModule/META-INF", new File(ejbProyPath+ "/ejbModule/META-INF/weblogic-ejb-jar.xml"),context);
-		this.summary = createSummary(context);
 		
+		try{
+			// Recupera el Workspace para crear los proyectos
+			String path = earClassesProyPath + Constants.PREF_DEFAULT_BUILD_PATH;
+			List<String[]> metodos = getClasses(packageName, serviceName,path,earProyPath,workspacePath);
+			createSkeletonRemoting(metodos,ejbProyPath,context);
+			createSkeleton(metodos,ejbProyPath,context);
+			editXMLFile(ejbProyPath+ "/ejbModule/META-INF", new File(ejbProyPath+ "/ejbModule/META-INF/weblogic-ejb-jar.xml"),context);
+			this.summary = createSummary(context);
+			
+		}catch(Exception e){
+			consola.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
+		}		
 		consola.println(" EJB " + context.get("serviceName") + " del proyecto " + ((String)ejbProyName), Constants.MSG_INFORMATION);
 		consola.println(" generado en " + ((String) context.get(Constants.PACKAGE_PATTERN)).replace(".service", ".remoting"), Constants.MSG_INFORMATION);
 		consola.println("UDA - END", Constants.MSG_INFORMATION);

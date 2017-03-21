@@ -206,7 +206,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 	 * @throws Exception
 	 */
 	private void doFinish(IProgressMonitor monitor, String warName, IProject projectEAR, boolean radSpringJDBC,
-			boolean radJPA, String idSecurity) throws Exception {
+			boolean radJPA, String idSecurity) throws Exception  {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
@@ -224,29 +224,34 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.RADSPRINGJDBC_PATTERN, radSpringJDBC);
 		context.put(Constants.ID_SECURITY, idSecurity);
 
-		// Recupera el Workspace para crear los proyectos
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		
-		// Crea el proyecto de xxxEJB
-		monitor.setTaskName("Creando el módulo EJB...");
-		IProject projectEJB = createProjectEJB(root, context, monitor);
-		monitor.worked(1);
-		consola.println("Módulo EJB generado.", Constants.MSG_INFORMATION);
-		
-		// Relaciona el proyecto EJB al EAR
-		monitor.setTaskName("Enlazando el módulo EJB a la aplicación...");
-		ProjectWorker.linkedReferencesProjects(projectEAR, projectEJB);
-		
-		ProjectWorker.linkedProjectsClasspath(getProject(getCodAppFromEAR(projectEAR)+"EARClasses"),projectEJB);
-		monitor.worked(1);
-		consola.println("Módulo EJB enlazado a la aplicación.", Constants.MSG_INFORMATION);
-
-		// Actualiza los proyectos al finalizar la ejecución
-		ProjectWorker.refresh(projectEJB);
-		ProjectWorker.refresh(projectEAR);
-		
-		this.summary = createSummary(context);
-
+		try{
+			// Recupera el Workspace para crear los proyectos
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			// Crea el proyecto de xxxEJB
+			monitor.setTaskName("Creando el módulo EJB...");
+			IProject projectEJB = createProjectEJB(root, context, monitor);
+			monitor.worked(1);
+			consola.println("Módulo EJB generado.", Constants.MSG_INFORMATION);
+			
+			// Relaciona el proyecto EJB al EAR
+			monitor.setTaskName("Enlazando el módulo EJB a la aplicación...");
+			ProjectWorker.linkedReferencesProjects(projectEAR, projectEJB);
+			
+			ProjectWorker.linkedProjectsClasspath(getProject(getCodAppFromEAR(projectEAR)+"EARClasses"),projectEJB);
+			monitor.worked(1);
+			consola.println("Módulo EJB enlazado a la aplicación.", Constants.MSG_INFORMATION);
+	
+			// Actualiza los proyectos al finalizar la ejecución
+			ProjectWorker.refresh(projectEJB);
+			ProjectWorker.refresh(projectEAR);
+			
+			this.summary = createSummary(context);
+			
+		}catch(Exception e){
+			consola.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
+		}
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
 	}
 
@@ -329,6 +334,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		path = projectEJB.getLocation().toString();
 		ProjectWorker.createFileTemplate(pathEJB+"/ejbModule/META-INF/", path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
 
+		/*
 		// Añade la configuración de PMD
 		path =  projectEJB.getLocation().toString();
 		ProjectWorker.copyFile(pathEJB, path, ".pmd", context);
@@ -340,7 +346,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 			// Añade el nature de PMD al proyecto
 			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
 		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
+			//consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
 		
@@ -349,9 +355,10 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 			ProjectUtilities.addNatureToProject(projectEJB, "net.sf.eclipsecs.core.CheckstyleNature");
 			
 		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
+			//consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
+		*/
 		
 		try {
 			String locationText=projectEJB.getParent().getLocation().toString()+"/"+context.get(Constants.EAR_NAME_PATTERN);
@@ -472,13 +479,12 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		}
 		return found;
 	}*/
+	
 	private IProject getProject(String projectName) {
 
 		IProject projectsEARClasses;
-
 		projectsEARClasses = EarUtilities.getProject(projectName);
 		return projectsEARClasses;
-
 		
 	}
 	

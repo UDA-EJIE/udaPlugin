@@ -89,7 +89,7 @@ public class PojoUtils {
 					&& !tipe.toUpperCase().endsWith("FLOAT")
 					&& !tipe.toUpperCase().endsWith("INTEGER")) {
 				result = "@JsonIgnore";
-				pojo.importType("org.codehaus.jackson.annotate.JsonIgnore");
+				pojo.importType("com.fasterxml.jackson.annotation.JsonIgnore");
 
 			}
 		}
@@ -119,7 +119,7 @@ public class PojoUtils {
 					&& !tipe.toUpperCase().endsWith("FLOAT")
 					&& !tipe.toUpperCase().endsWith("INTEGER")) {
 				result = "@JsonIgnore";
-				pojo.importType("org.codehaus.jackson.annotate.JsonIgnore");
+				pojo.importType("com.fasterxml.jackson.annotation.JsonIgnore");
 
 			}
 		}
@@ -133,7 +133,7 @@ public class PojoUtils {
 		if (tipe.toUpperCase().endsWith("TIMESTAMP")
 				|| tipe.toUpperCase().endsWith("DATE")) {
 			result = "@JsonSerialize(using = JsonDateSerializer.class)";
-			pojo.importType("org.codehaus.jackson.map.annotate.JsonSerialize");
+			pojo.importType("com.fasterxml.jackson.databind.annotation.JsonSerialize");
 			pojo.importType("com.ejie.x38.serialization.JsonDateSerializer");
 		}
 		return result;
@@ -145,7 +145,7 @@ public class PojoUtils {
 		if (tipe.toUpperCase().endsWith("TIMESTAMP")
 				|| tipe.toUpperCase().endsWith("DATE")) {
 			result = "@JsonDeserialize(using = JsonDateDeserializer.class)";
-			pojo.importType("org.codehaus.jackson.map.annotate.JsonDeserialize");
+			pojo.importType("com.fasterxml.jackson.databind.annotation.JsonDeserialize");
 			pojo.importType("com.ejie.x38.serialization.JsonDateDeserializer");
 		}
 		return result;

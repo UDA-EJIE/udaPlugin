@@ -283,64 +283,60 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.LANGUAGES_WITHOUT_QUOTES_PATTERN, languagesWithoutQuotes);
 		context.put(Constants.DEFAULT_LANGUAGE_PATTERN, defaultLanguage);
 		context.put(Constants.WAR_NAME_SHORT_PATTERN, appCode + warName);
-		
-		// Recupera el Workspace para crear los proyectos
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		
-		// Crea el proyecto xxxConfig
-		monitor.setTaskName("Creando proyecto Config...");
-		IProject projectConfig = createProjectConfig(root, context);
-		monitor.worked(1);
-		
-		// Crea el proyecto xxxStatics
-		monitor.setTaskName("Creando proyecto Statics...");
-		IProject projectStatics = createProjectStatics(root, locationCheck, locationText, appType, context, monitor);
-		monitor.worked(1);
-		
-		// Crea el proyecto xxxEARClasses
-		monitor.setTaskName("Creando proyecto EARClasses...");
-		IProject projectEARClasses = createProjectEARClasses(root, radJPA, locationCheck, locationText, context, monitor);
-		monitor.worked(1);
-		
-		// Crea el proyecto de xxxEAR
-		monitor.setTaskName("Creando proyecto EAR...");
-		IProject projectEAR = createProjectEAR(root, locationCheck, locationText, context, appType, monitor);
-		monitor.worked(1);
-		
-		// Crea el proyecto de xxxWAR
-		monitor.setTaskName("Creando proyecto WAR...");
-		IProject projectWAR = createProjectWAR(root, radJPA, locationCheck, locationText, layout, appType, category, context, monitor);
-		monitor.worked(1);
-		IProject projectEJB = null;
-		if (ejbCheck){
-			// Crea el proyecto de xxxEJB
-			monitor.setTaskName("Creando proyecto EJB...");
-			projectEJB = createProjectEJB(root, locationCheck, locationText, context, monitor);
+
+		try{
+			// Recupera el Workspace para crear los proyectos
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			
-			// Relaciona los proyectos al EJB
-			monitor.setTaskName("Enlazando el EJB a la aplicación...");
-			ProjectWorker.linkedReferencesProjects(projectEAR, projectEJB);
+			// Crea el proyecto xxxConfig
+			monitor.setTaskName("Creando proyecto Config...");
+			IProject projectConfig = createProjectConfig(root, context);
 			monitor.worked(1);
 			
-			monitor.setTaskName("Enlazando el EJB a la aplicación...");
-			//08/03/2011
-		//	ProjectWorker.createEARDependency(projectEAR, projectEJB);
-		    ProjectWorker.linkedProjectsClasspath(projectEARClasses,projectEJB);
+			// Crea el proyecto xxxStatics
+			monitor.setTaskName("Creando proyecto Statics...");
+			IProject projectStatics = createProjectStatics(root, locationCheck, locationText, appType, context, monitor);
+			monitor.worked(1);
 			
-		}
-		// Relaciona los proyectos al EAR
-		ProjectWorker.linkedReferencesProjects(projectEAR, projectWAR);
-		ProjectWorker.linkedReferencesProjects(projectEAR, projectEARClasses, "/lib");
-		monitor.setTaskName("Enlazando los proyectos generados...");
-		monitor.worked(1);
-		
-		// Recupera la ruta raiz del proyecto, es donde situamos el pom.xml
-		String pathProject = projectEAR.getLocation().toString();
-		
-		consola.println("DEPENDENCIES TASK - INI", Constants.MSG_INFORMATION);
-		// Ejecutamos el target de la tarea Ant indicado
-		
-		try{
+			// Crea el proyecto xxxEARClasses
+			monitor.setTaskName("Creando proyecto EARClasses...");
+			IProject projectEARClasses = createProjectEARClasses(root, radJPA, locationCheck, locationText, context, monitor);
+			monitor.worked(1);
+			
+			// Crea el proyecto de xxxEAR
+			monitor.setTaskName("Creando proyecto EAR...");
+			IProject projectEAR = createProjectEAR(root, locationCheck, locationText, context, appType, monitor);
+			monitor.worked(1);
+			
+			// Crea el proyecto de xxxWAR
+			monitor.setTaskName("Creando proyecto WAR...");
+			IProject projectWAR = createProjectWAR(root, radJPA, locationCheck, locationText, layout, appType, category, context, monitor);
+			monitor.worked(1);
+			
+			IProject projectEJB = null;
+			if (ejbCheck){
+				// Crea el proyecto de xxxEJB
+				monitor.setTaskName("Creando proyecto EJB...");
+				projectEJB = createProjectEJB(root, locationCheck, locationText, context, monitor);
+				
+				// Relaciona los proyectos EJB
+				monitor.setTaskName("Enlazando el EJB al EAR...");
+				ProjectWorker.linkedReferencesProjects(projectEAR, projectEJB);
+				monitor.worked(1);
+				
+				monitor.setTaskName("Enlazando el EJB al EARClasses...");
+			    ProjectWorker.linkedProjectsClasspath(projectEARClasses,projectEJB);
+			}
+			// Relaciona los proyectos al EAR
+			ProjectWorker.linkedReferencesProjects(projectEAR, projectWAR);
+			ProjectWorker.linkedReferencesProjects(projectEAR, projectEARClasses, "/lib");
+			monitor.setTaskName("Enlazando los proyectos generados...");
+			monitor.worked(1);
+			
+			// Recupera la ruta raiz del proyecto, es donde situamos el pom.xml
+			String pathProject = projectEAR.getLocation().toString();
+			consola.println("DEPENDENCIES TASK - INI", Constants.MSG_INFORMATION);
+			// Ejecutamos el target de la tarea Ant indicado	
 			monitor.setTaskName("Recuperando las librerías, puede tardar algunos minutos...");
 			AntTaskWorker.executeOperation(pathProject, "mavenRunDependencies");
 			
@@ -348,36 +344,38 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				throw new OperationCanceledException("operación cancelada por el usuario");
 			}
 			monitor.worked(1);
-				
-		}catch (Exception e) {
-			consola.println("Error detectado", Constants.MSG_ERROR);
+			consola.println("DEPENDENCIES TASK - END", Constants.MSG_INFORMATION);
+			
+			// Actualiza los proyectos al finalizar la ejecución
+			ProjectWorker.refresh(projectConfig);
+			ProjectWorker.refresh(projectStatics);
+			ProjectWorker.refresh(projectEARClasses);
+			ProjectWorker.refresh(projectWAR);
+			if (ejbCheck){
+				ProjectWorker.refresh(projectEJB);
+			}
+			ProjectWorker.refresh(projectEAR);
+			monitor.worked(1);
+			
+			//Generar sumario si ha generado correctamente
+			this.summary = createSummary(context, ejbCheck);
+		
+		}catch(Exception e){
+			consola.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
 		}
 		
-		consola.println("DEPENDENCIES TASK - END", Constants.MSG_INFORMATION);
-		// Actualiza los proyectos al finalizar la ejecución
-		ProjectWorker.refresh(projectConfig);
-		ProjectWorker.refresh(projectStatics);
-		ProjectWorker.refresh(projectEARClasses);
-		ProjectWorker.refresh(projectWAR);
-		if (ejbCheck){
-			ProjectWorker.refresh(projectEJB);
-		}
-		ProjectWorker.refresh(projectEAR);
-		monitor.worked(1);
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
 		consola.println("Ubicación de logs de la aplicación: " + Constants.UNIDAD_HD + Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log" , Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Para revisar la configuración del log en " + Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
-		consola.println("- el servidor Weblogic Server 10.3.5 ", Constants.MSG_INFORMATION);
-		consola.println("- las reglas de los plugins de calidad: PMD, Checkstyle y Findbugs en las preferencias (Window>Preferences) ", Constants.MSG_INFORMATION);
+		consola.println("- el servidor Weblogic Server 10.3.6 ", Constants.MSG_INFORMATION);
 		consola.println("- la librería de dependencias UDAWLS11Classpath ", Constants.MSG_INFORMATION);
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
 		
-		//Generar sumario si ha generado correctamente
-		this.summary = createSummary(context, ejbCheck);
 	}
 
 	/**
@@ -623,10 +621,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.addSourceProject(projectEARClasses, path, monitor, sourceFolder);
 		
 		//PMD y CheckStyle
-		path =  projectEARClasses.getLocation().toString();
-		ProjectWorker.copyFile(pathEARClasses, path, ".pmd", context);
+		//path =  projectEARClasses.getLocation().toString();
+		//ProjectWorker.copyFile(pathEARClasses, path, ".pmd", context);
 		//ProjectWorker.copyFile(pathEARClasses, path, ".checkstyle", context);
-		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, ".checkstyle", context);
+		//ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, ".checkstyle", context);
 
 		// Genera los ficheros de configuración del proyecto
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "src");
@@ -669,7 +667,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), userLibCpEntry);
-				
+			/*	
 		try {
 			// Añade el nature de PMD al proyecto  
 			//ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.runtime.pmdNature");
@@ -688,7 +686,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
-		
+		*/
 		return projectEARClasses;
 	}
 
@@ -750,10 +748,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.organizeWARLibraries(projectWAR, context, monitor);
 
 		//PMD y CheckStyle
+		/*
 		path =  projectWAR.getLocation().toString();
 		ProjectWorker.copyFile(pathWar, path, ".pmd", context);
 		ProjectWorker.copyFile(pathWar, path, ".checkstyle", context);
-		
+		*/
 		//Ruta para las plantillas que se deben procesar (.ftl)
 		String pathFileTemplate = projectWAR.getLocation().toString();
 	
@@ -839,7 +838,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
-		
+		/*
 		try {
 			// Añade el nature de PMD al proyecto
 			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
@@ -857,7 +856,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
-		
+		*/
 		//LAYOUTS
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
@@ -1059,7 +1058,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 
 		path = projectEJB.getLocation().toString();
 		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
-				
+
+		/*
 		// Añade la configuración de PMD
 		path =  projectEJB.getLocation().toString();
 		ProjectWorker.copyFile(pathEJB, path, ".pmd", context);
@@ -1082,7 +1082,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
-		
+		*/
 		try {
 			ProjectWorker.addEjbModuleEARApplication(locationText+"EAR/EarContent/META-INF/",new File(locationText+"EAR/EarContent/META-INF/application.xml"),context );
 		} catch (Exception e) {

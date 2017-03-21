@@ -40,13 +40,6 @@ public class Utilities {
 	private final static Logger logger = Logger.getLogger(Utilities.class);
 	
 	/**
-	 * Constructor
-	 */
-	private Utilities(){
-		//No es instanciable
-	}
-
-	/**
 	 * Capitaliza una cadena de caracteres
 	 * @param s - cadena de caracteres
 	 * @return

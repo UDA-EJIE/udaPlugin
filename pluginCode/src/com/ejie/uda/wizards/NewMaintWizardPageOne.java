@@ -143,9 +143,9 @@ public class NewMaintWizardPageOne extends WizardPage {
 		connectionGroup.setLayout(new GridLayout(4, true));
 
 		// Campo Service Name de la BBDD
-		Label serviceLabel= new Label(container, SWT.NULL);
+		Label serviceLabel= new Label(connectionGroup, SWT.NULL);
 		serviceLabel.setText("&Service Name:");
-		serviceText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		serviceText = new Text(connectionGroup, SWT.BORDER | SWT.SINGLE);
 		serviceText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(validatePage());

@@ -322,6 +322,7 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
+		
 		Map<String, Object> context = new HashMap<String, Object>();
 		context.put(Constants.EJB_NAME_PATTERN, ejbProyName);
 		context.put(Constants.PACKAGE_PATTERN, packageName);
@@ -343,26 +344,31 @@ public class GenerateStubWizard extends Wizard implements INewWizard {
 		context.put("codapp",codapp);
 		context.put("earClassesPath",earClassesProyPath);
 
-		// Recupera el Workspace para crear los proyectos
-		//IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		if (addNeededLibraries(earProyPath,isEjb3)){
-			if(!isEjb3) {
-				context.put("serviceName", serviceName.replace("Home", ""));
-				List<String[]> metodos = StubClassUtils.getClasses((String) context.get("serviceName"));
-				context.put("methods",metodos);
-			}else{
-				List<String[]> metodos = getClassesEJB3(serviceName.replace("Home", ""),earProyPath);
-				context.put("methods",metodos);
+		try{
+			// Recupera el Workspace para crear los proyectos
+			//IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			if (addNeededLibraries(earProyPath,isEjb3)){
+				if(!isEjb3) {
+					context.put("serviceName", serviceName.replace("Home", ""));
+					List<String[]> metodos = StubClassUtils.getClasses((String) context.get("serviceName"));
+					context.put("methods",metodos);
+				}else{
+					List<String[]> metodos = getClassesEJB3(serviceName.replace("Home", ""),earProyPath);
+					context.put("methods",metodos);
+				}
 			}
+	
+			createAdministrationStub(ejbProyPath,context);
+			createAdministrationStubRemote(ejbProyPath,context);
+			createAppConfigXml(configProyPath,context);
+			editXMLFile(context.get("earClassesPath")+"/src/spring", new File(context.get("earClassesPath")+"/src/spring/service-config.xml"),context);
+			editXMLFileWeblogicEjbJar(ejbProyPath+"/ejbModule/META-INF", new File(ejbProyPath+"/ejbModule/META-INF/weblogic-ejb-jar.xml"),context);
+			this.summary = createSummary(context);
+			
+		}catch(Exception e){
+			consola.println(e.toString(), Constants.MSG_ERROR);
+			throw e;
 		}
-
-		createAdministrationStub(ejbProyPath,context);
-		createAdministrationStubRemote(ejbProyPath,context);
-		createAppConfigXml(configProyPath,context);
-		editXMLFile(context.get("earClassesPath")+"/src/spring", new File(context.get("earClassesPath")+"/src/spring/service-config.xml"),context);
-		editXMLFileWeblogicEjbJar(ejbProyPath+"/ejbModule/META-INF", new File(ejbProyPath+"/ejbModule/META-INF/weblogic-ejb-jar.xml"),context);
-		this.summary = createSummary(context);
-
 		consola.println("Cliente EJB " + context.get("serviceName")+ "Stub del proyecto " + ((String)ejbProyName), Constants.MSG_INFORMATION);
 		consola.println("generado en " + ((String) context.get(Constants.PACKAGE_PATTERN)).replace(".service", ".remoting"), Constants.MSG_INFORMATION);
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
