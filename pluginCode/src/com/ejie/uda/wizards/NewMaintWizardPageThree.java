@@ -112,7 +112,7 @@ public class NewMaintWizardPageThree extends WizardPage {
 		// Campo texto URL
 		urlText = new Text(containerProperties, SWT.BORDER | SWT.SINGLE);
 		urlText.setToolTipText("Define la url a través de la cual se carga el grid");
-		urlText.setText("../[nombre entidad]");
+		urlText.setText("./[nombre entidad]");
 		urlText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2 ,1));
 		
 		// Propiedad alias 

@@ -651,6 +651,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 		columnProperties.setLength(column.getLength());
 		columnProperties.setScale(column.getScale());
 		columnProperties.setPrecision(column.getPrecision());
+		columnProperties.setColumnNameBBDD(column.getNameBBDD());
 		
 		// Si es JPA y clave compueste le añadimos el JPA_ID. o 'entidad'. por delante para acceder a los datos, segun la tecnología de persistencia.
 		if (column.isPrimaryKey() && column.isComposite()){

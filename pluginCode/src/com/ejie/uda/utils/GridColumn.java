@@ -21,6 +21,7 @@ public class GridColumn {
 	// Propiedades de la columna de un grid
 	private String tableName;
 	private String columnName;
+	private String columnNameBBDD;
 
 	// INTEGER, SQLXML, BLOB, VARBINARY, OTHER, DATALINK, LONGNVARCHAR, NCHAR,
 	// LONGVARBINARY, NULL, CLOB, CHAR, VARCHAR, STRUCT, FLOAT, NUMERIC, NCLOB,
@@ -121,6 +122,14 @@ public class GridColumn {
 
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
+	}
+
+	public String getColumnNameBBDD() {
+		return columnNameBBDD;
+	}
+
+	public void setColumnNameBBDD(String columnNameBBDD) {
+		this.columnNameBBDD = columnNameBBDD;
 	}
 
 	/**
