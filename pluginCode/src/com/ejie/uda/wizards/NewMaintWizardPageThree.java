@@ -309,7 +309,7 @@ public class NewMaintWizardPageThree extends WizardPage {
 							// Carga la combo de Ordenación por
 							setColumnsCombo(conData, widButton.getText());
 							//Inicializa el campo de URL
-							urlText.setText("../" + widButton.getText().replace("_", "").toLowerCase());
+							urlText.setText("./" + widButton.getText().replace("_", "").toLowerCase());
 							aliasText.setText(widButton.getText().replace("_", "").toLowerCase());
 				        }
 					}
