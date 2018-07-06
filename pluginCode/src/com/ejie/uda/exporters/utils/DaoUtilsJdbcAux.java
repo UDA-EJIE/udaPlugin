@@ -1,16 +1,16 @@
 /*
  * Copyright 2012 E.J.I.E., S.A.
  *
- * Licencia con arreglo a la EUPL, VersiÃ³n 1.1 exclusivamente (la Â«LicenciaÂ»);
- * Solo podrÃ¡ usarse esta obra si se respeta la Licencia.
+ * Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+ * Solo podrá usarse esta obra si se respeta la Licencia.
  * Puede obtenerse una copia de la Licencia en
  *
  * http://ec.europa.eu/idabc/eupl.html
  *
- * Salvo cuando lo exija la legislaciÃ³n aplicable o se acuerde por escrito,
- * el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
- * SIN GARANTÃ�AS NI CONDICIONES DE NINGÃšN TIPO, ni expresas ni implÃ­citas.
- * VÃ©ase la Licencia en el idioma concreto que rige los permisos y limitaciones
+ * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
+ * el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+ * SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+ * Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
  * que establece la Licencia.
  */
 package com.ejie.uda.exporters.utils;
@@ -37,7 +37,7 @@ import org.hibernate.tool.hbm2x.pojo.BasicPOJOClass;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
 /**
  * 
- * Clases principalmente utilizada en la generaciÃ³n de la capa de acceso a base de datos, la cual contiene las funciones especÃ­ficas para el comportamiento  de la persistencia JDBC
+ * Clases principalmente utilizada en la generación de la capa de acceso a base de datos, la cual contiene las funciones específicas para el comportamiento  de la persistencia JDBC
  *
  */
 @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
@@ -76,7 +76,7 @@ public class DaoUtilsJdbcAux {
 							}
 						}
 					}else if( clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->			
+						//<#-- Primaria compuesta por más de un campo -->			
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while (primarias.hasNext()){
 							Property prim=primarias.next();
@@ -87,7 +87,7 @@ public class DaoUtilsJdbcAux {
 							}
 						}
 					}else if(!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->
+						//<#-- Primaria compuesta por 1 único campo -->
 						Iterator<Column> itAuxCol = propiedad.getColumnIterator();
 						while (itAuxCol.hasNext()){
 							Column aux2= itAuxCol.next();
@@ -138,7 +138,7 @@ public class DaoUtilsJdbcAux {
 							}
 						}
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -172,7 +172,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->		
+						//<#-- Primaria compuesta por 1 único campo -->		
 						String[] auxiliar={ pojo.getDeclarationName().toLowerCase()+"."+ warSupresor.getGetterSignature(propiedad,pojo)+"()","0","","",""};
 						result.add(auxiliar);
 
@@ -234,7 +234,7 @@ public class DaoUtilsJdbcAux {
 				Property propiedad = itPropiedades.next();
 				if (!c2h.isCollection(propiedad)){
 					if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -247,7 +247,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->		
+						//<#-- Primaria compuesta por 1 único campo -->		
 						Iterator<Column> itColumns = propiedad.getColumnIterator();
 						while (itColumns.hasNext()){
 							Column aux2	= 	itColumns.next();				  
@@ -294,7 +294,7 @@ public class DaoUtilsJdbcAux {
 							}					
 						}
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -328,7 +328,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->		
+						//<#-- Primaria compuesta por 1 único campo -->		
 						String[] auxiliar={pojo.getDeclarationName().toLowerCase()+"."+ warSupresor.getGetterSignature(propiedad,pojo)+"()","0","","",""};
 						resultPrimaria.add(auxiliar);
 
@@ -402,7 +402,7 @@ public class DaoUtilsJdbcAux {
 								while (subCamposCol.hasNext()){
 									Column auxCol=subCamposCol.next();
 									String campo = "t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase();
-									//Evitar relaciones sobre sÃ­ mismo
+									//Evitar relaciones sobre sí mismo
 									if (!resultSelectMany.contains(campo)){
 										//resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
 										resultSelectManyNiv2.add(campo);
@@ -412,7 +412,7 @@ public class DaoUtilsJdbcAux {
 						}
 
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -424,7 +424,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->		
+						//<#-- Primaria compuesta por 1 único campo -->		
 						Iterator<Column> itColumns = propiedad.getColumnIterator();
 						while (itColumns.hasNext()){
 							Column aux2	= 	itColumns.next();		
@@ -521,7 +521,7 @@ public class DaoUtilsJdbcAux {
 							}
 						}
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 		  
@@ -533,7 +533,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->		
+						//<#-- Primaria compuesta por 1 único campo -->		
 						Iterator<Column> itColumns = propiedad.getColumnIterator();
 						while (itColumns.hasNext()){
 							Column aux2	= 	itColumns.next();				  
@@ -679,7 +679,7 @@ public class DaoUtilsJdbcAux {
 						mapeosParaClasses = mapeosParaClasses + subMapeo +")";
 
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -828,7 +828,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->
+						//<#-- Primaria compuesta por 1 único campo -->
 						if (finalStringJoins.equals("")|| finalStringJoins.substring(finalStringJoins.length()-1,finalStringJoins.length()).equals("(")){
 							finalStringJoins = finalStringJoins + obtenerCadenaResultSet(pojo, propiedad); 
 						}else{
@@ -867,7 +867,7 @@ public class DaoUtilsJdbcAux {
 				Property propiedad = itPropiedades.next();
 				if (!c2h.isCollection(propiedad)){
 					if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -899,7 +899,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->	
+						//<#-- Primaria compuesta por 1 único campo -->	
 						result.add(pojo.getDeclarationName().toLowerCase()+"."+ warSupresor.getGetterSignature(propiedad,pojo)+"()");
 					}
 				}
@@ -937,7 +937,7 @@ public class DaoUtilsJdbcAux {
 				if (!c2h.isCollection(propiedad)){
 					
 					if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -1100,7 +1100,7 @@ public class DaoUtilsJdbcAux {
 					
 				
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo Propiedad = pk(ida, idb) -->
+						//<#-- Primaria compuesta por más de un campo Propiedad = pk(ida, idb) -->
 						Iterator<Property> colsPkCompuesta = c2h.getProperties((Component)clazz.getIdentifier());
 						while(colsPkCompuesta.hasNext()){
 							Property col = colsPkCompuesta.next(); 
@@ -1112,7 +1112,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 						
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo Propiedad = pk(ida)-->
+						//<#-- Primaria compuesta por 1 único campo Propiedad = pk(ida)-->
 						if (strResulSetPks.equals("")|| strResulSetPks.substring(strResulSetPks.length()-1,strResulSetPks.length()).equals("(")){
 							strResulSetPks = strResulSetPks + obtenerCadenaResultSet(pojo, propiedad); 
 						}else{
@@ -1221,7 +1221,7 @@ public class DaoUtilsJdbcAux {
 								while (subCamposCol.hasNext()){
 									Column auxCol=subCamposCol.next();
 									String campo = "t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase();
-									//Evitar relaciones sobre sÃ­ mismo
+									//Evitar relaciones sobre sí mismo
 									if (!resultSelectMany.contains(campo)){
 										//resultSelectManyNiv2.add("t"+contadorManyToOne+"."+ auxCol.getName()+" " + nombreSubclase.toUpperCase() + ControllerUtils.findHibernateName(auxCol.getName()).toUpperCase());
 										resultSelectManyNiv2.add(campo);
@@ -1231,7 +1231,7 @@ public class DaoUtilsJdbcAux {
 						}
 
 					}else if(clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por mÃ¡s de un campo -->	
+						//<#-- Primaria compuesta por más de un campo -->	
 						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
 						while(primarias.hasNext()){
 							Property prim = primarias.next(); 
@@ -1243,7 +1243,7 @@ public class DaoUtilsJdbcAux {
 						}// while primarias.hasNext()){
 
 					}else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())){
-						//<#-- Primaria compuesta por 1 Ãºnico campo -->		
+						//<#-- Primaria compuesta por 1 único campo -->		
 						Iterator<Column> itColumns = propiedad.getColumnIterator();
 						while (itColumns.hasNext()){
 							Column aux2	= 	itColumns.next();		
