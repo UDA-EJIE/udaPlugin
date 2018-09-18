@@ -366,7 +366,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 				monitor.setTaskName("Generando JavaScript...");
 				
 				// Añadir el JS del mantenimiento al proyecto de estáticos
-				path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + appCode + "/scripts/" + warName);
+				path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + appCode + "/scripts/" + warName);
 				ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.js", context, entityName + ".js");
 				
 				monitor.worked(1);

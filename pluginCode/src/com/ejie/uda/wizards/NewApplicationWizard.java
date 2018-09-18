@@ -477,16 +477,16 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		//i18n
 		String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
 		if (languages.indexOf("es")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_es.json", context);
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "3x/rup/resources/rup.i18n_es.json", context);
 		}
 		if (languages.indexOf("eu")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_eu.json", context);
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "3x/rup/resources/rup.i18n_eu.json", context);
 		}
 		if (languages.indexOf("en")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_en.json", context);
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "3x/rup/resources/rup.i18n_en.json", context);
 		}
 		if (languages.indexOf("fr")!=-1){
-			ProjectWorker.copyFile(pathStatics, path+"/resources", "rup/resources/rup.i18n_fr.json", context);
+			ProjectWorker.copyFile(pathStatics, path+"/resources", "3x/rup/resources/rup.i18n_fr.json", context);
 		}
 	
 		/* xxx */
@@ -496,7 +496,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
 		
 		//favicon.ico
-		ProjectWorker.copyFile(pathStatics, path, "favicon.ico", context);
+		ProjectWorker.copyFile(pathStatics, path, "3x/xxx/favicon.ico", context);
 		
 		//Crear carpeta de statics para la aplicación
 		ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
@@ -505,22 +505,22 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		//Styles
 		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
 		new File (path+"/xxx.css.ftl").delete();
-		ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
+		ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
 	
 		//i18n
 		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
 		RVCopyWorker.deleteDirectoryContent(new File(path), false);
 		if (languages.indexOf("es")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+			ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
 		}
 		if (languages.indexOf("eu")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+			ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
 		}
 		if (languages.indexOf("en")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+			ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
 		}
 		if (languages.indexOf("fr")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+			ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
 		}
 	
 		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
