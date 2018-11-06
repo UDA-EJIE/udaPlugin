@@ -519,7 +519,7 @@ public class ProjectWorker {
 	}
 	
 	/**
-	 * Genera una estructura d ecarpetas pasándole la ruta
+	 * Genera una estructura de carpetas pasándole la ruta
 	 * @param path - ruta de carpetas a generar
 	 * @return true si ha generado correctamente, false ecc.
 	 */
