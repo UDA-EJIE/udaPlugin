@@ -585,28 +585,28 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		if (projectStatics != null && !Utilities.isBlank(warName)){
 
 			//i18n
-			String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
-			String pathRup = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/rup/resources");
+			String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
+			String pathRup = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup/resources");
 			String languages = (String) context.get(Constants.LANGUAGES_PATTERN);
 			if (languages.indexOf("es")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
-				ProjectWorker.copyFile(pathStatics, pathRup, "3x/rup/resources/rup.i18n_es.json", context);
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_es.json", context);
 			}
 			if (languages.indexOf("eu")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
-				ProjectWorker.copyFile(pathStatics, pathRup, "3x/rup/resources/rup.i18n_eu.json", context);
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_eu.json", context);
 			}
 			if (languages.indexOf("en")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
-				ProjectWorker.copyFile(pathStatics, pathRup, "3x/rup/resources/rup.i18n_en.json", context);
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_en.json", context);
 			}
 			if (languages.indexOf("fr")!=-1){
-				ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
-				ProjectWorker.copyFile(pathStatics, pathRup, "3x/rup/resources/rup.i18n_fr.json", context);
+				ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_fr.json", context);
 			}
 			
-			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
-			ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "_layoutLoader.js", context);
+			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
+			ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
 			
 		}
 		// Refresca el proyecto
