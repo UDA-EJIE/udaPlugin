@@ -465,9 +465,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 		
 		/* rup */
-		// Copia la configuración de RUP en la carpeta WebContent/3x/rup del proyecto Statics
-		ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x");
-		String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/rup");
+		// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
+		String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
 		String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
 		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
 		
@@ -490,8 +489,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 	
 		/* xxx */
-		// Copia la configuración específica de la aplicación en la carpeta WebContent/3x/codapp del proyecto Statics
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + (String)context.get(Constants.CODAPP_PATTERN));
+		// Copia la configuración específica de la aplicación en la carpeta WebContent/codapp del proyecto Statics
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN));
 		pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_APLIC;
 		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
 		
@@ -499,34 +498,34 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathStatics, path, "favicon.ico", context);
 		
 		//Crear carpeta de statics para la aplicación
-		ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
+		ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + (String)context.get(Constants.CODAPP_PATTERN) + "/scripts");
 		ProjectWorker.refresh(projectStatics);
 
 		//Styles
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/styles");
 		new File (path+"/xxx.css.ftl").delete();
-		ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
+		ProjectWorker.createFileTemplate(pathStatics, path, "xxx/styles/xxx.css", context, context.get(Constants.CODAPP_PATTERN) + ".css");
 	
 		//i18n
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" +(String)context.get(Constants.CODAPP_PATTERN) + "/resources");
 		RVCopyWorker.deleteDirectoryContent(new File(path), false);
 		if (languages.indexOf("es")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_es.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_es.json");
 		}
 		if (languages.indexOf("eu")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_eu.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_eu.json");
 		}
 		if (languages.indexOf("en")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_en.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_en.json");
 		}
 		if (languages.indexOf("fr")!=-1){
-			ProjectWorker.createFileTemplate(pathStatics, path, "3x/xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
+			ProjectWorker.createFileTemplate(pathStatics, path, "xxx/resources/xxx.i18n_fr.json", context, context.get(Constants.WAR_NAME_SHORT_PATTERN) + ".i18n_fr.json");
 		}
 	
-		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/3x/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
-		ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "_layoutLoader.js", context);
-		ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "mockLoginAjaxPage.js", context);
-		ProjectWorker.createFileTemplate(pathStatics + "/3x", path, "mockLoginPage.js", context);
+		path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
+		ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
+		ProjectWorker.createFileTemplate(pathStatics, path, "mockLoginAjaxPage.js", context);
+		ProjectWorker.createFileTemplate(pathStatics, path, "mockLoginPage.js", context);
 		
 		
 		// Genera los ficheros de configuración del proyecto
