@@ -58,6 +58,7 @@ import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.AntTaskWorker;
 import com.ejie.uda.operations.ProjectWorker;
+import com.ejie.uda.operations.PropertiesWorker;
 import com.ejie.uda.operations.RVCopyWorker;
 import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
@@ -411,6 +412,14 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			//ProjectWorker.createFileTemplate(pathConfig, path, "log4j.properties", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "logback.xml", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "xxx.properties", context, context.get(Constants.CODAPP_PATTERN) + ".properties");
+			//Añadimos si es o no de EJIE
+			String isEjie = "true";
+	        if(!"true".equals(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
+	        	isEjie = "false";
+	        }
+	        PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", path);
+	        pw.writeProperty("isEjie", isEjie);
+	        pw.saveProperties();
 		}	
 				
 		return projectConfig;
@@ -466,6 +475,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		/* rup */
 		// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
+		ProjectWorker.createGetFolderPath(projectStatics, "WebContent");
 		String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
 		String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
 		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
