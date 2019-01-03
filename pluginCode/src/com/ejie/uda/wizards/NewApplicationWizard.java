@@ -402,6 +402,12 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		// Crea la carpeta configuracián del proyecto, donde estarán los .properties
 		path = Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN);
+		//Añadimos si es o no de EJIE
+		String isEjie = "true";
+	    if(!"true".equals(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
+	    	isEjie = "false";
+	    }
+	    context.put("isEjie", isEjie);
 			
 		//Crea el proyecto en la ruta indicada
 		projectConfig = ProjectWorker.createProjectLocation(projectConfig, path, false);
@@ -412,11 +418,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			//ProjectWorker.createFileTemplate(pathConfig, path, "log4j.properties", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "logback.xml", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "xxx.properties", context, context.get(Constants.CODAPP_PATTERN) + ".properties");
-			//Añadimos si es o no de EJIE
-			String isEjie = "true";
-	        if(!"true".equals(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
-	        	isEjie = "false";
-	        }
+			
 	        PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", path);
 	        pw.writeProperty("isEjie", isEjie);
 	        pw.saveProperties();
@@ -795,6 +797,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/mvc-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-core-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/audit-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/validation-config.xml", context);
 		//context.put("listaClases", "");
 		
@@ -868,6 +871,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 		*/
 		//LAYOUTS
+		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
+		context.put("isEjie", pw.readValue("isEjie"));
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);

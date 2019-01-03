@@ -388,6 +388,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		context.put("listaClases", "");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-core-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/audit-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/validation-config.xml", context);
 		//context.put("listaClases", "");
 		
@@ -456,6 +457,8 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		*/
 		
 		//LAYOUTS
+		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
+		context.put("isEjie", pw.readValue("isEjie"));
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);
@@ -606,8 +609,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 				ProjectWorker.copyFile(pathStatics, pathRup, "rup/resources/rup.i18n_fr.json", context);
 			}
 			
-			PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
-			context.put("isEjie", pw.readValue("isEjie"));
 			path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/" + context.get(Constants.CODAPP_PATTERN) + "/scripts/" + context.get(Constants.WAR_NAME_SHORT_PATTERN));
 			ProjectWorker.createFileTemplate(pathStatics, path, "_layoutLoader.js", context);
 			
