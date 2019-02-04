@@ -50,6 +50,7 @@ import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.ProjectWorker;
+import com.ejie.uda.operations.PropertiesWorker;
 import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
 import com.ejie.uda.utils.Utilities;
@@ -387,6 +388,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		context.put("listaClases", "");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-core-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/audit-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/validation-config.xml", context);
 		//context.put("listaClases", "");
 		
@@ -455,6 +457,8 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		*/
 		
 		//LAYOUTS
+		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
+		context.put("isEjie", pw.readValue("isEjie"));
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);

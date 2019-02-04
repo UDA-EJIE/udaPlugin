@@ -58,6 +58,7 @@ import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import com.ejie.uda.Activator;
 import com.ejie.uda.operations.AntTaskWorker;
 import com.ejie.uda.operations.ProjectWorker;
+import com.ejie.uda.operations.PropertiesWorker;
 import com.ejie.uda.operations.RVCopyWorker;
 import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
@@ -401,6 +402,12 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		// Crea la carpeta configuracián del proyecto, donde estarán los .properties
 		path = Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN);
+		//Añadimos si es o no de EJIE
+		String isEjie = "true";
+	    if(!"true".equals(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
+	    	isEjie = "false";
+	    }
+	    context.put("isEjie", isEjie);
 			
 		//Crea el proyecto en la ruta indicada
 		projectConfig = ProjectWorker.createProjectLocation(projectConfig, path, false);
@@ -411,6 +418,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			//ProjectWorker.createFileTemplate(pathConfig, path, "log4j.properties", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "logback.xml", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "xxx.properties", context, context.get(Constants.CODAPP_PATTERN) + ".properties");
+			
+	        PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", path);
+	        pw.writeProperty("isEjie", isEjie);
+	        pw.saveProperties();
 		}	
 				
 		return projectConfig;
@@ -466,6 +477,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		/* rup */
 		// Copia la configuración de RUP en la carpeta WebContent/rup del proyecto Statics
+		ProjectWorker.createGetFolderPath(projectStatics, "WebContent");
 		String path = ProjectWorker.createGetFolderPath(projectStatics, "WebContent/rup");
 		String pathSource = pathStatics + Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_STATICS_RUP;
 		RVCopyWorker.copyDirectory(new File(pathSource), new File(path));
@@ -785,6 +797,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/mvc-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/security-core-config.xml", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/audit-config.xml", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/spring/validation-config.xml", context);
 		//context.put("listaClases", "");
 		
@@ -858,6 +871,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 		*/
 		//LAYOUTS
+		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
+		context.put("isEjie", pw.readValue("isEjie"));
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);
