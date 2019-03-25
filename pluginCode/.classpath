@@ -11,5 +11,8 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/ejb-api-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee-1.1.105-v200709122200.jar"/>
+	<classpathentry kind="lib" path="lib/freemarker-2.3.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
