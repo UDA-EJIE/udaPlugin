@@ -1,2 +1,4 @@
 .project
 bin/
+pluginCode/.settings/
+pluginCode/.classpath
