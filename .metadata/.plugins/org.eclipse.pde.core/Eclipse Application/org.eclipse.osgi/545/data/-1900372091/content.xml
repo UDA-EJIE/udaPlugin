@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<repository name='update site: http://jope.ow2.org/update/jope/' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1554970680526'/>
+    <property name='site.checksum' value='1760146970'/>
+  </properties>
+  <references size='2'>
+    <repository uri='http://jope.ow2.org/update/jope/' url='http://jope.ow2.org/update/jope/' type='1' options='0'/>
+    <repository uri='http://jope.ow2.org/update/jope/' url='http://jope.ow2.org/update/jope/' type='0' options='0'/>
+  </references>
+  <units size='9'>
+    <unit id='org.ow2.jonas.wtp.adapter' version='5.1.0' singleton='false'>
+      <update id='org.ow2.jonas.wtp.adapter' range='[0.0.0,5.1.0)' severity='0'/>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.partial.iu' value='true'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter' version='5.1.0'/>
+        <provided namespace='osgi.bundle' name='org.ow2.jonas.wtp.adapter' version='5.1.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.ow2.jonas.wtp.adapter' version='5.1.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.ow2.jonas.wtp.adapter&#xA;Bundle-Version: 5.1.0&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter' version='5.1.2' singleton='false'>
+      <update id='org.ow2.jonas.wtp.adapter' range='[0.0.0,5.1.2)' severity='0'/>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.partial.iu' value='true'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter' version='5.1.2'/>
+        <provided namespace='osgi.bundle' name='org.ow2.jonas.wtp.adapter' version='5.1.2'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.ow2.jonas.wtp.adapter' version='5.1.2'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.ow2.jonas.wtp.adapter&#xA;Bundle-Version: 5.1.2&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter.feature.group' version='5.1.0' singleton='false'>
+      <update id='org.ow2.jonas.wtp.adapter.feature.group' range='[0.0.0,5.1.0)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Jonas WTP Adapter'/>
+        <property name='org.eclipse.equinox.p2.description' value='JOPE (JOnAS Plugin for Eclipse) is an open source JOnAS plugin for Eclipse.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://jope.ow2.org/'/>
+        <property name='org.eclipse.equinox.p2.provider' value='OW2'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.group' version='5.1.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter' range='[5.1.0,5.1.0]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.ui' range='[5.1.0,5.1.0]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.jar' range='[5.1.0,5.1.0]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://jonas.objectweb.org/license.html' url='http://jonas.objectweb.org/license.html'>
+          JOnAS is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License (LGPL) as published by the Free Software Foundation; either version 2.1 of the license, or (at your option) any later version.
+        </license>
+      </licenses>
+      <copyright uri='http://jope.ow2.org/' url='http://jope.ow2.org/'>
+        JOnAS: Java(TM) Open Application Server&#xA;JOPE: JOnAS Plugin for Eclipse&#xA;&#xA;Copyright (C) 2007-2009 Bull S.A.S.
+      </copyright>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter.feature.group' version='5.1.2' singleton='false'>
+      <update id='org.ow2.jonas.wtp.adapter.feature.group' range='[0.0.0,5.1.2)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Jonas WTP Adapter'/>
+        <property name='org.eclipse.equinox.p2.description' value='JOPE (JOnAS Plugin for Eclipse) is an open source JOnAS plugin for Eclipse.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://jope.ow2.org/'/>
+        <property name='org.eclipse.equinox.p2.provider' value='OW2'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.group' version='5.1.2'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter' range='[5.1.2,5.1.2]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.ui' range='[5.1.2,5.1.2]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.jar' range='[5.1.2,5.1.2]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://jonas.objectweb.org/license.html' url='http://jonas.objectweb.org/license.html'>
+          JOnAS is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License (LGPL) as published by the Free Software Foundation; either version 2.1 of the license, or (at your option) any later version.
+        </license>
+      </licenses>
+      <copyright uri='http://jope.ow2.org/' url='http://jope.ow2.org/'>
+        JOnAS: Java(TM) Open Application Server&#xA;JOPE: JOnAS Plugin for Eclipse&#xA;&#xA;Copyright (C) 2007-2011 Bull S.A.S.
+      </copyright>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter.ui' version='5.1.0' singleton='false'>
+      <update id='org.ow2.jonas.wtp.adapter.ui' range='[0.0.0,5.1.0)' severity='0'/>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.partial.iu' value='true'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.ui' version='5.1.0'/>
+        <provided namespace='osgi.bundle' name='org.ow2.jonas.wtp.adapter.ui' version='5.1.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.ow2.jonas.wtp.adapter.ui' version='5.1.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.ow2.jonas.wtp.adapter.ui&#xA;Bundle-Version: 5.1.0&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter.ui' version='5.1.2' singleton='false'>
+      <update id='org.ow2.jonas.wtp.adapter.ui' range='[0.0.0,5.1.2)' severity='0'/>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.partial.iu' value='true'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.ui' version='5.1.2'/>
+        <provided namespace='osgi.bundle' name='org.ow2.jonas.wtp.adapter.ui' version='5.1.2'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.ow2.jonas.wtp.adapter.ui' version='5.1.2'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.ow2.jonas.wtp.adapter.ui&#xA;Bundle-Version: 5.1.2&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='http://jope.ow2.org/update/jope/site.xml.org.eclipse.wst.server.core.serverAdapter' version='1.0.0.7J33cJintL'>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='JOnAS Server Adapter'/>
+        <property name='org.eclipse.equinox.p2.description' value='Adds the OW2 JOnAS Server Adapter to Eclipse.'/>
+        <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='http://jope.ow2.org/update/jope/site.xml.org.eclipse.wst.server.core.serverAdapter' version='1.0.0.7J33cJintL'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.group' range='[5.1.0,5.1.0]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.group' range='[5.1.2,5.1.2]'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter.feature.jar' version='5.1.0'>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Jonas WTP Adapter'/>
+        <property name='org.eclipse.equinox.p2.description' value='JOPE (JOnAS Plugin for Eclipse) is an open source JOnAS plugin for Eclipse.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://jope.ow2.org/'/>
+        <property name='org.eclipse.equinox.p2.provider' value='OW2'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.jar' version='5.1.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.ow2.jonas.wtp.adapter' version='5.1.0'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.ow2.jonas.wtp.adapter' version='5.1.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://jonas.objectweb.org/license.html' url='http://jonas.objectweb.org/license.html'>
+          JOnAS is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License (LGPL) as published by the Free Software Foundation; either version 2.1 of the license, or (at your option) any later version.
+        </license>
+      </licenses>
+      <copyright uri='http://jope.ow2.org/' url='http://jope.ow2.org/'>
+        JOnAS: Java(TM) Open Application Server&#xA;JOPE: JOnAS Plugin for Eclipse&#xA;&#xA;Copyright (C) 2007-2009 Bull S.A.S.
+      </copyright>
+    </unit>
+    <unit id='org.ow2.jonas.wtp.adapter.feature.jar' version='5.1.2'>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Jonas WTP Adapter'/>
+        <property name='org.eclipse.equinox.p2.description' value='JOPE (JOnAS Plugin for Eclipse) is an open source JOnAS plugin for Eclipse.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://jope.ow2.org/'/>
+        <property name='org.eclipse.equinox.p2.provider' value='OW2'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.ow2.jonas.wtp.adapter.feature.jar' version='5.1.2'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.ow2.jonas.wtp.adapter' version='5.1.2'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.ow2.jonas.wtp.adapter' version='5.1.2'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://jonas.objectweb.org/license.html' url='http://jonas.objectweb.org/license.html'>
+          JOnAS is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License (LGPL) as published by the Free Software Foundation; either version 2.1 of the license, or (at your option) any later version.
+        </license>
+      </licenses>
+      <copyright uri='http://jope.ow2.org/' url='http://jope.ow2.org/'>
+        JOnAS: Java(TM) Open Application Server&#xA;JOPE: JOnAS Plugin for Eclipse&#xA;&#xA;Copyright (C) 2007-2011 Bull S.A.S.
+      </copyright>
+    </unit>
+  </units>
+</repository>

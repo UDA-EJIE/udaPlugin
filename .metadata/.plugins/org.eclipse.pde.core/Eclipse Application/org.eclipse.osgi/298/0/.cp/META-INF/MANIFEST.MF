@@ -1,0 +1,79 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.eclipse.cvs; singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: genie.releng
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/platfo
+ rm/eclipse.platform.releng.git;path="bundles/org.eclipse.cvs";tag="M2
+ 0160829-0800";commitId=ef68ea8bc76bc9719e7add8d1f9f6c886e702148
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Bundle-Version: 1.4.300.v20160907-1200
+Bundle-Localization: plugin
+Created-By: Apache Maven 3.3.3
+Build-Jdk: 1.8.0_51
+
+Name: about.properties
+SHA-256-Digest: L2wjSfZMZn61D1KVmpR2NukdW/bmKLgH4vslJVwx724=
+
+Name: plugin.xml
+SHA-256-Digest: 5znluRdHeOAie1WllvcM2aOj7d/jHkyg2NLo5We93Uc=
+
+Name: about.html
+SHA-256-Digest: 0RM1x9lTJa7T8YkysaegPuBIeaEvSZypRDfXoMpsJAU=
+
+Name: images/topiclabel/ov_teamsup48.gif
+SHA-256-Digest: lYHEzY0MKzKf7Zv6z3ANvV7bzdu9+0uGXzQhZDGPmJk=
+
+Name: images/topiclabel/tu_merge48.gif
+SHA-256-Digest: lYHEzY0MKzKf7Zv6z3ANvV7bzdu9+0uGXzQhZDGPmJk=
+
+Name: intro/css/overview.css
+SHA-256-Digest: RzOPB0oGCl4FjV6QgpfmoaTRquRtAIkmxJEGYpZ07z8=
+
+Name: intro/css/overview.properties
+SHA-256-Digest: m+bN1eFvqCfaSCx72viU4z3TPu9PTXWLB31q5mGhZ+k=
+
+Name: images/topiclabel/tu_checkout48_hov.gif
+SHA-256-Digest: f+HOGFo4dSiP5q8fMyEJljS5qIQvxGNQQolLZ+iMnCQ=
+
+Name: eclipse32.png
+SHA-256-Digest: ktA85ZDd0SYDxbcnnzVpnpATbdHzzTvB7x6Y8FkhCS4=
+
+Name: intro/overviewExtensionContent.xml
+SHA-256-Digest: 9P6Vwz78zofubIJMTGZVYV9YplN/zeV51WgA+dTucXE=
+
+Name: images/topiclabel/ov_teamsup48_hov.gif
+SHA-256-Digest: oAYl8Tribhd1NTIeNAtWq6RWg5lJmPf7IX+HBCRx8sc=
+
+Name: images/topiclabel/tu_checkout48.gif
+SHA-256-Digest: PD+TQNKyM90b0HvBc0iJZGEQxR4Xj+Q7l8qSVyDUPhk=
+
+Name: about.mappings
+SHA-256-Digest: uBjdvQNNt1IoxgZSAaOkLdGsz0Mf7T8xknCzXEc5IKU=
+
+Name: images/topiclabel/tu_merge48_hov.gif
+SHA-256-Digest: oAYl8Tribhd1NTIeNAtWq6RWg5lJmPf7IX+HBCRx8sc=
+
+Name: intro/css/tutorials.css
+SHA-256-Digest: YbTwGSBh/N+OGBTRQq21OCsPvl4vXrTTuhSJUnMtBuo=
+
+Name: cheatsheets/cvs_merge.xml
+SHA-256-Digest: cDVIX0wk9+BpE3UWojDjjnMO+rcFYf2FUTb9z1MF9bs=
+
+Name: about.ini
+SHA-256-Digest: 006hdcevcSJi4Hb/eZPJSlMf+cFQbMRD/XZoHDR0rLM=
+
+Name: plugin.properties
+SHA-256-Digest: VfQJ6ri1lK4mOKUWDK2J2doW/NIPr7VjptzZp0qZKq0=
+
+Name: intro/tutorialsExtensionContent.xml
+SHA-256-Digest: WspdhIkCIYqissshkCoxMljSmaFU6WtbcT377zANK+Q=
+
+Name: intro/css/tutorials.properties
+SHA-256-Digest: 8EkOpVm4U0+58i/TFy323ERqsrJLJpVDhmqDrWSY630=
+
+Name: cheatsheets/cvs_checkout.xml
+SHA-256-Digest: WWmQO8mEh7YvnKs9yMbWbWnGQolfdrf9Ef7Fp+Iwyoc=
+
