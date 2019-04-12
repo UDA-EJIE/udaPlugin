@@ -2,3 +2,4 @@
 bin/
 pluginCode/.settings/
 pluginCode/.classpath
+.metadata/
