@@ -223,7 +223,7 @@ public class DaoUtilsJdbcAux {
 		}
 	}
 	
-	public List<String> getWherePk(POJOClass pojo, Configuration cfg){
+	public List<String> getWherePk(POJOClass pojo, Configuration cfg, Boolean WhiteList){
 
 		List<String> result=new ArrayList<String>();
 		try{
@@ -242,7 +242,11 @@ public class DaoUtilsJdbcAux {
 							while (iterador.hasNext()){
 								Column aux2=iterador.next();
 								//where = where + aux2.getName()+ " = ? ";
-								result.add(aux2.getName());
+								if(WhiteList) {
+									result.add(aux2.getName().replaceAll("_", ""));
+								} else {
+									result.add(aux2.getName());
+								}
 							}// while (iterador.hasNext()){
 						}// while primarias.hasNext()){
 
@@ -251,7 +255,11 @@ public class DaoUtilsJdbcAux {
 						Iterator<Column> itColumns = propiedad.getColumnIterator();
 						while (itColumns.hasNext()){
 							Column aux2	= 	itColumns.next();				  
-							result.add(aux2.getName());
+							if(WhiteList) {
+								result.add(aux2.getName().replaceAll("_", ""));
+							} else {
+								result.add(aux2.getName());
+							}
 						}// while (itColumns.hasNext()){
 					}							
 				}
