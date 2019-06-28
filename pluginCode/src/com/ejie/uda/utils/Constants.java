@@ -143,6 +143,10 @@ public class Constants {
 	public static final int MSG_ERROR = 2;
 	public static final int MSG_WARNING = 3;
 	
+	// Mantenimiento
+	public static final String TILES_CONFIG_CONFIG = "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN";
+	public static final String TILES_CONFIG_DTD = "http://tiles.apache.org/dtds/tiles-config_3_01.dtd";
+	
 	// Otros
 	public static final String SAVE = "SAVE";
 	public static final String SAVE_REPEAT = "SAVE_REPEAT";

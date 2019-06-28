@@ -536,8 +536,8 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 					
 					Transformer trans = transfac.newTransformer();
 					// Añade las propiedades
-					trans.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN");
-					trans.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "http://tiles.apache.org/dtds/tiles-config_2_1.dtd");
+					trans.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, Constants.TILES_CONFIG_CONFIG);
+					trans.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, Constants.TILES_CONFIG_DTD);
 					trans.setOutputProperty(OutputKeys.INDENT, "yes");
 					trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 					
