@@ -594,7 +594,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 								}
 								columnComposite.setComposite(true);
 								// Crea las propiedades para cada columna
-								createColumnProperties(columnComposite, entity);
+								createColumnProperties(columnComposite, entity, conData);
 							}
 						}else if (!column.isComposite()){
 							if (column.isPrimaryKey()){
@@ -602,7 +602,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 								primaryKeys.add(column.getName());
 							}
 							// Crea las propiedades para cada columna
-							createColumnProperties(column, entity);
+							createColumnProperties(column, entity, conData);
 						}
 					}
 				}
@@ -639,7 +639,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 	/**
 	 * Genera las propiedades para cada columna de la tabla
 	 */
-	private void createColumnProperties(TreeNode column, String entity){
+	private void createColumnProperties(TreeNode column, String entity, ConnectionData conData){
 
 		GridColumn columnProperties = new GridColumn();
 		// Inicializa con los valores por defecto
@@ -664,7 +664,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 			}
 		}else{
 			if (!isJPAProjectWar(getIProjectWARPageOne()) && !Utilities.isBlank(column.getReferenceClass())){
-				columnProperties.setName(column.getReferenceClass() + "." + column.getName());				
+				columnProperties.setName(column.getReferenceClass() + "." + DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));				
 			}else{
 				columnProperties.setName(column.getName());
 			}
