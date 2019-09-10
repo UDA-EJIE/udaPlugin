@@ -658,13 +658,15 @@ public class NewMaintWizardPageFour extends WizardPage {
 			if (isJPAProjectWar(getIProjectWARPageOne())){
 				columnProperties.setName("JPA_ID." + column.getName());				
 			}else if (!Utilities.isBlank(column.getReferenceClass())){
-				columnProperties.setName(column.getReferenceClass() + "." + column.getName());
+				columnProperties.setName(column.getReferenceClass() + "." + DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
+				columnProperties.setColumnName(DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
 			}else{
 				columnProperties.setName(column.getName());
 			}
 		}else{
 			if (!isJPAProjectWar(getIProjectWARPageOne()) && !Utilities.isBlank(column.getReferenceClass())){
-				columnProperties.setName(column.getReferenceClass() + "." + DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));				
+				columnProperties.setName(column.getReferenceClass() + "." + DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
+				columnProperties.setColumnName(DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
 			}else{
 				columnProperties.setName(column.getName());
 			}
