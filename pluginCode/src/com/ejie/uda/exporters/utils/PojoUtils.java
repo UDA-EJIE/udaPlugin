@@ -16,9 +16,7 @@
 package com.ejie.uda.exporters.utils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -117,7 +115,8 @@ public class PojoUtils {
 					&& !tipe.toUpperCase().endsWith("INT")
 					&& !tipe.toUpperCase().endsWith("DOUBLE")
 					&& !tipe.toUpperCase().endsWith("FLOAT")
-					&& !tipe.toUpperCase().endsWith("INTEGER")) {
+					&& !tipe.toUpperCase().endsWith("INTEGER")
+					&& !tipe.startsWith(pojo.getPackageName())) {
 				result = "@JsonIgnore";
 				pojo.importType("com.fasterxml.jackson.annotation.JsonIgnore");
 
