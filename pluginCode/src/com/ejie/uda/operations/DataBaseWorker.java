@@ -386,4 +386,29 @@ public class DataBaseWorker {
 		return columns;
 	}
 	
+public static String getReferencedTableNodePK(ConnectionData conData, String tableName){
+		TreeNode columns = null;
+		
+		TreeNode schema = getSchemaTree(conData);
+		
+		List<TreeNode> tables = schema.getChildren();
+		
+		if (tables != null && !tables.isEmpty()){
+			for (TreeNode tableNode : tables) {
+				if (tableName.toUpperCase().equals(tableNode.getName().toUpperCase())){
+					columns = tableNode;
+					break;
+				}
+			}
+		}
+		
+		for (TreeNode column : columns.getChildren()) {
+			if(column.isPrimaryKey()) {
+				return column.getName();
+			}
+		}
+		
+		return null;
+	}
+	
 }
