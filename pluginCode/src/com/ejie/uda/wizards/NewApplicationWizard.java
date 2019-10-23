@@ -472,6 +472,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		} catch (Exception e) {
 			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
+			consola.println("StackTrace: " + e.getStackTrace(), Constants.MSG_ERROR);
 			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
 		

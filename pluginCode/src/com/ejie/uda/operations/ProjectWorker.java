@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -62,7 +62,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ejie.uda.utils.Constants;
-import com.ejie.uda.utils.HaltProgressMonitor;
 import com.ejie.uda.utils.Utilities;
 
 public class ProjectWorker {
@@ -277,15 +276,7 @@ public class ProjectWorker {
 	 * @throws CoreException
 	 */
 	public static void refresh(IProject project) throws CoreException {
-		HaltProgressMonitor m = new HaltProgressMonitor();
-		project.refreshLocal(IResource.DEPTH_INFINITE, m);
-		try {
-			while (!m.isDone()) {
-				Thread.sleep(300);
-			}
-		} catch (InterruptedException e) {
-			//consola.println("Error al refrescar proyecto: " + e.getMessage(),  Constants.MSG_ERROR);
-		}
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 	
 	/**
@@ -354,7 +345,7 @@ public class ProjectWorker {
             listEntries.add(JavaCore.newContainerEntry(new Path(containerEAR)));
             listEntries.add(JavaCore.newContainerEntry(new Path(Constants.WEBLOGIC_LIB_SYS)));
             IClasspathEntry[] newEntries = listEntries.toArray(new IClasspathEntry[listEntries.size()]);
-            javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor,1));
+            javaProject.setRawClasspath(newEntries, SubMonitor.convert(monitor,1));
            
 		}
 	}
@@ -384,7 +375,7 @@ public class ProjectWorker {
             listEntries.add(entryClassFolder);
             
             IClasspathEntry[] newEntries = listEntries.toArray(new IClasspathEntry[listEntries.size()]);
-            javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor,1));    
+            javaProject.setRawClasspath(newEntries, SubMonitor.convert(monitor,1));    
 		}
 	}
 	 public static void addEjbModuleEARApplication(String path, File xmlFile,Map<String, Object> context){
@@ -465,7 +456,7 @@ public class ProjectWorker {
             listEntries.add(JavaCore.newContainerEntry(new Path(containerEAR)));
             //listEntries.add(ne);
             IClasspathEntry[] newEntries = listEntries.toArray(new IClasspathEntry[listEntries.size()]);
-            javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor,1));    
+            javaProject.setRawClasspath(newEntries, SubMonitor.convert(monitor,1));    
 		}
 	}
 
