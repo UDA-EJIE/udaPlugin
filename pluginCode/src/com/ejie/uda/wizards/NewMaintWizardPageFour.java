@@ -16,12 +16,15 @@
 package com.ejie.uda.wizards;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -49,6 +52,8 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import com.ejie.uda.operations.DataBaseWorker;
 import com.ejie.uda.utils.ConnectionData;
+import com.ejie.uda.utils.ConsoleLogger;
+import com.ejie.uda.utils.Constants;
 import com.ejie.uda.utils.ContentProvider;
 import com.ejie.uda.utils.GridColumn;
 import com.ejie.uda.utils.TableLabelProvider;
@@ -1027,25 +1032,35 @@ public class NewMaintWizardPageFour extends WizardPage {
 	 */
 	@Override
 	public void setVisible(boolean visible) {
-		super.setVisible(visible);
+		try {
+			super.setVisible(visible);
 
-		// Visualiza los datos de reglas de edición 
-		// si el check de Validación cliente (pagina 2 del wizard) está marcado 
-		boolean isvc = isValidacionesClienteChecked();
-		
-		Composite comp = (Composite)tabFolder.getTabList()[2];
-	    
-		// Deshabilitar-habilitar los controles
-	    for (Control child : comp.getChildren()){
-  		  child.setEnabled(isvc);
-	    }
+			// Visualiza los datos de reglas de edición 
+			// si el check de Validación cliente (pagina 2 del wizard) está marcado 
+			boolean isvc = isValidacionesClienteChecked();
+			
+			Control[] composites = (Control[])tabFolder.getTabList();
+			
+			// Deshabilitar-habilitar los controles
+			for (Control comp : composites) {
+				for (Control child : ((Composite)comp).getChildren()){
+					child.setEnabled(isvc);
+				}				
+			}
 
-	    // Deshabilitar-habilitar Labels
-		edithiddenEditRulesLabel.setEnabled(isvc);
-		requiredEditRulesLabel.setEnabled(isvc);
-		typeEditRulesLabel.setEnabled(isvc);
-		minValueEditRulesLabel.setEnabled(isvc);
-		maxValueEditRulesLabel.setEnabled(isvc);
+			// Deshabilitar-habilitar Labels
+			edithiddenEditRulesLabel.setEnabled(isvc);
+			requiredEditRulesLabel.setEnabled(isvc);
+			typeEditRulesLabel.setEnabled(isvc);
+			minValueEditRulesLabel.setEnabled(isvc);
+			maxValueEditRulesLabel.setEnabled(isvc);
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			ConsoleLogger consola = ConsoleLogger.getDefault();
+			consola.println(sw.toString(), Constants.MSG_ERROR);
+			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + e.getLocalizedMessage());
+		}
 	}
 
 }
