@@ -29,5 +29,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/freemarker-2.3.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy-r8-21122004.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

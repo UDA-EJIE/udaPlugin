@@ -47,6 +47,7 @@ Bundle-ClassPath: .,
   lib/log4j-1.2.15.jar,
   lib/slf4j-api-1.6.1.jar,
   lib/slf4j-log4j12-1.6.1.jar,
-  lib/ojdbc6.jar
+  lib/ojdbc6.jar,
+  lib/jtidy-r8-21122004.jar
 Bundle-ActivationPolicy: lazy
 
