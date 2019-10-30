@@ -100,6 +100,7 @@ public class Constants {
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB= "/ejb";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_MAINT= "/maint";
 	public static final String PERSISTENCE_LOCALPATH = "/EarContent/META-INF/weblogic-application.xml";
+	public static final String PERSISTENCE_DESC_LOCALPATH = "/EarContent/META-INF/application.xml";
 	public static final String WEBLOGIC_LIB_APP = "oracle.eclipse.tools.weblogic.lib.application";
 	public static final String WEBLOGIC_LIB_SYS = "oracle.eclipse.tools.weblogic.lib.system";
 	public static final String DEPLOY_PATH = "org.eclipse.wst.common.component";

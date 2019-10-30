@@ -15,9 +15,14 @@
 */
 package com.ejie.uda.operations;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +32,15 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -50,17 +58,16 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jem.util.emf.workbench.ProjectUtilities;
-import org.eclipse.jst.j2ee.application.internal.operations.AddComponentToEnterpriseApplicationDataModelProvider;
 import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
 import org.eclipse.wst.common.componentcore.ComponentCore;
-import org.eclipse.wst.common.componentcore.datamodel.properties.ICreateReferenceComponentsDataModelProperties;
 import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;
 import org.eclipse.wst.common.componentcore.resources.IVirtualReference;
-import org.eclipse.wst.common.frameworks.datamodel.DataModelFactory;
-import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
+import com.ejie.uda.utils.ConsoleLogger;
 import com.ejie.uda.utils.Constants;
 import com.ejie.uda.utils.Utilities;
 
@@ -303,15 +310,53 @@ public class ProjectWorker {
 	 * @throws ExecutionException
 	 */
 	public static void createEARDependency(IProject earProject, IProject childProject) throws ExecutionException {
-		final IDataModel dm = DataModelFactory.createDataModel(new AddComponentToEnterpriseApplicationDataModelProvider());
+		// create a new DocumentBuilderFactory
+	    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    IFile earDescriptor = earProject.getFile(Constants.PERSISTENCE_DESC_LOCALPATH);
 		
-		IVirtualComponent earComp = ComponentCore.createComponent(earProject);
-		IVirtualComponent childComp = ComponentCore.createComponent(childProject);
-		dm.setProperty(ICreateReferenceComponentsDataModelProperties.SOURCE_COMPONENT, earComp); 
-		List<IVirtualComponent> depList = new ArrayList<IVirtualComponent>();
-		depList.add(childComp);
-		dm.setProperty(ICreateReferenceComponentsDataModelProperties.TARGET_COMPONENT_LIST, depList);
-		dm.getDefaultOperation().execute(null, null);
+	    try {
+	    	InputStream isEarDescriptor = earDescriptor.getContents();
+	    	int earDescriptorType = earDescriptor.getType();
+			
+			// use the factory to create a documentbuilder
+	        DocumentBuilder builder = factory.newDocumentBuilder();
+
+	        // create a new document from input stream
+	        Document doc = builder.parse(isEarDescriptor);
+
+	        // get the first element
+	        Element element = doc.getDocumentElement();
+	        
+	        // update ear descriptor with new web module
+	        InputSource is = new InputSource();
+	        is.setCharacterStream(new StringReader(
+	        		  "<module>"
+		        		+ "<web>"
+			        		+ "<web-uri>"+childProject.getName()+".war</web-uri>"
+			        		+ "<context-root>"+childProject.getName()+"</context-root>"
+		        		+ "</web>"
+	        		+ "</module>"));
+	        Node newWarModule = doc.importNode(builder.parse(is).getDocumentElement(), true);
+	        element.appendChild(newWarModule);
+	         
+			// Configure transformer and write the Document
+			TransformerFactory transfac = TransformerFactory.newInstance();
+			transfac.setAttribute("indent-number", 4);
+			Transformer transformer = transfac.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+	        Source xmlSource = new DOMSource(doc);
+	        Result outputTarget = new StreamResult(outputStream);			
+	        transformer.transform(xmlSource, outputTarget);
+	        earDescriptor.setContents(new ByteArrayInputStream(outputStream.toByteArray()),earDescriptorType,null);
+	         
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			ConsoleLogger consola = ConsoleLogger.getDefault();
+			consola.println(sw.toString(), Constants.MSG_ERROR);
+			throw new ExecutionException("Error actualizando el application.xml del EAR", e);
+		}
 	}
 	
 	/**
