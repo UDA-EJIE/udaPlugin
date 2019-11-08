@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
+import org.eclipse.jst.j2ee.project.EarUtilities;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -266,6 +267,15 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			// Relaciona el proyecto WAR al EAR
 			monitor.setTaskName("Enlazando el WAR a la aplicación...");
 			ProjectWorker.createEARDependency(projectEAR, projectWAR);
+			ProjectWorker.linkedReferencesProjects(projectEAR, projectWAR);
+			ProjectWorker.linkedProjectsClasspath(getProject(getCodAppFromEAR(projectEAR)+"EARClasses"),projectWAR);
+			monitor.worked(1);
+			consola.println("Módulo EJB enlazado a la aplicación.", Constants.MSG_INFORMATION);
+	
+			// Actualiza los proyectos al finalizar la ejecución
+			ProjectWorker.refresh(projectWAR);
+			ProjectWorker.refresh(projectEAR);
+			
 			monitor.worked(1);
 			consola.println("Proyecto WAR enlazado a la aplicación.", Constants.MSG_INFORMATION);
 			
@@ -615,6 +625,18 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		}
 		// Refresca el proyecto
 		ProjectWorker.refresh(projectStatics);
+		
+	}
+	
+	/**
+	 * @param projectName
+	 * @return IProject
+	 */
+	private IProject getProject(String projectName) {
+
+		IProject projectsEARClasses;
+		projectsEARClasses = EarUtilities.getProject(projectName);
+		return projectsEARClasses;
 		
 	}
 }

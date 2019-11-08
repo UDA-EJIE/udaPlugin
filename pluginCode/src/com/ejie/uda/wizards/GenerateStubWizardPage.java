@@ -454,7 +454,7 @@ public class GenerateStubWizardPage extends WizardPage {
 		setJarService(getClassesFromJars(libraries,getRadEJBUda()));
 		if (getJarService().size()==0){
 			MessageDialog.openInformation(getShell(), "Información", "No se ha encontrado ningún Interface de EJB Remoto" );
-			return null;
+			return "";
 		}
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(),  new LabelProvider());
 		dialog.setTitle("Services");
@@ -468,7 +468,7 @@ public class GenerateStubWizardPage extends WizardPage {
 					return resultado;	
 			}
 		}
-		return null;
+		return "";
 	}
  
 	private IProject handleBrowseEJBProject() {

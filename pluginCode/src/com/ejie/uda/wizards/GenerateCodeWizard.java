@@ -16,6 +16,8 @@
 package com.ejie.uda.wizards;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -248,6 +250,10 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			
 			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			consola = ConsoleLogger.getDefault();
+			consola.println(sw.toString(), Constants.MSG_ERROR);
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
 		return true;

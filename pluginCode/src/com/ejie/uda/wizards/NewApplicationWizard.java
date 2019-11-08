@@ -16,6 +16,8 @@
 package com.ejie.uda.wizards;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,13 +37,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jem.util.emf.workbench.ProjectUtilities;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -456,7 +458,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			// Lo genera como un Dinamic Project
 			IFacetedProject fpStaticsWAR = ProjectFacetsManager.create(projectStatics.getProject(), true, null);
 			//Añade el runTime de Oracle
-			fpStaticsWAR.addTargetedRuntime(Utilities.addServerRuntime(fpStaticsWAR, "jst.web", Constants.JST_WEB_VERSION), new SubProgressMonitor(monitor,1));
+			fpStaticsWAR.addTargetedRuntime(Utilities.addServerRuntime(fpStaticsWAR, "jst.web", Constants.JST_WEB_VERSION), SubMonitor.convert(monitor,1));
 
 			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
 			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion(Constants.JST_WEB_VERSION), null, null);
@@ -472,6 +474,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		} catch (Exception e) {
 			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			String sStackTrace = sw.toString();
+			consola.println("StackTrace: " + sStackTrace, Constants.MSG_ERROR);
 			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
 		
@@ -583,7 +590,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	
 			IFacetedProject fpEARClasses = ProjectFacetsManager.create(projectEARClasses.getProject(), true, null);
 			// Añade el runTime de Oracle
-			fpEARClasses.addTargetedRuntime(Utilities.addServerRuntime(fpEARClasses, "jst.utility", Constants.JST_UTILITY_VERSION), new SubProgressMonitor(monitor,1));
+			fpEARClasses.addTargetedRuntime(Utilities.addServerRuntime(fpEARClasses, "jst.utility", Constants.JST_UTILITY_VERSION), SubMonitor.convert(monitor,1));
 			
 			// Lo genera como Java Project
 			fpEARClasses.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
@@ -732,7 +739,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			// Lo genera como un Dinamic Project
 			IFacetedProject fpWAR = ProjectFacetsManager.create(projectWAR.getProject(), true, null);
 			// Añade el runTime de Oracle
-			fpWAR.addTargetedRuntime(Utilities.addServerRuntime(fpWAR, "jst.web", Constants.JST_WEB_VERSION), new SubProgressMonitor(monitor,1));
+			fpWAR.addTargetedRuntime(Utilities.addServerRuntime(fpWAR, "jst.web", Constants.JST_WEB_VERSION), SubMonitor.convert(monitor,1));
 			
 			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
 			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.web").getVersion(Constants.JST_WEB_VERSION), null, null);
@@ -957,7 +964,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	
 			IFacetedProject fpEAR = ProjectFacetsManager.create(projectEAR.getProject(), true, null);
 			// Añade el runTime de Oracle
-			fpEAR.addTargetedRuntime(Utilities.addServerRuntime(fpEAR, "jst.ear", Constants.JST_EAR_VERSION), new SubProgressMonitor(monitor,1));			
+			fpEAR.addTargetedRuntime(Utilities.addServerRuntime(fpEAR, "jst.ear", Constants.JST_EAR_VERSION), SubMonitor.convert(monitor,1));			
 			
 			fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ear").getVersion(Constants.JST_EAR_VERSION), null, null);
 			fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("wls.ear").getVersion(Constants.WEBLOGIC_SERVER_VERSION), null, null);
@@ -1026,7 +1033,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	
 			IFacetedProject fpEJB = ProjectFacetsManager.create(projectEJB.getProject(), true, null);
 			// Añade el runTime de Oracle
-			fpEJB.addTargetedRuntime(Utilities.addServerRuntime(fpEJB, "jst.ejb", Constants.JST_EJB_VERSION), new SubProgressMonitor(monitor,1));
+			fpEJB.addTargetedRuntime(Utilities.addServerRuntime(fpEJB, "jst.ejb", Constants.JST_EJB_VERSION), SubMonitor.convert(monitor,1));
 			
 			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
 			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ejb").getVersion(Constants.JST_EJB_VERSION), null, null);

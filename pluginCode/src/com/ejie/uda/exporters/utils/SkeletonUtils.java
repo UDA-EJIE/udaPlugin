@@ -105,10 +105,10 @@ public class SkeletonUtils {
 				//parametros dle metodo
 				while (imports.hasNext()){
 					String subst=imports.next();
-					if (!isJpa && subst.contains(".dto.")) {
-						String auxiliar = StubClassUtils.replaceDto(subst);
-						subst=auxiliar;
-					}
+//					if (!isJpa && subst.contains(".dto.")) {
+//						String auxiliar = StubClassUtils.replaceDto(subst);
+//						subst=auxiliar;
+//					}
 					if (!alreadyExists(resultado,subst)){
 						resultado.add(subst);
 					}
@@ -122,10 +122,10 @@ public class SkeletonUtils {
 				if (isJpa && retorno.startsWith("com.ejie") && !retorno.startsWith("com.ejie.x38")){
 					retornoFinal=retorno+"Dto";
 				}
-				if (!isJpa && retornoFinal.contains(".dto.")) {
-					String auxiliar = StubClassUtils.replaceDto(retornoFinal);
-					retornoFinal=auxiliar;
-				}
+//				if (!isJpa && retornoFinal.contains(".dto.")) {
+//					String auxiliar = StubClassUtils.replaceDto(retornoFinal);
+//					retornoFinal=auxiliar;
+//				}
 				if (retornoFinal.contains(".") && !retornoFinal.toUpperCase().startsWith("JAVA.LANG.") && !retornoFinal.equals("void")){
 					if (!alreadyExists(resultado,retornoFinal)){
 						resultado.add(retorno);
