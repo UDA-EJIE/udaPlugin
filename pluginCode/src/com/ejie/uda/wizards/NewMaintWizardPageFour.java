@@ -16,12 +16,15 @@
 package com.ejie.uda.wizards;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -49,6 +52,8 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import com.ejie.uda.operations.DataBaseWorker;
 import com.ejie.uda.utils.ConnectionData;
+import com.ejie.uda.utils.ConsoleLogger;
+import com.ejie.uda.utils.Constants;
 import com.ejie.uda.utils.ContentProvider;
 import com.ejie.uda.utils.GridColumn;
 import com.ejie.uda.utils.TableLabelProvider;
@@ -594,7 +599,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 								}
 								columnComposite.setComposite(true);
 								// Crea las propiedades para cada columna
-								createColumnProperties(columnComposite, entity);
+								createColumnProperties(columnComposite, entity, conData);
 							}
 						}else if (!column.isComposite()){
 							if (column.isPrimaryKey()){
@@ -602,7 +607,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 								primaryKeys.add(column.getName());
 							}
 							// Crea las propiedades para cada columna
-							createColumnProperties(column, entity);
+							createColumnProperties(column, entity, conData);
 						}
 					}
 				}
@@ -639,7 +644,7 @@ public class NewMaintWizardPageFour extends WizardPage {
 	/**
 	 * Genera las propiedades para cada columna de la tabla
 	 */
-	private void createColumnProperties(TreeNode column, String entity){
+	private void createColumnProperties(TreeNode column, String entity, ConnectionData conData){
 
 		GridColumn columnProperties = new GridColumn();
 		// Inicializa con los valores por defecto
@@ -658,13 +663,15 @@ public class NewMaintWizardPageFour extends WizardPage {
 			if (isJPAProjectWar(getIProjectWARPageOne())){
 				columnProperties.setName("JPA_ID." + column.getName());				
 			}else if (!Utilities.isBlank(column.getReferenceClass())){
-				columnProperties.setName(column.getReferenceClass() + "." + column.getName());
+				columnProperties.setName(column.getReferenceClass() + "." + DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
+				columnProperties.setColumnName(DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
 			}else{
 				columnProperties.setName(column.getName());
 			}
 		}else{
 			if (!isJPAProjectWar(getIProjectWARPageOne()) && !Utilities.isBlank(column.getReferenceClass())){
-				columnProperties.setName(column.getReferenceClass() + "." + column.getName());				
+				columnProperties.setName(column.getReferenceClass() + "." + DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
+				columnProperties.setColumnName(DataBaseWorker.getReferencedTableNodePK(conData, column.getReferenceClass()));
 			}else{
 				columnProperties.setName(column.getName());
 			}
@@ -1025,25 +1032,35 @@ public class NewMaintWizardPageFour extends WizardPage {
 	 */
 	@Override
 	public void setVisible(boolean visible) {
-		super.setVisible(visible);
+		try {
+			super.setVisible(visible);
 
-		// Visualiza los datos de reglas de edición 
-		// si el check de Validación cliente (pagina 2 del wizard) está marcado 
-		boolean isvc = isValidacionesClienteChecked();
-		
-		Composite comp = (Composite)tabFolder.getTabList()[2];
-	    
-		// Deshabilitar-habilitar los controles
-	    for (Control child : comp.getChildren()){
-  		  child.setEnabled(isvc);
-	    }
+			// Visualiza los datos de reglas de edición 
+			// si el check de Validación cliente (pagina 2 del wizard) está marcado 
+			boolean isvc = isValidacionesClienteChecked();
+			
+			Control[] composites = (Control[])tabFolder.getTabList();
+			
+			// Deshabilitar-habilitar los controles
+			for (Control comp : composites) {
+				for (Control child : ((Composite)comp).getChildren()){
+					child.setEnabled(isvc);
+				}				
+			}
 
-	    // Deshabilitar-habilitar Labels
-		edithiddenEditRulesLabel.setEnabled(isvc);
-		requiredEditRulesLabel.setEnabled(isvc);
-		typeEditRulesLabel.setEnabled(isvc);
-		minValueEditRulesLabel.setEnabled(isvc);
-		maxValueEditRulesLabel.setEnabled(isvc);
+			// Deshabilitar-habilitar Labels
+			edithiddenEditRulesLabel.setEnabled(isvc);
+			requiredEditRulesLabel.setEnabled(isvc);
+			typeEditRulesLabel.setEnabled(isvc);
+			minValueEditRulesLabel.setEnabled(isvc);
+			maxValueEditRulesLabel.setEnabled(isvc);
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			ConsoleLogger consola = ConsoleLogger.getDefault();
+			consola.println(sw.toString(), Constants.MSG_ERROR);
+			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + e.getLocalizedMessage());
+		}
 	}
 
 }
