@@ -51,7 +51,6 @@ public class NewMaintWizardPageTwo extends WizardPage {
 	private Label detailMaintButtonsComboLabel;
 	private Button feedbackMaintCollapsibleCheck;
 	private Button toolbarMaintCheck;
-	private Button btnDisenoLiquido;
 	private Button btnFiltrado;
 	private Button btnMenuContextual;
 	private Button btnBusqueda;
@@ -233,16 +232,16 @@ public class NewMaintWizardPageTwo extends WizardPage {
 		
 		
 		// Check box para mostrar todos los mensajes en formato plegable
-		Label feedbackMaintCollapsibleCheckLabel = new Label(container, SWT.NONE);
-		feedbackMaintCollapsibleCheckLabel.setText("Feedback plegable:     ");
-
-		feedbackMaintCollapsibleCheck = new Button(container, SWT.CHECK);
-		GridData gd_feedbackMaintCollapsibleCheck = new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1);
-		gd_feedbackMaintCollapsibleCheck.heightHint = 18;
-		feedbackMaintCollapsibleCheck.setLayoutData(gd_feedbackMaintCollapsibleCheck);
-		feedbackMaintCollapsibleCheck.setSelection(true);
-		feedbackMaintCollapsibleCheck
-				.setToolTipText("Los mensajes de feedback para las acciones de añadir, modificar y borrar desaparecerán de manera automática");
+//		Label feedbackMaintCollapsibleCheckLabel = new Label(container, SWT.NONE);
+//		feedbackMaintCollapsibleCheckLabel.setText("Feedback plegable:     ");
+//
+//		feedbackMaintCollapsibleCheck = new Button(container, SWT.CHECK);
+//		GridData gd_feedbackMaintCollapsibleCheck = new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1);
+//		gd_feedbackMaintCollapsibleCheck.heightHint = 18;
+//		feedbackMaintCollapsibleCheck.setLayoutData(gd_feedbackMaintCollapsibleCheck);
+//		feedbackMaintCollapsibleCheck.setSelection(true);
+//		feedbackMaintCollapsibleCheck
+//				.setToolTipText("Los mensajes de feedback para las acciones de añadir, modificar y borrar desaparecerán de manera automática");
 		
 		// Check box de Generación de la toolbar del mantenimiento
 		Label toolbarMaintCheckLabel = new Label(container, SWT.NONE);
@@ -267,17 +266,6 @@ public class NewMaintWizardPageTwo extends WizardPage {
 		btnMenuContextual.setLayoutData(gd_btnMenuContextual);
 		btnMenuContextual.setSelection(true);
 		
-		// El ancho de la tabla se ajustará al ancho de la ventana del navegador
-		Label btnDisenoLiquidoLabel = new Label(container, SWT.NONE);
-		btnDisenoLiquidoLabel.setText("Diseño líquido:    ");
-
-		btnDisenoLiquido = new Button(container, SWT.CHECK);
-		btnDisenoLiquido.setToolTipText("El ancho de la tabla se ajustará al ancho de la ventana del navegador");
-		GridData gd_btnDiseoLquido = new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1);
-		gd_btnDiseoLquido.heightHint = 18;
-		btnDisenoLiquido.setLayoutData(gd_btnDiseoLquido);
-		btnDisenoLiquido.setSelection(true);
-
 		// Se permitirá el filtrado de datos
 		Label btnFiltradoLabel = new Label(container, SWT.NONE);
 		btnFiltradoLabel.setText("Filtrado de datos:    ");
@@ -322,14 +310,14 @@ public class NewMaintWizardPageTwo extends WizardPage {
 		btnMultiseleccion.setLayoutData(gd_btnMultiseleccin);
 
 		// La tabla podrá presentar datos con formato jerárquico (padre-hijo)
-		Label btnJerarquiaLabel = new Label(container, SWT.NONE);
-		btnJerarquiaLabel.setText("Jerarquía:    ");
-
-		btnJerarquia = new Button(container, SWT.CHECK);
-		btnJerarquia.setToolTipText("La tabla podrá presentar datos con formato jerárquico (padre-hijo)");
-		GridData gd_btnJerarqua = new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1);
-		gd_btnJerarqua.heightHint = 18;
-		btnJerarquia.setLayoutData(gd_btnJerarqua);
+//		Label btnJerarquiaLabel = new Label(container, SWT.NONE);
+//		btnJerarquiaLabel.setText("Jerarquía:    ");
+//
+//		btnJerarquia = new Button(container, SWT.CHECK);
+//		btnJerarquia.setToolTipText("La tabla podrá presentar datos con formato jerárquico (padre-hijo)");
+//		GridData gd_btnJerarqua = new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1);
+//		gd_btnJerarqua.heightHint = 18;
+//		btnJerarquia.setLayoutData(gd_btnJerarqua);
 
 		setControl(container);
 	}
@@ -471,15 +459,6 @@ public class NewMaintWizardPageTwo extends WizardPage {
 	}
 	
 	/**
-	 * Recupera el valor del check Diseño líquido
-	 * 
-	 * @return true si seleccionado, false ecc.
-	 */
-	public boolean getBtnDisenoLiquidoCheck() {
-		return btnDisenoLiquido.getSelection();
-	}
-	
-	/**
 	 * Recupera el valor del check Filtrado de datos
 	 * 
 	 * @return true si seleccionado, false ecc.
@@ -540,15 +519,14 @@ public class NewMaintWizardPageTwo extends WizardPage {
 		maint.setTypeMaint(getTypeMaint());
 		maint.setDetailServerMaint(getBtnRecuperarDetalleDesdeCheck());
 		maint.setDetailMaintButtons(getDetailMaintButtonsCombo());
-		maint.setFeedbackMaintCollapsible(getFeedbackMaintCollapsibleCheck());
+//		maint.setFeedbackMaintCollapsible(getFeedbackMaintCollapsibleCheck());
 		maint.setToolBarButtonsMaint(getToolbarMaintCheck());
 		maint.setContextMenuMaint(getBtnMenuContextualCheck());
-		maint.setFluidMaint(getBtnDisenoLiquidoCheck());
 		maint.setFilterMaint(getBtnFiltradoCheck());
 		maint.setSearchMaint(getBtnBusquedaCheck());
 		maint.setClientValidationMaint(getBtnValidacionesClienteCheck());
 		maint.setMultiSelectMaint(getBtnMultiseleccionCheck());
-		maint.setHierarchyMaint(getBtnJerarquiaCheck());
+//		maint.setHierarchyMaint(getBtnJerarquiaCheck());
 		
 		return maint;
 	}

@@ -74,13 +74,10 @@ public class NewMaintWizardPageFour extends WizardPage {
 	private Text nameText;
 	private Text labelText;
 	private Combo alignCombo;
-	private Text widthText;
 	private Button editableCheck;
 	
 	// Propiedades avanzadas
 	private Combo editTypeCombo;
-	private Combo firstSortOrderCombo;
-	private Button fixedCheck;
 	private Button hiddenCheck;
 	private Button resizableCheck;
 	private Button sortableCheck;
@@ -323,18 +320,6 @@ public class NewMaintWizardPageFour extends WizardPage {
 		alignCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
 		alignCombo.addFocusListener(focusListener);
 		
-		// Propiedad de width
-		Label widthLabel = new Label(containerPropertiesTab, SWT.NULL);
-		widthLabel.setText("Width:");
-		widthLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-
-		// Campo texto width
-		widthText = new Text(containerPropertiesTab, SWT.BORDER | SWT.SINGLE);
-		widthText.setText("150");
-		widthText.setToolTipText("Define la anchura de la columna");
-		widthText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1 ,1));
-		widthText.addFocusListener(focusListener);
-		
 		// Propiedad de columna editable
 		Label editableLabel = new Label(containerPropertiesTab, SWT.NULL);
 		editableLabel.setText("Editable:");
@@ -362,42 +347,14 @@ public class NewMaintWizardPageFour extends WizardPage {
 		editTypeCombo = new Combo(containerAdvancedPropertiesTab, SWT.READ_ONLY);
 		editTypeCombo.add("Text");
 		editTypeCombo.add("Textarea");
-		editTypeCombo.add("Autocomplete");
-		editTypeCombo.add("Datepicker");
-		editTypeCombo.add("Combo");
 		editTypeCombo.add("Checkbox");
+		editTypeCombo.add("Datepicker");
 		editTypeCombo.add("Password");
-		editTypeCombo.add("Button");
-		editTypeCombo.add("Image");
 		editTypeCombo.add("File");
 		editTypeCombo.select(0);
 		editTypeCombo.setToolTipText("Indica el tipo de elemento que se forma al poner la columna en modo edición");
 		editTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
 		editTypeCombo.addFocusListener(focusListener);
-		
-		// Propiedad de firstsortorder 
-		Label firstSortOrderLabel = new Label(containerAdvancedPropertiesTab, SWT.NULL);
-		firstSortOrderLabel.setText("Firstsortorder:");
-		firstSortOrderLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Campo combo de firstsortorder
-		firstSortOrderCombo = new Combo(containerAdvancedPropertiesTab, SWT.READ_ONLY);
-		firstSortOrderCombo.add("");
-		firstSortOrderCombo.add("asc");
-		firstSortOrderCombo.add("desc");
-		firstSortOrderCombo.select(0);
-		firstSortOrderCombo.setToolTipText("La columna se ordenará en la dirección seleccionada");
-		firstSortOrderCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		firstSortOrderCombo.addFocusListener(focusListener);
-		
-		// Propiedad de fixed
-		Label fixedLabel = new Label(containerAdvancedPropertiesTab, SWT.NULL);
-		fixedLabel.setText("Fixed:");
-		fixedLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1 ,1));
-		// Campo check de fixed
-		fixedCheck = new Button(containerAdvancedPropertiesTab, SWT.CHECK);
-		fixedCheck.setSelection(false);
-		fixedCheck.setToolTipText("Columna que no se redimensiona cuando se cambia el grid");
-		fixedCheck.addFocusListener(focusListener);
 		
 		// Propiedad de hidden
 		Label hiddenLabel = new Label(containerAdvancedPropertiesTab, SWT.NULL);
@@ -843,9 +800,6 @@ public class NewMaintWizardPageFour extends WizardPage {
 				gridColumn.setAlignIndex(alignCombo.getSelectionIndex());
 				gridColumn.setAlign(alignCombo.getText());	
 			}
-			if (widthText != null && widthText.getText() != null){
-				gridColumn.setWidth(widthText.getText());
-			}
 			if (editableCheck != null){
 				gridColumn.setEditable(editableCheck.getSelection());	
 			}
@@ -854,13 +808,6 @@ public class NewMaintWizardPageFour extends WizardPage {
 			if (editTypeCombo != null){
 				gridColumn.setEditTypeIndex(editTypeCombo.getSelectionIndex());
 				gridColumn.setEditType(editTypeCombo.getText());
-			}
-			if (firstSortOrderCombo != null){
-				gridColumn.setFirstSortOrderIndex(firstSortOrderCombo.getSelectionIndex());
-				gridColumn.setFirstSortOrder(firstSortOrderCombo.getText());
-			}
-			if (fixedCheck != null){
-				gridColumn.setFixed(fixedCheck.getSelection());
 			}
 			if (hiddenCheck != null){
 				gridColumn.setHidden(hiddenCheck.getSelection());
@@ -909,9 +856,6 @@ public class NewMaintWizardPageFour extends WizardPage {
 			if (alignCombo != null){
 				alignCombo.select(gridColumn.getAlignIndex());
 			}
-			if (widthText != null && gridColumn.getWidth() != null){
-				widthText.setText(gridColumn.getWidth());
-			}
 			if (editableCheck != null){
 				editableCheck.setSelection(gridColumn.getEditable());	
 			}
@@ -919,12 +863,6 @@ public class NewMaintWizardPageFour extends WizardPage {
 			// Propiedades avanzadas
 			if (editTypeCombo != null){
 				editTypeCombo.select(gridColumn.getEditTypeIndex());
-			}
-			if (firstSortOrderCombo != null){
-				firstSortOrderCombo.select(gridColumn.getFirstSortOrderIndex());
-			}
-			if (fixedCheck != null){
-				fixedCheck.setSelection(gridColumn.getFixed());
 			}
 			if (hiddenCheck != null){
 				hiddenCheck.setSelection(gridColumn.getHidden());

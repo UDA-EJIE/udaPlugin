@@ -29,7 +29,6 @@ public class Maint {
 	private boolean feedbackMaintCollapsible;
 	private boolean toolBarButtonsMaint;
 	private boolean contextMenuMaint;
-	private boolean fluidMaint;
 	private boolean filterMaint;
 	private boolean searchMaint;
 	private boolean clientValidationMaint;
@@ -52,7 +51,7 @@ public class Maint {
 			boolean detailServerMaint, String detailMaintButtons,
 			boolean feedbackMaintCollapsible, boolean toolBarButtonsMaint,
 			boolean multiSelectMaint, boolean filterMaint, boolean searchMaint,
-			boolean hierarchyMaint, boolean fluidMaint,
+			boolean hierarchyMaint,
 			boolean clientValidationMaint, boolean contextMenuMaint) {
 		super();
 		this.modelObject = modelObject;
@@ -69,7 +68,6 @@ public class Maint {
 		this.filterMaint = filterMaint;
 		this.searchMaint = searchMaint;
 		this.hierarchyMaint = hierarchyMaint;
-		this.fluidMaint = fluidMaint;
 		this.clientValidationMaint = clientValidationMaint;
 		this.contextMenuMaint = contextMenuMaint;
 	}
@@ -189,14 +187,6 @@ public class Maint {
 		return contextMenuMaint;
 	}
 	
-	public void setFluidMaint(boolean fluidMaint) {
-		this.fluidMaint = fluidMaint;
-	}
-
-	public boolean getFluidMaint() {
-		return fluidMaint;
-	}
-
 	public void setClientValidationMaint(boolean clientValidationMaint) {
 		this.clientValidationMaint = clientValidationMaint;
 	}

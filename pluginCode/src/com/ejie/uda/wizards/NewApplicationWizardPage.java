@@ -51,8 +51,8 @@ public class NewApplicationWizardPage extends WizardPage {
 	private Text ejbNameText;
 	private Text ejbFullNameText;
 	private Text warFullNameText;
-	private Button radSpringJDBC;
-	private Button radJPA;
+//	private Button radSpringJDBC;
+//	private Button radJPA;
 	private Button locationCheck;
 	private Text locationText;
 	private Button locationButton;
@@ -61,9 +61,9 @@ public class NewApplicationWizardPage extends WizardPage {
 	private Label labelEJBName;
 	private Label labelEJBNameFull;
 	private Combo appTypeCombo;
-	private Button horizontalRadio;
-	private Button verticalRadio;
-	private Button mixtoRadio;
+//	private Button horizontalRadio;
+//	private Button verticalRadio;
+//	private Button mixtoRadio;
 	private Combo categoryCombo;
 //	private Button examplesCheck;
 	private Combo languageCombo;
@@ -241,26 +241,26 @@ public class NewApplicationWizardPage extends WizardPage {
 		labelLine.setLayoutData(gd5);
 		
 		// Grupo Layout
-	    Group persistenceGroup = new Group(container, SWT.NONE);
-	    persistenceGroup.setLayout(new GridLayout(3, false));
-	    persistenceGroup.setText("Persistencia");
-	    persistenceGroup.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, false, 5, 1));
-		
-	    Label labelRadioEmpty = new Label(persistenceGroup, SWT.NULL);
-		labelRadioEmpty.setText("                   ");
-		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-	    
-		// Radio button para Spring-JDBC
-		radSpringJDBC = new Button(persistenceGroup, SWT.RADIO);
-		radSpringJDBC.setText("Spring JDBC");
-		radSpringJDBC.setSelection(true);
-		radSpringJDBC.setLayoutData(new GridData (SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		// Radio button para JPA 2.0
-		radJPA = new Button(persistenceGroup, SWT.RADIO);
-		radJPA.setText("JPA 2.0");
-		radJPA.setSelection(false);
-		radJPA.setLayoutData(new GridData (SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+//	    Group persistenceGroup = new Group(container, SWT.NONE);
+//	    persistenceGroup.setLayout(new GridLayout(3, false));
+//	    persistenceGroup.setText("Persistencia");
+//	    persistenceGroup.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, false, 5, 1));
+//		
+//	    Label labelRadioEmpty = new Label(persistenceGroup, SWT.NULL);
+//		labelRadioEmpty.setText("                   ");
+//		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+//	    
+//		// Radio button para Spring-JDBC
+//		radSpringJDBC = new Button(persistenceGroup, SWT.RADIO);
+//		radSpringJDBC.setText("Spring JDBC");
+//		radSpringJDBC.setSelection(true);
+//		radSpringJDBC.setLayoutData(new GridData (SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+//
+//		// Radio button para JPA 2.0
+//		radJPA = new Button(persistenceGroup, SWT.RADIO);
+//		radJPA.setText("JPA 2.0");
+//		radJPA.setSelection(false);
+//		radJPA.setLayoutData(new GridData (SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		
 		// Grupo Layout
 	    Group layoutGroup = new Group(container, SWT.NONE);
@@ -269,14 +269,14 @@ public class NewApplicationWizardPage extends WizardPage {
 	    layoutGroup.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, false, 5, 1));
 	    
 	    // Disposición
-	    Label dispositionLabel = new Label(layoutGroup, SWT.NULL);
-	    dispositionLabel.setText("Disposición:");
-	    dispositionLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-	    
-	    horizontalRadio = new Button(layoutGroup, SWT.RADIO);
-	    horizontalRadio.setText("Horizontal");
-	    horizontalRadio.setSelection(true);
-	    horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+//	    Label dispositionLabel = new Label(layoutGroup, SWT.NULL);
+//	    dispositionLabel.setText("Disposición:");
+//	    dispositionLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+//	    
+//	    horizontalRadio = new Button(layoutGroup, SWT.RADIO);
+//	    horizontalRadio.setText("Horizontal");
+//	    horizontalRadio.setSelection(true);
+//	    horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 	    
 	    if ("true".equalsIgnoreCase(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
 		     // Tipo aplicación
@@ -309,31 +309,32 @@ public class NewApplicationWizardPage extends WizardPage {
 				public void widgetDefaultSelected(SelectionEvent arg0) {
 				}
 			});
-	    }else{
-	    	horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 	    }
-
-		labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
-		labelRadioEmpty.setText("");
-		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-	    
-	    verticalRadio = new Button(layoutGroup, SWT.RADIO);
-	    verticalRadio.setText("Vertical");
-	    verticalRadio.setSelection(false);
-	    verticalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
-
-		labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
-		labelRadioEmpty.setText("");
-		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-	    
-	    mixtoRadio = new Button(layoutGroup, SWT.RADIO);
-	    mixtoRadio.setText("Mixto");
-	    mixtoRadio.setSelection(false);
-	    mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
+//	    else{
+//	    	horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+//	    }
+//
+//		labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
+//		labelRadioEmpty.setText("");
+//		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+//	    
+//	    verticalRadio = new Button(layoutGroup, SWT.RADIO);
+//	    verticalRadio.setText("Vertical");
+//	    verticalRadio.setSelection(false);
+//	    verticalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
+//
+//		labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
+//		labelRadioEmpty.setText("");
+//		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+//	    
+//	    mixtoRadio = new Button(layoutGroup, SWT.RADIO);
+//	    mixtoRadio.setText("Mixto");
+//	    mixtoRadio.setSelection(false);
+//	    mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
 	   
 	    if ("true".equalsIgnoreCase(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
 	    	
-	    	mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
+//	    	mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
 	    	
 	    	// Categoría
 		    Label categoryLabel = new Label(layoutGroup, SWT.NULL);
@@ -574,7 +575,8 @@ public class NewApplicationWizardPage extends WizardPage {
 	 * @return true si seleccionado, false ecc.
 	 */
 	public boolean getRadSpringJDBC() {
-		return radSpringJDBC.getSelection();
+//		return radSpringJDBC.getSelection();
+		return Boolean.TRUE;
 	}
 	
 	/**
@@ -583,7 +585,8 @@ public class NewApplicationWizardPage extends WizardPage {
 	 * @return true si seleccionado, false ecc.
 	 */
 	public boolean getRadJPA() {
-		return radJPA.getSelection();
+//		return radJPA.getSelection();
+		return Boolean.FALSE;
 	}
 
 	/**
@@ -650,18 +653,19 @@ public class NewApplicationWizardPage extends WizardPage {
 	 */
 	public String getDispositionCombo() {
 		
-		String disposition = "";
-		
-		if (horizontalRadio != null && verticalRadio != null && mixtoRadio != null) {
-			if (horizontalRadio.getSelection()){
-				disposition = horizontalRadio.getText(); 
-			}else if (verticalRadio.getSelection()){
-				disposition = verticalRadio.getText(); 
-			}else if (mixtoRadio.getSelection()){
-				disposition = mixtoRadio.getText(); 
-			} 
-		}
-		return disposition;
+//		String disposition = "";
+//		
+//		if (horizontalRadio != null && verticalRadio != null && mixtoRadio != null) {
+//			if (horizontalRadio.getSelection()){
+//				disposition = horizontalRadio.getText(); 
+//			}else if (verticalRadio.getSelection()){
+//				disposition = verticalRadio.getText(); 
+//			}else if (mixtoRadio.getSelection()){
+//				disposition = mixtoRadio.getText(); 
+//			} 
+//		}
+//		return disposition;
+		return "Horizontal";
 	}
 	
 	/**

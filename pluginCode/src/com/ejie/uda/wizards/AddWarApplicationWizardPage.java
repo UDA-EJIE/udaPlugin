@@ -54,9 +54,9 @@ public class AddWarApplicationWizardPage extends WizardPage {
 	private Text earNameText;
 	private IProject projectEAR;
 	private Combo appTypeCombo;
-	private Button horizontalRadio;
-	private Button verticalRadio;
-	private Button mixtoRadio;
+//	private Button horizontalRadio;
+//	private Button verticalRadio;
+//	private Button mixtoRadio;
 	private Combo categoryCombo;
 	private Combo languageCombo;
 	private Button esLanguageCheck; 
@@ -170,14 +170,14 @@ public class AddWarApplicationWizardPage extends WizardPage {
 	    layoutGroup.setLayoutData(new GridData (SWT.FILL, SWT.FILL, true, false, 3, 1));
 	    
 	    // Disposición
-	    Label dispositionLabel = new Label(layoutGroup, SWT.NULL);
-	    dispositionLabel.setText("Disposición:");
-	    dispositionLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-	    
-	    horizontalRadio = new Button(layoutGroup, SWT.RADIO);
-	    horizontalRadio.setText("Horizontal");
-	    horizontalRadio.setSelection(true);
-	    horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+//	    Label dispositionLabel = new Label(layoutGroup, SWT.NULL);
+//	    dispositionLabel.setText("Disposición:");
+//	    dispositionLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+//	    
+//	    horizontalRadio = new Button(layoutGroup, SWT.RADIO);
+//	    horizontalRadio.setText("Horizontal");
+//	    horizontalRadio.setSelection(true);
+//	    horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 	    
 	    if ("true".equalsIgnoreCase(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
 		     // Tipo aplicación
@@ -210,32 +210,33 @@ public class AddWarApplicationWizardPage extends WizardPage {
 				public void widgetDefaultSelected(SelectionEvent arg0) {
 				}
 			});
-	    }else{
-	    	horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
 	    }
+//	    else{
+//	    	horizontalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+//	    }
 
-		Label labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
-		labelRadioEmpty.setText("");
-		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-	    
-	    verticalRadio = new Button(layoutGroup, SWT.RADIO);
-	    verticalRadio.setText("Vertical");
-	    verticalRadio.setSelection(false);
-	    verticalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
-
-		labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
-		labelRadioEmpty.setText("");
-		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-	    
-	    mixtoRadio = new Button(layoutGroup, SWT.RADIO);
-	    mixtoRadio.setText("Mixto");
-	    mixtoRadio.setSelection(false);
-	    mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
+//		Label labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
+//		labelRadioEmpty.setText("");
+//		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+//	    
+//	    verticalRadio = new Button(layoutGroup, SWT.RADIO);
+//	    verticalRadio.setText("Vertical");
+//	    verticalRadio.setSelection(false);
+//	    verticalRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
+//
+//		labelRadioEmpty = new Label(layoutGroup, SWT.NULL);
+//		labelRadioEmpty.setText("");
+//		labelRadioEmpty.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+//	    
+//	    mixtoRadio = new Button(layoutGroup, SWT.RADIO);
+//	    mixtoRadio.setText("Mixto");
+//	    mixtoRadio.setSelection(false);
+//	    mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 3, 1));
 	    
 
 	    if ("true".equalsIgnoreCase(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
 	    	
-	    	mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
+//	    	mixtoRadio.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
 	    	
 	    	// Categoría
 		    Label categoryLabel = new Label(layoutGroup, SWT.NULL);
@@ -437,18 +438,19 @@ public class AddWarApplicationWizardPage extends WizardPage {
 	 */
 	public String getDispositionCombo() {
 		
-		String disposition = "";
-		
-		if (horizontalRadio != null && verticalRadio != null && mixtoRadio != null) {
-			if (horizontalRadio.getSelection()){
-				disposition = horizontalRadio.getText(); 
-			}else if (verticalRadio.getSelection()){
-				disposition = verticalRadio.getText(); 
-			}else if (mixtoRadio.getSelection()){
-				disposition = mixtoRadio.getText(); 
-			} 
-		}
-		return disposition;
+//		String disposition = "";
+//		
+//		if (horizontalRadio != null && verticalRadio != null && mixtoRadio != null) {
+//			if (horizontalRadio.getSelection()){
+//				disposition = horizontalRadio.getText(); 
+//			}else if (verticalRadio.getSelection()){
+//				disposition = verticalRadio.getText(); 
+//			}else if (mixtoRadio.getSelection()){
+//				disposition = mixtoRadio.getText(); 
+//			} 
+//		}
+//		return disposition;
+		return "Horizontal";
 	}
 	
 	/**
