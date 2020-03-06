@@ -228,7 +228,10 @@ public class NewMaintWizardPageTwo extends WizardPage {
 				.setToolTipText("Propiedad que indica la tipología de botones que se crearan en el formulario de detalle."
 						+ "\nSAVE: Se crearán dos botones: Guardar; Cancelar."
 						+ "\nSAVE_REPEAT: Se crearán tres botones: Guardar; Guardar y repetir; Cancelar.");
-		detailMaintButtonsCombo.setEnabled(false);
+		detailMaintButtonsCombo.setEnabled(true);
+		btnRecuperarDetalleDesde.setEnabled(true);
+		detailMaintButtonsComboLabel.setEnabled(true);
+		detailMaintButtonsCombo.setEnabled(true);
 		
 		
 		// Check box para mostrar todos los mensajes en formato plegable
