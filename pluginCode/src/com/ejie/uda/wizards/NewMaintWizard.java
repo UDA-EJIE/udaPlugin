@@ -182,6 +182,20 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		final Grid grid = pageThree.getGrid();
 		final List<GridColumn> gridColumns = pageFour.getColumns();
 		
+		if(gridColumns != null && gridColumns.size() > 1 && grid != null && grid.getSortName() != null) {//meter el num order
+			int pos = 0;
+			for(GridColumn gridColumn:gridColumns) {
+				if(gridColumn.getActivated()) {
+					if(gridColumn.getLabel().equals(grid.getSortName())) {
+						grid.setSortPosition(pos);
+						break;
+					}
+					
+					pos++;
+				}
+			}
+		}
+		
 		String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 		
 		//Validación de configuración de plantillas
@@ -341,8 +355,12 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			monitor.worked(1);
 			//Se crean los includes
 			String pathInclude = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/" + entityName+"/includes");
-			ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEdit.jsp", context, maint.getNameMaint() + "Edit.jsp");
-			ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintFilterForm.jsp", context, maint.getNameMaint() + "FilterForm.jsp");
+			if(maint.getIsMaint()) {//Si no quieres mantenimiento no se crea la jsp.
+				ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEdit.jsp", context, maint.getNameMaint() + "Edit.jsp");
+			}
+			if(maint.getFilterMaint()) {//Si no quieres filtro no se crea la jsp.
+				ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintFilterForm.jsp", context, maint.getNameMaint() + "FilterForm.jsp");
+			}
 			console.println("JSPs generados en el proyecto WAR: " + (String)context.get(Constants.WAR_NAME_PATTERN), Constants.MSG_INFORMATION);
 			console.println("\t" + entityName + "-includes.jsp", Constants.MSG_INFORMATION);
 			console.println("\t" + entityName + ".jsp", Constants.MSG_INFORMATION);

@@ -26,6 +26,7 @@ public class Grid {
 	private boolean loadOnStartUp;
 	private String sortOrder;
 	private String sortName;
+	private int sortPosition;
 	
 	/**
 	 * Constructor
@@ -109,6 +110,14 @@ public class Grid {
 
 	public void setAlias(String alias) {
 		this.alias = alias;
+	}
+
+	public int getSortPosition() {
+		return sortPosition;
+	}
+
+	public void setSortPosition(int sortPosition) {
+		this.sortPosition = sortPosition;
 	}
 
 }

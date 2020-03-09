@@ -127,10 +127,22 @@ public class NewMaintWizardPageOne extends WizardPage {
 				setWarProject(handleBrowseWARProject());
 				if (getWarProject() != null) {
 					warLocationText.setText(getWarProject().getName());
+				}else {
+					warLocationText.setText("");
 				}
 			}
 		});
 		warLocationButton.setLayoutData(new GridData (SWT.FILL, SWT.CENTER, true, true,1,1));
+		IProject[] projectsWAR = EarUtilities.getAllProjectsInWorkspaceOfType("jst.web");
+		if(projectsWAR != null) {
+			projectsWAR = getProjectsWAR(projectsWAR);
+			if(projectsWAR.length == 1) {
+				setWarProject(projectsWAR[0]);
+				if (getWarProject() != null) {
+					warLocationText.setText(getWarProject().getName());
+				}
+			}
+		}
 		
 		// Salto de línea
 		hiddenLabel= new Label(container, SWT.NULL);
