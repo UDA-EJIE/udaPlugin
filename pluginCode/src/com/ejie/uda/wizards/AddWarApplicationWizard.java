@@ -484,16 +484,15 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateMixto.jsp", context, "WebContent/WEB-INF/layouts/template.jsp");
 			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menuMixto.jsp", context);
 		}	
-			
+		
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/footer.jsp.ftl", context);
 		if(Constants.APP_TYPE_INTRANET.equalsIgnoreCase(appType)){
-			ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/footer.jsp", context);
 			if(Constants.CATEGORY_DEPARTAMENTAL.equalsIgnoreCase(category)){
 				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/headerIntraDept.jsp", context, "WebContent/WEB-INF/layouts/header.jsp");
 			} else {
 				ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/headerIntraHori.jsp", context, "WebContent/WEB-INF/layouts/header.jsp");
 			}
 		} else {
-			ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/layouts/footerInternet.jsp", context, "footer.jsp");
 			ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/headerInternet.jsp", context, "WebContent/WEB-INF/layouts/header.jsp");
 		}
 

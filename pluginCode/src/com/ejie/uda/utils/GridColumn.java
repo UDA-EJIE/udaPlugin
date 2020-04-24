@@ -45,9 +45,6 @@ public class GridColumn {
 	private String editType;
 	private int editTypeIndex;
 	private String rupType;
-	private String firstSortOrder;
-	private int firstSortOrderIndex;
-	private boolean fixed;
 	private boolean hidden;
 	private boolean resizable;
 	private boolean sortable;
@@ -78,8 +75,7 @@ public class GridColumn {
 			boolean enableEditRules, boolean editHiddenEditRules,
 			boolean requiredEditRules, String typeEditRules,
 			String minValueEditRules, String maxValueEditRules,
-			String editType, int editTypeIndex, String firstSortOrder,
-			int firstSortOrderIndex, boolean fixed, boolean hidden,
+			String editType, int editTypeIndex, boolean hidden,
 			String index, String label, String name, boolean resizable,
 			boolean sortable, String width, boolean activated) {
 		this.tableName = tableName;
@@ -96,9 +92,6 @@ public class GridColumn {
 		this.maxValueEditRules = maxValueEditRules;
 		this.editType = editType;
 		this.editTypeIndex = editTypeIndex;
-		this.firstSortOrder = firstSortOrder;
-		this.firstSortOrderIndex = firstSortOrderIndex;
-		this.fixed = fixed;
 		this.hidden = hidden;
 		this.label = label;
 		this.name = name;
@@ -293,31 +286,6 @@ public class GridColumn {
 		this.editTypeIndex = editTypeIndex;
 	}
 
-	public String getFirstSortOrder() {
-		return firstSortOrder;
-	}
-
-	public void setFirstSortOrder(String firstSortOrder) {
-		this.firstSortOrder = firstSortOrder;
-	}
-
-	public int getFirstSortOrderIndex() {
-		return firstSortOrderIndex;
-	}
-
-	public void setFirstSortOrderIndex(int firstSortOrderIndex) {
-		this.firstSortOrderIndex = firstSortOrderIndex;
-	}
-	
-	public boolean getFixed() {
-		return fixed;
-	}
-
-	public void setFixed(boolean fixed) {
-		this.fixed = fixed;
-	}
-	
-
 	public boolean getHidden() {
 		return hidden;
 	}
@@ -390,10 +358,7 @@ public class GridColumn {
 		setEditType("text");
 		setEditTypeIndex(0);
 		setRupType("");
-		setFirstSortOrder("");
-		setFirstSortOrderIndex(0);
 		
-		setFixed(false);
 		setHidden(false);
 		setLabel("");
 		setResizable(true);

@@ -249,6 +249,7 @@ public class NewMaintWizardPageThree extends WizardPage {
 		}
 		if (sortNameCombo != null){
 			grid.setSortName(sortNameCombo.getText());	
+			grid.setSortPosition(0);
 		}
 		
 		return grid;
