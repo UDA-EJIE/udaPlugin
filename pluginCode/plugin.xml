@@ -6,7 +6,7 @@
 		<objectContribution
 				adaptable="true"
 				objectClass="org.eclipse.core.resources.IProject"
-				nnameFilter="*"
+				nameFilter="*"
 				id="Plugin.contribution1">
 		</objectContribution>
 	</extension>
