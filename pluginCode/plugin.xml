@@ -6,7 +6,7 @@
 		<objectContribution
 				adaptable="true"
 				objectClass="org.eclipse.core.resources.IProject"
-				nnameFilter="*"
+				nameFilter="*"
 				id="Plugin.contribution1">
 		</objectContribution>
 	</extension>
@@ -33,6 +33,7 @@
 				category="UDA wizard" 
 				class="com.ejie.uda.wizards.NewApplicationWizard"
 				id="com.ejie.uda.wizards.NewApplicationWizard">
+				<description>UDA</description>
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
@@ -40,6 +41,7 @@
 				category="UDA wizard"
 				class="com.ejie.uda.wizards.AddWarApplicationWizard"
 				id="com.ejie.uda.wizards.AddWarApplicationWizard">
+				<description>UDA</description>
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
@@ -47,6 +49,7 @@
 				category="UDA wizard"
 				class="com.ejie.uda.wizards.GenerateCodeWizard"
 				id="com.ejie.uda.wizards.GenerateCodeWizard">
+				<description>UDA</description>
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
@@ -54,6 +57,7 @@
 				category="UDA wizard"
 				class="com.ejie.uda.wizards.NewMaintWizard"
 				id="com.ejie.uda.wizards.NewMaintWizard">
+				<description>UDA</description>
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
@@ -61,6 +65,7 @@
 				category="UDA wizard"
 				class="com.ejie.uda.wizards.GenerateSkeletonWizard"
 				id="com.ejie.uda.wizards.GenerateSkeletonWizard">
+				<description>UDA</description>
 		</wizard>
 		<wizard
 				icon="icons/uda.gif"
@@ -68,6 +73,7 @@
 				category="UDA wizard"
 				class="com.ejie.uda.wizards.GenerateStubWizard"
 				id="com.ejie.uda.wizards.GenerateStubWizard">
+				<description>UDA</description>
 		</wizard>
 		<wizard  
 				icon="icons/uda.gif"
@@ -75,6 +81,7 @@
 				category="UDA wizard"
 				class="com.ejie.uda.wizards.AddEjbApplicationWizard"
 				id="com.ejie.uda.wizards.AddEjbApplicationWizard">
+				<description>UDA</description>
 		</wizard>
 	</extension>
 	<extension
