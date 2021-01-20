@@ -146,7 +146,7 @@ public class Constants {
 	
 	// Mantenimiento
 	public static final String TILES_CONFIG_CONFIG = "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN";
-	public static final String TILES_CONFIG_DTD = "http://tiles.apache.org/dtds/tiles-config_3_01.dtd";
+	public static final String TILES_CONFIG_DTD = "http://tiles.apache.org/dtds/tiles-config_3_0.dtd";
 	
 	// Otros
 	public static final String SAVE = "SAVE";
