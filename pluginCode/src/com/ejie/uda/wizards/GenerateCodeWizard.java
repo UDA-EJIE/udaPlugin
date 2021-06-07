@@ -248,7 +248,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			
 			pageThree.getControl().setEnabled(false);
 			
-			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
@@ -414,7 +414,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 				if (jmdc==null){
 					jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
 				}
-				
+								
 				if (controllerCheck){
 					GenerateCodeWorker.controllerExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
 					GenerateCodeWorker.jacksonExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);

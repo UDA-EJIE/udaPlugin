@@ -96,6 +96,7 @@ public class Constants {
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_CONFIG =  "/config";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EARCLASSES =  "/earclasses";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_WAR= "/war";
+	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_GENERATE= "/generateCode";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EAR= "/ear";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EJB= "/ejb";
 	public static final String PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_MAINT= "/maint";
@@ -154,5 +155,6 @@ public class Constants {
 	public static final String INLINE = "INLINE";
 	public static final String DETAIL = "DETAIL";
 	public static final String DATA_TABLE = "DATA_TABLE";
+	public static final String PACKAGE_NAME = "PACKAGE_NAME";
 	
 }

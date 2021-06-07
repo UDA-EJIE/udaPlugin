@@ -131,6 +131,34 @@ public class ControllerUtilsJdbc {
 			return null;
 		}
 	}
+	
+	// Function to convert the string
+    // from snake case to camel case
+    public String snakeToCamel(String str)
+    {
+        // Capitalize first letter of string
+        str = str.substring(0, 1).toLowerCase() + str.substring(1);
+  
+        // Run a loop till string
+        // string contains underscore
+        while (str.contains("_")) {
+  
+            // Replace the first occurrence
+            // of letter that present after
+            // the underscore, to capitalize
+            // form of next letter of underscore
+            str = str
+                      .replaceFirst(
+                          "_[a-z]",
+                          String.valueOf(
+                              Character.toUpperCase(
+                                  str.charAt(
+                                      str.indexOf("_") + 1))));
+        }
+  
+        // Return string
+        return str;
+    }
 
 	public List<String[]> getPrimaryKey(POJOClass pojo, Configuration cfg){
 		try {
@@ -240,7 +268,8 @@ public class ControllerUtilsJdbc {
 							String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclass.getEntityName()))+ BasicPOJOClass.beanCapitalize(subclass.getIdentifierProperty().getName());
 							getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"()";
 							tipo = wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, true);
-							String[] strAt= {nombre, tipo,getter,subclass.getIdentifierProperty().getName()};
+							String name = ControllerUtils.findNameFromEntity(subclass.getEntityName());
+							String[] strAt= {nombre, tipo,getter,subclass.getIdentifierProperty().getName(),name};
 							 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("CLOB") 
 							    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("BLOB")
 							    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("OBJECT")
@@ -324,7 +353,7 @@ public class ControllerUtilsJdbc {
 				String[] auxiliar= (String[]) itAux.next();
 				result.add(auxiliar); 
 			}
-			//Obtenemos todos los campos, pero si son de primaria los descartamos que ya están calculados arriba
+			//Obtenemos todos los campos, pero si son de primaria los descartamos que ya estÃ¡n calculados arriba
 			Iterator<Property> itFields= pojo.getAllPropertiesIterator();
 			while (itFields.hasNext()){
 				Property prop= itFields.next();

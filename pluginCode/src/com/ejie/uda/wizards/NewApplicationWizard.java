@@ -28,6 +28,7 @@ import java.util.Map;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -38,10 +39,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -88,7 +90,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	}
 	
 	/**
-	 * Método de configuración de variable locales para la información de contexto
+	 * MÃ©todo de configuración de variable locales para la información de contexto
 	 * 
 	 * @param workbench - workbench de eclipse
 	 * @param selection - selecction de eclipse 
@@ -228,7 +230,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			getContainer().run(true, false, op);
 			
 			page.getControl().setEnabled(false);
-			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con Ã©xito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
@@ -335,6 +337,22 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			ProjectWorker.linkedReferencesProjects(projectEAR, projectEARClasses, "/lib");
 			monitor.setTaskName("Enlazando los proyectos generados...");
 			monitor.worked(1);
+			//HDIV
+			String codApp = (String) context.get("codapp");
+
+			IJavaProject javaproject = JavaCore.create(projectWAR);
+			IFolder folder = projectWAR.getFolder("src");
+			IPackageFragmentRoot srcfolder = javaproject.getPackageFragmentRoot(folder);
+			String packageName = "com.ejie."+codApp+".config"; 
+			context.put(Constants.PACKAGE_NAME, packageName);
+			IPackageFragment fragment = srcfolder.createPackageFragment(packageName, false, null);
+			
+			String pathGenerateCode = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
+					+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_GENERATE+"/controller";
+			String path = ProjectWorker.createGetFolderPath(projectWAR, "src/"+"com/ejie/"+codApp+"/config");
+			ProjectWorker.createFileTemplate(pathGenerateCode,path , "UDA4HdivConfig.java", context);
+			
+			//FIN HDIV
 			
 			// Recupera la ruta raiz del proyecto, es donde situamos el pom.xml
 			String pathProject = projectEAR.getLocation().toString();
@@ -404,7 +422,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		// Crea la carpeta configuracián del proyecto, donde estarán los .properties
 		path = Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN);
-		//Añadimos si es o no de EJIE
+		//AÑadimos si es o no de EJIE
 		String isEjie = "true";
 	    if(!"true".equals(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
 	    	isEjie = "false";
@@ -457,7 +475,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 
 			// Lo genera como un Dinamic Project
 			IFacetedProject fpStaticsWAR = ProjectFacetsManager.create(projectStatics.getProject(), true, null);
-			//Añade el runTime de Oracle
+			//AÑade el runTime de Oracle
 			fpStaticsWAR.addTargetedRuntime(Utilities.addServerRuntime(fpStaticsWAR, "jst.web", Constants.JST_WEB_VERSION), SubMonitor.convert(monitor,1));
 
 			fpStaticsWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
@@ -589,7 +607,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			}
 	
 			IFacetedProject fpEARClasses = ProjectFacetsManager.create(projectEARClasses.getProject(), true, null);
-			// Añade el runTime de Oracle
+			// AÑade el runTime de Oracle
 			fpEARClasses.addTargetedRuntime(Utilities.addServerRuntime(fpEARClasses, "jst.utility", Constants.JST_UTILITY_VERSION), SubMonitor.convert(monitor,1));
 			
 			// Lo genera como Java Project
@@ -624,7 +642,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			ProjectWorker.copyFile(pathEARClasses, path, ".factorypath.ftl", context);
 		}
 		
-		// Añade las carpetas de test para la generación de pruebas de calidad
+		// AÑade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "test-integration");
 		IFolder sourceFolder = projectEARClasses.getFolder("test-integration");
 		ProjectWorker.addSourceProject(projectEARClasses, path, monitor, sourceFolder);
@@ -688,7 +706,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), userLibCpEntry);
 			/*	
 		try {
-			// Añade el nature de PMD al proyecto  
+			// AÑade el nature de PMD al proyecto  
 			//ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.runtime.pmdNature");
 			ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
 			
@@ -698,7 +716,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 
 		try {
-			// Añade el nature de Checkstyle al proyecto  
+			// AÑade el nature de Checkstyle al proyecto  
 			ProjectUtilities.addNatureToProject(projectEARClasses, "net.sf.eclipsecs.core.CheckstyleNature");
 			
 		} catch (Exception e) {
@@ -723,7 +741,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		String path = "";
 		String pathWar = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 				+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_WAR;
-
+		
 		// Crea el proyecto de xxxWAR
 		IProject projectWAR = null;
 		try {
@@ -738,7 +756,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			
 			// Lo genera como un Dinamic Project
 			IFacetedProject fpWAR = ProjectFacetsManager.create(projectWAR.getProject(), true, null);
-			// Añade el runTime de Oracle
+			// AÑade el runTime de Oracle
 			fpWAR.addTargetedRuntime(Utilities.addServerRuntime(fpWAR, "jst.web", Constants.JST_WEB_VERSION), SubMonitor.convert(monitor,1));
 			
 			fpWAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
@@ -846,7 +864,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage.jsp", context);
 		
-		// Añade las carpetas de test para la generación de pruebas de calidad
+		// AÑade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-integration");
 		IFolder sourceFolder = projectWAR.getFolder("test-integration");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
@@ -858,9 +876,42 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		//HDIV
+		/*	
+		String codApp = (String) context.get("codapp");
+		//set the java nature
+		IProjectDescription description = projectWAR.getDescription();
+		description.setNatureIds(new String[] { JavaCore.NATURE_ID });
+		//create the project
+		projectWAR.setDescription(description, null);
+		IJavaProject javaproject = JavaCore.create(projectWAR);
+		IFolder folder = projectWAR.getFolder("src");
+		IPackageFragmentRoot srcfolder = javaproject.getPackageFragmentRoot(folder);
+		IPackageFragment fragment = srcfolder.createPackageFragment(
+				"com.ejie."+codApp, true, null);
+		
+		ProjectWorker.copyFile(pathGenerateCode, path, "controller/UDA4HdivConfig.ftl", context);
+		
+		path = ProjectWorker.createGetFolderPath(projectWAR, "src/com");
+		sourceFolder = projectWAR.getFolder("com");
+		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		
+		path = ProjectWorker.createGetFolderPath(projectWAR, "src/com/ejie");
+		sourceFolder = projectWAR.getFolder("ejie");
+		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		
+		
+		path = ProjectWorker.createGetFolderPath(projectWAR, "src/com/ejie/"+codApp);
+		sourceFolder = projectWAR.getFolder(codApp);
+		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		
+		
+		*/
+		//fin hdiv
+		
 		/*
 		try {
-			// Añade el nature de PMD al proyecto
+			// AÑade el nature de PMD al proyecto
 			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
 			ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
 		
@@ -870,7 +921,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 
 		try {
-			// Añade el nature de checkstyle al proyecto  
+			// AÑade el nature de checkstyle al proyecto  
 			ProjectUtilities.addNatureToProject(projectWAR, "net.sf.eclipsecs.core.CheckstyleNature");
 		} catch (Exception e) {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
@@ -962,7 +1013,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			}
 	
 			IFacetedProject fpEAR = ProjectFacetsManager.create(projectEAR.getProject(), true, null);
-			// Añade el runTime de Oracle
+			// AÑade el runTime de Oracle
 			fpEAR.addTargetedRuntime(Utilities.addServerRuntime(fpEAR, "jst.ear", Constants.JST_EAR_VERSION), SubMonitor.convert(monitor,1));			
 			
 			fpEAR.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.ear").getVersion(Constants.JST_EAR_VERSION), null, null);
@@ -1031,7 +1082,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			}
 	
 			IFacetedProject fpEJB = ProjectFacetsManager.create(projectEJB.getProject(), true, null);
-			// Añade el runTime de Oracle
+			// AÑade el runTime de Oracle
 			fpEJB.addTargetedRuntime(Utilities.addServerRuntime(fpEJB, "jst.ejb", Constants.JST_EJB_VERSION), SubMonitor.convert(monitor,1));
 			
 			fpEJB.installProjectFacet(ProjectFacetsManager.getProjectFacet("jst.java").getVersion(Constants.JST_JAVA_VERSION), null, null);
@@ -1079,15 +1130,15 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
 
 		/*
-		// Añade la configuración de PMD
+		// AÑade la configuración de PMD
 		path =  projectEJB.getLocation().toString();
 		ProjectWorker.copyFile(pathEJB, path, ".pmd", context);
 	
-		// Añade la configuración de checkstyle
+		// AÑade la configuración de checkstyle
 		ProjectWorker.copyFile(pathEJB, path, ".checkstyle", context);
 	
 		try {
-			// Añade el nature de PMD al proyecto
+			// AÑade el nature de PMD al proyecto
 			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
 		} catch (Exception e) {
 			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
@@ -1095,7 +1146,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 		
 		try {
-			// Añade el nature de checkstyle al proyecto  
+			// AÑade el nature de checkstyle al proyecto  
 			ProjectUtilities.addNatureToProject(projectEJB, "net.sf.eclipsecs.core.CheckstyleNature");
 		} catch (Exception e) {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
