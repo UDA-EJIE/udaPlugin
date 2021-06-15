@@ -8,9 +8,9 @@
 * http://ec.europa.eu/idabc/eupl.html
 *
 * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
-* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
-* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
-* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
+* SIN GARANTÃ�AS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* VÃ©ase la Licencia en el idioma concreto que rige los permisos y limitaciones
 * que establece la Licencia.
 */
 package com.ejie.uda.wizards;
@@ -78,7 +78,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 	}
 	
 	/**
-	 * Método de configuración de variable locales para la información de contexto
+	 * MÃ©todo de configuración de variable locales para la información de contexto
 	 * 
 	 * @param workbench - workbench de eclipse
 	 * @param selection - selecction de eclipse 
@@ -198,7 +198,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			
 			page.getControl().setEnabled(false);
 			
-			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con Ã©xito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
@@ -352,7 +352,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
-		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÃ‘ADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectWAR), userLibCpEntry);
@@ -474,6 +474,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/breadCrumb.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/language.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menu.jsp", context);
+		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/menuMantenimientos.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/templateError.jsp", context);
 
 		if (Constants.LAYOUT_HORIZONTAL.equalsIgnoreCase(layout)){

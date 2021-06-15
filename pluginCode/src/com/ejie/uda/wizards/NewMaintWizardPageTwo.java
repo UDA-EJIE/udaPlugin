@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 E.J.I.E., S.A.
+ * Copyright 2021 E.J.I.E., S.A.
  *
  * Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
  * Solo podrá usarse esta obra si se respeta la Licencia.
@@ -8,7 +8,7 @@
  * http://ec.europa.eu/idabc/eupl.html
  *
  * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
- * el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
+ * el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
  * SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
  * Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
  * que establece la Licencia.
@@ -114,7 +114,7 @@ public class NewMaintWizardPageTwo extends WizardPage {
 				setPageComplete(validatePage());
 			}
 		});
-		titleMaintText.setToolTipText("Título del mantenimiento que se enseñará en pantalla");
+		titleMaintText.setToolTipText("Título del mantenimiento que se enseÃ±ará en pantalla");
 		titleMaintText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 
 		// Salto de línea
@@ -244,7 +244,7 @@ public class NewMaintWizardPageTwo extends WizardPage {
 //		feedbackMaintCollapsibleCheck.setLayoutData(gd_feedbackMaintCollapsibleCheck);
 //		feedbackMaintCollapsibleCheck.setSelection(true);
 //		feedbackMaintCollapsibleCheck
-//				.setToolTipText("Los mensajes de feedback para las acciones de añadir, modificar y borrar desaparecerán de manera automática");
+//				.setToolTipText("Los mensajes de feedback para las acciones de aÃ±adir, modificar y borrar desaparecerán de manera automática");
 		
 		// Check box de Generación de la toolbar del mantenimiento
 		Label toolbarMaintCheckLabel = new Label(container, SWT.NONE);

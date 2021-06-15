@@ -132,29 +132,39 @@ public class ControllerUtilsJdbc {
 		}
 	}
 	
+	public String eliminarComa(String str)
+	{
+		if(str != null && str.length() > 1){
+			str = str.substring(0, str.length() - 3);
+		}
+		return str;
+	}
+	
 	// Function to convert the string
     // from snake case to camel case
     public String snakeToCamel(String str)
     {
-        // Capitalize first letter of string
-        str = str.substring(0, 1).toLowerCase() + str.substring(1);
-  
-        // Run a loop till string
-        // string contains underscore
-        while (str.contains("_")) {
-  
-            // Replace the first occurrence
-            // of letter that present after
-            // the underscore, to capitalize
-            // form of next letter of underscore
-            str = str
-                      .replaceFirst(
-                          "_[a-z]",
-                          String.valueOf(
-                              Character.toUpperCase(
-                                  str.charAt(
-                                      str.indexOf("_") + 1))));
-        }
+    	if(str != null && str.length() > 1) {
+	        // Capitalize first letter of string
+	        str = str.substring(0, 1).toLowerCase() + str.substring(1);
+	  
+	        // Run a loop till string
+	        // string contains underscore
+	        while (str.contains("_")) {
+	  
+	            // Replace the first occurrence
+	            // of letter that present after
+	            // the underscore, to capitalize
+	            // form of next letter of underscore
+	            str = str
+	                      .replaceFirst(
+	                          "_[a-z]",
+	                          String.valueOf(
+	                              Character.toUpperCase(
+	                                  str.charAt(
+	                                      str.indexOf("_") + 1))));
+	        }
+    	}
   
         // Return string
         return str;
@@ -172,7 +182,7 @@ public class ControllerUtilsJdbc {
 				if (!c2h.isOneToMany(prop) && !c2h.isManyToOne(prop)){
 					getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName());
 					tipo = wsJdbc.getJavaTypeName(prop, true, true);
-					String[] strAt= {prop.getName(), tipo,getter,prop.getName()};
+					String[] strAt= {prop.getName(), tipo,getter,prop.getName(),prop.getName()};
 					 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(prop, true, false),false).toUpperCase().endsWith("CLOB") 
 					    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(prop, true, false),false).toUpperCase().endsWith("BLOB")
 					    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(prop, true, false),false).toUpperCase().endsWith("OBJECT")
@@ -186,7 +196,7 @@ public class ControllerUtilsJdbc {
 						getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"()";
 						tipo = wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, true);
 						String nombre=ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclass.getEntityName()))+ BasicPOJOClass.beanCapitalize(subclass.getIdentifierProperty().getName());
-						String[] strAt= {nombre, tipo,getter,subclass.getIdentifierProperty().getName()};
+						String[] strAt= {nombre, tipo,getter,subclass.getIdentifierProperty().getName(),nombre};
 						 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("CLOB") 
 						    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("BLOB")
 						    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclass.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("OBJECT")
@@ -202,7 +212,7 @@ public class ControllerUtilsJdbc {
 								String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclass.getEntityName()))+ BasicPOJOClass.beanCapitalize(propSubclas.getName());
 								getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"()";
 								tipo = wsJdbc.getJavaTypeName(propSubclas, true, true);
-								String[] strAt= {nombre, tipo,getter,propSubclas.getName()};
+								String[] strAt= {nombre, tipo,getter,propSubclas.getName(),nombre};
 								 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(propSubclas, true, false),false).toUpperCase().endsWith("CLOB") 
 								    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(propSubclas, true, false),false).toUpperCase().endsWith("BLOB")
 								    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(propSubclas, true, false),false).toUpperCase().endsWith("OBJECT")
@@ -215,7 +225,7 @@ public class ControllerUtilsJdbc {
 									getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"().get"+ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName())+"()";
 									tipo = wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, true);
 									String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName()))+ BasicPOJOClass.beanCapitalize(subclaseTwo.getIdentifierProperty().getName());
-									String[] strAt= {nombre, tipo,getter,subclaseTwo.getIdentifierProperty().getName()};
+									String[] strAt= {nombre, tipo,getter,subclaseTwo.getIdentifierProperty().getName(),nombre};
 									 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("CLOB") 
 									    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("BLOB")
 									    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("OBJECT")
@@ -230,7 +240,7 @@ public class ControllerUtilsJdbc {
 										getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"().get"+ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName())+"()";
 										tipo = wsJdbc.getJavaTypeName(itPropSubClassTwo, true, true);
 										String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName()))+ BasicPOJOClass.beanCapitalize(itPropSubClassTwo.getName());
-										String[] strAt= {nombre, tipo,getter,itPropSubClassTwo.getName()};
+										String[] strAt= {nombre, tipo,getter,itPropSubClassTwo.getName(),nombre};
 										 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(itPropSubClassTwo, true, false),false).toUpperCase().endsWith("CLOB") 
 										    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(itPropSubClassTwo, true, false),false).toUpperCase().endsWith("BLOB")
 										    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(itPropSubClassTwo, true, false),false).toUpperCase().endsWith("OBJECT")
@@ -254,7 +264,7 @@ public class ControllerUtilsJdbc {
 					if (!c2h.isOneToMany(prop) && !c2h.isManyToAny(prop) && !c2h.isManyToOne(prop)){
 						getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName());
 						tipo = wsJdbc.getJavaTypeName(prop, true, true);
-						String[] strAt= {prop.getName(), tipo,getter,prop.getName()};
+						String[] strAt= {prop.getName(), tipo,getter,prop.getName(),prop.getName()};
 						 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(prop, true, false),false).toUpperCase().endsWith("CLOB") 
 						    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(prop, true, false),false).toUpperCase().endsWith("BLOB")
 						    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(prop, true, false),false).toUpperCase().endsWith("OBJECT")
@@ -285,7 +295,8 @@ public class ControllerUtilsJdbc {
 									String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclass.getEntityName()))+ BasicPOJOClass.beanCapitalize(propSubclas.getName());
 									getter =ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"()";
 									tipo = wsJdbc.getJavaTypeName(propSubclas, true, true);
-									String[] strAt= {nombre, tipo,getter,propSubclas.getName()};
+									String name = ControllerUtils.findNameFromEntity(subclass.getEntityName());
+									String[] strAt= {nombre, tipo,getter,propSubclas.getName(),name};
 									 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(propSubclas, true, false),false).toUpperCase().endsWith("CLOB") 
 									    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(propSubclas, true, false),false).toUpperCase().endsWith("BLOB")
 									    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(propSubclas, true, false),false).toUpperCase().endsWith("OBJECT")
@@ -299,7 +310,8 @@ public class ControllerUtilsJdbc {
 										String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName()))+ BasicPOJOClass.beanCapitalize(subclaseTwo.getIdentifierProperty().getName());
 										getter = ControllerUtils.stringDecapitalize(pojo.getDeclarationName())+".get"+ControllerUtils.findNameFromEntity(subclass.getEntityName())+"().get"+ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName())+"()";
 										tipo = wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, true);
-										String[] strAt= {nombre, tipo ,getter,subclaseTwo.getIdentifierProperty().getName()};
+										String name = ControllerUtils.findNameFromEntity(subclass.getEntityName());
+										String[] strAt= {nombre, tipo ,getter,subclaseTwo.getIdentifierProperty().getName(),name};
 										 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("CLOB") 
 										    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("BLOB")
 										    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(subclaseTwo.getIdentifierProperty(), true, false),false).toUpperCase().endsWith("OBJECT")
@@ -316,7 +328,8 @@ public class ControllerUtilsJdbc {
 											
 											String nombre= ControllerUtils.stringDecapitalize(ControllerUtils.findNameFromEntity(subclaseTwo.getEntityName()))+ BasicPOJOClass.beanCapitalize(itPropSubClassTwo.getName());
 											tipo = wsJdbc.getJavaTypeName(itPropSubClassTwo, true, true);
-											String[] strAt= {nombre, tipo,getter,itPropSubClassTwo.getName()};
+											String name = ControllerUtils.findNameFromEntity(subclass.getEntityName());
+											String[] strAt= {nombre, tipo,getter,itPropSubClassTwo.getName(),name};
 											 if(!WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(itPropSubClassTwo, true, false),false).toUpperCase().endsWith("CLOB") 
 											    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(itPropSubClassTwo, true, false),false).toUpperCase().endsWith("BLOB")
 											    		&& !WarningSupressorJdbc.typeConverter(wsJdbc.getJavaTypeName(itPropSubClassTwo, true, false),false).toUpperCase().endsWith("OBJECT")

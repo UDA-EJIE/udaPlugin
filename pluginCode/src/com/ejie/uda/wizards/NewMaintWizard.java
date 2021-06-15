@@ -8,17 +8,21 @@
 * http://ec.europa.eu/idabc/eupl.html
 *
 * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
-* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
-* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
+* SIN GARANTÃ�AS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
 * Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
 * que establece la Licencia.
 */
 package com.ejie.uda.wizards;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -290,7 +294,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			
 			pageFour.getControl().setEnabled(false);
 			
-			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
@@ -372,6 +376,12 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			File xmlFile = new File(path + "/tiles.xml");
 			//Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
 			editTiles(path, entityName, entityTableName, xmlFile);
+			
+			//Editar MENU
+			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/layouts/");
+			File jspFile = new File(path + "/menuMantenimientos.jsp");
+			//Añadir el mantenimiento
+			editMenu(path, entityName, entityTableName, jspFile);
 			
 			monitor.worked(1);
 			
@@ -487,6 +497,81 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 	public PropertiesWorker getProperties(){
 		return udaProperties;
 	}
+	
+	private void editMenu(String path, String entityName, String entityTableName, File jspFile){
+		File archivo = null;
+	    FileReader fr = null;
+	    BufferedReader br = null;
+	    FileWriter fichero = null;
+        PrintWriter pw = null;
+        if (jspFile.exists()) {
+
+	      try {
+	         // Apertura del fichero y creacion de BufferedReader para poder
+	         // hacer una lectura comoda (disponer del metodo readLine()).
+	         archivo = jspFile;
+	         fr = new FileReader (archivo);
+	         br = new BufferedReader(fr);
+	         fichero = new FileWriter(path+"/menuMantenimientosCopia.jsp");
+	         pw = new PrintWriter(fichero);
+	         String linea1 = "	<spring:url value=\"/"+entityTableName+"/maint\" var=\""+entityTableName+"Maint\" htmlEscape=\"true\"/>";
+	         String linea2 = "	<a class=\"dropdown-item\" href=\"${"+entityTableName+"Maint}\">";
+	         String linea3 = "		<spring:message code=\""+entityTableName+"Maint\" />";
+	         String linea4 = "	</a>";
+
+	         boolean encontrado = false;
+
+	         // Lectura del fichero
+	         String linea;
+	         while((linea=br.readLine())!=null) {
+	        	if(linea.equals("</div>")) {//ultima linea
+	        		if(!encontrado){
+	        			pw.println(linea1);
+	        			pw.println(linea2);
+	        			pw.println(linea3);
+	        			pw.println(linea4);	        				        			
+	        		}
+	        		pw.println(linea);
+	        		
+	        	}else {
+		            if(linea.contains(entityTableName+"/maint")) {//encontrado
+		            	encontrado = true;
+		            	console.println("Mantenimiento ya definido en el menu.jsp", Constants.MSG_INFORMATION);
+		            }
+		            pw.println(linea);
+		            
+	        	}
+	            
+	         }
+	      }
+	      catch(Exception e){
+	         e.printStackTrace();
+	      }finally{
+	         // En el finally cerramos el fichero, para asegurarnos
+	         // que se cierra tanto si todo va bien como si salta 
+	         // una excepcion.
+	         try{                    
+	            if( null != fr ){   
+	               fr.close();     
+	            }                  
+	         }catch (Exception e2){ 
+	            e2.printStackTrace();
+	         }
+	         try {
+	            // Nuevamente aprovechamos el finally para 
+	            // asegurarnos que se cierra el fichero.
+	            if (null != fichero)
+	               fichero.close();
+	            } catch (Exception e2) {
+	               e2.printStackTrace();
+	            }
+	      }
+	      archivo.delete();
+	      File ficheroCopia = new File(path+"/menuMantenimientosCopia.jsp");
+	      ficheroCopia.renameTo(new File(path+"/menuMantenimientos.jsp"));
+	      console.println("Mantenimiento creado en el menuMantenimientos.jsp", Constants.MSG_INFORMATION);
+        }
+	   }
 	
 	private void editTiles(String path, String entityName, String entityTableName, File xmlFile){
 		try {
