@@ -169,6 +169,17 @@ public class ControllerUtilsJdbc {
         // Return string
         return str;
     }
+    
+    public List<String[]> getPrimaryKeyHdiv(POJOClass pojo, Configuration cfg){
+    	List<String[]> resultPrimary =  getPrimaryKey(pojo, cfg);
+    	List<String[]> result =  new ArrayList<String[]>();
+    	if(resultPrimary.size() > 1) {
+    		String[] strAt= {"id", "String",ControllerUtils.stringDecapitalize(pojo.getDeclarationName()),"Id"};
+    		result.add(strAt);
+    		return result;
+    	}
+    	return resultPrimary;
+    }
 
 	public List<String[]> getPrimaryKey(POJOClass pojo, Configuration cfg){
 		try {
