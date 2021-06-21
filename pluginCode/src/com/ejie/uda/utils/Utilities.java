@@ -1,15 +1,15 @@
 /*
 * Copyright 2012 E.J.I.E., S.A.
 *
-* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
-* Solo podrá usarse esta obra si se respeta la Licencia.
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la Â«LicenciaÂ»);
+* Solo podrÃ¡ usarse esta obra si se respeta la Licencia.
 * Puede obtenerse una copia de la Licencia en
 *
 * http://ec.europa.eu/idabc/eupl.html
 *
 * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
-* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
-* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
+* SIN GARANTÃ�AS NI CONDICIONES DE NINGÃšN TIPO, ni expresas ni implícitas.
 * Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
 * que establece la Licencia.
 */
@@ -51,7 +51,7 @@ public class Utilities {
 
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
-			token = String.format("%s%s", Character.toUpperCase(token.charAt(0)), token.substring(1));
+			token = String.format("%s%s", Character.toUpperCase(token.charAt(0)), token.substring(1).toLowerCase());
 			sb.append(token);
 		}
 
@@ -76,7 +76,7 @@ public class Utilities {
 	}
 	
 	/**
-	 * Pone sólo la primera letra a mayúscula, las demas deja como están
+	 * Pone sólo la primera letra a mayúscula, las demas deja como estÃ¡n
 	 * @param s - cadena de caracteres
 	 * @return
 	 */
@@ -167,7 +167,7 @@ public class Utilities {
 	}
 	/**
 	 * Valida en contenido del campo texto del nombre de un JNDI del plugin.
-	 * Sólo permite letras, números, carácter / y _
+	 * Sólo permite letras, números, carÃ¡cter / y _
 	 * @param text - texto a validar
 	 * @return
 	 */
