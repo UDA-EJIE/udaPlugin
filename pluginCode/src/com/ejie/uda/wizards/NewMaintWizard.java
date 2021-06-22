@@ -344,8 +344,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		context.put(Constants.GRID, grid);
 		context.put(Constants.GRID_COLUMNS, filterGridColumnsActivated(gridColumns));
 		
-		try{
-			
+		try {
 			final String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 			
 			String path = "";
@@ -357,12 +356,27 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple-includes.jsp", context, entityName + "-includes.jsp");
 			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.jsp", context, entityName + ".jsp");
 			monitor.worked(1);
-			//Se crean los includes
+			
+			// Se crean los includes
 			String pathInclude = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/" + entityName+"/includes");
-			if(maint.getIsMaint()) {//Si no quieres mantenimiento no se crea la jsp.
-				ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEdit.jsp", context, maint.getNameMaint() + "Edit.jsp");
+			
+			// Recupera el tiles.xml
+			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/");
+			File xmlFile = new File(path + "/tiles.xml");
+			
+			// Si no quieres mantenimiento, no se crea la JSP.
+			if (maint.getIsMaint()) {
+				if (maint.getTypeMaint().equals("DETAIL")) {
+					ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEdit.jsp", context, maint.getNameMaint() + "Edit.jsp");
+					ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEditForm.jsp", context, maint.getNameMaint() + "EditForm.jsp");
+					editTiles(path, entityName, maint.getNameMaint() + "EditForm", xmlFile, false);
+				} else if (maint.getTypeMaint().equals("INLINE")) {
+					ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintInlineEditAuxForm.jsp", context, maint.getNameMaint() + "InlineEditAuxForm.jsp");
+					editTiles(path, entityName, maint.getNameMaint() + "InlineEditAuxForm", xmlFile, false);
+				}
 			}
-			if(maint.getFilterMaint()) {//Si no quieres filtro no se crea la jsp.
+			// Si no quieres filtro, no se crea la JSP.
+			if (maint.getFilterMaint()) {
 				ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintFilterForm.jsp", context, maint.getNameMaint() + "FilterForm.jsp");
 			}
 			console.println("JSPs generados en el proyecto WAR: " + (String)context.get(Constants.WAR_NAME_PATTERN), Constants.MSG_INFORMATION);
@@ -371,16 +385,14 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 	
 			monitor.setTaskName("Modificando tiles.xml...");
 			console.println("Modificación del fichero tiles.xml", Constants.MSG_INFORMATION);
-			// Recupera el tiles.xml
-			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/");
-			File xmlFile = new File(path + "/tiles.xml");
-			//Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
-			editTiles(path, entityName, entityTableName, xmlFile);
 			
-			//Editar MENU
+			// Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
+			editTiles(path, entityName, entityTableName, xmlFile, true);
+			
+			// Editar MENU
 			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/layouts/");
 			File jspFile = new File(path + "/menuMantenimientos.jsp");
-			//Añadir el mantenimiento
+			// Añadir el mantenimiento
 			editMenu(path, entityName, entityTableName, jspFile);
 			
 			monitor.worked(1);
@@ -409,7 +421,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			
 			// Visualiza el sumario de tareas
 			this.summary = createSummary(context);
-		}catch(Exception e){
+		} catch (Exception e) {
 			console.println(e.toString(), Constants.MSG_ERROR);
 			throw e;
 		}		
@@ -573,10 +585,9 @@ public class NewMaintWizard extends Wizard implements INewWizard {
         }
 	   }
 	
-	private void editTiles(String path, String entityName, String entityTableName, File xmlFile){
+	private void editTiles(String path, String entityName, String entityTableName, File xmlFile, boolean extend) {
 		try {
-			String relativePathIncludesJsp = "/WEB-INF/views/" + entityName + "/" + entityName + "-includes.jsp";
-			String relativePathJsp = "/WEB-INF/views/" + entityName + "/" + entityName + ".jsp";
+			String relativePath = "/WEB-INF/views/" + entityName + "/";
 
 			if (xmlFile.exists()) {
 				// Crea la instancia de DocumentBuilderFactory
@@ -606,10 +617,9 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 				// utiliza el fichero xml
 				Document doc = docBuilder.parse(xmlFile);
 				
-				if (findNodeAttribute(doc, "definition", "name", entityName)){
+				if (findNodeAttribute(doc, "definition", "name", entityName)) {
 					console.println("Mantenimiento ya definido en el tiles.xml", Constants.MSG_INFORMATION);
-				}else{
-					
+				} else {
 					doc.getDoctype();
 					doc.setXmlStandalone(true);
 					
@@ -617,21 +627,29 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 					Element rootElement = doc.getDocumentElement();
 					// crea un elemento nuevo de definition
 					Element definitionElement = doc.createElement("definition");
-					// Añade atributos
-					definitionElement.setAttribute("extends", "template");
-					definitionElement.setAttribute("name", entityName);
-					rootElement.appendChild(definitionElement);
-					// crea elemento hijo para la JSP
-					Element contentElement = doc.createElement("put-attribute");
-					contentElement.setAttribute("name", "content");
-					contentElement.setAttribute("value", relativePathJsp);
-					definitionElement.appendChild(contentElement);
 					
-					// crea elemento hijo para la JSP-include
-					Element includesElement = doc.createElement("put-attribute");
-					includesElement.setAttribute("name", "includes");
-					includesElement.setAttribute("value", relativePathIncludesJsp);
-					definitionElement.appendChild(includesElement);
+					if (extend) {
+						// Añade atributos
+						definitionElement.setAttribute("extends", "template");
+						definitionElement.setAttribute("name", entityName);
+						rootElement.appendChild(definitionElement);
+						// crea elemento hijo para la JSP
+						Element contentElement = doc.createElement("put-attribute");
+						contentElement.setAttribute("name", "content");
+						contentElement.setAttribute("value", relativePath + entityName + ".jsp");
+						definitionElement.appendChild(contentElement);
+						
+						// crea elemento hijo para la JSP-include
+						Element includesElement = doc.createElement("put-attribute");
+						includesElement.setAttribute("name", "includes");
+						includesElement.setAttribute("value", relativePath + entityName + "-includes.jsp");
+						definitionElement.appendChild(includesElement);
+					} else {
+						// Añade atributos
+						definitionElement.setAttribute("name", entityTableName);
+						definitionElement.setAttribute("template", relativePath + "includes/" + entityTableName + ".jsp");
+						rootElement.appendChild(definitionElement);
+					}
 
 					// configura transformer
 					TransformerFactory transfac = TransformerFactory.newInstance();
