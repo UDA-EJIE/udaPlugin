@@ -301,7 +301,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			 */
 			if (projectEARClasses != null){
 				
-				monitor.setTaskName("Generando código para las capa de negocio...");
+				monitor.setTaskName("Generando código para la capa de negocio...");
 				
 				String pathProject =  projectEARClasses.getLocation().toString();
 				String appName = Utilities.getAppName(projectEARClasses.getName()); 
@@ -407,7 +407,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			 * WAR
 			 */
 			if (projectWar != null){
-				monitor.setTaskName("Generando código para las capa de presentación...");
+				monitor.setTaskName("Generando código para la capa de presentación...");
 				String pathProject =  projectWar.getLocation().toString();
 				String appName = Utilities.getAppName(projectWar.getName()); 
 				
