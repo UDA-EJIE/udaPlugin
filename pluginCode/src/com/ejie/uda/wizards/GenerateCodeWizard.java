@@ -248,7 +248,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			
 			pageThree.getControl().setEnabled(false);
 			
-			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
@@ -425,13 +425,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 							+ "/generateCode/controller/";
 						ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/WebContent/WEB-INF/spring/", "app-config.xml", null);
 					}
-	
-					//miramos si es entorno ejie
-					if (Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE).equals("true")){
-						GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, chkXLNets, chkIdXlNets);
-					}else{
-						GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, false, chkIdXlNets);
-					}
+
 				}
 				monitor.worked(1);
 				consola.println("Código generado para la capa de presentación:", Constants.MSG_INFORMATION);
