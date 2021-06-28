@@ -617,9 +617,10 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 				// utiliza el fichero xml
 				Document doc = docBuilder.parse(xmlFile);
 				
-				if (findNodeAttribute(doc, "definition", "name", entityName)) {
+				if (findNodeAttribute(doc, "definition", "name", entityName) && extend) {
 					console.println("Mantenimiento ya definido en el tiles.xml", Constants.MSG_INFORMATION);
 				} else {
+
 					doc.getDoctype();
 					doc.setXmlStandalone(true);
 					
@@ -645,6 +646,15 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 						includesElement.setAttribute("value", relativePath + entityName + "-includes.jsp");
 						definitionElement.appendChild(includesElement);
 					} else {
+						//revisar si es inline o editForm
+						//elimnar y luego poner
+					
+						ArrayList<String> lista = new ArrayList<String>();
+						lista.add(entityName+"EditForm");
+						lista.add(entityName);
+						lista.add(entityName+"InlineEditAuxForm");
+						doc = deleteNodeAttribute(doc, "definition", "name", lista);
+						
 						// Añade atributos
 						definitionElement.setAttribute("name", entityTableName);
 						definitionElement.setAttribute("template", relativePath + "includes/" + entityTableName + ".jsp");
@@ -709,6 +719,44 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		}
 				
 		return match;
+	}
+	
+	private Document deleteNodeAttribute(Document document, String nodeName, String attributeName, ArrayList<String> lista){
+		
+		if (document != null && !Utilities.isBlank(attributeName) && !Utilities.isBlank(nodeName)){
+			NodeList nodeList = document.getElementsByTagName(nodeName);
+			
+			int size = nodeList.getLength();
+			Node childNodeEncontrado = null;
+			for(int i=0; i < size; i++){
+				  Node childNode = nodeList.item(i);
+				  if(childNode != null) {
+					  NamedNodeMap nodeMap = childNode.getAttributes();
+					  
+					  String valor =nodeMap.getNamedItem(attributeName).getNodeValue();
+					  
+					  if (lista.get(0).equals(valor)){//Eliminar
+						  childNodeEncontrado = childNode;
+						  Node parentNode = childNodeEncontrado.getParentNode();
+						  //parentNode.removeChild(childNodeEncontrado);
+					  }
+					  if (lista.get(1).equals(valor)){//Eliminar
+						  Node parentNode = childNode.getParentNode();
+						  parentNode.removeChild(childNode);
+							 
+					  }
+					  if (lista.get(2).equals(valor)){//Eliminar
+						  Node parentNode = childNode.getParentNode();
+						  parentNode.removeChild(childNode); 
+					  }
+				  }
+			}
+			if(childNodeEncontrado != null){
+				Node parentNode = childNodeEncontrado.getParentNode();
+				parentNode.removeChild(childNodeEncontrado);
+			}
+		}
+		return document;
 	}
 	
 }
