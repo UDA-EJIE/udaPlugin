@@ -353,10 +353,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 						}
 						
 					}
-					String pathEARClasses = Activator.getDefault().getPreferenceStore()
-					.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
-					+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EARCLASSES;
-					ProjectWorker.copyFile(pathEARClasses, path, "src/spring/security-config.xml.ftl", context);
+
 				}
 				
 				if (!annotCheck){
