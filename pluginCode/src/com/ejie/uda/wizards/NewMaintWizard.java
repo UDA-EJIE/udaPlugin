@@ -653,6 +653,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 						lista.add(entityName+"EditForm");
 						lista.add(entityName);
 						lista.add(entityName+"InlineEditAuxForm");
+
 						doc = deleteNodeAttribute(doc, "definition", "name", lista);
 						
 						// Añade atributos
@@ -727,7 +728,8 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			NodeList nodeList = document.getElementsByTagName(nodeName);
 			
 			int size = nodeList.getLength();
-			Node childNodeEncontrado = null;
+			
+			List<Node> listaBorrar = new ArrayList<Node>();
 			for(int i=0; i < size; i++){
 				  Node childNode = nodeList.item(i);
 				  if(childNode != null) {
@@ -736,25 +738,22 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 					  String valor =nodeMap.getNamedItem(attributeName).getNodeValue();
 					  
 					  if (lista.get(0).equals(valor)){//Eliminar
-						  childNodeEncontrado = childNode;
-						  Node parentNode = childNodeEncontrado.getParentNode();
-						  //parentNode.removeChild(childNodeEncontrado);
+						  listaBorrar.add(childNode);
 					  }
 					  if (lista.get(1).equals(valor)){//Eliminar
-						  Node parentNode = childNode.getParentNode();
-						  parentNode.removeChild(childNode);
+						  listaBorrar.add(childNode);
 							 
 					  }
 					  if (lista.get(2).equals(valor)){//Eliminar
-						  Node parentNode = childNode.getParentNode();
-						  parentNode.removeChild(childNode); 
+						  listaBorrar.add(childNode); 
 					  }
 				  }
 			}
-			if(childNodeEncontrado != null){
-				Node parentNode = childNodeEncontrado.getParentNode();
-				parentNode.removeChild(childNodeEncontrado);
+			for(Node nodeBorrar:listaBorrar) {
+				Node parentNode = nodeBorrar.getParentNode();
+				parentNode.removeChild(nodeBorrar);
 			}
+
 		}
 		return document;
 	}
