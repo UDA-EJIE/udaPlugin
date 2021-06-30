@@ -1,16 +1,16 @@
 /*
 * Copyright 2012 E.J.I.E., S.A.
 *
-* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
+* Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la Â«LicenciaÂ»);
 * Solo podrá usarse esta obra si se respeta la Licencia.
 * Puede obtenerse una copia de la Licencia en
 *
 * http://ec.europa.eu/idabc/eupl.html
 *
 * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
-* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
-* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
-* Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+* el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
+* SIN GARANTÃ�AS NI CONDICIONES DE NINGÃšN TIPO, ni expresas ni implÃ­citas.
+* VÃ©ase la Licencia en el idioma concreto que rige los permisos y limitaciones
 * que establece la Licencia.
 */
 package com.ejie.uda.utils;
@@ -61,6 +61,8 @@ public class GridColumn {
 	
 	//Propiedad de activación
 	private boolean activated;
+	
+	private boolean primaryKey = false;
 
 	/**
 	 * Contructor
@@ -77,7 +79,7 @@ public class GridColumn {
 			String minValueEditRules, String maxValueEditRules,
 			String editType, int editTypeIndex, boolean hidden,
 			String index, String label, String name, boolean resizable,
-			boolean sortable, String width, boolean activated) {
+			boolean sortable, String width, boolean activated, boolean primaryKey) {
 		this.tableName = tableName;
 		this.columnName = columnName;
 		this.align = align;
@@ -99,6 +101,7 @@ public class GridColumn {
 		this.sortable = sortable;
 		this.width = width;
 		this.activated = activated;
+		this.primaryKey = primaryKey;
 	}
 
 	public String getTableName() {
@@ -368,6 +371,14 @@ public class GridColumn {
 		setName("");
 		
 		setActivated(true);
+	}
+
+	public boolean isPrimaryKey() {
+		return primaryKey;
+	}
+
+	public void setPrimaryKey(boolean primaryKey) {
+		this.primaryKey = primaryKey;
 	}
 
 }

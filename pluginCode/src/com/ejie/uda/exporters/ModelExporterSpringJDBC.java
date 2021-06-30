@@ -24,6 +24,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2x.GenericExporter;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
 
+import com.ejie.uda.exporters.utils.ControllerUtilsJdbc;
 import com.ejie.uda.exporters.utils.PojoUtils;
 import com.ejie.uda.exporters.utils.WarningSupressorJdbc;
 
@@ -49,6 +50,7 @@ public class ModelExporterSpringJDBC extends GenericExporter {
     		properties.put("ejb3", "false");
 			properties.put("jdk5", "false");
 			properties.put("warSupresor", new WarningSupressorJdbc());
+			properties.put("ctrlUtils", new ControllerUtilsJdbc());
 			
 			setTemplateName(TemplatePath.MODEL_JDBC_FTL);
 			setFilePattern(TemplatePath.MODEL_PATTERN);

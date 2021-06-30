@@ -8,17 +8,21 @@
 * http://ec.europa.eu/idabc/eupl.html
 *
 * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
-* el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
-* SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
+* el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
+* SIN GARANTÃ�AS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
 * Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
 * que establece la Licencia.
 */
 package com.ejie.uda.wizards;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -290,7 +294,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			
 			pageFour.getControl().setEnabled(false);
 			
-			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
@@ -340,8 +344,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		context.put(Constants.GRID, grid);
 		context.put(Constants.GRID_COLUMNS, filterGridColumnsActivated(gridColumns));
 		
-		try{
-			
+		try {
 			final String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 			
 			String path = "";
@@ -353,12 +356,27 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple-includes.jsp", context, entityName + "-includes.jsp");
 			ProjectWorker.createFileTemplate(pathWar, path, "maintSimple.jsp", context, entityName + ".jsp");
 			monitor.worked(1);
-			//Se crean los includes
+			
+			// Se crean los includes
 			String pathInclude = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/" + entityName+"/includes");
-			if(maint.getIsMaint()) {//Si no quieres mantenimiento no se crea la jsp.
-				ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEdit.jsp", context, maint.getNameMaint() + "Edit.jsp");
+			
+			// Recupera el tiles.xml
+			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/");
+			File xmlFile = new File(path + "/tiles.xml");
+			
+			// Si no quieres mantenimiento, no se crea la JSP.
+			if (maint.getIsMaint()) {
+				if (maint.getTypeMaint().equals("DETAIL")) {
+					ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEdit.jsp", context, maint.getNameMaint() + "Edit.jsp");
+					ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintEditForm.jsp", context, maint.getNameMaint() + "EditForm.jsp");
+					editTiles(path, entityName, maint.getNameMaint() + "EditForm", xmlFile, false);
+				} else if (maint.getTypeMaint().equals("INLINE")) {
+					ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintInlineEditAuxForm.jsp", context, maint.getNameMaint() + "InlineEditAuxForm.jsp");
+					editTiles(path, entityName, maint.getNameMaint() + "InlineEditAuxForm", xmlFile, false);
+				}
 			}
-			if(maint.getFilterMaint()) {//Si no quieres filtro no se crea la jsp.
+			// Si no quieres filtro, no se crea la JSP.
+			if (maint.getFilterMaint()) {
 				ProjectWorker.createFileTemplate(pathWar, pathInclude, "maintFilterForm.jsp", context, maint.getNameMaint() + "FilterForm.jsp");
 			}
 			console.println("JSPs generados en el proyecto WAR: " + (String)context.get(Constants.WAR_NAME_PATTERN), Constants.MSG_INFORMATION);
@@ -367,11 +385,15 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 	
 			monitor.setTaskName("Modificando tiles.xml...");
 			console.println("Modificación del fichero tiles.xml", Constants.MSG_INFORMATION);
-			// Recupera el tiles.xml
-			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/views/");
-			File xmlFile = new File(path + "/tiles.xml");
-			//Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
-			editTiles(path, entityName, entityTableName, xmlFile);
+			
+			// Edita el tiles.xml y Añade la referencia del nuevo mantenimiento en el caso que no exista
+			editTiles(path, entityName, entityTableName, xmlFile, true);
+			
+			// Editar MENU
+			path = ProjectWorker.createGetFolderPath(projectWar, "WebContent/WEB-INF/layouts/");
+			File jspFile = new File(path + "/menuMantenimientos.jsp");
+			// Añadir el mantenimiento
+			editMenu(path, entityName, entityTableName, jspFile);
 			
 			monitor.worked(1);
 			
@@ -399,7 +421,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			
 			// Visualiza el sumario de tareas
 			this.summary = createSummary(context);
-		}catch(Exception e){
+		} catch (Exception e) {
 			console.println(e.toString(), Constants.MSG_ERROR);
 			throw e;
 		}		
@@ -488,10 +510,84 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		return udaProperties;
 	}
 	
-	private void editTiles(String path, String entityName, String entityTableName, File xmlFile){
+	private void editMenu(String path, String entityName, String entityTableName, File jspFile){
+		File archivo = null;
+	    FileReader fr = null;
+	    BufferedReader br = null;
+	    FileWriter fichero = null;
+        PrintWriter pw = null;
+        if (jspFile.exists()) {
+
+	      try {
+	         // Apertura del fichero y creacion de BufferedReader para poder
+	         // hacer una lectura comoda (disponer del metodo readLine()).
+	         archivo = jspFile;
+	         fr = new FileReader (archivo);
+	         br = new BufferedReader(fr);
+	         fichero = new FileWriter(path+"/menuMantenimientosCopia.jsp");
+	         pw = new PrintWriter(fichero);
+	         String linea1 = "	<spring:url value=\"/"+entityTableName+"/maint\" var=\""+entityTableName+"Maint\" htmlEscape=\"true\"/>";
+	         String linea2 = "	<a class=\"dropdown-item\" href=\"${"+entityTableName+"Maint}\">";
+	         String linea3 = "		<spring:message code=\""+entityTableName+"Maint\" />";
+	         String linea4 = "	</a>";
+
+	         boolean encontrado = false;
+
+	         // Lectura del fichero
+	         String linea;
+	         while((linea=br.readLine())!=null) {
+	        	if(linea.equals("</div>")) {//ultima linea
+	        		if(!encontrado){
+	        			pw.println(linea1);
+	        			pw.println(linea2);
+	        			pw.println(linea3);
+	        			pw.println(linea4);	        				        			
+	        		}
+	        		pw.println(linea);
+	        		
+	        	}else {
+		            if(linea.contains(entityTableName+"/maint")) {//encontrado
+		            	encontrado = true;
+		            	console.println("Mantenimiento ya definido en el menu.jsp", Constants.MSG_INFORMATION);
+		            }
+		            pw.println(linea);
+		            
+	        	}
+	            
+	         }
+	      }
+	      catch(Exception e){
+	         e.printStackTrace();
+	      }finally{
+	         // En el finally cerramos el fichero, para asegurarnos
+	         // que se cierra tanto si todo va bien como si salta 
+	         // una excepcion.
+	         try{                    
+	            if( null != fr ){   
+	               fr.close();     
+	            }                  
+	         }catch (Exception e2){ 
+	            e2.printStackTrace();
+	         }
+	         try {
+	            // Nuevamente aprovechamos el finally para 
+	            // asegurarnos que se cierra el fichero.
+	            if (null != fichero)
+	               fichero.close();
+	            } catch (Exception e2) {
+	               e2.printStackTrace();
+	            }
+	      }
+	      archivo.delete();
+	      File ficheroCopia = new File(path+"/menuMantenimientosCopia.jsp");
+	      ficheroCopia.renameTo(new File(path+"/menuMantenimientos.jsp"));
+	      console.println("Mantenimiento creado en el menuMantenimientos.jsp", Constants.MSG_INFORMATION);
+        }
+	   }
+	
+	private void editTiles(String path, String entityName, String entityTableName, File xmlFile, boolean extend) {
 		try {
-			String relativePathIncludesJsp = "/WEB-INF/views/" + entityName + "/" + entityName + "-includes.jsp";
-			String relativePathJsp = "/WEB-INF/views/" + entityName + "/" + entityName + ".jsp";
+			String relativePath = "/WEB-INF/views/" + entityName + "/";
 
 			if (xmlFile.exists()) {
 				// Crea la instancia de DocumentBuilderFactory
@@ -521,10 +617,10 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 				// utiliza el fichero xml
 				Document doc = docBuilder.parse(xmlFile);
 				
-				if (findNodeAttribute(doc, "definition", "name", entityName)){
+				if (findNodeAttribute(doc, "definition", "name", entityName) && extend) {
 					console.println("Mantenimiento ya definido en el tiles.xml", Constants.MSG_INFORMATION);
-				}else{
-					
+				} else {
+
 					doc.getDoctype();
 					doc.setXmlStandalone(true);
 					
@@ -532,21 +628,39 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 					Element rootElement = doc.getDocumentElement();
 					// crea un elemento nuevo de definition
 					Element definitionElement = doc.createElement("definition");
-					// Añade atributos
-					definitionElement.setAttribute("extends", "template");
-					definitionElement.setAttribute("name", entityName);
-					rootElement.appendChild(definitionElement);
-					// crea elemento hijo para la JSP
-					Element contentElement = doc.createElement("put-attribute");
-					contentElement.setAttribute("name", "content");
-					contentElement.setAttribute("value", relativePathJsp);
-					definitionElement.appendChild(contentElement);
 					
-					// crea elemento hijo para la JSP-include
-					Element includesElement = doc.createElement("put-attribute");
-					includesElement.setAttribute("name", "includes");
-					includesElement.setAttribute("value", relativePathIncludesJsp);
-					definitionElement.appendChild(includesElement);
+					if (extend) {
+						// Añade atributos
+						definitionElement.setAttribute("extends", "template");
+						definitionElement.setAttribute("name", entityName);
+						rootElement.appendChild(definitionElement);
+						// crea elemento hijo para la JSP
+						Element contentElement = doc.createElement("put-attribute");
+						contentElement.setAttribute("name", "content");
+						contentElement.setAttribute("value", relativePath + entityName + ".jsp");
+						definitionElement.appendChild(contentElement);
+						
+						// crea elemento hijo para la JSP-include
+						Element includesElement = doc.createElement("put-attribute");
+						includesElement.setAttribute("name", "includes");
+						includesElement.setAttribute("value", relativePath + entityName + "-includes.jsp");
+						definitionElement.appendChild(includesElement);
+					} else {
+						//revisar si es inline o editForm
+						//elimnar y luego poner
+					
+						ArrayList<String> lista = new ArrayList<String>();
+						lista.add(entityName+"EditForm");
+						lista.add(entityName);
+						lista.add(entityName+"InlineEditAuxForm");
+
+						doc = deleteNodeAttribute(doc, "definition", "name", lista);
+						
+						// Añade atributos
+						definitionElement.setAttribute("name", entityTableName);
+						definitionElement.setAttribute("template", relativePath + "includes/" + entityTableName + ".jsp");
+						rootElement.appendChild(definitionElement);
+					}
 
 					// configura transformer
 					TransformerFactory transfac = TransformerFactory.newInstance();
@@ -606,6 +720,42 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		}
 				
 		return match;
+	}
+	
+	private Document deleteNodeAttribute(Document document, String nodeName, String attributeName, ArrayList<String> lista){
+		
+		if (document != null && !Utilities.isBlank(attributeName) && !Utilities.isBlank(nodeName)){
+			NodeList nodeList = document.getElementsByTagName(nodeName);
+			
+			int size = nodeList.getLength();
+			
+			List<Node> listaBorrar = new ArrayList<Node>();
+			for(int i=0; i < size; i++){
+				  Node childNode = nodeList.item(i);
+				  if(childNode != null) {
+					  NamedNodeMap nodeMap = childNode.getAttributes();
+					  
+					  String valor =nodeMap.getNamedItem(attributeName).getNodeValue();
+					  
+					  if (lista.get(0).equals(valor)){//Eliminar
+						  listaBorrar.add(childNode);
+					  }
+					  if (lista.get(1).equals(valor)){//Eliminar
+						  listaBorrar.add(childNode);
+							 
+					  }
+					  if (lista.get(2).equals(valor)){//Eliminar
+						  listaBorrar.add(childNode); 
+					  }
+				  }
+			}
+			for(Node nodeBorrar:listaBorrar) {
+				Node parentNode = nodeBorrar.getParentNode();
+				parentNode.removeChild(nodeBorrar);
+			}
+
+		}
+		return document;
 	}
 	
 }

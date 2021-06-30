@@ -1,16 +1,16 @@
 /*
  * Copyright 2012 E.J.I.E., S.A.
  *
- * Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la «Licencia»);
- * Solo podrá usarse esta obra si se respeta la Licencia.
+ * Licencia con arreglo a la EUPL, Versión 1.1 exclusivamente (la Â«LicenciaÂ»);
+ * Solo podrÃ¡ usarse esta obra si se respeta la Licencia.
  * Puede obtenerse una copia de la Licencia en
  *
  * http://ec.europa.eu/idabc/eupl.html
  *
  * Salvo cuando lo exija la legislación aplicable o se acuerde por escrito,
- * el programa distribuido con arreglo a la Licencia se distribuye «TAL CUAL»,
- * SIN GARANTÍAS NI CONDICIONES DE NINGÚN TIPO, ni expresas ni implícitas.
- * Véase la Licencia en el idioma concreto que rige los permisos y limitaciones
+ * el programa distribuido con arreglo a la Licencia se distribuye Â«TAL CUALÂ»,
+ * SIN GARANTÃ�AS NI CONDICIONES DE NINGÃšN TIPO, ni expresas ni implícitas.
+ * VÃ©ase la Licencia en el idioma concreto que rige los permisos y limitaciones
  * que establece la Licencia.
  */
 package com.ejie.uda.exporters.utils;
@@ -31,6 +31,8 @@ import org.hibernate.tool.hbm2x.Cfg2HbmTool;
 import org.hibernate.tool.hbm2x.Cfg2JavaTool;
 import org.hibernate.tool.hbm2x.pojo.BasicPOJOClass;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
+
+import com.ejie.uda.utils.Utilities;
 /**
  * 
  * Clases principalmente utilizada en la generación de la capa de acceso a base de datos, la cual contiene las funciones específicas para el comportamiento  de la persistencia JDBC
@@ -305,7 +307,7 @@ public class DaoUtilsJdbc {
 													String nombreColumna="t1."+ columna.getName();
 													List<String> listaAuxiliar= new ArrayList<String>(3);
 													String nombreHiber = ControllerUtils.findHibernateName(columna.getName());
-													getterProp = "get"+BasicPOJOClass.beanCapitalize(propiedadComp.getName())+"().get"+BasicPOJOClass.beanCapitalize(nombreHiber)+"()";
+													getterProp = "get"+BasicPOJOClass.beanCapitalize(propiedadComp.getName())+"().get"+Utilities.capitalize(nombreHiber)+"()";
 													listaAuxiliar.add(0,getterProp);
 													listaAuxiliar.add(1,proper.getName());
 													listaAuxiliar.add(1,nombreColumna);

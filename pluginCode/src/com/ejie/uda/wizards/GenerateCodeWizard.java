@@ -301,7 +301,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			 */
 			if (projectEARClasses != null){
 				
-				monitor.setTaskName("Generando código para las capa de negocio...");
+				monitor.setTaskName("Generando código para la capa de negocio...");
 				
 				String pathProject =  projectEARClasses.getLocation().toString();
 				String appName = Utilities.getAppName(projectEARClasses.getName()); 
@@ -353,10 +353,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 						}
 						
 					}
-					String pathEARClasses = Activator.getDefault().getPreferenceStore()
-					.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
-					+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_EARCLASSES;
-					ProjectWorker.copyFile(pathEARClasses, path, "src/spring/security-config.xml.ftl", context);
+
 				}
 				
 				if (!annotCheck){
@@ -407,14 +404,14 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 			 * WAR
 			 */
 			if (projectWar != null){
-				monitor.setTaskName("Generando código para las capa de presentación...");
+				monitor.setTaskName("Generando código para la capa de presentación...");
 				String pathProject =  projectWar.getLocation().toString();
 				String appName = Utilities.getAppName(projectWar.getName()); 
 				
 				if (jmdc==null){
 					jmdc = GenerateCodeWorker.getConfigurationReveng(conData, appName, isJPA, revengXML);
 				}
-				
+								
 				if (controllerCheck){
 					GenerateCodeWorker.controllerExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
 					GenerateCodeWorker.jacksonExporter(jmdc, pathTemplates, pathProject,annotCheck,appName);
@@ -425,13 +422,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 							+ "/generateCode/controller/";
 						ProjectWorker.createFileTemplate(pathTemplate, pathProject+"/WebContent/WEB-INF/spring/", "app-config.xml", null);
 					}
-	
-					//miramos si es entorno ejie
-					if (Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE).equals("true")){
-						GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, chkXLNets, chkIdXlNets);
-					}else{
-						GenerateCodeWorker.securityContextExporter(jmdc, pathTemplates,pathProject, false, chkIdXlNets);
-					}
+
 				}
 				monitor.worked(1);
 				consola.println("Código generado para la capa de presentación:", Constants.MSG_INFORMATION);
