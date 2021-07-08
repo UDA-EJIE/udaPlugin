@@ -128,6 +128,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final String defaultLanguage = page.getLanguageCombo();
 		final String languages = page.getLanguages();
 		final String languagesWithoutQuotes = page.getLanguagesWithoutQuotes();
+		final boolean xlnets = page.getXLNetsCheck();
 		
 		String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 		
@@ -215,7 +216,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				try {
 					monitor.beginTask("Generando proyectos UDA", 8);
 					// Inicia tratamiento del plugin
-					doFinish(appCode, warName, monitor, radSpringJDBC, radJPA, locationCheck, locationText, idSecurity, ejbCheck, ejbProject, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes);
+					doFinish(appCode, warName, monitor, radSpringJDBC, radJPA, locationCheck, locationText, idSecurity, ejbCheck, ejbProject, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes, xlnets);
 
 				} catch (Exception e) {
 					errorMessage = e.getLocalizedMessage();
@@ -251,7 +252,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			boolean radJPA, boolean locationCheck, String locationText, String idSecurity, 
 			boolean ejbCheck, String ejbProyName,
 			String layout, String appType, String category, 
-			String languages, String defaultLanguage, String languagesWithoutQuotes) throws Exception {
+			String languages, String defaultLanguage, String languagesWithoutQuotes, boolean xlnets) throws Exception {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
@@ -287,6 +288,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.LANGUAGES_WITHOUT_QUOTES_PATTERN, languagesWithoutQuotes);
 		context.put(Constants.DEFAULT_LANGUAGE_PATTERN, defaultLanguage);
 		context.put(Constants.WAR_NAME_SHORT_PATTERN, appCode + warName);
+		context.put(Constants.XLNETS, xlnets);
 
 		try{
 			// Recupera el Workspace para crear los proyectos
