@@ -230,7 +230,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			getContainer().run(true, false, op);
 			
 			page.getControl().setEnabled(false);
-			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con Ã©xito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
