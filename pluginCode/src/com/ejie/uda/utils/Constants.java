@@ -128,8 +128,9 @@ public class Constants {
 	public static final String PREF_DEFAULT_UDA_JAR= "uda";
 
 	
-	//Id security
+	// Seguridad
 	public static final String ID_SECURITY = "idSecurity";
+	public static final String XLNETS = "xlnets";
 	
 	//Framework
 	public static final String UDA = "UDA";
