@@ -294,7 +294,7 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 			
 			pageFour.getControl().setEnabled(false);
 			
-			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con éxito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}

@@ -28,7 +28,6 @@ import java.util.Map;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -129,6 +128,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final String defaultLanguage = page.getLanguageCombo();
 		final String languages = page.getLanguages();
 		final String languagesWithoutQuotes = page.getLanguagesWithoutQuotes();
+		final boolean xlnets = page.getXLNetsCheck();
 		
 		String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 		
@@ -216,7 +216,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				try {
 					monitor.beginTask("Generando proyectos UDA", 8);
 					// Inicia tratamiento del plugin
-					doFinish(appCode, warName, monitor, radSpringJDBC, radJPA, locationCheck, locationText, idSecurity, ejbCheck, ejbProject, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes);
+					doFinish(appCode, warName, monitor, radSpringJDBC, radJPA, locationCheck, locationText, idSecurity, ejbCheck, ejbProject, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes, xlnets);
 
 				} catch (Exception e) {
 					errorMessage = e.getLocalizedMessage();
@@ -230,7 +230,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			getContainer().run(true, false, op);
 			
 			page.getControl().setEnabled(false);
-			MessageDialog.openInformation(getShell(), "Información", "Â¡Las operaciones se han realizado con Ã©xito!" + this.summary);
+			MessageDialog.openInformation(getShell(), "Información", "¡Las operaciones se han realizado con éxito!" + this.summary);
 		} catch (Exception e) {
 			MessageDialog.openError(getShell(), "Error", "Error en la generación de la aplicación: " + errorMessage);
 		}
@@ -252,7 +252,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			boolean radJPA, boolean locationCheck, String locationText, String idSecurity, 
 			boolean ejbCheck, String ejbProyName,
 			String layout, String appType, String category, 
-			String languages, String defaultLanguage, String languagesWithoutQuotes) throws Exception {
+			String languages, String defaultLanguage, String languagesWithoutQuotes, boolean xlnets) throws Exception {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
@@ -288,6 +288,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.LANGUAGES_WITHOUT_QUOTES_PATTERN, languagesWithoutQuotes);
 		context.put(Constants.DEFAULT_LANGUAGE_PATTERN, defaultLanguage);
 		context.put(Constants.WAR_NAME_SHORT_PATTERN, appCode + warName);
+		context.put(Constants.XLNETS, xlnets);
 
 		try{
 			// Recupera el Workspace para crear los proyectos

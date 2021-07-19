@@ -71,6 +71,9 @@ public class NewApplicationWizardPage extends WizardPage {
 	private Button euLanguageCheck;
 	private Button enLanguageCheck;
 	private Button frLanguageCheck;
+	private Group securityGroup;
+	private Button disabledXLNetsCheck;
+	private Button enabledXLNetsCheck;
 
 	/**
 	 * Primera ventana del Wizard de Plugin, donde se selecciona
@@ -475,8 +478,23 @@ public class NewApplicationWizardPage extends WizardPage {
 	    languageCombo.setToolTipText("Idioma por defecto de la aplicación");
 	    languageCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 3, 1));
 
-		labelLine = new Label(container, SWT.NULL);
-		labelLine.setLayoutData(gd5);
+		// Checkbox para activar o desactivar el wrapper de XLNets
+		securityGroup = new Group(container, SWT.NONE);
+		securityGroup.setText("Seguridad con XLNets");
+		securityGroup.setLayout(new GridLayout(4, true));
+		securityGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 5, 1));
+
+ 		// XLNets activo
+		enabledXLNetsCheck = new Button(securityGroup, SWT.RADIO);
+		enabledXLNetsCheck.setText("Sí");
+		enabledXLNetsCheck.setSelection(true);
+		enabledXLNetsCheck.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		// XLNets desactivado
+ 		disabledXLNetsCheck = new Button(securityGroup, SWT.RADIO);
+ 		disabledXLNetsCheck.setText("No");
+ 		disabledXLNetsCheck.setSelection(false);
+ 		disabledXLNetsCheck.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));		
 
 		// Check box para crear Módulo EJB para la aplicación
 		ejbCheck = new Button(container, SWT.CHECK);
@@ -787,6 +805,19 @@ public class NewApplicationWizardPage extends WizardPage {
 		return root.getLocation().toString().replace("/", "\\");
 	}
 	
+	/**
+	 * Obtiene la preferencia del usuario sobre el uso de XLNets.
+	 * 
+	 * @return boolean
+	 */
+	public boolean getXLNetsCheck() {
+		if (enabledXLNetsCheck.getSelection()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	private String buildWarFullName(String appCode, String warName){
 		String fullName = "";
 		
