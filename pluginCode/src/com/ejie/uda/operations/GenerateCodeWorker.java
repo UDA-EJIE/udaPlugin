@@ -269,7 +269,7 @@ public class GenerateCodeWorker {
 			securityContexExporter.getProperties().put("codroleAux", "hasRole('ROLE_UDA')");
 			securityContexExporter.getProperties().put("idSecurity", "");
 		}
-		
+		securityContexExporter.getProperties().put(Constants.XLNETS, chkXLNets);
 		securityContexExporter.start();
 	}
 
