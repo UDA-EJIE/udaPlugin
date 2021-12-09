@@ -466,6 +466,57 @@ public class DaoUtilsJdbcAux {
 			return null;
 		}
 	}
+	
+	public List<String> pkSelectFind(POJOClass pojo, Configuration cfg){
+		List<String> result = new ArrayList<String>();
+		try {
+			List<String> resultSelectMany = new ArrayList<String>();
+			List<String> resultSelectManyNiv2 = new ArrayList<String>();
+			Iterator<Property> itPropiedades = pojo.getAllPropertiesIterator();
+			int contadorManyToOne = 1;
+			PersistentClass clazz = (PersistentClass) pojo.getDecoratedObject();
+			while (itPropiedades.hasNext()) {
+				Property propiedad = itPropiedades.next();
+				if (!c2h.isCollection(propiedad)) {
+					if (clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())) {
+						//<#-- Primaria compuesta por más de un campo -->	
+						Iterator<Property> primarias = c2h.getProperties((Component)clazz.getIdentifier());
+						while (primarias.hasNext()) {
+							Property prim = primarias.next(); 
+							Iterator<Column> iterador = prim.getColumnIterator();
+							while (iterador.hasNext()) {
+								Column aux2 = iterador.next();
+								result.add("t1." + aux2.getName() + " " + ControllerUtils.findHibernateName(aux2.getName()).toUpperCase());
+							}
+						}
+					} else if (!clazz.getIdentifierProperty().isComposite() && propiedad.equals(clazz.getIdentifierProperty())) {
+						//<#-- Primaria compuesta por 1 único campo -->		
+						Iterator<Column> itColumns = propiedad.getColumnIterator();
+						while (itColumns.hasNext()) {
+							Column aux2	= itColumns.next();		
+							result.add("t1." + aux2.getName() + " " + ControllerUtils.findHibernateName(aux2.getName()).toUpperCase());
+						}
+					}
+				}
+			}
+			if (resultSelectMany.size() > 0) {
+				Iterator<String> auxIterador = resultSelectMany.iterator();
+				while (auxIterador.hasNext()) {
+					result.add(auxIterador.next());
+				}
+			}
+			if (resultSelectManyNiv2.size() > 0) {
+				Iterator<String> auxIterador = resultSelectManyNiv2.iterator();
+				while (auxIterador.hasNext()){
+					result.add(auxIterador.next());
+				}
+			}
+			return result;
+		} catch(Exception e){
+			log.error("Error:" + e.getCause() + e.getMessage());
+			return null;
+		}
+	}
 
 	public List<String> tablasSelect(POJOClass pojo, Configuration cfg){
 
