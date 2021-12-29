@@ -380,7 +380,6 @@ public class NewMaintWizardPageThree extends WizardPage {
 	public void setColumnsCombo(ConnectionData conData, String tableName){
 		
 		List<TreeNode> columns;
-		List<TreeNode> columnsComposite;
 		
 		if (conData != null && !Utilities.isBlank(tableName)){
 			TreeNode table = DataBaseWorker.getTableNode(conData, tableName);
@@ -397,15 +396,8 @@ public class NewMaintWizardPageThree extends WizardPage {
 					for (Iterator<TreeNode> iterator = columns.iterator(); iterator.hasNext();) {
 						TreeNode column = (TreeNode) iterator.next();
 						
-						if (column.isComposite()){
-							columnsComposite = column.getChildren();
-							for (Iterator<TreeNode> iteratorComposite = columnsComposite.iterator(); iteratorComposite.hasNext();) {
-								TreeNode columnComposite = (TreeNode) iteratorComposite.next();
-								// Añade las claves compuestas
-								sortNameCombo.add(columnComposite.getName());
-							}
-						}else{
-							// Añade las columnas de la tabla
+						if (!column.isComposite() && !column.isPrimaryKey()){
+							// Añade las columnas de la tabla que no formen o sean clave primaria
 							sortNameCombo.add(column.getName());
 						}
 					}
