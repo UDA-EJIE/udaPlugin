@@ -352,7 +352,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
-		//AÃ‘ADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectWAR), userLibCpEntry);
