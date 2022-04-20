@@ -331,33 +331,7 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathEJB+"/.settings/", path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		
 		path = projectEJB.getLocation().toString();
-		ProjectWorker.createFileTemplate(pathEJB+"/ejbModule/META-INF/", path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
-
-		/*
-		// Añade la configuración de PMD
-		path =  projectEJB.getLocation().toString();
-		ProjectWorker.copyFile(pathEJB, path, ".pmd", context);
-		// Añade la configuración de checkstyle
-		ProjectWorker.copyFile(pathEJB, path, ".checkstyle", context);
-	
-
-		try {
-			// Añade el nature de PMD al proyecto
-			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		} catch (Exception e) {
-			//consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		
-		try {
-			// Añade el nature de Checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectEJB, "net.sf.eclipsecs.core.CheckstyleNature");
-			
-		} catch (Exception e) {
-			//consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
+		ProjectWorker.createFileTemplate(pathEJB+"/ejbModule/META-INF/", path +"/ejbModule/META-INF/", "ejb-jar.xml", context);
 		
 		try {
 			String locationText=projectEJB.getParent().getLocation().toString()+"/"+context.get(Constants.EAR_NAME_PATTERN);
