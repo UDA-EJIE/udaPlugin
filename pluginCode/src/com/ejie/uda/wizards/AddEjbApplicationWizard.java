@@ -297,10 +297,10 @@ public class AddEjbApplicationWizard extends Wizard implements INewWizard {
 					ProjectFacetsManager.getProjectFacet("jst.java")
 				})));
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EJB!",
+					"¡No tiene OEPE con WebLogic instalado para el EJB!",
 					IMessageProvider.ERROR);
 		}
 	
