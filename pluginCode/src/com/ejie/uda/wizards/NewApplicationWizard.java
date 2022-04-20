@@ -473,14 +473,14 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				})));
 			
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			String sStackTrace = sw.toString();
 			consola.println("StackTrace: " + sStackTrace, Constants.MSG_ERROR);
-			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
+			page.setMessage("¡No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
 		
 		/* rup */
@@ -602,9 +602,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					ProjectFacetsManager.getProjectFacet("jst.java")
 				})));
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EARClasses!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el EARClasses!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-			page.setMessage("No tiene OEPE con WebLogic instalado para el EARClasses!",IMessageProvider.ERROR);
+			page.setMessage("¡No tiene OEPE con WebLogic instalado para el EARClasses!",IMessageProvider.ERROR);
 		}
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
@@ -727,10 +727,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			})));
 
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el WAR!",
+					"¡No tiene OEPE con WebLogic instalado para el WAR!",
 					IMessageProvider.ERROR);
 		}
 		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
@@ -939,10 +939,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			fpEAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{ProjectFacetsManager.getProjectFacet("jst.ear")})));
 					
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para EAR!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para EAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EAR!",
+					"¡No tiene OEPE con WebLogic instalado para el EAR!",
 					IMessageProvider.ERROR);
 		}
 		
@@ -1014,10 +1014,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			})));
 
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EJB!",
+					"¡No tiene OEPE con WebLogic instalado para el EJB!",
 					IMessageProvider.ERROR);
 		}
 		
