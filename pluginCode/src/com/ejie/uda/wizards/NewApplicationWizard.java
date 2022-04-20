@@ -657,12 +657,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	
 		//SRC
 		ProjectWorker.addSourceProject(projectEARClasses, path, monitor, sourceFolder);
-		
-		//PMD y CheckStyle
-		//path =  projectEARClasses.getLocation().toString();
-		//ProjectWorker.copyFile(pathEARClasses, path, ".pmd", context);
-		//ProjectWorker.copyFile(pathEARClasses, path, ".checkstyle", context);
-		//ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, ".checkstyle", context);
 
 		// Genera los ficheros de configuración del proyecto
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "src");
@@ -705,26 +699,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), userLibCpEntry);
-			/*	
-		try {
-			// AÑade el nature de PMD al proyecto  
-			//ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.runtime.pmdNature");
-			ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-			
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-
-		try {
-			// AÑade el nature de Checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectEARClasses, "net.sf.eclipsecs.core.CheckstyleNature");
-			
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		return projectEARClasses;
 	}
 
@@ -784,13 +758,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
 		ProjectWorker.organizeWARLibraries(projectWAR, context, monitor);
-
-		//PMD y CheckStyle
-		/*
-		path =  projectWAR.getLocation().toString();
-		ProjectWorker.copyFile(pathWar, path, ".pmd", context);
-		ProjectWorker.copyFile(pathWar, path, ".checkstyle", context);
-		*/
+		
 		//Ruta para las plantillas que se deben procesar (.ftl)
 		String pathFileTemplate = projectWAR.getLocation().toString();
 	
@@ -910,25 +878,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		*/
 		//fin hdiv
 		
-		/*
-		try {
-			// AÑade el nature de PMD al proyecto
-			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-
-		try {
-			// AÑade el nature de checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sf.eclipsecs.core.CheckstyleNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		//LAYOUTS
 		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
 		context.put("isEjie", pw.readValue("isEjie"));
@@ -1129,32 +1078,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 
 		path = projectEJB.getLocation().toString();
-		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
-
-		/*
-		// AÑade la configuración de PMD
-		path =  projectEJB.getLocation().toString();
-		ProjectWorker.copyFile(pathEJB, path, ".pmd", context);
-	
-		// AÑade la configuración de checkstyle
-		ProjectWorker.copyFile(pathEJB, path, ".checkstyle", context);
-	
-		try {
-			// AÑade el nature de PMD al proyecto
-			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
+		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context);
 		
-		try {
-			// AÑade el nature de checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectEJB, "net.sf.eclipsecs.core.CheckstyleNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		try {
 			ProjectWorker.addEjbModuleEARApplication(locationText+"EAR/EarContent/META-INF/",new File(locationText+"EAR/EarContent/META-INF/application.xml"),context );
 		} catch (Exception e) {

@@ -360,12 +360,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		//Organiza las librerias que debe tener un proyecto EARClasses
 		ProjectWorker.organizeWARLibraries(projectWAR, context, monitor);
 		
-		/*
-		//PMD y CheckStyle
-		path =  projectWAR.getLocation().toString();
-		ProjectWorker.copyFile(pathWar, path, ".pmd", context);
-		ProjectWorker.copyFile(pathWar, path, ".checkstyle", context);
-		*/
 		//Ruta para las plantillas que se deben procesar (.ftl)
 		String pathFileTemplate = projectWAR.getLocation().toString();
 	
@@ -446,25 +440,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
-		/*
-		try {
-			// Añade el nature de PMD al proyecto
-			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-
-		try {
-			// Añade el nature de checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sf.eclipsecs.core.CheckstyleNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		
 		//LAYOUTS
 		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
