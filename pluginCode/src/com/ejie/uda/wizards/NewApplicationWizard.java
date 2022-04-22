@@ -1042,10 +1042,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		//ProjectWorker.copyFile(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		//INCLUIR MODULES Y MODULES_EXTRA EN LA CONFIGURACIÓN DE Weblogic System Library del proyecto
-		ProjectWorker.createFileTemplate(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
+		ProjectWorker.createFileTemplate(pathEJB + "/.settings/", path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 
 		path = projectEJB.getLocation().toString();
-		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context);
+		ProjectWorker.createFileTemplate(pathEJB + "/ejbModule/META-INF/", path +"/ejbModule/META-INF/", "ejb-jar.xml", context);
 		
 		try {
 			ProjectWorker.addEjbModuleEARApplication(locationText+"EAR/EarContent/META-INF/",new File(locationText+"EAR/EarContent/META-INF/application.xml"),context );
