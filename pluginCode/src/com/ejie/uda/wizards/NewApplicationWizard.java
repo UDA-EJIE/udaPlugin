@@ -393,8 +393,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		consola.println("Para revisar la configuración del log en " + Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
-		consola.println("- el servidor Weblogic Server 10.3.6 ", Constants.MSG_INFORMATION);
-		consola.println("- la librería de dependencias UDAWLS11Classpath ", Constants.MSG_INFORMATION);
+		consola.println("- el servidor Weblogic Server 12.2.1.4 ", Constants.MSG_INFORMATION);
+		consola.println("- la librería de dependencias UDAWLS12Classpath ", Constants.MSG_INFORMATION);
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
 		
@@ -695,9 +695,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final IClasspathEntry resourcesCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), resourcesCpEntry);
 		
-		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS12Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
-		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
+		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS12Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), userLibCpEntry);
 		return projectEARClasses;
 	}
@@ -751,9 +751,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					"¡No tiene OEPE con WebLogic instalado para el WAR!",
 					IMessageProvider.ERROR);
 		}
-		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS12Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
-		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
+		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS12Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectWAR), userLibCpEntry);
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
