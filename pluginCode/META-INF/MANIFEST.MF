@@ -1,7 +1,7 @@
 Bundle-ManifestVersion: 2
 Bundle-Name: UDA - Utilidades de Desarrollo de Aplicaciones
 Bundle-SymbolicName: com.ejie.uda;singleton:=true
-Bundle-Version: 5.0.2.qualifier
+Bundle-Version: 5.0.3.qualifier
 Bundle-Activator: com.ejie.uda.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: EJIE
