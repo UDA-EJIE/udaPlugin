@@ -472,6 +472,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					ProjectFacetsManager.getProjectFacet("jst.web")
 				})));
 			
+			// Poner en orden el deployment assembly.
+			String pathFileTemplate = projectStatics.getLocation().toString()+ "/.settings/";
+			ProjectWorker.createFileTemplate(pathStatics + "/.settings/", pathFileTemplate, Constants.DEPLOY_PATH, context);
 		} catch (Exception e) {
 			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -552,7 +555,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectStatics.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
 
 		return projectStatics;
 	}
@@ -625,7 +628,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			ProjectWorker.copyFile(pathEARClasses, path, ".factorypath.ftl", context);
 		}
 		
-		// Añade las carpetas de test para la generación de pruebas de calidad
+		// Ajusta los sources del proyecto.
+		assignDefaultSourceFolder(projectEARClasses, "src", "src/main");
+		
+		// AÑade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "test-integration");
 		IFolder sourceFolder = projectEARClasses.getFolder("test-integration");
 		ProjectWorker.addSourceProject(projectEARClasses, path, monitor, sourceFolder);
@@ -725,7 +731,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				ProjectFacetsManager.getProjectFacet("jst.java"),
 				ProjectFacetsManager.getProjectFacet("jst.web")
 			})));
-
+			
+			// Poner en orden el deployment assembly.
+			String pathFileTemplate = projectWAR.getLocation().toString()+ "/.settings/";
+			ProjectWorker.createFileTemplate(pathWar + "/.settings/", pathFileTemplate, Constants.DEPLOY_PATH, context);
 		} catch (Exception e) {
 			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -815,7 +824,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage.jsp", context);
 		
-		// Añade las carpetas de test para la generación de pruebas de calidad
+		// Ajusta los sources del proyecto.
+		assignDefaultSourceFolder(projectWAR, "src", "src/main");
+		
+		// AÑade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-integration");
 		IFolder sourceFolder = projectWAR.getFolder("test-integration");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
@@ -1021,18 +1033,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					IMessageProvider.ERROR);
 		}
 		
-		//asignamos la carpeta ejbModule como la del source
-		final IJavaProject javaP = JavaCore.create(projectEJB);
-		removeAllSourceFolders(javaP);
-		IFolder borrarCarpeta = projectEJB.getFolder("src");
-		borrarCarpeta.deleteMarkers("src", true, IResource.DEPTH_ZERO);
-		borrarCarpeta.delete( true, null);
-		projectEJB.build(IncrementalProjectBuilder.CLEAN_BUILD,null);
-		ProjectWorker.refresh(projectEJB);
-
-		final IFolder srcFolder = projectEJB.getFolder("ejbModule");
-		final IClasspathEntry ejbModuleCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
-		ProjectWorker.addToClasspath(JavaCore.create(projectEJB), ejbModuleCpEntry);		
+		// Asignar la carpeta ejbModule como source.
+		assignDefaultSourceFolder(projectEJB, "ejbModule", "src");
 			
 		String pathEJB = Activator.getDefault().getPreferenceStore()
 			.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
@@ -1070,6 +1072,33 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 		}
 	 		javaP.setRawClasspath(newClasspath.toArray(new IClasspathEntry[newClasspath.size()]), new NullProgressMonitor());
 	 	}
+	
+	/**
+	 * Elimina los fuentes existentes y establece uno nuevo.
+	 * @param project IProject - Proyecto a manipular.
+	 * @param newSourceFolder String - Nueva ubicación para los archivos fuentes.
+	 * @param folderToDelete String - Carpeta de archivos fuentes a eliminar.
+	 */
+	private static void assignDefaultSourceFolder(IProject project, String newSourceFolder, String folderToDelete) throws CoreException {
+		final IJavaProject javaProject = JavaCore.create(project);
+		
+		// Limpia los sources del proyecto.
+		removeAllSourceFolders(javaProject);
+		IFolder borrarCarpeta = project.getFolder(folderToDelete);
+		for (IResource marker : borrarCarpeta.members()) {
+			borrarCarpeta.deleteMarkers(marker.toString(), true, IResource.DEPTH_ZERO);
+		}
+		borrarCarpeta.delete(true, null);
+		
+		// Refrescar proyecto.
+		project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+		ProjectWorker.refresh(project);
+
+		// Establece la nueva ubicación de los fuentes.
+		final IFolder srcFolder = project.getFolder(newSourceFolder);
+		final IClasspathEntry classpathEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
+		ProjectWorker.addToClasspath(JavaCore.create(project), classpathEntry);
+	}
 	
 	/**
 	 * Genera el texto que se sacará de sumario con las operaciones realizadas.
