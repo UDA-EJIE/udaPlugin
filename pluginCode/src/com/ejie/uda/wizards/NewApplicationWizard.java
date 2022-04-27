@@ -488,11 +488,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			fpStaticsWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
 					ProjectFacetsManager.getProjectFacet("jst.java"),
 					ProjectFacetsManager.getProjectFacet("jst.web")
-				})));
-			
-			// Poner en orden el deployment assembly.
-			String pathFileTemplate = projectStatics.getLocation().toString()+ "/.settings/";
-			ProjectWorker.createFileTemplate(pathStatics + "/.settings/", pathFileTemplate, Constants.DEPLOY_PATH, context);
+				})));			
+
 		} catch (Exception e) {
 			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -574,6 +571,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
+		
+		// Poner en orden el deployment assembly.
+		String pathFileTemplate = projectStatics.getLocation().toString()+ "/.settings/";
+		ProjectWorker.createFileTemplate(pathStatics + "/.settings/", pathFileTemplate, Constants.DEPLOY_PATH, context);
 
 		return projectStatics;
 	}
@@ -750,9 +751,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				ProjectFacetsManager.getProjectFacet("jst.web")
 			})));
 			
-			// Poner en orden el deployment assembly.
-			String pathFileTemplate = projectWAR.getLocation().toString()+ "/.settings/";
-			ProjectWorker.createFileTemplate(pathWar + "/.settings/", pathFileTemplate, Constants.DEPLOY_PATH, context);
+
 		} catch (Exception e) {
 			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
@@ -857,6 +856,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		
+		// Poner en orden el deployment assembly.
+		String pathFileTemplat = projectWAR.getLocation().toString()+ "/.settings/";
+		ProjectWorker.createFileTemplate(pathWar + "/.settings/", pathFileTemplat, Constants.DEPLOY_PATH, context);
 		//HDIV
 		/*	
 		String codApp = (String) context.get("codapp");
