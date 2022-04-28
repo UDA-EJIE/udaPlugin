@@ -552,7 +552,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectStatics.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
 
 		return projectStatics;
 	}
@@ -846,9 +846,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 		}
-		// Poner en orden el deployment assembly.
-		String pathFileTemplat = projectWAR.getLocation().toString()+ "/.settings/";
-		ProjectWorker.createFileTemplate(pathWar + "/.settings/", pathFileTemplat, Constants.DEPLOY_PATH, context);
 		*/
 		//LAYOUTS
 		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
