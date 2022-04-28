@@ -294,6 +294,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			// Recupera el Workspace para crear los proyectos
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			
+			// Configurar AppXray a nivel de proyecto.
+			String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) + "/workspace";
+			String pathConfig = root.getLocation().toString() + "/.metadata/.plugins/org.eclipse.core.runtime/.settings";
+			ProjectWorker.copyFile(pathTemplate, pathConfig, "oracle.eclipse.tools.common.services.prefs", context);
+			
 			// Crea el proyecto xxxConfig
 			monitor.setTaskName("Creando proyecto Config...");
 			IProject projectConfig = createProjectConfig(root, context);
@@ -443,7 +448,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	        PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", path);
 	        pw.writeProperty("isEjie", isEjie);
 	        pw.saveProperties();
-		}	
+			
+			// Desactivar AppXray (también crea la carpeta .settings).
+			ProjectWorker.createGetFolderPath(projectConfig, ".settings");
+			ProjectWorker.copyFile(pathConfig + "/.settings", path + "/.settings", "oracle.eclipse.tools.common.services.prefs", context);
+		}
 				
 		return projectConfig;
 	}
@@ -571,6 +580,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
+		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathStatics + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
 
 		return projectStatics;
 	}
@@ -634,6 +646,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectEARClasses.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathEARClasses, path, ".settings/org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, ".settings/oracle.eclipse.tools.weblogic.syslib.xml", context);
+		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathEARClasses + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		if (radJPA){		
 			//MetaModel
 			ProjectWorker.configRepositoryMaven(context);
@@ -699,6 +715,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
 		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS12Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), userLibCpEntry);
+				
 		return projectEARClasses;
 	}
 
@@ -767,7 +784,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectWAR.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathWar, path, ".settings/org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, ".settings/oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathWar, path, ".settings/oracle.eclipse.tools.webtier.ui.prefs", context);		
+		ProjectWorker.copyFile(pathWar, path, ".settings/oracle.eclipse.tools.webtier.ui.prefs", context);	
+		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathWar + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		if (radJPA){
 			//Fichero encargado de indicar que el proyecto tendrá tecnologia JPA 2.0
 			ProjectWorker.copyFile(pathWar, path, ".settings/com.ejie.uda.xml", context);
@@ -846,6 +867,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		
 		//HDIV
 		/*	
 		String codApp = (String) context.get("codapp");
@@ -1008,6 +1030,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		// Copia el parseador de estilos para aplicaciones de INTERNET
 		ProjectWorker.copyFile(pathTemplates + "/staticsTools", path, "com.ejie.uda.statics.tools.jar", context);
 		ProjectWorker.copyFile(pathTemplates + "/staticsTools", path, "com.ejie.uda.statics.tools.style_hacks", context);
+		
+		// Desactivar AppXray.
+		path = projectEAR.getLocation().toString()+ "/.settings";
+		ProjectWorker.copyFile(pathEar + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		return projectEAR;
 	}
 	
@@ -1064,6 +1091,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		String path =  projectEJB.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathEJB, path, "org.eclipse.jdt.ui.prefs", context);
 		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathEJB + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		//ProjectWorker.copyFile(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		//INCLUIR MODULES Y MODULES_EXTRA EN LA CONFIGURACIÓN DE Weblogic System Library del proyecto
 		ProjectWorker.createFileTemplate(pathEJB + "/.settings/", path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
@@ -1080,6 +1110,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		//Organiza las librerias que debe tener un proyecto EJB
 		ProjectWorker.organizeEJBLibraries(projectEJB, context, monitor);
+		
 		return projectEJB;
 	}
 	
