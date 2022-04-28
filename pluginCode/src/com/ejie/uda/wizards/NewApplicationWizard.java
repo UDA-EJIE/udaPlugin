@@ -552,11 +552,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectStatics.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
-		
-		// Poner en orden el deployment assembly.
-		String pathFileTemplate = projectStatics.getLocation().toString()+ "/.settings/";
-		ProjectWorker.createFileTemplate(pathStatics + "/.settings/", pathFileTemplate, Constants.DEPLOY_PATH, context);
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
 
 		return projectStatics;
 	}
@@ -628,9 +624,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			path =  projectEARClasses.getLocation().toString();
 			ProjectWorker.copyFile(pathEARClasses, path, ".factorypath.ftl", context);
 		}
-		
-		// Ajusta los sources del proyecto.
-		assignDefaultSourceFolder(projectEARClasses, "src", "src/main");
 		
 		// AÑade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "test-integration");
@@ -822,9 +815,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginAjaxPage.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage-includes.jsp", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/views/mockLogin/mockLoginPage.jsp", context);
-		
-		// Ajusta los sources del proyecto.
-		assignDefaultSourceFolder(projectWAR, "src", "src/main");
 		
 		// AÑade las carpetas de test para la generación de pruebas de calidad
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-integration");
