@@ -570,7 +570,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectStatics.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
 
 		return projectStatics;
 	}
@@ -846,10 +846,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
-		
-		// Poner en orden el deployment assembly.
-		String pathFileTemplat = projectWAR.getLocation().toString()+ "/.settings/";
-		ProjectWorker.createFileTemplate(pathWar + "/.settings/", pathFileTemplat, Constants.DEPLOY_PATH, context);
 		//HDIV
 		/*	
 		String codApp = (String) context.get("codapp");
