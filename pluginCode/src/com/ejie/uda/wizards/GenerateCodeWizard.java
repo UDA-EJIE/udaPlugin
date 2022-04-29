@@ -335,6 +335,7 @@ public class GenerateCodeWizard extends Wizard implements INewWizard {
 					if (!annotCheck){
 						GenerateCodeWorker.serviceDIExporter(jmdc, pathTemplates, pathProject,annotCheck,isJPA);
 					}
+					ProjectWorker.createGetFolderPath(projectEARClasses, "src/spring");
 					Map<String, Object> context = new HashMap<String, Object>();
 					if (chkIdXlNets.equals("")){
 						context.put(Constants.CODROLE_PATTERN, "UDA");
