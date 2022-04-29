@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -351,7 +350,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			IPackageFragmentRoot srcfolder = javaproject.getPackageFragmentRoot(folder);
 			String packageName = "com.ejie."+codApp+".config"; 
 			context.put(Constants.PACKAGE_NAME, packageName);
-			IPackageFragment fragment = srcfolder.createPackageFragment(packageName, false, null);
+			srcfolder.createPackageFragment(packageName, false, null);
 			
 			String pathGenerateCode = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 					+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_GENERATE+"/controller";
