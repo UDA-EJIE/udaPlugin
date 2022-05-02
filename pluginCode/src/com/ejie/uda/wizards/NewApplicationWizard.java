@@ -582,6 +582,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		// Desactivar AppXray.
 		ProjectWorker.copyFile(pathStatics + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
+		// Desactivar validador de JS.
+		ProjectWorker.copyFile(pathStatics + "/.settings", path, "org.eclipse.wst.validation.prefs", context);
 
 		return projectStatics;
 	}
