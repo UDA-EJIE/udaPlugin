@@ -681,6 +681,7 @@ public String getEjbName(){
 	      }
       }   
     }
+    jarFile.close();
   }
   catch( Exception e){
     e.printStackTrace ();

@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jem.util.emf.workbench.ProjectUtilities;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -352,20 +351,14 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
-		//AÃ‘ADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS12Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
-		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
+		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS12Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectWAR), userLibCpEntry);
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
 		ProjectWorker.organizeWARLibraries(projectWAR, context, monitor);
 		
-		/*
-		//PMD y CheckStyle
-		path =  projectWAR.getLocation().toString();
-		ProjectWorker.copyFile(pathWar, path, ".pmd", context);
-		ProjectWorker.copyFile(pathWar, path, ".checkstyle", context);
-		*/
 		//Ruta para las plantillas que se deben procesar (.ftl)
 		String pathFileTemplate = projectWAR.getLocation().toString();
 	
@@ -446,25 +439,6 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
-		/*
-		try {
-			// Añade el nature de PMD al proyecto
-			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-
-		try {
-			// Añade el nature de checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sf.eclipsecs.core.CheckstyleNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		
 		//LAYOUTS
 		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));

@@ -348,7 +348,6 @@ public class DataBaseWorker {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static List<String> getTablesSchema(ConnectionData conData){
 		List<String> tablesSchema = new ArrayList<String>(0);
 		if (conData != null){

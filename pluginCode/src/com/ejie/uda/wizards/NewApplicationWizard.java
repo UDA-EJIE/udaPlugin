@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -294,6 +293,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			// Recupera el Workspace para crear los proyectos
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			
+			// Configurar AppXray a nivel de proyecto.
+			String pathTemplate = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH) + "/workspace";
+			String pathConfig = root.getLocation().toString() + "/.metadata/.plugins/org.eclipse.core.runtime/.settings";
+			ProjectWorker.copyFile(pathTemplate, pathConfig, "oracle.eclipse.tools.common.services.prefs", context);
+			
 			// Crea el proyecto xxxConfig
 			monitor.setTaskName("Creando proyecto Config...");
 			IProject projectConfig = createProjectConfig(root, context);
@@ -346,7 +350,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			IPackageFragmentRoot srcfolder = javaproject.getPackageFragmentRoot(folder);
 			String packageName = "com.ejie."+codApp+".config"; 
 			context.put(Constants.PACKAGE_NAME, packageName);
-			IPackageFragment fragment = srcfolder.createPackageFragment(packageName, false, null);
+			srcfolder.createPackageFragment(packageName, false, null);
 			
 			String pathGenerateCode = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
 					+ Constants.PREF_DEFAULT_TEMPLATES_UDA_LOCALPATH_GENERATE+"/controller";
@@ -393,8 +397,8 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		consola.println("Para revisar la configuración del log en " + Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
-		consola.println("- el servidor Weblogic Server 10.3.6 ", Constants.MSG_INFORMATION);
-		consola.println("- la librería de dependencias UDAWLS11Classpath ", Constants.MSG_INFORMATION);
+		consola.println("- el servidor Weblogic Server 12.2.1.4 ", Constants.MSG_INFORMATION);
+		consola.println("- la librería de dependencias UDAWLS12Classpath ", Constants.MSG_INFORMATION);
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
 		consola.println("UDA - END", Constants.MSG_INFORMATION);
 		
@@ -443,7 +447,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	        PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", path);
 	        pw.writeProperty("isEjie", isEjie);
 	        pw.saveProperties();
-		}	
+			
+			// Desactivar AppXray (también crea la carpeta .settings).
+			ProjectWorker.createGetFolderPath(projectConfig, ".settings");
+			ProjectWorker.copyFile(pathConfig + "/.settings", path + "/.settings", "oracle.eclipse.tools.common.services.prefs", context);
+		}
 				
 		return projectConfig;
 	}
@@ -488,17 +496,17 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			fpStaticsWAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{
 					ProjectFacetsManager.getProjectFacet("jst.java"),
 					ProjectFacetsManager.getProjectFacet("jst.web")
-				})));
-			
+				})));			
+
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			String sStackTrace = sw.toString();
 			consola.println("StackTrace: " + sStackTrace, Constants.MSG_ERROR);
-			page.setMessage("No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
+			page.setMessage("¡No tiene OEPE con WebLogic instalado para el WAR!",IMessageProvider.ERROR);
 		}
 		
 		/* rup */
@@ -570,7 +578,13 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectStatics.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathStatics, path, "org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);	
+		ProjectWorker.copyFile(pathStatics, path, "oracle.eclipse.tools.webtier.ui.prefs", context);
+		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathStatics + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
+		// Desactivar validador de JS.
+		ProjectWorker.copyFile(pathStatics + "/.settings", path, "org.eclipse.wst.validation.prefs", context);
 
 		return projectStatics;
 	}
@@ -620,9 +634,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 					ProjectFacetsManager.getProjectFacet("jst.java")
 				})));
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EARClasses!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el EARClasses!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-			page.setMessage("No tiene OEPE con WebLogic instalado para el EARClasses!",IMessageProvider.ERROR);
+			page.setMessage("¡No tiene OEPE con WebLogic instalado para el EARClasses!",IMessageProvider.ERROR);
 		}
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
@@ -634,6 +648,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectEARClasses.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathEARClasses, path, ".settings/org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, ".settings/oracle.eclipse.tools.weblogic.syslib.xml", context);
+		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathEARClasses + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		if (radJPA){		
 			//MetaModel
 			ProjectWorker.configRepositoryMaven(context);
@@ -657,12 +675,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	
 		//SRC
 		ProjectWorker.addSourceProject(projectEARClasses, path, monitor, sourceFolder);
-		
-		//PMD y CheckStyle
-		//path =  projectEARClasses.getLocation().toString();
-		//ProjectWorker.copyFile(pathEARClasses, path, ".pmd", context);
-		//ProjectWorker.copyFile(pathEARClasses, path, ".checkstyle", context);
-		//ProjectWorker.createFileTemplate(pathEARClasses, pathFileTemplate, ".checkstyle", context);
 
 		// Genera los ficheros de configuración del proyecto
 		path = ProjectWorker.createGetFolderPath(projectEARClasses, "src");
@@ -701,30 +713,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		final IClasspathEntry resourcesCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), resourcesCpEntry);
 		
-		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS12Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
-		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
+		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS12Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectEARClasses), userLibCpEntry);
-			/*	
-		try {
-			// AÑade el nature de PMD al proyecto  
-			//ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.runtime.pmdNature");
-			ProjectUtilities.addNatureToProject(projectEARClasses, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-			
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-
-		try {
-			// AÑade el nature de Checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectEARClasses, "net.sf.eclipsecs.core.CheckstyleNature");
-			
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
+				
 		return projectEARClasses;
 	}
 
@@ -769,28 +762,23 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 				ProjectFacetsManager.getProjectFacet("jst.java"),
 				ProjectFacetsManager.getProjectFacet("jst.web")
 			})));
+			
 
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el WAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el WAR!",
+					"¡No tiene OEPE con WebLogic instalado para el WAR!",
 					IMessageProvider.ERROR);
 		}
-		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS11Classpath)
+		//AÑADIR LA USER SYSTEM LIBRARY (UDAWLS12Classpath)
 		final IClasspathAttribute[] atribs = new IClasspathAttribute[]{UpdateClasspathAttributeUtil.createNonDependencyAttribute()};
-		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS11Classpath"), null, atribs, true);
+		final IClasspathEntry userLibCpEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.USER_LIBRARY/UDAWLS12Classpath"), null, atribs, true);
 		ProjectWorker.addToClasspath(JavaCore.create(projectWAR), userLibCpEntry);
 		
 		//Organiza las librerias que debe tener un proyecto EARClasses
 		ProjectWorker.organizeWARLibraries(projectWAR, context, monitor);
-
-		//PMD y CheckStyle
-		/*
-		path =  projectWAR.getLocation().toString();
-		ProjectWorker.copyFile(pathWar, path, ".pmd", context);
-		ProjectWorker.copyFile(pathWar, path, ".checkstyle", context);
-		*/
+		
 		//Ruta para las plantillas que se deben procesar (.ftl)
 		String pathFileTemplate = projectWAR.getLocation().toString();
 	
@@ -798,7 +786,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path =  projectWAR.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathWar, path, ".settings/org.eclipse.jdt.ui.prefs", context);
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, ".settings/oracle.eclipse.tools.weblogic.syslib.xml", context);
-		ProjectWorker.copyFile(pathWar, path, ".settings/oracle.eclipse.tools.webtier.ui.prefs", context);		
+		ProjectWorker.copyFile(pathWar, path, ".settings/oracle.eclipse.tools.webtier.ui.prefs", context);	
+		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathWar + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		if (radJPA){
 			//Fichero encargado de indicar que el proyecto tendrá tecnologia JPA 2.0
 			ProjectWorker.copyFile(pathWar, path, ".settings/com.ejie.uda.xml", context);
@@ -877,6 +869,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		path = ProjectWorker.createGetFolderPath(projectWAR, "test-unit");
 		sourceFolder = projectWAR.getFolder("test-unit");
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
+		
 		//HDIV
 		/*	
 		String codApp = (String) context.get("codapp");
@@ -910,25 +903,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		*/
 		//fin hdiv
 		
-		/*
-		try {
-			// AÑade el nature de PMD al proyecto
-			//ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.runtime.pmdNature");
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-
-		try {
-			// AÑade el nature de checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectWAR, "net.sf.eclipsecs.core.CheckstyleNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		//LAYOUTS
 		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
 		context.put("isEjie", pw.readValue("isEjie"));
@@ -1023,10 +997,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			fpEAR.setFixedProjectFacets(new HashSet<IProjectFacet>(Arrays.asList(new IProjectFacet[]{ProjectFacetsManager.getProjectFacet("jst.ear")})));
 					
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para EAR!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para EAR!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EAR!",
+					"¡No tiene OEPE con WebLogic instalado para el EAR!",
 					IMessageProvider.ERROR);
 		}
 		
@@ -1058,6 +1032,11 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		// Copia el parseador de estilos para aplicaciones de INTERNET
 		ProjectWorker.copyFile(pathTemplates + "/staticsTools", path, "com.ejie.uda.statics.tools.jar", context);
 		ProjectWorker.copyFile(pathTemplates + "/staticsTools", path, "com.ejie.uda.statics.tools.style_hacks", context);
+		
+		// Desactivar AppXray.
+		path = projectEAR.getLocation().toString()+ "/.settings";
+		ProjectWorker.copyFile(pathEar + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		return projectEAR;
 	}
 	
@@ -1098,25 +1077,15 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			})));
 
 		} catch (Exception e) {
-			consola.println("No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
+			consola.println("¡No tiene OEPE con WebLogic instalado para el EJB!", Constants.MSG_ERROR);
 			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
 			page.setMessage(
-					"No tiene OEPE con WebLogic instalado para el EJB!",
+					"¡No tiene OEPE con WebLogic instalado para el EJB!",
 					IMessageProvider.ERROR);
 		}
 		
-		//asignamos la carpeta ejbModule como la del source
-		final IJavaProject javaP = JavaCore.create(projectEJB);
-		removeAllSourceFolders(javaP);
-		IFolder borrarCarpeta = projectEJB.getFolder("src");
-		borrarCarpeta.deleteMarkers("src", true, IResource.DEPTH_ZERO);
-		borrarCarpeta.delete( true, null);
-		projectEJB.build(IncrementalProjectBuilder.CLEAN_BUILD,null);
-		ProjectWorker.refresh(projectEJB);
-
-		final IFolder srcFolder = projectEJB.getFolder("ejbModule");
-		final IClasspathEntry ejbModuleCpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
-		ProjectWorker.addToClasspath(JavaCore.create(projectEJB), ejbModuleCpEntry);		
+		// Asignar la carpeta ejbModule como source.
+		assignDefaultSourceFolder(projectEJB, "ejbModule", "src");
 			
 		String pathEJB = Activator.getDefault().getPreferenceStore()
 			.getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH)
@@ -1124,37 +1093,16 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		String path =  projectEJB.getLocation().toString() + "/.settings";
 		ProjectWorker.copyFile(pathEJB, path, "org.eclipse.jdt.ui.prefs", context);
 		
+		// Desactivar AppXray.
+		ProjectWorker.copyFile(pathEJB + "/.settings", path, "oracle.eclipse.tools.common.services.prefs", context);
+		
 		//ProjectWorker.copyFile(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 		//INCLUIR MODULES Y MODULES_EXTRA EN LA CONFIGURACIÓN DE Weblogic System Library del proyecto
-		ProjectWorker.createFileTemplate(pathEJB, path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
+		ProjectWorker.createFileTemplate(pathEJB + "/.settings/", path, "oracle.eclipse.tools.weblogic.syslib.xml", context);
 
 		path = projectEJB.getLocation().toString();
-		ProjectWorker.createFileTemplate(pathEJB, path +"/ejbModule/META-INF/", "ejb-jar.xml", context); 
-
-		/*
-		// AÑade la configuración de PMD
-		path =  projectEJB.getLocation().toString();
-		ProjectWorker.copyFile(pathEJB, path, ".pmd", context);
-	
-		// AÑade la configuración de checkstyle
-		ProjectWorker.copyFile(pathEJB, path, ".checkstyle", context);
-	
-		try {
-			// AÑade el nature de PMD al proyecto
-			ProjectUtilities.addNatureToProject(projectEJB, "net.sourceforge.pmd.eclipse.plugin.pmdNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de PMD instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
+		ProjectWorker.createFileTemplate(pathEJB + "/ejbModule/META-INF/", path +"/ejbModule/META-INF/", "ejb-jar.xml", context);
 		
-		try {
-			// AÑade el nature de checkstyle al proyecto  
-			ProjectUtilities.addNatureToProject(projectEJB, "net.sf.eclipsecs.core.CheckstyleNature");
-		} catch (Exception e) {
-			consola.println("No tiene Plugin de Checkstyle instalado en el Eclipse!", Constants.MSG_ERROR);
-			consola.println("Error: " + e.getMessage(), Constants.MSG_ERROR);
-		}
-		*/
 		try {
 			ProjectWorker.addEjbModuleEARApplication(locationText+"EAR/EarContent/META-INF/",new File(locationText+"EAR/EarContent/META-INF/application.xml"),context );
 		} catch (Exception e) {
@@ -1164,6 +1112,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		
 		//Organiza las librerias que debe tener un proyecto EJB
 		ProjectWorker.organizeEJBLibraries(projectEJB, context, monitor);
+		
 		return projectEJB;
 	}
 	
@@ -1178,6 +1127,33 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 	 		}
 	 		javaP.setRawClasspath(newClasspath.toArray(new IClasspathEntry[newClasspath.size()]), new NullProgressMonitor());
 	 	}
+	
+	/**
+	 * Elimina los fuentes existentes y establece uno nuevo.
+	 * @param project IProject - Proyecto a manipular.
+	 * @param newSourceFolder String - Nueva ubicación para los archivos fuentes.
+	 * @param folderToDelete String - Carpeta de archivos fuentes a eliminar.
+	 */
+	private static void assignDefaultSourceFolder(IProject project, String newSourceFolder, String folderToDelete) throws CoreException {
+		final IJavaProject javaProject = JavaCore.create(project);
+		
+		// Limpia los sources del proyecto.
+		removeAllSourceFolders(javaProject);
+		IFolder borrarCarpeta = project.getFolder(folderToDelete);
+		for (IResource marker : borrarCarpeta.members()) {
+			borrarCarpeta.deleteMarkers(marker.toString(), true, IResource.DEPTH_ZERO);
+		}
+		borrarCarpeta.delete(true, null);
+		
+		// Refrescar proyecto.
+		project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+		ProjectWorker.refresh(project);
+
+		// Establece la nueva ubicación de los fuentes.
+		final IFolder srcFolder = project.getFolder(newSourceFolder);
+		final IClasspathEntry classpathEntry = JavaCore.newSourceEntry(srcFolder.getFullPath().makeAbsolute());
+		ProjectWorker.addToClasspath(JavaCore.create(project), classpathEntry);
+	}
 	
 	/**
 	 * Genera el texto que se sacará de sumario con las operaciones realizadas.
