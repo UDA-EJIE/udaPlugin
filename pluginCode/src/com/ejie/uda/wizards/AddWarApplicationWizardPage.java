@@ -63,6 +63,9 @@ public class AddWarApplicationWizardPage extends WizardPage {
 	private Button euLanguageCheck;
 	private Button enLanguageCheck;
 	private Button frLanguageCheck;
+	private Group securityGroup;
+	private Button disabledXLNetsCheck;
+	private Button enabledXLNetsCheck;
 	
 	/**
 	 * Primera ventana del Wizard de Plugin, donde se selecciona
@@ -378,6 +381,24 @@ public class AddWarApplicationWizardPage extends WizardPage {
 	    languageCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 3, 1));
 
 		setControl(container);
+
+		// Checkbox para activar o desactivar el wrapper de XLNetS.
+		securityGroup = new Group(container, SWT.NONE);
+		securityGroup.setText("Seguridad con XLNets");
+		securityGroup.setLayout(new GridLayout(4, true));
+		securityGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 5, 1));
+
+ 		// XLNetS activado.
+		enabledXLNetsCheck = new Button(securityGroup, SWT.RADIO);
+		enabledXLNetsCheck.setText("Sí");
+		enabledXLNetsCheck.setSelection(true);
+		enabledXLNetsCheck.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		// XLNetS desactivado.
+ 		disabledXLNetsCheck = new Button(securityGroup, SWT.RADIO);
+ 		disabledXLNetsCheck.setText("No");
+ 		disabledXLNetsCheck.setSelection(false);
+ 		disabledXLNetsCheck.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	}
 	
 	/*************/
@@ -561,6 +582,19 @@ public class AddWarApplicationWizardPage extends WizardPage {
 			}
 		}
 		return language;
+	}
+	
+	/**
+	 * Obtiene la preferencia del usuario sobre el uso de XLNetS.
+	 * 
+	 * @return boolean
+	 */
+	public boolean getXLNetsCheck() {
+		if (enabledXLNetsCheck.getSelection()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**********************/

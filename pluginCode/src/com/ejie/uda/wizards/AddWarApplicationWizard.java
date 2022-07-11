@@ -111,6 +111,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		final String defaultLanguage = page.getLanguageCombo();
 		final String languages = page.getLanguages();
 		final String languagesWithoutQuotes = page.getLanguagesWithoutQuotes();
+		final boolean xlnets = page.getXLNetsCheck();
 		
 		String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
 		
@@ -183,7 +184,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 				try {
 					monitor.beginTask("Añadiendo WAR a la aplicación", 2);
 					// Inicia tratamiento del plugin
-					doFinish(monitor, warName, projectEAR, radSpringJDBC, radJPA, idSecurity, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes);
+					doFinish(monitor, warName, projectEAR, radSpringJDBC, radJPA, idSecurity, layout, appType, category, languages, defaultLanguage, languagesWithoutQuotes, xlnets);
 				} catch (Exception e) {
 					errorMessage = e.getLocalizedMessage();
 					throw new CoreException(null);
@@ -217,7 +218,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 	 */
 	private void doFinish(IProgressMonitor monitor, String warName, IProject projectEAR, boolean radSpringJDBC,
 			boolean radJPA, String idSecurity, String layout, String appType, String category, 
-			String languages, String defaultLanguage, String languagesWithoutQuotes) throws Exception {
+			String languages, String defaultLanguage, String languagesWithoutQuotes, boolean xlnets) throws Exception {
 		
 		consola = ConsoleLogger.getDefault();
 		consola.println("UDA - INI", Constants.MSG_INFORMATION);
@@ -251,7 +252,8 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.LANGUAGES_WITHOUT_QUOTES_PATTERN, languagesWithoutQuotes);
 		context.put(Constants.DEFAULT_LANGUAGE_PATTERN, defaultLanguage);
 		context.put(Constants.WAR_NAME_SHORT_PATTERN, warName);
-		context.put(Constants.PREF_EJIE_PATTERN, Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE));		
+		context.put(Constants.PREF_EJIE_PATTERN, Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE));
+		context.put(Constants.XLNETS, xlnets);	
 
 		try{
 			// Recupera el Workspace para crear los proyectos
