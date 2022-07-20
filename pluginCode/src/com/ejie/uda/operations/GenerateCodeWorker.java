@@ -286,7 +286,7 @@ public class GenerateCodeWorker {
 		
 		xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		xml.append(System.getProperty("line.separator"));
-		xml.append("<!DOCTYPE hibernate-reverse-engineering PUBLIC \"-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd\" >");
+		xml.append("<!DOCTYPE hibernate-reverse-engineering PUBLIC \"-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN\" \"https://hibernate.org/dtd/hibernate-reverse-engineering-3.0.dtd\" >");
 		xml.append(System.getProperty("line.separator"));
 		xml.append("<hibernate-reverse-engineering>");
 		xml.append(System.getProperty("line.separator"));
