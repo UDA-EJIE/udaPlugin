@@ -18,6 +18,7 @@ package com.ejie.uda.preferences;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -32,24 +33,38 @@ import com.ejie.uda.utils.Constants;
 
 public class PreferecesMainPage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
+	
+	private static IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 	/**
 	 * Crea un campo para la introducción de la ruta de la plantilla
 	 */
 	@Override
 	protected void createFieldEditors() {
-		// Campo de texto acompañado de un botín para seleccionar una ruta
+		// Campos de texto acompañados de un botón para seleccionar una ruta.
 		DirectoryFieldEditor templatesUDAField = new DirectoryFieldEditor(
 				Constants.PREF_TEMPLATES_UDA_LOCALPATH, "&Plantillas UDA:",
 				getFieldEditorParent());
-		// añade el campo
-		addField(templatesUDAField);
-		// Check que guardará el si estamos o no en un entorno EJIE
+		DirectoryFieldEditor configUDAField = new DirectoryFieldEditor(
+				Constants.PATH_CONFIG_APP, "&Configuraciones:",
+				getFieldEditorParent());
+		DirectoryFieldEditor dataUDAField = new DirectoryFieldEditor(
+				Constants.PATH_DATOS_APP, "&Datos:",
+				getFieldEditorParent());
+		
+		// Check que guardará el si estamos o no en un entorno EJIE.
 		BooleanFieldEditor checkEjie = new BooleanFieldEditor(
 				Constants.PREF_EJIE, "Desarrollo para EJIE", getFieldEditorParent());
 		checkEjie.loadDefault();
-		// Añade el campo
+		
+		// Añade los campos.
+		addField(templatesUDAField);
+		addField(configUDAField);
+		addField(dataUDAField);
 		addField(checkEjie);
+		
+		store.setDefault(Constants.PATH_CONFIG_APP, Constants.UNIDAD_HD + Constants.PATH_CONFIG);
+		store.setDefault(Constants.PATH_DATOS_APP, Constants.UNIDAD_HD + Constants.PATH_DATOS);
 	}
 
 	/**
@@ -58,10 +73,8 @@ public class PreferecesMainPage extends FieldEditorPreferencePage implements
 	 */
 	@Override
 	public void init(IWorkbench arg0) {
-
 		setDescription("Indique la carpeta raiz de las plantillas:");
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		Activator.getDefault().getPreferenceStore().getBoolean("Constants.PREF_EJIE");
-
+		setPreferenceStore(store);
+		store.getBoolean("Constants.PREF_EJIE");
 	}
 }

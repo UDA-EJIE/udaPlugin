@@ -580,7 +580,7 @@ public class GenerateStubWizardPage extends WizardPage {
 		return projectConfigLocation;
 	}
 	public void setProjectConfigLocation(IProject project){
-		this.projectConfigLocation = Constants.UNIDAD_HD + Constants.PATH_CONFIG+Utilities.getAppName(getProjectEJB().getName());
+		this.projectConfigLocation = Utilities.getAppConfigPath() + Utilities.getAppName(getProjectEJB().getName());
 		
 	}
 	public String getProjectEARLocation(){

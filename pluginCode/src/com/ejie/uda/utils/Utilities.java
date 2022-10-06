@@ -28,16 +28,20 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
 
+import com.ejie.uda.Activator;
 import com.ejie.uda.exporters.Reveng;
 
 public class Utilities {
 	
 	private final static Logger logger = Logger.getLogger(Utilities.class);
+	
+	private static IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 	
 	public enum OS {
 		WINDOWS, LINUX, MAC, SOLARIS
@@ -326,7 +330,11 @@ public class Utilities {
 		}
 		return runtime;
 	}
-
+	
+	/**
+	 * Detecta el sistema operativo sobre el que se ejecuta la JVM.
+	 * @return Sistema operativo en uso.
+	 */
 	public static OS getOS() {
 		if (os == null) {
 			String osName = System.getProperty("os.name").toLowerCase();
@@ -343,4 +351,33 @@ public class Utilities {
 		return os;
 	}
 	
+	/**
+	 * Devuelve la ruta en la que se almacenarán los archivos de configuración.
+	 * @return Ruta de los archivos de configuración.
+	 */
+	public static String getAppConfigPath() {
+		return setTrailingSlash(store.getString(Constants.PATH_CONFIG_APP));
+	}
+	
+	/**
+	 * Devuelve la ruta en la que se almacenarán los datos.
+	 * @return Ruta de los datos.
+	 */
+	public static String getAppDataPath() {
+		return setTrailingSlash(store.getString(Constants.PATH_DATOS_APP));
+	}
+	
+	/**
+	 * Garantiza que la ruta contenga siempre la barra o contrabarra final.
+	 * @return Ruta con barra o contrabarra final.
+	 */
+	public static String setTrailingSlash(String path) {
+		if (OS.WINDOWS == getOS() && !path.endsWith("\\")) {
+			path = path + "\\";
+		} else if (OS.WINDOWS != getOS() && !path.endsWith("/")){
+			path = path + "/";
+		}
+		
+		return path;
+	}
 }
