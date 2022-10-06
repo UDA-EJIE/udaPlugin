@@ -39,6 +39,12 @@ public class Utilities {
 	
 	private final static Logger logger = Logger.getLogger(Utilities.class);
 	
+	public enum OS {
+		WINDOWS, LINUX, MAC, SOLARIS
+	};
+
+	private static OS os = null;
+	
 	/**
 	 * Capitaliza una cadena de caracteres
 	 * @param s - cadena de caracteres
@@ -319,6 +325,22 @@ public class Utilities {
 			}
 		}
 		return runtime;
+	}
+
+	public static OS getOS() {
+		if (os == null) {
+			String osName = System.getProperty("os.name").toLowerCase();
+			if (osName.contains("win")) {
+				os = OS.WINDOWS;
+			} else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
+				os = OS.LINUX;
+			} else if (osName.contains("mac")) {
+				os = OS.MAC;
+			} else if (osName.contains("sunos")) {
+				os = OS.SOLARIS;
+			}
+		}
+		return os;
 	}
 	
 }
