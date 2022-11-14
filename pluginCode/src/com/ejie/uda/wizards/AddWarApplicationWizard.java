@@ -443,7 +443,7 @@ public class AddWarApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.addSourceProject(projectWAR, path, monitor, sourceFolder);
 		
 		//LAYOUTS
-		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
+		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Utilities.getAppConfigPath() + context.get(Constants.CODAPP_PATTERN));
 		context.put("isEjie", pw.readValue("isEjie"));
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);

@@ -288,6 +288,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		context.put(Constants.DEFAULT_LANGUAGE_PATTERN, defaultLanguage);
 		context.put(Constants.WAR_NAME_SHORT_PATTERN, appCode + warName);
 		context.put(Constants.XLNETS, xlnets);
+		context.put(Constants.MAVEN_FILE_TYPE, Utilities.OS.WINDOWS == Utilities.getOS() ? "mvn.bat" : "mvn");
 
 		try{
 			// Recupera el Workspace para crear los proyectos
@@ -395,9 +396,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 		
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
-		consola.println("Ubicación de logs de la aplicación: " + Constants.UNIDAD_HD + Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log" , Constants.MSG_INFORMATION);
+		consola.println("Ubicación de logs de la aplicación: " + Utilities.getAppDataPath() + context.get(Constants.CODAPP_PATTERN)+"/log" , Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
-		consola.println("Para revisar la configuración del log en " + Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
+		consola.println("Para revisar la configuración del log en " + Utilities.getAppConfigPath() + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
 		consola.println("- el servidor Weblogic Server 12.2.1.4 ", Constants.MSG_INFORMATION);
@@ -426,10 +427,10 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		IProject projectConfig = root.getProject((String)context.get(Constants.CONFIG_NAME_PATTERN));
 
 		// Crea la carpeta datos del proyecto, donde estarán los logs
-		ProjectWorker.createFolder(Constants.UNIDAD_HD + Constants.PATH_DATOS + context.get(Constants.CODAPP_PATTERN)+"/log");
+		ProjectWorker.createFolder(Utilities.getAppDataPath() + context.get(Constants.CODAPP_PATTERN)+"/log");
 		
 		// Crea la carpeta configuracián del proyecto, donde estarán los .properties
-		path = Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN);
+		path = Utilities.getAppConfigPath() + context.get(Constants.CODAPP_PATTERN);
 		//AÑadimos si es o no de EJIE
 		String isEjie = "true";
 	    if(!"true".equals(Activator.getDefault().getPreferenceStore().getString(Constants.PREF_EJIE))){
@@ -907,7 +908,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		//fin hdiv
 		
 		//LAYOUTS
-		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Constants.UNIDAD_HD + Constants.PATH_CONFIG + context.get(Constants.CODAPP_PATTERN));
+		PropertiesWorker pw = new PropertiesWorker(context.get(Constants.CODAPP_PATTERN) + ".properties", Utilities.getAppConfigPath() + context.get(Constants.CODAPP_PATTERN));
 		context.put("isEjie", pw.readValue("isEjie"));
 		path = ProjectWorker.createGetFolderPath(projectWAR, "WebContent/WEB-INF/layouts");
 		ProjectWorker.createFileTemplate(pathWar, pathFileTemplate, "WebContent/WEB-INF/layouts/base-includes.jsp", context);
