@@ -304,12 +304,17 @@ public class Utilities {
 	 * Método que devuelve el sinónimo de la tabla de la relación M:N
 	 * @param tableName - Nombre tabla (ej. X2100T00)
 	 * @return - Nombre del sinónimo (ej. PetsSpecialties)
+	 * @exception NullPointerException Cuando no exista un sinónimo para la tabla.
 	 */
 	public static String getRelationName(String tableName){
 		StringBuffer nameBBDD = new StringBuffer();
-		String[] arrNames = Reveng.synonymous.get(tableName).split("_");
-		for (int i = 0; i < arrNames.length; i++) {
-			nameBBDD.append(Utilities.camelCase(arrNames[i].toLowerCase()));
+		try {
+			String[] arrNames = Reveng.synonymous.get(tableName).split("_");
+			for (int i = 0; i < arrNames.length; i++) {
+				nameBBDD.append(Utilities.camelCase(arrNames[i].toLowerCase()));
+			}
+		} catch (NullPointerException exception) {
+			logger.error("No existe un sinónimo para la tabla " + tableName);
 		}
 		return nameBBDD.toString();
 	}
