@@ -364,6 +364,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			ProjectWorker.createFileTemplate(pathGenerateCode, path, "MvcConfig.java", context);
 			
 			// MVC Controller
+			packageName = "com.ejie."+codApp+".control"; 
+			context.put(Constants.PACKAGE_NAME, packageName);
+			srcfolder.createPackageFragment(packageName, false, null);
 			path = ProjectWorker.createGetFolderPath(projectWAR, "src/"+"com/ejie/"+codApp+"/control");
 			ProjectWorker.createFileTemplate(pathGenerateCode, path, "MvcController.java", context);
 			
