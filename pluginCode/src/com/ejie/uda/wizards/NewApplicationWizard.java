@@ -851,7 +851,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/c.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/fmt.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/security.tld", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring-form.tld", context);
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/x38-form.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/tiles-jsp.tld", context);
 		
