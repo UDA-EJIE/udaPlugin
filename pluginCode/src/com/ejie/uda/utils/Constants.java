@@ -85,6 +85,8 @@ public class Constants {
 	public static final String MAINT = "maint";
 	public static final String GRID = "grid";
 	public static final String GRID_COLUMNS = "gridColumns";
+	public static final String PRIMARY_KEY = "primaryKey";
+	public static final String MULTIPK = "multipk";
 	
 	//Prefijos y sufijos para identificar elementos
 	public static final String FREEMARKER_SUFFIX = ".ftl";

@@ -343,6 +343,8 @@ public class NewMaintWizard extends Wizard implements INewWizard {
 		context.put(Constants.MAINT, maint);
 		context.put(Constants.GRID, grid);
 		context.put(Constants.GRID_COLUMNS, filterGridColumnsActivated(gridColumns));
+		context.put(Constants.PRIMARY_KEY, maint.getPrimaryKey());
+		context.put(Constants.MULTIPK, maint.getPrimaryKey().contains(";"));
 		
 		try {
 			final String pathTemplates = Activator.getDefault().getPreferenceStore().getString(Constants.PREF_TEMPLATES_UDA_LOCALPATH);
