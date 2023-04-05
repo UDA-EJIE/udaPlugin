@@ -363,6 +363,13 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			// MVC Java Config
 			ProjectWorker.createFileTemplate(pathGenerateCode, path, "MvcConfig.java", context);
 			
+			// MVC Controller
+			packageName = "com.ejie."+codApp+".control"; 
+			context.put(Constants.PACKAGE_NAME, packageName);
+			srcfolder.createPackageFragment(packageName, false, null);
+			path = ProjectWorker.createGetFolderPath(projectWAR, "src/"+"com/ejie/"+codApp+"/control");
+			ProjectWorker.createFileTemplate(pathGenerateCode, path, "MvcController.java", context);
+			
 			// Recupera la ruta raiz del proyecto, es donde situamos el pom.xml
 			String pathProject = projectEAR.getLocation().toString();
 			consola.println("DEPENDENCIES TASK - INI", Constants.MSG_INFORMATION);
@@ -844,7 +851,7 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/c.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/fmt.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/security.tld", context);
-		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring-form.tld", context);
+		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/x38-form.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/spring.tld", context);
 		ProjectWorker.copyFile(pathWar, path, "WebContent/WEB-INF/tld/tiles-jsp.tld", context);
 		
