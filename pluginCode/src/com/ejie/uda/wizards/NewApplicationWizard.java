@@ -386,9 +386,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		}
 		
 		consola.println("***************************************************************", Constants.MSG_INFORMATION);
-		consola.println("Ubicación de logs de la aplicación: " + Utilities.getAppDataPath() + context.get(Constants.CODAPP_PATTERN)+"/log" , Constants.MSG_INFORMATION);
+		consola.println("Ubicación de logs de la aplicación: " + (Utilities.getAppDataPath() + context.get(Constants.CODAPP_PATTERN)).replace("\\", "/") + "/log" , Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
-		consola.println("Para revisar la configuración del log en " + Utilities.getAppConfigPath() + context.get(Constants.CODAPP_PATTERN) + "/logback.xml", Constants.MSG_INFORMATION);
+		consola.println("Para revisar la configuración del log en " + (Utilities.getAppConfigPath() + context.get(Constants.CODAPP_PATTERN)).replace("\\", "/") + "/logback.xml", Constants.MSG_INFORMATION);
 		consola.println("" , Constants.MSG_INFORMATION);
 		consola.println("Recuerda que deberás tener configurado el entorno con: ", Constants.MSG_INFORMATION);
 		consola.println("- el servidor Weblogic Server 10.3.6 ", Constants.MSG_INFORMATION);
@@ -433,8 +433,9 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 		if (projectConfig.exists()) {
 			// path raiz del proyecto
 			path = projectConfig.getLocation().toString();
+			// Ruta de escritura de logs.
+		    context.put("logPath", (Utilities.getAppDataPath() + context.get(Constants.CODAPP_PATTERN)).replace("\\", "/") + "/log");
 			// Genera los ficheros de configuración del proyecto
-			//ProjectWorker.createFileTemplate(pathConfig, path, "log4j.properties", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "logback.xml", context);
 			ProjectWorker.createFileTemplate(pathConfig, path, "xxx.properties", context, context.get(Constants.CODAPP_PATTERN) + ".properties");
 			
