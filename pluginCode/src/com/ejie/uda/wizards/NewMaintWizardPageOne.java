@@ -593,7 +593,7 @@ public class NewMaintWizardPageOne extends WizardPage {
 			return false;
 		}
 		if (!Utilities.isBlank(getServiceText()) && !Utilities.validateServiceText(getServiceText())) {
-			setErrorMessage("El campo 'Service Name' no cumple el formato esperado: codapp.subdominio.dominio");
+			setErrorMessage("El campo 'Service Name' no cumple con ninguno de los formatos esperados: codapp.subdominio.dominio o codapp.subdominio.subdominio.dominio");
 			return false;
 		}
     	if (!Utilities.isBlank(getSidText()) && !Utilities.validateText(getSidText())) {
