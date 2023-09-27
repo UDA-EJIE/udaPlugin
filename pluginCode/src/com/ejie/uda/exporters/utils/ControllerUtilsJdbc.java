@@ -364,6 +364,14 @@ public class ControllerUtilsJdbc {
 			return null;
 		}
 	}
+    
+	public boolean isMultipk(POJOClass pojo, Configuration cfg) {
+		if (getPrimaryKey(pojo, cfg).size() > 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public List<String[]> getPojoFieldsParameter(POJOClass pojo, Configuration cfg){
 		try{
