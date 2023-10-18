@@ -343,16 +343,6 @@ public class NewApplicationWizard extends Wizard implements INewWizard {
 			monitor.setTaskName("Enlazando los proyectos generados...");
 			monitor.worked(1);
 			
-			// MVC Java Config
-			ProjectWorker.createFileTemplate(pathGenerateCode, path, "MvcConfig.java", context);
-			
-			// MVC Controller
-			packageName = "com.ejie."+codApp+".control"; 
-			context.put(Constants.PACKAGE_NAME, packageName);
-			srcfolder.createPackageFragment(packageName, false, null);
-			path = ProjectWorker.createGetFolderPath(projectWAR, "src/"+"com/ejie/"+codApp+"/control");
-			ProjectWorker.createFileTemplate(pathGenerateCode, path, "MvcController.java", context);
-			
 			// Recupera la ruta raiz del proyecto, es donde situamos el pom.xml
 			String pathProject = projectEAR.getLocation().toString();
 			consola.println("DEPENDENCIES TASK - INI", Constants.MSG_INFORMATION);
