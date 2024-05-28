@@ -1,3 +1,4 @@
 .project
 bin/
 **/__pycache__
+instantclient_21_12
