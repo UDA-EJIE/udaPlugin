@@ -2,3 +2,4 @@
 bin/
 **/__pycache__
 instantclient_21_12
+plugin/config.ini
