@@ -1,0 +1,4 @@
+[submodule "templates"]
+	path = templates
+	url = https://github.com/UDA-EJIE/udaTemplates
+	branch = feat-copier-templatesOnly
