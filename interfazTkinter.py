@@ -175,7 +175,7 @@ class Paso1(CTk):
             yaml_data["xlnets"] = FALSE     
 
         rutaPath = utl.rutaActual(__file__)
-        directorio_actual = rutaPath + "\\proyecto"
+        directorio_actual = rutaPath + "\\templates\\proyecto"
         idiomasExcludes = []
         availableLangs = "es, eu"
         

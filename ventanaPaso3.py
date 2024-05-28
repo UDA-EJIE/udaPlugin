@@ -762,7 +762,7 @@ class VentanaPrincipal(CTk):
         "security_app": "",
         "war_project_name": war_name,
         "PACKAGE_NAME": "com.ejie."+project_name+".control",
-        "directorio_actual" : rutaActual+"/generateCode/",
+        "directorio_actual" : rutaActual+"/templates/generateCode/",
         "destinoApp" : self.archivoWar
        }
         print(data)
