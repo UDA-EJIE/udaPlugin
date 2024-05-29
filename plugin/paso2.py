@@ -60,6 +60,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         #controller java 
         if(ventanaPaso2.controladores_var.get()):
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
+             worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
+             worker.jinja_env.filters["toCamelCase"] = toCamelCase
              worker.run_copy() 
 
         #Fecha creación services

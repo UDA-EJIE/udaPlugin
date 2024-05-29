@@ -49,8 +49,8 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = tName  
-        data["titleMaint"]  = table["name"] + " MAINT"
-        data["nameMaint"]  = table["name"] 
+        data["titleMaint"]  = data_mantenimiento[1][1]
+        data["nameMaint"]  = data_mantenimiento[00][1] 
         data["urlBase"]  = "../"+table["name"]
         data["filterMaint"]  = True
         data["typeMaint"] = "DETAIL"
