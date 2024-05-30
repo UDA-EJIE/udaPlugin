@@ -183,12 +183,12 @@ class Paso1(CTk):
             if lang_var.get() == FALSE:
                 if lang_option == "Inglés":
                     filesExcludes.append("*i18n_en*")
-                if lang_option == "Frances":
+                if lang_option == "Francés":
                     filesExcludes.append("*i18n_fr*") 
             else:  
                 if lang_option == "Inglés":
                     availableLangs = availableLangs + " ,en"
-                if lang_option == "Frances":
+                if lang_option == "Francés":
                     availableLangs = availableLangs + " ,fr"   
         filesExcludes.append("*EJB")         
         yaml_data["defaultLanguage"] = self.default_language_combobox.get()
