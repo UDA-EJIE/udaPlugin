@@ -119,7 +119,7 @@ class Paso1(CTk):
         finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
 
-        cancel_button = CTkButton(self, text="Cancelar", command=self.destroy, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        cancel_button = CTkButton(self, text="Cancelar", command= lambda: m.MainMenuLoop(self), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
 
