@@ -70,11 +70,15 @@ class PaginaUno(CTkFrame):
             self.entries.append(entry)
         self.urlModify()
         # Botones
-        self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.test_button.grid(row=len(labels) + 1, column=0, columnspan=2, pady=20, padx=20, sticky="ew")
 
-        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
-        next_button.grid(row=len(labels) + 2, column=1, pady=10, padx=20, sticky="e")        
+        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        next_button.grid(row=len(labels) + 2, column=1, pady=10, padx=20, sticky="e")
+
+        back_button = CTkButton(self, text="Atrás", command=lambda: m.MainMenuLoop(self), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        back_button.grid(row=len(labels) + 2, column=1, pady=10, padx=(50, 130), sticky="e")
+                 
     
     def urlModify(self):
         if(len(self.entries) > 6):
@@ -250,13 +254,14 @@ class PaginaDos(CTkFrame):
         configuration_warning.pack(side="left", padx=5)
         self.master.configuration_warning = configuration_warning
 
-        back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno())
-        back_button.pack(side="right", padx=5)
 
         next_button = CTkButton(self.footer_frame, text="Siguiente", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,  command=lambda: self.master.mostrar_pagina_tres(self.obtener_seleccion_checkbox()))
         next_button.pack(side="right", padx=5)
-        
-        cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,)
+
+        back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno())
+        back_button.pack(side="right", padx=5)
+     
+        cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: m.MainMenuLoop(master))
         cancel_button.pack(side="right", padx=5)
             
 class PaginaTres(CTkFrame):
@@ -386,10 +391,11 @@ class PaginaTres(CTkFrame):
         self.rutaActual = rutaActual
         self.archivoClases = archivoClases
         self.archivoWar = archivoWar
+        CTkButton(buttons_container, text="Siguiente", command=lambda: self.master.mostrarSpinner("finalizar"), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
+        CTkButton(buttons_container, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_dos(tables_original, estado_tables=tables)).pack(side="right", padx=5, pady=20)
+        CTkButton(buttons_container, text="Cancelar", command=lambda: m.MainMenuLoop(master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
         self.configuration_warning = CTkLabel(buttons_container,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=1, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-        CTkButton(buttons_container, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_dos(tables_original, estado_tables=tables)).grid(row=0, column=1, padx=(0,150),  pady=(40, 10),  sticky="e")
-        CTkButton(buttons_container, text="Siguiente", command=lambda: self.master.mostrarSpinner("finalizar"), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).grid(row=0, column=1, padx=(0,30), pady=(40, 10), sticky="e")
+        self.configuration_warning.pack(side="left", padx=5, pady=20)
 
         self.grid_rowconfigure(2, weight=0)  # Botones no expanden
 
