@@ -261,7 +261,7 @@ class PaginaDos(CTkFrame):
         back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno())
         back_button.pack(side="right", padx=5)
      
-        cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: m.MainMenuLoop(master))
+        cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: m.MainMenuLoop(self.master))
         cancel_button.pack(side="right", padx=5)
             
 class PaginaTres(CTkFrame):
@@ -391,7 +391,7 @@ class PaginaTres(CTkFrame):
         self.rutaActual = rutaActual
         self.archivoClases = archivoClases
         self.archivoWar = archivoWar
-        CTkButton(buttons_container, text="Siguiente", command=lambda: self.master.mostrarSpinner("finalizar"), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
+        CTkButton(buttons_container, text="Finalizar", command=lambda: self.master.mostrarSpinner("finalizar"), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
         CTkButton(buttons_container, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_dos(tables_original, estado_tables=tables)).pack(side="right", padx=5, pady=20)
         CTkButton(buttons_container, text="Cancelar", command=lambda: m.MainMenuLoop(master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
         self.configuration_warning = CTkLabel(buttons_container,  text="", font=("Arial", 13, "bold"),text_color="red")
