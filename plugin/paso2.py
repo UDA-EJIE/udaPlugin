@@ -80,6 +80,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         if(ventanaPaso2.daos_var.get()):
          with Worker(src_path=dirDao, dst_path=destinoEarDao, data=data, exclude=["*Rel*"],overwrite=True) as worker:
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
+             worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
              worker.run_copy()  
         
         #Fecha creación Models
