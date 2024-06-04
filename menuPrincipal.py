@@ -4,9 +4,11 @@ import ventanaPaso2Buena as paso2
 import ventanaPaso3 as paso3
 from tkinter import *
 from PIL import Image, ImageTk
-
+import logging
 
 base_path = os.path.dirname(os.path.abspath(__file__))
+#sys.stderr = open('logs/log.log', 'a')
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG,encoding='utf-8',filename='logs/info.log')
 
 class MainMenu(CTkToplevel):
     def __init__(self):

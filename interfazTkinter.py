@@ -15,7 +15,6 @@ self = CTk()
 
 
 
-
 class Paso1(CTk):
     def __init__(self):
         super().__init__()
@@ -196,8 +195,10 @@ class Paso1(CTk):
         destinoPath = self.entry_location.get()
         if(destinoPath == ''):
             destinoPath = rutaPath
+        print('Inicio: proyecto Creando... ' + yaml_data["project_name"]+yaml_data["war_project_name"])    
         with Worker(src_path=directorio_actual,overwrite=True, dst_path=destinoPath, data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
+            worker.template.version = "1.0 Paso 1"
             worker.run_copy()
             logging.info('Fin: Crear proyecto: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
             #guardar ultima ruta creada
@@ -206,7 +207,7 @@ class Paso1(CTk):
         self.ocultarSpinner()
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
         fin = datetime.now()
-        print('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
+        logging.info('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
         self.ventana_final_popup()
 
             

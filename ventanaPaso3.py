@@ -14,9 +14,10 @@ import plugin.utils as utl
 import menuPrincipal as m
 from pathlib import Path
 import time
+import logging
 
 d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instantclient_21_12')
-
+#sys.stderr = open('logs/log.log', 'a')
 ruta_war = utl.readConfig("RUTA", "ruta_war")
 
 class PaginaUno(CTkFrame):
@@ -94,7 +95,7 @@ class PaginaUno(CTkFrame):
                try:
                  entry.insert(0, utl.readConfig("BBDD", valores[i]))  
                except ValueError:    
-                 print("Error al obtener el valor:" + ValueError)
+                 logging.exception("Error al obtener el valor:" )
             self.entries.append(entry)
         self.urlModify()
         # Botones
@@ -141,12 +142,12 @@ class PaginaUno(CTkFrame):
             else:#con SID
                 oracledb.connect(user=un, password=pw, sid=self.entries[1].get(),host=self.entries[2].get(),port=self.entries[3].get())
             
-            print("Connection successful!")
+            logging.info("Connection successful!")
             self.update_button_color('#4CAF50')  # Green color on successful connection
             self.configuration_warning.configure(text="Connection successful!")
             self.configuration_warning.configure(text_color ="#4CAF50")
         except oracledb.Error as e:
-            print("Error connecting to Oracle Database:", e)
+            logging.exception("Error connecting to Oracle Database: ")
             self.update_button_color('#FF0000')  # Red color on error
             self.configuration_warning.configure(text="Error connecting to Oracle Database")
             self.configuration_warning.configure(text_color ="#FF0000")
@@ -159,6 +160,7 @@ class PaginaUno(CTkFrame):
         
         # Puedes agregar aquí la lógica para probar la conexión a la base de datos
         print("Conexión probada")
+        logging.info("Conexión probada")
         
         if self.war_entry.get() == "":
            self.configuration_warning.configure(text="Seleccione un proyecto WAR")
@@ -198,7 +200,7 @@ class PaginaUno(CTkFrame):
             else:#con SID
                 connection =  oracledb.connect(user=un, password=pw, sid=self.entries[1].get(),host=self.entries[2].get(),port=self.entries[3].get())
         except Exception as e: 
-            print("An exception occurred BBDD:  ", e)  
+            logging.exception("An exception occurred BBDD:  ")  
             self.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.configuration_warning.configure(text_color ="red")
             self.master.ocultarSpinner()
@@ -248,7 +250,7 @@ class PaginaUno(CTkFrame):
                 try:
                     files = [file for file in os.listdir(ruta_personalizada) if file.endswith("War")]
                 except:
-                    print("No encontro la ruta: " + ruta_personalizada)    
+                    logging.exception("No encontro la ruta: " + ruta_personalizada)    
                 self.mostrar_resultados(files,ruta_personalizada)
 
 
@@ -295,15 +297,15 @@ class PaginaUno(CTkFrame):
             selected_file = ruta+"/"+selected_file
             nombreProyecto = utl.obtenerNombreProyectoWar(selected_file)
             if nombreProyecto != '':
-                print(f"Archivo seleccionado: {selected_file}")
+                logging.info(f"Archivo seleccionado: {selected_file}")
                 self.war_entry.insert(0, selected_file)
                 self.master.nombreProyecto = nombreProyecto
                 self.master.archivoWar = selected_file
                 frame.destroy()
             else:    
-                print("Este war no contiene un web.xml.") 
+                logging.info("Este war no contiene un web.xml.") 
         else:
-            print("No se seleccionó ningún archivo.")       
+            logging.info("No se seleccionó ningún archivo.")       
 
     def open_file_explorer(self, frame):
         # Esta función se llama cuando el usuario hace clic en "Buscar"
@@ -313,9 +315,9 @@ class PaginaUno(CTkFrame):
         if directory:  # Si se selecciona un directorio
             selected_directory = directory  # Guardar la ruta del directorio seleccionado
             self.buscar_archivos(selected_directory)
-            print(f"Directorio seleccionado: {selected_directory}")
+            logging.info(f"Directorio seleccionado: {selected_directory}")
         else:
-            print("No se seleccionó ningún directorio.")
+            logging.info("No se seleccionó ningún directorio.")
 
 class ventanaPaso2(CTkFrame):
     def __init__(self, master, tables, data_mantenimiento=None, indexSeleccionado=None, *args, **kwargs):
@@ -615,12 +617,12 @@ class VentanaPaso3(CTkFrame):
         self.url_entry.insert(0, "../" + name)
         self.alias_entry.insert(0, name)
         
-        print("Índice seleccionado:", index)
+        logging.info("Índice seleccionado:" + str(index))
 
     def abrir_ventana_columnas(self):
         """Usar el índice seleccionado para abrir otra ventana o realizar alguna acción."""
         index_seleccionado = self.tabla_seleccionada_index
-        print("Índice seleccionado:", index_seleccionado)
+        logging.info("Índice seleccionado: " + str(index_seleccionado))
         return index_seleccionado
            
 class VentanaColumnas(CTkFrame):
@@ -765,7 +767,7 @@ class VentanaPrincipal(CTk):
         "directorio_actual" : rutaActual+"/templates/generateCode/",
         "destinoApp" : self.archivoWar
        }
-        print(data)
+        logging.info(data)
         return data  
 
     def mostrarSpinner(self,caso):

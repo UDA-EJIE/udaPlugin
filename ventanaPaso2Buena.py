@@ -16,7 +16,7 @@ from functools import partial
 from plugin.GIFLabel import *
 import menuPrincipal as m
 from pathlib import Path
-
+import logging
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 d = os.path.join(base_path, 'instantclient_21_12')
@@ -26,7 +26,7 @@ ruta_war = utl.readConfig("RUTA", "ruta_war")
 tables_original = None
 
 
-
+#sys.stderr = open('logs/log.log', 'a')
 class PaginaUno(CTkFrame):
     
     def __init__(self, master, tables=None, columns=None, *args, **kwargs):
@@ -66,7 +66,7 @@ class PaginaUno(CTkFrame):
                try:
                 entry.insert(0, utl.readConfig("BBDD", valores[i]))  
                except ValueError:    
-                   print("Error al obtener el valor:" + ValueError)
+                   logging.exception("Error al obtener el valor:" + ValueError)
             self.entries.append(entry)
         self.urlModify()
         # Botones
@@ -109,12 +109,12 @@ class PaginaUno(CTkFrame):
                 oracledb.connect(user=un, password=pw, dsn=cs)
             else:#con SID
                 oracledb.connect(user=un, password=pw, sid=self.entries[1].get(),host=self.entries[2].get(),port=self.entries[3].get())    
-            print("Connection successful!")
+            logging.info("Connection successful!")
             self.update_button_color('#4CAF50')  # Green color on successful connection
             self.configuration_warning.configure(text="Connection successful!")
             self.configuration_warning.configure(text_color ="#4CAF50")
         except oracledb.Error as e:
-            print("Error connecting to Oracle Database:", e)
+            logging.exception("Error connecting to Oracle Database: " )
             self.update_button_color('#FF0000')  # Red color on error
             self.configuration_warning.configure(text="Error connecting to Oracle Database")
             self.configuration_warning.configure(text_color ="#FF0000")
@@ -240,7 +240,7 @@ class PaginaDos(CTkFrame):
             if selected_columns:
                 seleccion_checkbox.append({"name": table_name, "columns": selected_columns})
 
-        print("Esto es la selección de checkboxes:", seleccion_checkbox)
+        logging.info("Esto es la selección de checkboxes: " + str(seleccion_checkbox))
         return seleccion_checkbox
     
     def setup_footer_buttons(self):
@@ -450,13 +450,13 @@ class PaginaTres(CTkFrame):
                 try:
                     files = [file for file in os.listdir(ruta_classes) if file.endswith("Classes")]
                 except:
-                    print("No encontro la ruta: " + ruta_classes)
+                    logging.exception("No encontro la ruta: " + ruta_classes)
                 self.mostrar_resultados(files, boton_pulsado,ruta_classes)
             else:
                 try:
                     files = [file for file in os.listdir(ruta_personalizada) if file.endswith("Classes")]
                 except:
-                    print("No encontro la ruta: " + ruta_personalizada)    
+                    logging.exception("No encontro la ruta: " + ruta_personalizada)    
                 self.mostrar_resultados(files, boton_pulsado,ruta_personalizada)
         else:
             """Busca archivos con terminación 'war' en la misma ruta del script Python."""
@@ -464,13 +464,13 @@ class PaginaTres(CTkFrame):
                 try:
                     files = [file for file in os.listdir(ruta_war) if file.endswith("War")]
                 except:
-                    print("No encontro la ruta: " + ruta_war)    
+                    logging.exception("No encontro la ruta: " + ruta_war)    
                 self.mostrar_resultados(files, boton_pulsado,ruta_war)
             else:
                 try:
                     files = [file for file in os.listdir(ruta_personalizada) if file.endswith("War")]
                 except:
-                    print("No encontro la ruta: " + ruta_personalizada)    
+                    logging.exception("No encontro la ruta: " + ruta_personalizada)    
                 self.mostrar_resultados(files, boton_pulsado,ruta_personalizada)
 
 
@@ -517,7 +517,7 @@ class PaginaTres(CTkFrame):
 
     def aceptar(self, frame, selected_file, boton_pulsado, ruta):
         if selected_file and boton_pulsado == "negocio":
-            print(f"Archivo seleccionado: {selected_file}")
+            logging.info(f"Archivo seleccionado: {selected_file}")
             self.search_entry_negocio.configure(state="normal")
             self.search_entry_negocio.delete(0, "end")
             self.search_entry_negocio.insert(0, ruta+"/"+selected_file)
@@ -525,7 +525,7 @@ class PaginaTres(CTkFrame):
             self.archivoClases = selected_file
             frame.destroy()
         elif(selected_file and boton_pulsado == "presentacion"):
-            print(f"Archivo seleccionado: {selected_file}")
+            logging.info(f"Archivo seleccionado: {selected_file}")
             self.search_entry_presentacion.configure(state="normal")
             self.search_entry_presentacion.delete(0, "end")
             self.search_entry_presentacion.insert(0, ruta+"/"+selected_file)
@@ -534,7 +534,7 @@ class PaginaTres(CTkFrame):
             frame.destroy()
 
         else:
-            print("No se seleccionó ningún archivo.")       
+            logging.error("No se seleccionó ningún archivo.")       
 
     def open_file_explorer(self, frame, boton_pulsado):
         # Esta función se llama cuando el usuario hace clic en "Buscar"
@@ -544,9 +544,9 @@ class PaginaTres(CTkFrame):
         if directory:  # Si se selecciona un directorio
             selected_directory = directory  # Guardar la ruta del directorio seleccionado
             self.buscar_archivos(boton_pulsado, selected_directory)
-            print(f"Directorio seleccionado: {selected_directory}")
+            logging.info(f"Directorio seleccionado: {selected_directory}")
         else:
-            print("No se seleccionó ningún directorio.")
+            logging.error("No se seleccionó ningún directorio.")
 
 
 class VentanaPrincipal(CTk):
@@ -636,6 +636,7 @@ class VentanaPrincipal(CTk):
 
         # Puedes agregar aquí la lógica para probar la conexión a la base de datos
         print("Conexión probada")
+        logging.info("Conexión probada")
        
         un = self.pagina_actual.entries[4].get()
         pw = self.pagina_actual.entries[5].get()
@@ -669,7 +670,7 @@ class VentanaPrincipal(CTk):
             else:#con SID
              connection =  oracledb.connect(user=un, password=pw, sid=self.pagina_actual.entries[1].get(),host=self.pagina_actual.entries[2].get(),port=self.pagina_actual.entries[3].get())
         except Exception as e: 
-            print("An exception occurred BBDD:  ", e)  
+            logging.exception("An exception occurred BBDD:  " )  
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.pagina_actual.configuration_warning.configure(text_color ="red")
             self.ocultarSpinner()

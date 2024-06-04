@@ -7,6 +7,7 @@ from plugin.utils import snakeToCamel
 from plugin.utils import toCamelCase
 from plugin.utils import modifyJackson
 import operator
+import logging
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -56,12 +57,14 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
-
+        print("Inicio paso 2")
         #controller java 
         if(ventanaPaso2.controladores_var.get()):
+            logging.info("Inicio: crear controllers...")
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
+             worker.template.version = "1.0 Paso 2 Controllers"
              worker.run_copy() 
 
         #Fecha creación services
@@ -70,7 +73,9 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["project_name"] = proyectName 
         #service java 
         if(ventanaPaso2.servicios_var.get()):
+            logging.info("Inicio: crear services...")
             with Worker(src_path=dirService, dst_path=destinoEarService, data=data, exclude=["*Rel*"],overwrite=True) as worker:
+                worker.template.version = "1.0 Paso 2 servicios"
                 worker.run_copy()   
 
         #Fecha creación Daos
@@ -78,9 +83,11 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')  
         #Daos java 
         if(ventanaPaso2.daos_var.get()):
+         logging.info("Inicio: crear daos...")
          with Worker(src_path=dirDao, dst_path=destinoEarDao, data=data, exclude=["*Rel*"],overwrite=True) as worker:
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
+             worker.template.version = "1.0 Paso 2 daos"
              worker.run_copy()  
         
         #Fecha creación Models
@@ -88,13 +95,17 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')  
         #Models java 
         if(ventanaPaso2.modelo_datos_var.get()):
+            logging.info("Inicio: crear models...")
             with Worker(src_path=dirModel, dst_path=destinoEarModel, data=data, exclude=["*model*"],overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
+                worker.template.version = "1.0 Paso 2 modelos"
                 worker.run_copy()
                 if(x == len(tables) - 1):
                     lastTable = True
                 if os.path.isdir(rutaJackson) == True:    
                     modifyJackson(rutaJackson,tName,lastTable,data["packageName"])                   
-        
+
+    print("Fin paso 2") 
+    logging.info("Final: paso 2 creado...")   
 #FIN función principal
