@@ -70,7 +70,7 @@ class Paso1(CTk):
 
         war_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
         war_label.grid(row=5, column=0, sticky="w", padx=(20, 10), pady=(5, 30))
-        self.entry_war = CTkEntry(self, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', height=2.5, border_width=3)
+        self.entry_war = CTkEntry(self, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', height=2.5, border_width=3, text_color="black")
         self.entry_war.grid(row=5, column=1, padx=(30, 20), pady=(5, 30), sticky="ew")
 
         languages_frame = CTkFrame(self,  bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
@@ -207,7 +207,7 @@ class Paso1(CTk):
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
         fin = datetime.now()
         print('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
-        m.MainMenuLoop(self)
+        self.ventana_final_popup()
 
             
         
@@ -260,6 +260,31 @@ class Paso1(CTk):
     def ocultarSpinner(self):
         self.resultados_window2.destroy()
 
+
+    # Function to create and show the popup
+    def ventana_final_popup(self):
+        popup_final = ctk.CTkToplevel(self)
+        popup_final.title("Resultados de Búsqueda")
+        popup_final.geometry("800x300")
+        popup_final.attributes('-topmost', True)
+
+        popup_final.config(bg="#E0E0E0")
+        
+        frame_labels = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
+        frame_labels.grid(row= 0, column = 0, columnspan = 1)
+
+        nombre_label = CTkLabel(frame_labels, text="Has creado el siguiente proyecto " + self.entry_code.get(), fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        nombre_label.grid(row=0, column=0,  pady=(10, 5), padx=10, sticky="w")
+
+        
+        ruta_label = CTkLabel(frame_labels, text="Has guardado el proyecto en la ruta " + self.entry_location.get(),  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        ruta_label.grid(row=1, column=0,  pady=(10, 5), padx=10, sticky="w")
+
+        war_label = CTkLabel(frame_labels, text="El war del proyecto es " + self.entry_war.get(), fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        war_label.grid(row=2, column=0, pady=(10, 5), padx=10, sticky="w")
+        
+        close_button = ctk.CTkButton(popup_final, text="Volver al menu", command= lambda : m.MainMenuLoop(self), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        close_button.grid(row = 1, column = 0, padx =200)
 
 if __name__ == "__main__":
 
