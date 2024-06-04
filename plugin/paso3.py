@@ -9,6 +9,8 @@ from plugin.utils import modifyTiles
 from plugin.utils import modifyMenu
 import operator
 import logging
+from customtkinter import *
+from datetime import datetime
 
 #INICIO función principal
 def initPaso3(tables,yaml_data, data_mantenimiento):
@@ -52,7 +54,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = tName  
         data["titleMaint"]  = data_mantenimiento[1][1]
-        data["nameMaint"]  = data_mantenimiento[00][1] 
+        data["nameMaint"]  = data_mantenimiento[00][1].strip() 
         data["urlBase"]  = "../"+table["name"]
         data["filterMaint"]  = True
         data["typeMaint"] = "DETAIL"
@@ -66,20 +68,22 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
 
         logging.info("SRC MAINT Jsp:: " +dirMaintJsp)
         logging.info("DEST MAINT Jsp:: " +destinoWarViewsFinal)
+        now = datetime.now()
+        data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')
         #Generando jsp MAINT 
         with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
-         worker.template.version = "1.0 Paso 3 Jsps"
+         worker.template.version = ":  1.0 Paso 3 Jsps ::: "+data["date"]
          worker.run_copy() 
         #Generando jsp Includes MAINT 
         with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
-         worker.template.version = "1.0 Paso 3 Includes"
+         worker.template.version = ": 1.0 Paso 3 Includes ::: "+data["date"]
          worker.run_copy()
         #Generando js MAINT 
         with Worker(src_path=dirMaintJsp, dst_path=destinoStaticsJs, data=data, exclude=["*.jsp"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
-         worker.template.version = "1.0 Paso 3 Js"
+         worker.template.version = ":  1.0 Paso 3 Js ::: "+data["date"]
          worker.run_copy() 
          if(x == len(tables) - 1):
            lastTable = True
@@ -88,6 +92,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         logging.info("Fin mantenimento: "+data["tableName"])  
     
     print("Fin paso 3")
-    logging.info("Final: paso 3 creado...")
+    logging.info("Final: paso 3 creado")
+    print("Final: paso 3 creado ::: "+data["date"],file=sys.stderr)
         
 #FIN función principal

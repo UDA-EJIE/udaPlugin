@@ -8,6 +8,7 @@ from plugin.utils import toCamelCase
 from plugin.utils import modifyJackson
 import operator
 import logging
+from customtkinter import *
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -64,7 +65,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
-             worker.template.version = "1.0 Paso 2 Controllers"
+             worker.template.version = ":  1.0 Paso 2 Controllers ::: "+data["date"]
              worker.run_copy() 
 
         #Fecha creación services
@@ -75,7 +76,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         if(ventanaPaso2.servicios_var.get()):
             logging.info("Inicio: crear services...")
             with Worker(src_path=dirService, dst_path=destinoEarService, data=data, exclude=["*Rel*"],overwrite=True) as worker:
-                worker.template.version = "1.0 Paso 2 servicios"
+                worker.template.version = ":  1.0 Paso 2 servicios ::: "+data["date"]
                 worker.run_copy()   
 
         #Fecha creación Daos
@@ -87,7 +88,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
          with Worker(src_path=dirDao, dst_path=destinoEarDao, data=data, exclude=["*Rel*"],overwrite=True) as worker:
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
-             worker.template.version = "1.0 Paso 2 daos"
+             worker.template.version = ": 1.0 Paso 2 daos ::: "+data["date"]
              worker.run_copy()  
         
         #Fecha creación Models
@@ -99,7 +100,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             with Worker(src_path=dirModel, dst_path=destinoEarModel, data=data, exclude=["*model*"],overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
-                worker.template.version = "1.0 Paso 2 modelos"
+                worker.template.version = ": 1.0 Paso 2 modelos ::: "+data["date"]
                 worker.run_copy()
                 if(x == len(tables) - 1):
                     lastTable = True
@@ -107,5 +108,6 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                     modifyJackson(rutaJackson,tName,lastTable,data["packageName"])                   
 
     print("Fin paso 2") 
-    logging.info("Final: paso 2 creado...")   
+    logging.info("Final: paso 2 creado") 
+    print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  
 #FIN función principal
