@@ -213,6 +213,7 @@ class Paso1(CTk):
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S')
         print("Final: paso 1 creado ::: "+dates,file=sys.stderr)
+        sys.stderr.close()
         self.ventana_final_popup()
 
             

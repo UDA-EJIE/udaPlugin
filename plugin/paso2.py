@@ -110,4 +110,5 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  
+    sys.stderr.close()
 #FIN función principal
