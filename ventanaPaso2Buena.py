@@ -826,8 +826,12 @@ class VentanaPrincipal(CTk):
         frame_boton = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
         frame_boton.grid(row = 2, column= 0, columnspan=3, sticky="nsew")
 
-        button = CTkButton(frame_boton, text="Cerrar", command=lambda: m.MainMenuLoop(self.master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
-        button.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
+        button_cerrar = CTkButton(frame_boton, text="Volver al menu",command=lambda: m.MainMenuLoop(self.master) , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button_cerrar.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
+
+        button_menu = CTkButton(frame_boton,text="Cerrar" ,command=lambda: self.master.destroy() , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button_menu.grid(row=0, column=1, pady=(100, 30), padx=(10,0), sticky="w")
+
 
 if __name__ == "__main__":
     app = VentanaPrincipal()
