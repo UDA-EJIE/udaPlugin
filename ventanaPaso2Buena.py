@@ -55,13 +55,15 @@ class PaginaUno(CTkFrame):
         self.entries = []
         
         for i, label_text in enumerate(labels):
-            sv = StringVar()
+            
+            sv = StringVar(self)
             sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.urlModify())
             label = CTkLabel(self, text=label_text, fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
             label.grid(row=i+1, column=0, sticky="w", padx=(20, 10), pady=(20, 2))
             entry = CTkEntry(self,textvariable=sv, fg_color='#69a3d6', border_color='#69a3d6', height=2.5, 
                              width=500, text_color="grey" if label_text == 'URL:' else 'black', show='*' if label_text == 'Contraseña:' else None,state='disabled' if label_text == 'URL:' else 'normal')
             entry.grid(row=i+1, column=1, padx=(0, 200), pady=(20, 2), sticky="ew")
+            
             if (valores[i] != None):
                try:
                 entry.insert(0, utl.readConfig("BBDD", valores[i]))  
@@ -81,7 +83,7 @@ class PaginaUno(CTkFrame):
                  
     
     def urlModify(self):
-        if(len(self.entries) > 6):
+        if(len(self.entries) > 7):
             entryUrl = self.entries[7]
             entryService = self.entries[0].get()
             entrySid = self.entries[1].get()
@@ -650,6 +652,12 @@ class VentanaPrincipal(CTk):
        
         un = self.pagina_actual.entries[4].get()
         pw = self.pagina_actual.entries[5].get()
+        sid = self.pagina_actual.entries[1].get()
+        serviceName = self.pagina_actual.entries[0].get()
+        host = self.pagina_actual.entries[2].get()
+        port = self.pagina_actual.entries[3].get()
+        esquema = self.pagina_actual.entries[6].get()
+        url = self.pagina_actual.entries[7].get()
         
         tables = [] 
         columns = [] 
@@ -674,11 +682,14 @@ class VentanaPrincipal(CTk):
         
         oracledb.init_oracle_client(lib_dir=d)
         try:
-            if(self.pagina_actual.entries[1].get() == ''):
-             cs = self.pagina_actual.entries[2].get() + ":" + self.pagina_actual.entries[3].get() + "/" + self.pagina_actual.entries[0].get()
+            if(sid == ''):
+             cs = host + ":" + port + "/" + serviceName
              connection =  oracledb.connect(user=un, password=pw, dsn=cs)
             else:#con SID
-             connection =  oracledb.connect(user=un, password=pw, sid=self.pagina_actual.entries[1].get(),host=self.pagina_actual.entries[2].get(),port=self.pagina_actual.entries[3].get())
+             connection =  oracledb.connect(user=un, password=pw, sid=sid,host=host,port=port)
+            utl.writeConfig("BBDD", 
+            {"servicename":serviceName,"sid":sid,"host":host,"puerto":port,
+            "usuario":un,"password":pw,"esquema":esquema,"url":url})
         except Exception as e: 
             logging.exception("An exception occurred BBDD:  " )  
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
