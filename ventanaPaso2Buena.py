@@ -16,7 +16,7 @@ from functools import partial
 from plugin.GIFLabel import *
 import menuPrincipal as m
 from pathlib import Path
-
+import logging
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 d = os.path.join(base_path, 'instantclient_21_12')
@@ -26,7 +26,7 @@ ruta_war = utl.readConfig("RUTA", "ruta_war")
 tables_original = None
 
 
-
+#sys.stderr = open('logs/log.log', 'a')
 class PaginaUno(CTkFrame):
     
     def __init__(self, master, tables=None, columns=None, *args, **kwargs):
@@ -66,7 +66,7 @@ class PaginaUno(CTkFrame):
                try:
                 entry.insert(0, utl.readConfig("BBDD", valores[i]))  
                except ValueError:    
-                   print("Error al obtener el valor:" + ValueError)
+                   logging.exception("Error al obtener el valor:" + ValueError)
             self.entries.append(entry)
         self.urlModify()
         # Botones
@@ -109,12 +109,12 @@ class PaginaUno(CTkFrame):
                 oracledb.connect(user=un, password=pw, dsn=cs)
             else:#con SID
                 oracledb.connect(user=un, password=pw, sid=self.entries[1].get(),host=self.entries[2].get(),port=self.entries[3].get())    
-            print("Connection successful!")
+            logging.info("Connection successful!")
             self.update_button_color('#4CAF50')  # Green color on successful connection
             self.configuration_warning.configure(text="Connection successful!")
             self.configuration_warning.configure(text_color ="#4CAF50")
         except oracledb.Error as e:
-            print("Error connecting to Oracle Database:", e)
+            logging.exception("Error connecting to Oracle Database: " )
             self.update_button_color('#FF0000')  # Red color on error
             self.configuration_warning.configure(text="Error connecting to Oracle Database")
             self.configuration_warning.configure(text_color ="#FF0000")
@@ -240,7 +240,7 @@ class PaginaDos(CTkFrame):
             if selected_columns:
                 seleccion_checkbox.append({"name": table_name, "columns": selected_columns})
 
-        print("Esto es la selección de checkboxes:", seleccion_checkbox)
+        logging.info("Esto es la selección de checkboxes: " + str(seleccion_checkbox))
         return seleccion_checkbox
     
     def setup_footer_buttons(self):
@@ -450,13 +450,13 @@ class PaginaTres(CTkFrame):
                 try:
                     files = [file for file in os.listdir(ruta_classes) if file.endswith("Classes")]
                 except:
-                    print("No encontro la ruta: " + ruta_classes)
+                    logging.exception("No encontro la ruta: " + ruta_classes)
                 self.mostrar_resultados(files, boton_pulsado,ruta_classes)
             else:
                 try:
                     files = [file for file in os.listdir(ruta_personalizada) if file.endswith("Classes")]
                 except:
-                    print("No encontro la ruta: " + ruta_personalizada)    
+                    logging.exception("No encontro la ruta: " + ruta_personalizada)    
                 self.mostrar_resultados(files, boton_pulsado,ruta_personalizada)
         else:
             """Busca archivos con terminación 'war' en la misma ruta del script Python."""
@@ -464,13 +464,13 @@ class PaginaTres(CTkFrame):
                 try:
                     files = [file for file in os.listdir(ruta_war) if file.endswith("War")]
                 except:
-                    print("No encontro la ruta: " + ruta_war)    
+                    logging.exception("No encontro la ruta: " + ruta_war)    
                 self.mostrar_resultados(files, boton_pulsado,ruta_war)
             else:
                 try:
                     files = [file for file in os.listdir(ruta_personalizada) if file.endswith("War")]
                 except:
-                    print("No encontro la ruta: " + ruta_personalizada)    
+                    logging.exception("No encontro la ruta: " + ruta_personalizada)    
                 self.mostrar_resultados(files, boton_pulsado,ruta_personalizada)
 
 
@@ -517,7 +517,7 @@ class PaginaTres(CTkFrame):
 
     def aceptar(self, frame, selected_file, boton_pulsado, ruta):
         if selected_file and boton_pulsado == "negocio":
-            print(f"Archivo seleccionado: {selected_file}")
+            logging.info(f"Archivo seleccionado: {selected_file}")
             self.search_entry_negocio.configure(state="normal")
             self.search_entry_negocio.delete(0, "end")
             self.search_entry_negocio.insert(0, ruta+"/"+selected_file)
@@ -525,7 +525,7 @@ class PaginaTres(CTkFrame):
             self.archivoClases = selected_file
             frame.destroy()
         elif(selected_file and boton_pulsado == "presentacion"):
-            print(f"Archivo seleccionado: {selected_file}")
+            logging.info(f"Archivo seleccionado: {selected_file}")
             self.search_entry_presentacion.configure(state="normal")
             self.search_entry_presentacion.delete(0, "end")
             self.search_entry_presentacion.insert(0, ruta+"/"+selected_file)
@@ -534,7 +534,7 @@ class PaginaTres(CTkFrame):
             frame.destroy()
 
         else:
-            print("No se seleccionó ningún archivo.")       
+            logging.error("No se seleccionó ningún archivo.")       
 
     def open_file_explorer(self, frame, boton_pulsado):
         # Esta función se llama cuando el usuario hace clic en "Buscar"
@@ -544,9 +544,19 @@ class PaginaTres(CTkFrame):
         if directory:  # Si se selecciona un directorio
             selected_directory = directory  # Guardar la ruta del directorio seleccionado
             self.buscar_archivos(boton_pulsado, selected_directory)
-            print(f"Directorio seleccionado: {selected_directory}")
+            logging.info(f"Directorio seleccionado: {selected_directory}")
         else:
-            print("No se seleccionó ningún directorio.")
+            logging.error("No se seleccionó ningún directorio.")
+
+    
+    def toggle_columns(self, table_frame):
+        # Asegúrate de referirte al columns_frame para expandir/contraer
+            if table_frame.columns_frame.winfo_viewable():
+                table_frame.columns_frame.pack_forget()
+                table_frame.winfo_children()[1].configure(text="▼")  # Icono cambia a 'expandir'
+            else:
+                table_frame.columns_frame.pack(fill="x", expand=True, padx=20, pady=2)
+                table_frame.winfo_children()[1].configure(text="▲")  # Icono cambia a 'contraer'
 
 
 class VentanaPrincipal(CTk):
@@ -636,6 +646,7 @@ class VentanaPrincipal(CTk):
 
         # Puedes agregar aquí la lógica para probar la conexión a la base de datos
         print("Conexión probada")
+        logging.info("Conexión probada")
        
         un = self.pagina_actual.entries[4].get()
         pw = self.pagina_actual.entries[5].get()
@@ -669,7 +680,7 @@ class VentanaPrincipal(CTk):
             else:#con SID
              connection =  oracledb.connect(user=un, password=pw, sid=self.pagina_actual.entries[1].get(),host=self.pagina_actual.entries[2].get(),port=self.pagina_actual.entries[3].get())
         except Exception as e: 
-            print("An exception occurred BBDD:  ", e)  
+            logging.exception("An exception occurred BBDD:  " )  
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.pagina_actual.configuration_warning.configure(text_color ="red")
             self.ocultarSpinner()
@@ -758,14 +769,65 @@ class VentanaPrincipal(CTk):
         self.header_frame.destroy()
         self.main_container.destroy()
         self.buttons_container.destroy()
-        main_container = CTkFrame(self, fg_color="#E0E0E0")
-        main_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
-        main_container.grid_columnconfigure(0, weight=1)
-        main_container.grid_rowconfigure(0, weight=1)
-        configuration_warning = CTkLabel(main_container,  text="Se han creado "+str(len(tablas))+" tablas ", font=("Arial", 13, "bold"),text_color="black")
-        configuration_warning.grid(row=0, column=0, pady=(20, 5), padx=(500,0), sticky="w")  
-        button = CTkButton(main_container, text="Cerrar", command=lambda: m.MainMenuLoop(self.master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
-        button.grid(row=0, column=0, pady=(100, 5), padx=(500,0), sticky="w") 
+        
+        modelos = " Modelos" if self.modelo_datos_var.get() == True else ""
+        daos = " DAOs" if self.daos_var .get() == True else ""
+        servicios = " Servicios" if self.servicios_var.get() == True else ""
+        controladores = " Controladores" if self.controladores_var.get() == True else ""
+        
+        cabecera_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        cabecera_container.grid(row=0, column=0, columnspan=3, sticky="nsew")
+
+         # Checkbox for the table
+        cabecera_label = ctk.CTkLabel(cabecera_container, text="Se han creado los" + modelos + daos + servicios + controladores+ " de las siguientes tablas y columnas",
+                                            text_color="black", font=("Arial", 10, "bold"))
+        cabecera_label.grid(row=0, column= 1, padx=350, pady = (30, 0), sticky = "we")
+
+
+
+        scrollbar_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        scrollbar_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
+        scrollbar_container.grid_columnconfigure(0, weight=1)
+        scrollbar_container.grid_rowconfigure(0, weight=1)
+        
+        self.scrollbar_resumen = CTkScrollableFrame(scrollbar_container, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+        self.scrollbar_resumen.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        self.var_list = []
+        self.tables = []
+        
+        for index, table in enumerate(tablas):
+            self.var_list.append(ctk.IntVar(value=0))
+            table_frame = ctk.CTkFrame(self.scrollbar_resumen, fg_color="#FFFFFF", corner_radius=10)
+            table_frame.pack(fill="x", padx=10, pady=2, expand=True)
+
+            # Checkbox for the table
+            table_checkbox = ctk.CTkLabel(table_frame, text=table['name'],
+                                            text_color="black", font=("Arial", 10, "bold"))
+            table_checkbox.pack(side="left", padx=5)
+
+            expand_icon = ctk.CTkLabel(table_frame, text="▼", fg_color="#FFFFFF", cursor="hand2",
+                                       text_color="black", font=("Arial", 10, "bold"))
+            expand_icon.pack(side="left", padx=5)
+            expand_icon.bind("<Button-1>", lambda event, f=table_frame: self.toggle_columns(f))
+
+            columns_frame = ctk.CTkFrame(table_frame, fg_color="#F0F0F0", corner_radius=10)
+            table_frame.columns_frame = columns_frame
+            columns_frame.pack(fill="x", expand=True, padx=20, pady=2)
+            columns_frame.pack_forget()  # Start with columns hidden
+
+            # Placement of column labels inside the columns_frame
+            for column in table['columns']:
+                column_label = ctk.CTkLabel(columns_frame, text=f"Column: {column['name']} Type: {column['type']}",
+                                            text_color="black", font=("Arial", 10, "bold"))
+                column_label.pack(anchor="w", padx=20)
+            self.tables.append(table_frame)
+     
+        frame_boton = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        frame_boton.grid(row = 2, column= 0, columnspan=3, sticky="nsew")
+
+        button = CTkButton(frame_boton, text="Cerrar", command=lambda: m.MainMenuLoop(self.master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
 
 if __name__ == "__main__":
     app = VentanaPrincipal()
