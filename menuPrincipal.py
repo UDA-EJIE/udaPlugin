@@ -22,7 +22,7 @@ class MainMenu(CTkToplevel):
         # Load the image
         image_path = base_path+'\\plugin\\images\\logo_uda.png'
         logo_ejie = CTkImage(light_image=Image.open(image_path))
-        label_logo = CTkLabel(self, text="Plugin UDA", image=logo_ejie, bg_color='#E0E0E0')
+        label_logo = CTkLabel(self, text="", image=logo_ejie, bg_color='#E0E0E0')
         label_logo.pack(pady=(20, 10), padx=20, fill="x")
 
         

@@ -548,6 +548,16 @@ class PaginaTres(CTkFrame):
         else:
             logging.error("No se seleccionó ningún directorio.")
 
+    
+    def toggle_columns(self, table_frame):
+        # Asegúrate de referirte al columns_frame para expandir/contraer
+            if table_frame.columns_frame.winfo_viewable():
+                table_frame.columns_frame.pack_forget()
+                table_frame.winfo_children()[1].configure(text="▼")  # Icono cambia a 'expandir'
+            else:
+                table_frame.columns_frame.pack(fill="x", expand=True, padx=20, pady=2)
+                table_frame.winfo_children()[1].configure(text="▲")  # Icono cambia a 'contraer'
+
 
 class VentanaPrincipal(CTk):
     def __init__(self):
@@ -759,14 +769,65 @@ class VentanaPrincipal(CTk):
         self.header_frame.destroy()
         self.main_container.destroy()
         self.buttons_container.destroy()
-        main_container = CTkFrame(self, fg_color="#E0E0E0")
-        main_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
-        main_container.grid_columnconfigure(0, weight=1)
-        main_container.grid_rowconfigure(0, weight=1)
-        configuration_warning = CTkLabel(main_container,  text="Se han creado "+str(len(tablas))+" tablas ", font=("Arial", 13, "bold"),text_color="black")
-        configuration_warning.grid(row=0, column=0, pady=(20, 5), padx=(500,0), sticky="w")  
-        button = CTkButton(main_container, text="Cerrar", command=lambda: m.MainMenuLoop(self.master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
-        button.grid(row=0, column=0, pady=(100, 5), padx=(500,0), sticky="w") 
+        
+        modelos = " Modelos" if self.modelo_datos_var.get() == True else ""
+        daos = " DAOs" if self.daos_var .get() == True else ""
+        servicios = " Servicios" if self.servicios_var.get() == True else ""
+        controladores = " Controladores" if self.controladores_var.get() == True else ""
+        
+        cabecera_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        cabecera_container.grid(row=0, column=0, columnspan=3, sticky="nsew")
+
+         # Checkbox for the table
+        cabecera_label = ctk.CTkLabel(cabecera_container, text="Se han creado los" + modelos + daos + servicios + controladores+ " de las siguientes tablas y columnas",
+                                            text_color="black", font=("Arial", 10, "bold"))
+        cabecera_label.grid(row=0, column= 1, padx=350, pady = (30, 0), sticky = "we")
+
+
+
+        scrollbar_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        scrollbar_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
+        scrollbar_container.grid_columnconfigure(0, weight=1)
+        scrollbar_container.grid_rowconfigure(0, weight=1)
+        
+        self.scrollbar_resumen = CTkScrollableFrame(scrollbar_container, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+        self.scrollbar_resumen.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        self.var_list = []
+        self.tables = []
+        
+        for index, table in enumerate(tablas):
+            self.var_list.append(ctk.IntVar(value=0))
+            table_frame = ctk.CTkFrame(self.scrollbar_resumen, fg_color="#FFFFFF", corner_radius=10)
+            table_frame.pack(fill="x", padx=10, pady=2, expand=True)
+
+            # Checkbox for the table
+            table_checkbox = ctk.CTkLabel(table_frame, text=table['name'],
+                                            text_color="black", font=("Arial", 10, "bold"))
+            table_checkbox.pack(side="left", padx=5)
+
+            expand_icon = ctk.CTkLabel(table_frame, text="▼", fg_color="#FFFFFF", cursor="hand2",
+                                       text_color="black", font=("Arial", 10, "bold"))
+            expand_icon.pack(side="left", padx=5)
+            expand_icon.bind("<Button-1>", lambda event, f=table_frame: self.toggle_columns(f))
+
+            columns_frame = ctk.CTkFrame(table_frame, fg_color="#F0F0F0", corner_radius=10)
+            table_frame.columns_frame = columns_frame
+            columns_frame.pack(fill="x", expand=True, padx=20, pady=2)
+            columns_frame.pack_forget()  # Start with columns hidden
+
+            # Placement of column labels inside the columns_frame
+            for column in table['columns']:
+                column_label = ctk.CTkLabel(columns_frame, text=f"Column: {column['name']} Type: {column['type']}",
+                                            text_color="black", font=("Arial", 10, "bold"))
+                column_label.pack(anchor="w", padx=20)
+            self.tables.append(table_frame)
+     
+        frame_boton = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        frame_boton.grid(row = 2, column= 0, columnspan=3, sticky="nsew")
+
+        button = CTkButton(frame_boton, text="Cerrar", command=lambda: m.MainMenuLoop(self.master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
 
 if __name__ == "__main__":
     app = VentanaPrincipal()
