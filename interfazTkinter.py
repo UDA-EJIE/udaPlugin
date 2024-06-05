@@ -196,7 +196,7 @@ class Paso1(CTk):
         if(destinoPath == ''):
             destinoPath = rutaPath
         now = datetime.now()
-        dates = now.strftime('%d-%b-%Y %H:%M:%S')    
+        dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' + yaml_data["project_name"]+yaml_data["war_project_name"])    
         with Worker(src_path=directorio_actual,overwrite=True, dst_path=destinoPath, data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
@@ -212,8 +212,8 @@ class Paso1(CTk):
         logging.info('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S')
-        print("Final: paso 1 creado ::: "+dates,file=sys.stderr)
-        sys.stderr.close()
+        print(F"Final: paso 1 creado ::: "+dates,file=sys.stderr)
+        sys.stderr.flush()
         self.ventana_final_popup()
 
             

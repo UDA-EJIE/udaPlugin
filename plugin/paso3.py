@@ -37,6 +37,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
 
     data["packageName"] = "com.ejie."+proyectName  
     lastTable = False
+
     print("Inicio paso 3")
     for x, table in enumerate(tables):
         #añadir funciones
@@ -94,6 +95,6 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
     print("Fin paso 3")
     logging.info("Final: paso 3 creado")
     print("Final: paso 3 creado ::: "+data["date"],file=sys.stderr)
-    sys.stderr.close()
+    sys.stderr.flush()
         
 #FIN función principal
