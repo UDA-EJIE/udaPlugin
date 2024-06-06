@@ -84,7 +84,7 @@ class PaginaUno(CTkFrame):
 
 
         for i, label_text in enumerate(labels):
-            sv = StringVar()
+            sv = StringVar(self)
             sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.urlModify())
             label = CTkLabel(self, text=label_text, fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
             label.grid(row=i+1, column=0, sticky="w", padx=(20, 10), pady=(15, 2))
@@ -168,8 +168,14 @@ class PaginaUno(CTkFrame):
            self.master.ocultarSpinner()
            return False
        
-        un = self.entries[4].get()
-        pw = self.entries[5].get()
+        un = self.pagina_actual.entries[4].get()
+        pw = self.pagina_actual.entries[5].get()
+        sid = self.pagina_actual.entries[1].get()
+        serviceName = self.pagina_actual.entries[0].get()
+        host = self.pagina_actual.entries[2].get()
+        port = self.pagina_actual.entries[3].get()
+        esquema = self.pagina_actual.entries[6].get()
+        url = self.pagina_actual.entries[7].get()
         
         tables = [] 
         columns = [] 
@@ -194,11 +200,14 @@ class PaginaUno(CTkFrame):
         
         oracledb.init_oracle_client(lib_dir=d)
         try:
-            if(self.entries[1].get() == ''):
-                cs = self.entries[2].get() + ":" + self.entries[3].get() + "/" + self.entries[0].get()
+            if(sid == ''):
+                cs = host + ":" + port + "/" + serviceName
                 connection =  oracledb.connect(user=un, password=pw, dsn=cs)
             else:#con SID
-                connection =  oracledb.connect(user=un, password=pw, sid=self.entries[1].get(),host=self.entries[2].get(),port=self.entries[3].get())
+                connection =  oracledb.connect(user=un, password=pw, sid=sid,host=host,port=port)
+            utl.writeConfig("BBDD", 
+            {"servicename":serviceName,"sid":sid,"host":host,"puerto":port,
+            "usuario":un,"password":pw,"esquema":esquema,"url":url})
         except Exception as e: 
             logging.exception("An exception occurred BBDD:  ")  
             self.configuration_warning.configure(text="An exception occurred: " + str(e))
@@ -545,14 +554,14 @@ class VentanaPaso3(CTkFrame):
         left_container.grid_columnconfigure(0, weight=1)
 
         # Scrollbar para los radio buttons
-        scrollbar = CTkScrollableFrame(left_container, fg_color="#E0E0E0")
-        scrollbar.pack(fill="both", expand=True, padx=10, pady=10)
+        self.scrollbar = CTkScrollableFrame(left_container, fg_color="#E0E0E0")
+        self.scrollbar.pack(fill="both", expand=True, padx=10, pady=10)
         
         self.radio_var = tk.StringVar(value=tables[0].name if tables else None)  # Valor predeterminado
         
         # Creamos los radio buttons dentro del scrollbar
         for i, table in enumerate(tables):
-            radio_button = CTkRadioButton(scrollbar, text=table.name, variable=self.radio_var, value=table.name, text_color="black", command=lambda table=table, i=i: self.actualizar_indice(i, table.name))
+            radio_button = CTkRadioButton(self.scrollbar , text=table.name, variable=self.radio_var, value=table.name, text_color="black", command=lambda table=table, i=i: self.actualizar_indice(i, table.name))
             radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
 
         # Si no se proporciona un índice seleccionado, usamos 0 por defecto
@@ -650,13 +659,13 @@ class VentanaColumnas(CTkFrame):
         desc_label = CTkLabel(self.configuration_frame, text="Seleccione el WAR al que se quiere añadir el mantenimiento y configure una conexión a la base de datos")
         desc_label.grid(row=2, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
         # Contenedor principal
-        contenedor_principal = ctk.CTkFrame(self)
-        contenedor_principal.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
-        contenedor_principal.grid_columnconfigure(0, weight=1)
-        contenedor_principal.grid_rowconfigure(0, weight=1)
+        self.contenedor_principal = ctk.CTkFrame(self)
+        self.contenedor_principal.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
+        self.contenedor_principal.grid_columnconfigure(0, weight=1)
+        self.contenedor_principal.grid_rowconfigure(0, weight=1)
 
         # Contenedor Scrollable para los Checkbuttons
-        self.scrollable_container = ctk.CTkScrollableFrame(contenedor_principal, fg_color="#E0E0E0", width=400, height=300)
+        self.scrollable_container = ctk.CTkScrollableFrame(self.contenedor_principal, fg_color="#E0E0E0", width=400, height=300)
         self.scrollable_container.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
 
@@ -820,16 +829,45 @@ class VentanaPrincipal(CTk):
         self.configuration_frame.destroy()
         self.contenedor_botones.destroy()
         self.scrollable_container.destroy()
-        main_container = CTkFrame(self, fg_color="#E0E0E0")
-        main_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
-        main_container.grid_columnconfigure(0, weight=1)
-        main_container.grid_rowconfigure(0, weight=1)
-        configuration_warning = CTkLabel(main_container,  text="Se han creado "+str(len(tablas))+" mantenimientos ", font=("Arial", 13, "bold"),text_color="black")
-        configuration_warning.grid(row=0, column=0, pady=(20, 5), padx=(500,0), sticky="w")  
-        button = CTkButton(main_container, text="Cerrar", command=lambda: m.MainMenuLoop(self.master), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
-        button.grid(row=0, column=0, pady=(100, 5), padx=(500,0), sticky="w") 
+        self.contenedor_principal.destroy()
+        
+        
         self.master.ocultarSpinner()
+        # Create the main container frame
+        main_container = CTkFrame(self, fg_color="#E0E0E0")
+        main_container.grid(row=0, column=0, sticky="nsew")
+        main_container.grid_rowconfigure(0, weight=1)
+        main_container.grid_rowconfigure(1, weight=1)
+        main_container.grid_columnconfigure(0, weight=1)
+        main_container.grid_columnconfigure(1, weight=1)
+        main_container.grid_columnconfigure(2, weight=1)
 
+        # Create the label container frame
+        label_container = CTkFrame(main_container, fg_color="#E0E0E0")
+        label_container.grid(row=0, column=1, sticky="n")
+        label_container.grid_rowconfigure(0, weight=1)
+        label_container.grid_columnconfigure(0, weight=1)
+
+        # Create the information label
+        label_info = CTkLabel(label_container, text="Has creado el mantenimiento de la siguiente tabla " + tablas[0]['name'], 
+                            bg_color="#E0E0E0", text_color="black", font=("Arial", 15, "bold"))
+        label_info.grid(row=0, column=0, pady=20, padx=20, sticky="n")
+
+        # Create a button container frame for buttons at the bottom
+        button_container = CTkFrame(main_container, fg_color="#E0E0E0")
+        button_container.grid(row=1, column=0, columnspan=3, pady=20, sticky="s")
+        button_container.grid_columnconfigure(0, weight=1)
+        button_container.grid_columnconfigure(1, weight=1)
+
+        # Create the 'Volver al menu' button
+        boton_menu = ctk.CTkButton(button_container, text="Volver al menú", fg_color='#69a3d6', text_color="black", 
+                                font=("Arial", 12, "bold"), command=lambda: m.MainMenuLoop(self.master))
+        boton_menu.grid(row=0, column=0, padx=5, pady=(200,0), sticky="se")
+
+        # Create the 'cerrar' button
+        boton_cerrar = ctk.CTkButton(button_container, text="cerrar", fg_color='#69a3d6', text_color="black", 
+                                    font=("Arial", 12, "bold"), command=lambda: self.master.destroy())
+        boton_cerrar.grid(row=0, column=1, padx=5, pady=(200,0), sticky="sw")
 
 if __name__ == "__main__":
     app = VentanaPrincipal()
