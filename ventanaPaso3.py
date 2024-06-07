@@ -168,14 +168,14 @@ class PaginaUno(CTkFrame):
            self.master.ocultarSpinner()
            return False
        
-        un = self.pagina_actual.entries[4].get()
-        pw = self.pagina_actual.entries[5].get()
-        sid = self.pagina_actual.entries[1].get()
-        serviceName = self.pagina_actual.entries[0].get()
-        host = self.pagina_actual.entries[2].get()
-        port = self.pagina_actual.entries[3].get()
-        esquema = self.pagina_actual.entries[6].get()
-        url = self.pagina_actual.entries[7].get()
+        un = self.entries[4].get()
+        pw = self.entries[5].get()
+        sid = self.entries[1].get()
+        serviceName = self.entries[0].get()
+        host = self.entries[2].get()
+        port = self.entries[3].get()
+        esquema = self.entries[6].get()
+        url = self.entries[7].get()
         
         tables = [] 
         columns = [] 
