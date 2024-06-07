@@ -25,8 +25,6 @@ ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 ruta_war = utl.readConfig("RUTA", "ruta_war")
 tables_original = None
 
-
-#sys.stderr = open('logs/log.log', 'a')
 class PaginaUno(CTkFrame):
     
     def __init__(self, master, tables=None, columns=None, *args, **kwargs):

@@ -21,6 +21,7 @@ a = Analysis(
         ('templates/generateCode/model/*', 'templates/generateCode/model'),
         ('templates/generateCode/service/*', 'templates/generateCode/service'),
 		('instantclient_21_12/*', 'instantclient_21_12'),
+        ('logs/*', 'logs'),
         ('plugin/*', 'plugin'),
         ('plugin/images/*', 'plugin/images'),
         ('templates/proyecto/', 'templates/proyecto'),
