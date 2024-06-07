@@ -5,11 +5,13 @@ import ventanaPaso3 as paso3
 from tkinter import *
 from PIL import Image, ImageTk
 import logging
+import plugin.utils as utl
 
 base_path = os.path.dirname(os.path.abspath(__file__))
+logsPath = os.path.join(base_path, 'logs\\log.log')
 
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG,encoding='utf-8',filename='logs/info.log')
-logsPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs\\log.log')
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG,encoding='utf-8',filename=logsPath)
+
 sys.stderr = open(logsPath, 'a')
 class MainMenu(CTkToplevel):
     def __init__(self):
