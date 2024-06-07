@@ -319,7 +319,7 @@ class PaginaTres(CTkFrame):
         if(ruta_classes != None and ruta_classes != ""):
            textRutaNegocio = ruta_classes 
         if(ruta_war != None and ruta_war != ""):
-           textRutaControlador = ruta_classes 
+           textRutaControlador = ruta_war 
         archivoClases = utl.buscarArchivo(textRutaNegocio,"EARClasses") 
         archivoWar = utl.buscarArchivo(textRutaControlador,"War") 
         if(archivoClases != '' ):

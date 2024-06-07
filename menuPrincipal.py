@@ -10,7 +10,7 @@ import plugin.utils as utl
 base_path = os.path.dirname(os.path.abspath(__file__))
 logsPath = os.path.join(base_path, 'logs\\log.log')
 
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG,encoding='utf-8',filename=logsPath)
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG,encoding='utf-8',filename='logs/info.log')
 
 sys.stderr = open(logsPath, 'a')
 class MainMenu(CTkToplevel):
