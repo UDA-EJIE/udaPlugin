@@ -9,6 +9,7 @@ from plugin.utils import modifyJackson
 import operator
 import logging
 from customtkinter import *
+from plugin.utils import writeConfig
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -30,15 +31,23 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     dirModel = directorio_actual+"model/" 
     destinoEarModel = yaml_data["destinoApp"]+"/src/com/ejie/"+proyectName+"/model"
     rutaJackson = destinoWarViews+"jackson-config.xml"
+    destinoSrc = ""
+    
+    if(yaml_data["destinoApp"] != ""):
+     destinoApp = yaml_data["destinoApp"].replace("\\","")
+     destinoSrc = destinoApp.replace("/"+ventanaPaso2.archivoClases,"")
+    elif(yaml_data["destinoWar"] != ""):
+     destinoWar = yaml_data["destinoWar"].replace("\\","")
+     destinoSrc = destinoWar.replace("/"+ventanaPaso2.archivoWar,"") 
 
     # si no existe crear la carpeta, raiz control - config java
-    if os.path.isdir(destinoWarControl) == False:
+    if ventanaPaso2.controladores_var.get() and os.path.isdir(destinoWarControl) == False:
         os.makedirs(destinoWarControl)
-    if os.path.isdir(destinoEarService) == False:
+    if ventanaPaso2.servicios_var.get() and os.path.isdir(destinoEarService) == False:
         os.makedirs(destinoEarService)
-    if os.path.isdir(destinoEarDao) == False:
+    if ventanaPaso2.daos_var.get() and os.path.isdir(destinoEarDao) == False:
         os.makedirs(destinoEarDao)
-    if os.path.isdir(destinoEarModel) == False:
+    if ventanaPaso2.modelo_datos_var.get() and os.path.isdir(destinoEarModel) == False:
         os.makedirs(destinoEarModel)            
     data["packageName"] = "com.ejie."+proyectName  
     lastTable = False
@@ -60,14 +69,16 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
         print("Inicio paso 2")
+        generoEar = False
         #controller java 
-        if(ventanaPaso2.controladores_var.get()):
+        if(ventanaPaso2.controladores_var.get()):            
             logging.info("Inicio: crear controllers...")
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
              worker.template.version = ":  1.0 Paso 2 Controllers ::: "+data["date"]
              worker.run_copy() 
+             writeConfig("RUTA", {"ruta_war":destinoSrc})
 
         #Fecha creación services
         now = datetime.now()        
@@ -78,7 +89,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             logging.info("Inicio: crear services...")
             with Worker(src_path=dirService, dst_path=destinoEarService, data=data, exclude=["*Rel*"],overwrite=True) as worker:
                 worker.template.version = ":  1.0 Paso 2 servicios ::: "+data["date"]
-                worker.run_copy()   
+                worker.run_copy() 
+                generoEar = True  
 
         #Fecha creación Daos
         now = datetime.now()        
@@ -91,6 +103,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
              worker.template.version = ": 1.0 Paso 2 daos ::: "+data["date"]
              worker.run_copy()  
+             generoEar = True
         
         #Fecha creación Models
         now = datetime.now()        
@@ -106,8 +119,11 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                 if(x == len(tables) - 1):
                     lastTable = True
                 if os.path.isdir(rutaJackson) == True:    
-                    modifyJackson(rutaJackson,tName,lastTable,data["packageName"])                   
-
+                    modifyJackson(rutaJackson,tName,lastTable,data["packageName"])  
+                generoEar = True                     
+    if(generoEar):
+        writeConfig("RUTA", {"ruta_classes":destinoSrc})
+    writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  

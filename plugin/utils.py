@@ -154,7 +154,11 @@ def writeConfig(section,key):
         configfile_name = os.path.join(base_path, 'config.ini')
         config = configparser.ConfigParser()
         config.read(configfile_name)
-        config[section] = key
+        if(len(key) == 1):
+          for k in key:
+            config.set(section,k,key[k])
+        else:      
+          config[section] = key
     
         with open(configfile_name, 'w') as configfile:
             config.write(configfile)
