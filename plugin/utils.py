@@ -79,27 +79,27 @@ def snakeToCamel(str):
     return res
 
 def modifyTiles(ruta,entityName, final):
-    tree = ET.parse(ruta)
+    tree = etree.parse(ruta)
     root = tree.getroot()   
     diag = root.find('definition[@name="'+entityName+'"]') 
     if (diag == None): 
-         padre = ET.Element("definition")
+         padre = Element("definition")
          padre.set('extends','template')
          padre.set('name',entityName)
-         content = ET.Element("put-attribute")
+         content = Element("put-attribute")
          content.set('name','content')
          content.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+".jsp")
-         includes = ET.Element("put-attribute")
+         includes = Element("put-attribute")
          includes.set('name','includes')
          includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
-         ET.indent(tree, '  ')
+         etree.indent(root, space="    ")
          padre.append(content)
          padre.append(includes)
          root.append(padre)
-         tree.write(ruta)
+         tree.write(ruta, encoding='utf-8', xml_declaration=True)
     if(final):
-        ET.indent(tree, '  ') 
-        tree.write(ruta) 
+        etree.indent(root, space="    ") 
+        tree.write(ruta, encoding='utf-8', xml_declaration=True) 
 
 def modifyJackson(ruta,entityName, final, packageName):
     packageName = packageName + ".model."+entityName
