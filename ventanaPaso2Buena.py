@@ -76,7 +76,7 @@ class PaginaUno(CTkFrame):
         next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         next_button.grid(row=len(labels) + 2, column=1, pady=10, padx=20, sticky="e")
 
-        back_button = CTkButton(self, text="Atrás", command=lambda: m.MainMenuLoop(self), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        back_button = CTkButton(self, text="Atrás", command=lambda: m.MainMenuLoop(master), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         back_button.grid(row=len(labels) + 2, column=1, pady=10, padx=(50, 130), sticky="e")
                  
     
