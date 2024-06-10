@@ -24,21 +24,21 @@ class MainMenu(CTkToplevel):
 
         # Load the image
         image_path = base_path+'\\plugin\\images\\logo_uda.png'
-        logo_ejie = CTkImage(light_image=Image.open(image_path))
+        logo_ejie = CTkImage(light_image=Image.open(image_path), size=(200,200))
         label_logo = CTkLabel(self, text="", image=logo_ejie, bg_color='#E0E0E0')
         label_logo.pack(pady=(20, 10), padx=20, fill="x")
 
         
         # Botón para Paso 1
-        self.button_paso_1 = CTkButton(self, text="Paso 1", command=self.abrir_paso1, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        self.button_paso_1 = CTkButton(self, text="Crear una nueva aplicación", command=self.abrir_paso1, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.button_paso_1.pack(pady=(20, 10), padx=20, fill="x")
 
         # Botón para Paso 2
-        self.button_paso_2 = CTkButton(self, text="Paso 2", command=self.abrir_paso2, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        self.button_paso_2 = CTkButton(self, text="Generar código de negocio y control", command=self.abrir_paso2, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.button_paso_2.pack(pady=10, padx=20, fill="x")
 
         # Botón para Paso 3
-        self.button_paso_3 = CTkButton(self, text="Paso 3", command=self.abrir_paso3, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        self.button_paso_3 = CTkButton(self, text="Generar mantenimiento", command=self.abrir_paso3, bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.button_paso_3.pack(pady=10, padx=20, fill="x")
 
     def on_close(self,ventana):
