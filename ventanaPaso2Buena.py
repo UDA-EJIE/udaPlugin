@@ -412,6 +412,8 @@ class PaginaTres(CTkFrame):
         war_name = ""
         if(self.controladores_var.get()):
             war_name = utl.obtenerNombreProyecto(self.search_entry_presentacion.get(),archivoWar)
+            if project_name == '':
+                project_name = archivoWar.replace(war_name+"War","")
         data = { "project_name": project_name,
         "security_app": "",
         "war_project_name": war_name,
