@@ -32,13 +32,18 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     destinoEarModel = yaml_data["destinoApp"]+"/src/com/ejie/"+proyectName+"/model"
     rutaJackson = destinoWarViews+"jackson-config.xml"
     destinoSrc = ""
+    destinoSrcWar = ""
     
     if(yaml_data["destinoApp"] != ""):
-     destinoApp = yaml_data["destinoApp"].replace("\\","")
+     destinoApp = yaml_data["destinoApp"]
+     destinoApp = destinoApp.replace("//"+ventanaPaso2.archivoClases,"")
+     destinoApp = destinoApp.replace("\\"+ventanaPaso2.archivoClases,"")
      destinoSrc = destinoApp.replace("/"+ventanaPaso2.archivoClases,"")
     elif(yaml_data["destinoWar"] != ""):
-     destinoWar = yaml_data["destinoWar"].replace("\\","")
-     destinoSrc = destinoWar.replace("/"+ventanaPaso2.archivoWar,"") 
+     destinoWar = yaml_data["destinoWar"]
+     destinoWar = destinoWar.replace("//"+ventanaPaso2.archivoWar,"")
+     destinoWar = destinoWar.replace("\\"+ventanaPaso2.archivoWar,"")
+     destinoSrcWar = destinoWar.replace("/"+ventanaPaso2.archivoWar,"") 
 
     # si no existe crear la carpeta, raiz control - config java
     if ventanaPaso2.controladores_var.get() and os.path.isdir(destinoWarControl) == False:
@@ -78,7 +83,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
              worker.template.version = ":  1.0 Paso 2 Controllers ::: "+data["date"]
              worker.run_copy() 
-             writeConfig("RUTA", {"ruta_war":destinoSrc})
+             writeConfig("RUTA", {"ruta_war":destinoSrcWar})
+             writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrcWar})
 
         #Fecha creación services
         now = datetime.now()        
@@ -123,7 +129,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                 generoEar = True                     
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
-    writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
+        writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  
