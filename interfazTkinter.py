@@ -12,7 +12,7 @@ from datetime import datetime
 
 self = CTk()
 
-
+base_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class Paso1(CTk):
@@ -271,7 +271,6 @@ class Paso1(CTk):
     # Function to create and show the popup
     def ventana_final_popup(self):
         popup_final = ctk.CTkToplevel(self)
-        popup_final.title("Resultados de Búsqueda")
         popup_final.geometry("800x300")
         popup_final.attributes('-topmost', True)
 
@@ -290,7 +289,12 @@ class Paso1(CTk):
 
         ruta_label = CTkLabel(frame_labels, text="Has guardado el proyecto en la ruta " + self.entry_location.get(),  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
         ruta_label.grid(row=2, column=2,  pady=(10, 5))
-        
+
+
+        ruta = base_path + "\logs"
+        ruta_label = CTkLabel(frame_labels, text="Para mas informacion consultar los logs en la ruta " + ruta ,  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        ruta_label.grid(row=3, column=2,  pady=(10, 5))
+
         frame_boton = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
         frame_boton.grid(row = 1, column= 0, columnspan = 3)
 
