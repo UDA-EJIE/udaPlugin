@@ -14,6 +14,8 @@ def getColumnsDates(columns):
     for columnOld in columns:   
         newColumn = columnOld
         type = columnOld["type"] 
+        newColumn["editable"] = "true"
+        newColumn["hidden"] = "false"
         
         if type == "FLOAT":
                newColumn["DATO_TYPE"] = "BigDecimal"
