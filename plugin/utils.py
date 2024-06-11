@@ -16,6 +16,7 @@ def getColumnsDates(columns):
         type = columnOld["type"] 
         newColumn["editable"] = "true"
         newColumn["hidden"] = "false"
+        newColumn["requiredEditRules"] = "false"
         
         if type == "FLOAT":
                newColumn["DATO_TYPE"] = "BigDecimal"
