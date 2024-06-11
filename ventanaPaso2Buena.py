@@ -38,13 +38,13 @@ class PaginaUno(CTkFrame):
         configuration_frame = CTkFrame(self)
         configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
 
-        configuration_label = CTkLabel(configuration_frame,  text="Crear nueva aplicación", font=("Arial", 14, "bold"))
+        configuration_label = CTkLabel(configuration_frame,  text="Generar código para una aplicación UDA", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
         self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
-        description_label = CTkLabel(configuration_frame, text="Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar")
+        description_label = CTkLabel(configuration_frame, text="Este Wizard genera el código fuente para desplegar una aplicación UDA")
         description_label.grid(row=1, column=0, columnspan=3, pady=(10, 5), padx=20, sticky="w")
 
         # Formulario
