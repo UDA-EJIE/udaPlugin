@@ -62,7 +62,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["urlStatics"]  = "../"+table["name"]
         destinoWarViewsFinal = destinoWarViews + tName.lower() +"/"
         destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/"  
-        data["maint"]["primaryKey"] = data["listPks"][0]      
+        data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])
         data["maint"]["isMaint"] = True
         data["maint"]["typeMaint"] = 'INLINE' if data_mantenimiento[3][1] == 'Edición en línea' else "DETAIL"
         data["maint"]["clientValidationMaint"] = True
