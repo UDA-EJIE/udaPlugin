@@ -60,7 +60,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["title"]  = data_mantenimiento[1][1]
         data["maint"]["isMaint"] = True
         data["maint"]["type"] = 'INLINE' if data_mantenimiento[3][1] == 'Edición en línea' else "DETAIL"
-        data["maint"]["loadFromModel"]  = data_mantenimiento[6][1]
+        data["maint"]["loadFromModel"]  = data_mantenimiento[4][1]
         data["maint"]["detailSaveButton"]  = data_mantenimiento[5][1]
         data["maint"]["buttons"]  = data_mantenimiento[6][1]
         data["maint"]["contextMenu"]  = data_mantenimiento[7][1]
