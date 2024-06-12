@@ -39,7 +39,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
      destinoApp = destinoApp.replace("//"+ventanaPaso2.archivoClases,"")
      destinoApp = destinoApp.replace("\\"+ventanaPaso2.archivoClases,"")
      destinoSrc = destinoApp.replace("/"+ventanaPaso2.archivoClases,"")
-    elif(yaml_data["destinoWar"] != ""):
+    if(yaml_data["destinoWar"] != ""):
      destinoWar = yaml_data["destinoWar"]
      destinoWar = destinoWar.replace("//"+ventanaPaso2.archivoWar,"")
      destinoWar = destinoWar.replace("\\"+ventanaPaso2.archivoWar,"")

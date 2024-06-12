@@ -193,7 +193,8 @@ def rutaActual(ruta_archivo_actual):
 def buscarArchivo(ruta,tipo):
     path = ""
     try:
-        files = [file for file in os.listdir(ruta) if file.endswith(tipo)]
+        paths = sorted(Path(ruta).iterdir() , key=os.path.getmtime, reverse = True)
+        files = [file for file in paths if str(file).endswith(tipo)]
         if len(files) != 0:
             return Path(files[0]).stem
     except Exception as e:
