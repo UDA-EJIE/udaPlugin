@@ -2,7 +2,7 @@ from customtkinter import *
 import yaml
 from pathlib import Path
 import yaml
-from copier import Worker
+from copier import Worker   
 import tkinter as tk
 import logging
 import plugin.utils as utl
@@ -10,18 +10,19 @@ import menuPrincipal as m
 import customtkinter as ctk
 from datetime import datetime
 
+
 self = CTk()
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class Paso1(CTk):
-    def __init__(self):
+    def __init__(self, main_menu):
         super().__init__()
 
         self.title("Crear nueva aplicación")
         self.geometry("900x700")
-
+        self.main_menu = main_menu
         # Configurar el color de fondo de la ventana
         self.config(bg="#E0E0E0")
 
@@ -118,10 +119,16 @@ class Paso1(CTk):
         finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
 
-        cancel_button = CTkButton(self, text="Cancelar", command= lambda: m.MainMenuLoop(self), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
 
+
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.withdraw()
+        self.quit()
+        self.main_menu.MainMenuLoop()
 
 
     def toggle_textbox(self):# check localización por defecto
@@ -298,7 +305,7 @@ class Paso1(CTk):
         frame_boton = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
         frame_boton.grid(row = 1, column= 0, columnspan = 3)
 
-        close_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : m.MainMenuLoop(self), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        close_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : self.cancelar(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         close_button.grid(row = 0, column = 1, pady = (30,30), sticky= 's')
 
 
