@@ -196,8 +196,20 @@ class Paso1(CTk):
                     availableLangs = availableLangs + " ,en"
                 if lang_option == "Francés":
                     availableLangs = availableLangs + " ,fr"   
-        filesExcludes.append("*EJB")         
-        yaml_data["defaultLanguage"] = self.default_language_combobox.get()
+        filesExcludes.append("*EJB") 
+        defaultLanguage = self.default_language_combobox.get() 
+        
+        if  defaultLanguage == "Castellano":      
+            yaml_data["defaultLanguage"] = "es"
+        if  defaultLanguage == "Euskera":      
+            yaml_data["defaultLanguage"] = "eu"
+        elif  defaultLanguage == "Inglés":      
+            yaml_data["defaultLanguage"] = "en"
+        elif  defaultLanguage == "Francés":      
+            yaml_data["defaultLanguage"] = "fr"
+        else:
+            yaml_data["defaultLanguage"] = "es"    
+
         yaml_data["availableLangs"] = availableLangs
         destinoPath = self.entry_location.get()
         if(destinoPath == ''):

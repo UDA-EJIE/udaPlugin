@@ -132,7 +132,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                     destinoWarViews = destinoSrc+"/"+nombreWar+"/WebContent/WEB-INF/spring/"
                     rutaJackson = destinoWarViews+"jackson-config.xml"    
                     if os.path.isfile(rutaJackson) == True:    
-                        modifyJackson(rutaJackson,tName,lastTable,data["packageName"])  
+                        modifyJackson(rutaJackson,data["tableName"],lastTable,data["packageName"])  
                 generoEar = True                     
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
