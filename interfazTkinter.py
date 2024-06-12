@@ -196,8 +196,20 @@ class Paso1(CTk):
                     availableLangs = availableLangs + " ,en"
                 if lang_option == "Francés":
                     availableLangs = availableLangs + " ,fr"   
-        filesExcludes.append("*EJB")         
-        yaml_data["defaultLanguage"] = self.default_language_combobox.get()
+        filesExcludes.append("*EJB") 
+        defaultLanguage = self.default_language_combobox.get() 
+        
+        if  defaultLanguage == "Castellano":      
+            yaml_data["defaultLanguage"] = "es"
+        if  defaultLanguage == "Euskera":      
+            yaml_data["defaultLanguage"] = "eu"
+        elif  defaultLanguage == "Inglés":      
+            yaml_data["defaultLanguage"] = "en"
+        elif  defaultLanguage == "Francés":      
+            yaml_data["defaultLanguage"] = "fr"
+        else:
+            yaml_data["defaultLanguage"] = "es"    
+
         yaml_data["availableLangs"] = availableLangs
         destinoPath = self.entry_location.get()
         if(destinoPath == ''):
@@ -298,7 +310,7 @@ class Paso1(CTk):
         ruta_label.grid(row=2, column=2,  pady=(10, 5))
 
 
-        ruta = base_path + "\logs"
+        ruta = base_path + "/logs"
         ruta_label = CTkLabel(frame_labels, text="Para mas informacion consultar los logs en la ruta " + ruta ,  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
         ruta_label.grid(row=3, column=2,  pady=(10, 5))
 
