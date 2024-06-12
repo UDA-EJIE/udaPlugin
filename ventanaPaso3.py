@@ -105,6 +105,9 @@ class PaginaUno(CTkFrame):
         next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         next_button.grid(row=len(labels) + 2, column=1, pady=0, padx=20, sticky="e")
         
+        back_button = CTkButton(self, text="Atrás", command=lambda: m.MainMenuLoop(master), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        back_button.grid(row=len(labels) + 2, column=1, pady=0, padx=(0, 180), sticky="e")
+        
     def selectDirectory(self,directory):
         if(directory == ""):
             return directory
@@ -590,8 +593,8 @@ class VentanaPaso3(CTkFrame):
           # Asegurarse de que el índice predeterminado se maneja desde el inicio
         self.actualizar_indice(indexSeleccionado, tables[indexSeleccionado].name)
 
-
-        cargar_check = CTkCheckBox(right_container, text="Cargar al inicio de la ventana", text_color="black")
+        var_cargar = ctk.BooleanVar(value=True)    
+        cargar_check = CTkCheckBox(right_container, text="Cargar al inicio de la ventana", text_color="black", variable=var_cargar)
         cargar_check.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=10)
 
         orden_label = CTkLabel(right_container, text="Ordenación:", text_color="black")
