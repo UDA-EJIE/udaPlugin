@@ -62,7 +62,7 @@ class MainMenu(CTkToplevel):
 
     def abrir_paso3(self):
         self.withdraw()
-        ventana = paso3.VentanaPrincipal()
+        ventana = paso3.VentanaPrincipal(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.ocultarSpinner()
         ventana.mainloop()

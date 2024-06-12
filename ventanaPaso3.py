@@ -21,12 +21,14 @@ d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instantclient_21_1
 ruta_war = utl.readConfig("RUTA", "ruta_war")
 
 class PaginaUno(CTkFrame):
-    def __init__(self, master, tables=None, data_mantenimiento=None, indexSeleccionado=None, *args, **kwargs):
+    def __init__(self, master, main_menu, tables=None, data_mantenimiento=None, indexSeleccionado=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#E0E0E0", border_color="#69a3d6", border_width=4)
          # Configura el contenedor principal para que las columnas se expandan
         self.grid_columnconfigure(0, weight=1)  # Esto hace que la columna se expanda
         self.grid_columnconfigure(1, weight=1) 
+
+        self.main_menu = main_menu
 
         configuration_frame = CTkFrame(self)
         configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
@@ -105,7 +107,7 @@ class PaginaUno(CTkFrame):
         next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         next_button.grid(row=len(labels) + 2, column=1, pady=0, padx=20, sticky="e")
         
-        back_button = CTkButton(self, text="Atrás", command=lambda: m.MainMenuLoop(master), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         back_button.grid(row=len(labels) + 2, column=1, pady=0, padx=(0, 180), sticky="e")
         
     def selectDirectory(self,directory):
@@ -249,7 +251,7 @@ class PaginaUno(CTkFrame):
                     if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
-        self.master.mostrar_pagina_dos(tables)           
+        self.master.mostrar_pagina_dos(self.main_menu, tables)           
 
 
     def buscar_archivos(self, ruta_personalizada = None):
@@ -331,8 +333,14 @@ class PaginaUno(CTkFrame):
         else:
             logging.info("No se seleccionó ningún directorio.")
 
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
+        self.main_menu.MainMenuLoop()
+
 class ventanaPaso2(CTkFrame):
-    def __init__(self, master, tables, data_mantenimiento=None, indexSeleccionado=None, *args, **kwargs):
+    def __init__(self, master, main_menu, tables, data_mantenimiento=None, indexSeleccionado=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#E0E0E0", border_color="#69a3d6", border_width=2)
         self.grid_columnconfigure(1, weight=1)
@@ -344,7 +352,8 @@ class ventanaPaso2(CTkFrame):
         configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
         configuration_frame.grid_columnconfigure(0, weight=1) 
 
-
+        self.main_menu = main_menu
+        
         configuration_label = CTkLabel(configuration_frame,  text="Crear nueva aplicación", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
 
@@ -426,11 +435,11 @@ class ventanaPaso2(CTkFrame):
         # Footer con botones de navegación
         footer_frame = CTkFrame(self, fg_color="#E0E0E0")
         footer_frame.grid(row=3, column=0, columnspan=2, padx=20, sticky="se")
-        btn_back = CTkButton(footer_frame, text="Back", command=lambda :master.mostrar_pagina_uno(),  fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        btn_back = CTkButton(footer_frame, text="Back", command=lambda :master.mostrar_pagina_uno(self.main_menu),  fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         btn_back.pack(side="left", padx=10)
         btn_next = CTkButton(footer_frame, text="Next", command=lambda: self.validarPaso3() ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         btn_next.pack(side="left", padx=10)
-        btn_cancel = CTkButton(footer_frame, text="Cancel", command=lambda : self.destroy() ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        btn_cancel = CTkButton(footer_frame, text="Cancel", command=lambda : self.cancelar() ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         btn_cancel.pack(side="left", padx=10)
 
         if data_mantenimiento ==None:
@@ -444,7 +453,7 @@ class ventanaPaso2(CTkFrame):
             self.nombre_entry.insert(0, data_mantenimiento[00][1])
             self.titulo_entry.insert(0, data_mantenimiento[1][1])
             self.tipo_var.set(data_mantenimiento[3][1])
-            self.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento[6][1])  
+            self.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento[4][1])  
             self.tipologia_label_combobox.set(data_mantenimiento[5][1])
             self.configurar_checkbox(self.botonera_checkbox, data_mantenimiento[6][1])   
             self.configurar_checkbox(self.menu_contextual_checkbox, data_mantenimiento[7][1])
@@ -538,11 +547,17 @@ class ventanaPaso2(CTkFrame):
             ("multiseleccion", self.multiseleccion_checkbox.get())
         ]
         return datos
+    
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
+        self.main_menu.MainMenuLoop()
 
 
 
 class VentanaPaso3(CTkFrame):
-    def __init__(self, master, tables, data_mantenimiento, indexSeleccionado=None, *args, **kwargs):
+    def __init__(self, master, main_menu, tables, data_mantenimiento, indexSeleccionado=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.tables = tables
         self.data_mantenimiento = data_mantenimiento
@@ -550,6 +565,7 @@ class VentanaPaso3(CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.configure(corner_radius=10, fg_color="#E0E0E0", border_color="#69a3d6", border_width=2)
 
+        self.main_menu = main_menu
         # Izquierda: Contenedor para la lista de entidades con radio buttons
         left_container = CTkFrame(self, corner_radius=3, bg_color="#E0E0E0", border_color="#69a3d6", )
         left_container.grid(row=0, column=0, sticky="nswe", padx=10, pady=10)
@@ -572,7 +588,7 @@ class VentanaPaso3(CTkFrame):
             indexSeleccionado = 0
         self.tabla_seleccionada_index = indexSeleccionado
 
-      
+
 
         # Derecha: Contenedor para los campos de entrada y opciones
         right_container = CTkFrame(self, corner_radius=5, fg_color="#E0E0E0", border_color="#69a3d6")
@@ -611,13 +627,19 @@ class VentanaPaso3(CTkFrame):
         footer_frame = CTkFrame(self, fg_color="#E0E0E0")
         footer_frame.grid(row=1, column=0, columnspan=2, sticky="se", padx=10, pady=(20, 20))
         
-        btn_back = CTkButton(footer_frame, text="Back", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(data_mantenimiento=data_mantenimiento, tables=tables))
+        btn_back = CTkButton(footer_frame, text="Back", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
         btn_next = CTkButton(footer_frame, text="Next", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : self.master.mostrarSpinner("paso4To5"))
         btn_next.pack(side="left", padx=10, pady=5)
-        btn_cancel = CTkButton(footer_frame, text="Cancel" ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        btn_cancel = CTkButton(footer_frame, text="Cancel" ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
         self.master.ocultarSpinner()
+
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
+        self.main_menu.MainMenuLoop()
 
 
     def actualizar_indice(self, index, name):
@@ -638,7 +660,7 @@ class VentanaPaso3(CTkFrame):
         return index_seleccionado
            
 class VentanaColumnas(CTkFrame):
-    def __init__(self, master, tables, data_mantenimiento, index_seleccionado, *args, **kwargs):
+    def __init__(self, master, main_menu, tables, data_mantenimiento, index_seleccionado, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.tables = tables
         self.data_mantenimiento = data_mantenimiento
@@ -647,7 +669,9 @@ class VentanaColumnas(CTkFrame):
          # Configura el contenedor principal para que las columnas se expandan
         self.grid_columnconfigure(0, weight=1)  # Esto hace que la columna se expanda
         self.grid_rowconfigure(3, weight=1)  # Row para contenedor_principal se expande
-      
+        
+        self.main_menu = main_menu
+
         self.configuration_frame = CTkFrame(self)
         self.configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
         self.configuration_frame.grid_columnconfigure(0, weight=1) 
@@ -689,15 +713,21 @@ class VentanaColumnas(CTkFrame):
         self.contenedor_botones = ctk.CTkFrame(self, fg_color="#E0E0E0")
         self.contenedor_botones.grid(row=4, column=0, sticky="se", padx=10, pady=10)
 
-        back_button = ctk.CTkButton(self.contenedor_botones, text="Back", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : master.mostrar_pagina_tres(data_mantenimiento, tables,  index_seleccionado))
+        back_button = ctk.CTkButton(self.contenedor_botones, text="Back", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : master.mostrar_pagina_tres(self.main_menu, data_mantenimiento, tables,  index_seleccionado))
         back_button.grid(row=0, column=0, padx=5, sticky="e")
         
         finish_button = ctk.CTkButton(self.contenedor_botones, text="Finish",  fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda:self.master.mostrarSpinner("finalizar") )
         finish_button.grid(row=0, column=1, padx=5, sticky="e")
 
-        cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancel", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancel", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         cancel_button.grid(row=0, column=2, padx=5, sticky="e")
         self.master.ocultarSpinner()
+
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
+        self.main_menu.MainMenuLoop()
 
     def getTablaResultados(self,tb):
         tabla_resultados = []
@@ -728,44 +758,50 @@ class VentanaColumnas(CTkFrame):
         this = self.master
         tablaResultados = self.getTablaResultados(tables[index_seleccionado])
         p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento)
-        this.mostrarResumenFinal(tablaResultados)    
+        this.mostrarResumenFinal(tablaResultados)  
+
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
+        self.main_menu.MainMenuLoop()  
 
 class VentanaPrincipal(CTk):
-    def __init__(self):
+    def __init__(self, main_menu):
         super().__init__()
         self.title("Generar código para una aplicación UDA")
         self.geometry("900x700") # Puedes ajustar las dimensiones según tus necesidades
         self.resizable(width=True, height=True)
-
+        self.main_menu = main_menu
         self.grid_rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
         self.pagina_actual = None
 
-        self.mostrar_pagina(PaginaUno, tables=None, data_mantenimineto=None, indexSeleccionado=None)
+        self.mostrar_pagina(PaginaUno, main_menu=self.main_menu, tables=None, data_mantenimineto=None, indexSeleccionado=None)
 
-    def mostrar_pagina(self, pagina, tables, data_mantenimineto, indexSeleccionado):
+    def mostrar_pagina(self, pagina, main_menu, tables, data_mantenimineto, indexSeleccionado):
         
         if self.pagina_actual:
             self.pagina_actual.destroy()
-        nueva_pagina = pagina(self, tables, data_mantenimineto, indexSeleccionado) 
+        nueva_pagina = pagina(self, main_menu, tables, data_mantenimineto, indexSeleccionado) 
         self.mostrarSpinner("") 
         self.update()  
         nueva_pagina.grid(row=0, column=0, sticky="nsew")
         self.pagina_actual = nueva_pagina
         self.ocultarSpinner()
 
-    def mostrar_pagina_dos(self, tables, data_mantenimiento=None , indexSeleccionado=None):
-        self.mostrar_pagina(ventanaPaso2, tables, data_mantenimiento, indexSeleccionado), 
+    def mostrar_pagina_dos(self, main_menu ,tables, data_mantenimiento=None , indexSeleccionado=None):
+        self.mostrar_pagina(ventanaPaso2,  main_menu, tables, data_mantenimiento, indexSeleccionado), 
 
-    def mostrar_pagina_tres(self, data_mantenimiento, tables, indexSeleccionado=None):
-        self.mostrar_pagina(VentanaPaso3, tables, data_mantenimiento, indexSeleccionado)
+    def mostrar_pagina_tres(self, main_menu, data_mantenimiento, tables, indexSeleccionado=None):
+        self.mostrar_pagina(VentanaPaso3, main_menu, tables, data_mantenimiento, indexSeleccionado)
 
-    def mostrar_pagina_cuatro(self, tables, data_mantenimineto, indexSeleccionado):
-        self.mostrar_pagina(VentanaColumnas, tables, data_mantenimineto, indexSeleccionado)   
+    def mostrar_pagina_cuatro(self, main_menu, tables, data_mantenimineto, indexSeleccionado):
+        self.mostrar_pagina(VentanaColumnas, main_menu,  tables, data_mantenimineto, indexSeleccionado)   
 
-    def mostrar_pagina_uno(self, tables = None, data_mantenimiento=None , indexSeleccionado=None):
-        self.mostrar_pagina(PaginaUno, tables, data_mantenimiento, indexSeleccionado )
+    def mostrar_pagina_uno(self, main_menu, tables = None, data_mantenimiento=None , indexSeleccionado=None):
+        self.mostrar_pagina(PaginaUno, main_menu, tables, data_mantenimiento, indexSeleccionado )
 
     def getDatos(self,rutaActual):
         project_name = self.nombreProyecto
@@ -815,9 +851,9 @@ class VentanaPrincipal(CTk):
             resultados_window2.after(710, self.pagina_actual.avanzar_paso2)
         elif caso == "paso3To4":#ir a las columnas
             self.update()
-            resultados_window2.after(710,self.mostrar_pagina_tres(self.pagina_actual.obtener_datos(),self.pagina_actual.tables)) 
+            resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)) 
         elif caso == "paso4To5":
-            resultados_window2.after(710,self.mostrar_pagina_cuatro(self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas()))
+            resultados_window2.after(710,self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas()))
         elif caso == "finalizar":
             self.update()
             pfinal = self.pagina_actual
