@@ -94,13 +94,12 @@ def modifyTiles(ruta,entityName, final):
          includes = Element("put-attribute")
          includes.set('name','includes')
          includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
-         etree.indent(root, space="    ")
+         etree.indent(diag, space="    ")
          padre.append(content)
          padre.append(includes)
          root.append(padre)
          tree.write(ruta, encoding='utf-8', xml_declaration=True)
     if(final):
-        etree.indent(root, space="    ") 
         tree.write(ruta, encoding='utf-8', xml_declaration=True) 
 
 def modifyJackson(ruta,entityName, final, packageName):
@@ -122,12 +121,12 @@ def modifyJackson(ruta,entityName, final, packageName):
         entry = Element("entry")
         entry.set('key','#{T('+packageName+')}')
         entry.set('value-ref',"customSerializer")
-        etree.indent(root, space="    ")
+        etree.indent(diag, space="    ")
         utilMap.append(entry)
-        tree.write(ruta)
+        tree.write(ruta, encoding='utf-8', xml_declaration=True)
     if(final):
-       etree.indent(root, space="    ") 
-       tree.write(ruta)    
+       #etree.indent(root, space="    ") 
+       tree.write(ruta, encoding='utf-8', xml_declaration=True)    
 
 def modifyMenu(ruta,entityName, final):
  linea1 = "	<spring:url value=\"/"+entityName+"/maint\" var=\""+entityName+"Maint\" htmlEscape=\"true\"/>"
@@ -226,4 +225,16 @@ def obtenerNombreProyectoWar(ruta):
         return nombreWar
     except Exception as e:
         print("An exception occurred: obtenerNombreProyectoWar",e)
+    return path
+
+def obtenerNombreProyectoByEar(ruta):
+    path = ""
+    try:
+        tree = etree.parse(ruta+"/EarContent/META-INF/application.xml")
+        root = tree.getroot()
+        diag = root.find(".//{http://java.sun.com/xml/ns/javaee}context-root")
+        nombreWar = diag.text
+        return nombreWar
+    except ValueError:
+        print("An exception occurred: obtenerNombreProyecto: ", ValueError)
     return path

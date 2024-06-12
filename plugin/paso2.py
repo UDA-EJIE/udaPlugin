@@ -10,6 +10,7 @@ import operator
 import logging
 from customtkinter import *
 from plugin.utils import writeConfig
+from plugin.utils import obtenerNombreProyectoByEar
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -30,7 +31,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     destinoEarDao = yaml_data["destinoApp"]+"/src/com/ejie/"+proyectName+"/dao"
     dirModel = directorio_actual+"model/" 
     destinoEarModel = yaml_data["destinoApp"]+"/src/com/ejie/"+proyectName+"/model"
-    rutaJackson = destinoWarViews+"jackson-config.xml"
+
     destinoSrc = ""
     destinoSrcWar = ""
     
@@ -124,8 +125,14 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                 worker.run_copy()
                 if(x == len(tables) - 1):
                     lastTable = True
-                if os.path.isdir(rutaJackson) == True:    
-                    modifyJackson(rutaJackson,tName,lastTable,data["packageName"])  
+                #Obtener war desde el Ear seleccionado
+                rutaClasses = destinoSrc + "/" + ventanaPaso2.archivoClases.replace("Classes","") 
+                nombreWar = obtenerNombreProyectoByEar(rutaClasses)
+                if nombreWar != '':
+                    destinoWarViews = destinoSrc+"/"+nombreWar+"/WebContent/WEB-INF/spring/"
+                    rutaJackson = destinoWarViews+"jackson-config.xml"    
+                    if os.path.isfile(rutaJackson) == True:    
+                        modifyJackson(rutaJackson,tName,lastTable,data["packageName"])  
                 generoEar = True                     
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
