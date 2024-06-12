@@ -287,11 +287,15 @@ class PaginaUno(CTkFrame):
         if (ruta != ''):
             desc_label2 = CTkLabel(file_frame, text="(" + ruta +")")
             desc_label2.grid(row=1, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+
         # Añadir radiobuttons para cada archivo
         if(files != None and len(files) > 0):
             for index, file in enumerate(files):
                 radiobutton = ctk.CTkRadioButton(file_frame, text=file, variable=selected_file, value=file)
                 radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
+        else:    
+            desc_label3 = CTkLabel(file_frame, text="Esta ruta no contiene ningún War",text_color="red")
+            desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")        
 
         # Botones de acción en el pie de página
         button_frame = ctk.CTkFrame(resultados_window)
@@ -354,7 +358,7 @@ class ventanaPaso2(CTkFrame):
 
         self.main_menu = main_menu
         
-        configuration_label = CTkLabel(configuration_frame,  text="Crear nueva aplicación", font=("Arial", 14, "bold"))
+        configuration_label = CTkLabel(configuration_frame,  text="Generar nuevo mantenimiento para una aplicación", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
 
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
@@ -615,13 +619,18 @@ class VentanaPaso3(CTkFrame):
 
         orden_label = CTkLabel(right_container, text="Ordenación:", text_color="black")
         orden_label.grid(row=3, column=0, sticky="w", padx=10, pady=10)
-        orden_combobox = CTkComboBox(right_container, values=["asc", "desc"], fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        
+        
+        orden_combobox = CTkComboBox(right_container, values=["asc", "desc"], fg_color='#69a3d6', text_color="black",state="readonly", font=("Arial", 12, "bold"))
         orden_combobox.grid(row=3, column=1, sticky="we", padx=10, pady=10)
+        orden_combobox.set("asc")
 
         orden_nombre_label = CTkLabel(right_container, text="Ordenación por:", text_color="black")
         orden_nombre_label.grid(row=4, column=0, sticky="w", padx=10, pady=10)
-        orden_nombre_combobox = CTkComboBox(right_container, values=["cdescripcion"], fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
+        
+        orden_nombre_combobox = CTkComboBox(right_container, values=["cdescripcion"], fg_color='#69a3d6', text_color="black",state="readonly", font=("Arial", 12, "bold"))
         orden_nombre_combobox.grid(row=4, column=1, sticky="we", padx=10, pady=10)
+        orden_combobox.set("cdescripcion")
 
         # Footer con botones
         footer_frame = CTkFrame(self, fg_color="#E0E0E0")
@@ -677,7 +686,7 @@ class VentanaColumnas(CTkFrame):
         self.configuration_frame.grid_columnconfigure(0, weight=1) 
 
 
-        configuration_label = CTkLabel(self.configuration_frame,  text="Crear nueva aplicación", font=("Arial", 14, "bold"))
+        configuration_label = CTkLabel(self.configuration_frame,  text="Generar nuevo mantenimiento para una aplicación", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
 
         description_label = CTkLabel(self.configuration_frame, text="Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar")

@@ -310,7 +310,7 @@ class Paso1(CTk):
         ruta_label.grid(row=2, column=2,  pady=(10, 5))
 
 
-        ruta = base_path + "\logs"
+        ruta = base_path + "/logs"
         ruta_label = CTkLabel(frame_labels, text="Para mas informacion consultar los logs en la ruta " + ruta ,  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
         ruta_label.grid(row=3, column=2,  pady=(10, 5))
 

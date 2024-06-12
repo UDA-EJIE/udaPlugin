@@ -521,7 +521,12 @@ class PaginaTres(CTkFrame):
             for index, file in enumerate(files):
                 radiobutton = ctk.CTkRadioButton(file_frame, text=file, variable=selected_file, value=file)
                 radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
-
+        else:
+            texto = "Esta ruta no contiene ningún War"
+            if boton_pulsado == "negocio" :
+                texto = "Esta ruta no contiene ningún EarClasses"  
+            desc_label3 = CTkLabel(file_frame, text=texto,text_color="red")
+            desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
         # Botones de acción en el pie de página
         button_frame = ctk.CTkFrame(resultados_window)
         button_frame.pack(fill="x", pady=20)
