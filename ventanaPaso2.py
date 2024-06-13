@@ -31,7 +31,7 @@ CADENA_COLUMN = "TTTABLA"
 PRIMARY_COLUMN = "PPPRIMARY"
 class PaginaUno(CTkFrame):
     
-    def __init__(self, master, main_menu, tables=None, columns=None, *args, **kwargs):
+    def __init__(self, master, main_menu, tables=None, columns=None,estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.configure(corner_radius=10, fg_color="#E0E0E0", border_color="#69a3d6", border_width=4)
@@ -155,6 +155,7 @@ class PaginaDos(CTkFrame):
 
         header_label = CTkLabel(self.header_frame, text="Seleccione las tablas y sus columnas para la generación de código", font=("Arial", 14, "bold"))
         header_label.pack(pady=10, padx=10)
+        self.estado_tables = estado_tables
 
         # Scrollable frame in the middle using pack inside a grid row
         self.middle_frame = CTkFrame(self)
@@ -169,7 +170,7 @@ class PaginaDos(CTkFrame):
         self.footer_frame.grid(row=2, column=0, pady=(5, 30) ,sticky="ew")
         self.setup_footer_buttons()
         self.master.ocultarSpinner()
-
+        
         if estado_tables != None:
             self.estado_tables_checkbox(estado_tables)
     
@@ -188,6 +189,7 @@ class PaginaDos(CTkFrame):
         else:
             columna.deselect()   
 
+    #Guarda las columnas seleccionadas anterioremente
     def estado_tables_checkbox(self, estado_checkboxes):
         for tables in estado_checkboxes:
             for column in tables['columns']:
@@ -196,7 +198,7 @@ class PaginaDos(CTkFrame):
                     columna = self.listaColumnas[tables['name']+CADENA_COLUMN+PRIMARY_COLUMN+column.name]
                 else:    
                     columna = self.listaColumnas[tables['name']+CADENA_COLUMN+column.name]
-                columna.select()
+                columna.select()                
    
     def populate_scrollable_frame(self, frame, tables_original):
         self.var_list = []
@@ -209,6 +211,8 @@ class PaginaDos(CTkFrame):
                                             text_color="black", font=("Arial", 10, "bold"),
                                             checkbox_height=15, checkbox_width=15, border_color='#337ab7')
             table_checkbox.pack(side="left", padx=5)
+            if self.estado_tables != None and len([x for x in self.estado_tables if x['name'] == table.name]) == 1:
+                table_checkbox.select()
             
             expand_icon = CTkLabel(table_frame, text="▼", fg_color="#FFFFFF", cursor="hand2", 
                                     text_color="black", font=("Arial", 10, "bold"))
@@ -299,7 +303,7 @@ class PaginaDos(CTkFrame):
         next_button = CTkButton(self.footer_frame, text="Siguiente", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,  command=lambda: self.master.mostrar_pagina_tres(self.main_menu, self.obtener_seleccion_checkbox()))
         next_button.pack(side="right", padx=5)
 
-        back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno())
+        back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno(self.main_menu))
         back_button.pack(side="right", padx=5)
      
         cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
@@ -651,7 +655,7 @@ class VentanaPrincipal(CTk):
         if self.pagina_actual is not None:
             self.pagina_actual.destroy()
 
-        self.pagina_actual = pagina(self, main_menu=main_menu,tables= tables)
+        self.pagina_actual = pagina(self, main_menu=main_menu,tables= tables,estado_tables=estado_tables)
         self.pagina_actual.grid(row=0, column=0, sticky="nsew")
 
     def mostrar_pagina_dos(self, main_menu=None, tables=None, estado_tables=None):
@@ -706,7 +710,7 @@ class VentanaPrincipal(CTk):
         elif caso == "paso2To3":
             resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_seleccion_checkbox())) 
         elif caso == "paso2To1":
-            resultados_window2.after(710,self.mostrar_pagina_uno())               
+            resultados_window2.after(710,self.mostrar_pagina_uno(self.main_menu))               
 
     def ocultarSpinner(self):
         self.resultados_window2.destroy()  
