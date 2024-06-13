@@ -316,6 +316,7 @@ class PaginaUno(CTkFrame):
             nombreProyecto = utl.obtenerNombreProyectoWar(selected_file)
             if nombreProyecto != '':
                 logging.info(f"Archivo seleccionado: {selected_file}")
+                self.war_entry.delete(0, "end")
                 self.war_entry.insert(0, selected_file)
                 self.master.nombreProyecto = nombreProyecto
                 self.master.archivoWar = selected_file
