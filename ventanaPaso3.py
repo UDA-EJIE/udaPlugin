@@ -616,9 +616,9 @@ class VentanaPaso3(CTkFrame):
 
         orden_label = CTkLabel(right_container, text="Ordenación:", text_color="black")
         orden_label.grid(row=3, column=0, sticky="w", padx=10, pady=10)
-        orden_combobox = CTkComboBox(right_container, values=["asc", "desc"], fg_color='#69a3d6', text_color="black",state="readonly", font=("Arial", 12, "bold"))
-        orden_combobox.grid(row=3, column=1, sticky="we", padx=10, pady=10)
-        orden_combobox.set("asc")
+        self.orden_combobox = CTkComboBox(right_container, values=["asc", "desc"], fg_color='#69a3d6', text_color="black",state="readonly", font=("Arial", 12, "bold"))
+        self.orden_combobox.grid(row=3, column=1, sticky="we", padx=10, pady=10)
+        self.orden_combobox.set("asc")
 
         orden_nombre_label = CTkLabel(right_container, text="Ordenación por:", text_color="black")
         orden_nombre_label.grid(row=4, column=0, sticky="w", padx=10, pady=10)
@@ -653,6 +653,7 @@ class VentanaPaso3(CTkFrame):
         self.data_mantenimiento.append(("alias", self.alias_entry.get()))
         self.data_mantenimiento.append(("cargar_check", self.cargar_check.get()))
         self.data_mantenimiento.append(("alias", self.obtener_posicion(self.orden_nombre_combobox.get())))
+        self.data_mantenimiento.append(("ordenacion", self.obtener_posicion(self.orden_combobox.get())))
 
 
 
