@@ -290,6 +290,7 @@ class Paso1(CTk):
     # Function to create and show the popup
     def ventana_final_popup(self):
         popup_final = ctk.CTkToplevel(self)
+        popup_final.title("Resumen final")
         popup_final.geometry("800x300")
         popup_final.attributes('-topmost', True)
 
