@@ -295,7 +295,7 @@ class PaginaUno(CTkFrame):
                 radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
         else:    
             desc_label3 = CTkLabel(file_frame, text="Esta ruta no contiene ningún War",text_color="red")
-            desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")        
+            desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")   
 
         # Botones de acción en el pie de página
         button_frame = ctk.CTkFrame(resultados_window)
@@ -584,7 +584,7 @@ class VentanaPaso3(CTkFrame):
         
         # Creamos los radio buttons dentro del scrollbar
         for i, table in enumerate(tables):
-            radio_button = CTkRadioButton(self.scrollbar , text=table.name, variable=self.radio_var, value=table.name, text_color="black", command=lambda table=table, i=i: self.actualizar_indice(i, table.name))
+            radio_button = CTkRadioButton(self.scrollbar , text=table.name, variable=self.radio_var, value=table.name, text_color="black", command=lambda table=table, i=i: self.actualizar_indice(i, table.name, table))
             radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
 
         # Si no se proporciona un índice seleccionado, usamos 0 por defecto
@@ -610,27 +610,23 @@ class VentanaPaso3(CTkFrame):
         self.alias_entry = CTkEntry(right_container, fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"))
         self.alias_entry.grid(row=1, column=1, sticky="we", padx=10, pady=10)
 
-          # Asegurarse de que el índice predeterminado se maneja desde el inicio
-        self.actualizar_indice(indexSeleccionado, tables[indexSeleccionado].name)
-
         var_cargar = ctk.BooleanVar(value=True)    
-        cargar_check = CTkCheckBox(right_container, text="Cargar al inicio de la ventana", text_color="black", variable=var_cargar)
-        cargar_check.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=10)
+        self.cargar_check = CTkCheckBox(right_container, text="Cargar al inicio de la ventana", text_color="black", variable=var_cargar)
+        self.cargar_check.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=10)
 
         orden_label = CTkLabel(right_container, text="Ordenación:", text_color="black")
         orden_label.grid(row=3, column=0, sticky="w", padx=10, pady=10)
-        
-        
         orden_combobox = CTkComboBox(right_container, values=["asc", "desc"], fg_color='#69a3d6', text_color="black",state="readonly", font=("Arial", 12, "bold"))
         orden_combobox.grid(row=3, column=1, sticky="we", padx=10, pady=10)
         orden_combobox.set("asc")
 
         orden_nombre_label = CTkLabel(right_container, text="Ordenación por:", text_color="black")
         orden_nombre_label.grid(row=4, column=0, sticky="w", padx=10, pady=10)
-        
-        orden_nombre_combobox = CTkComboBox(right_container, values=["cdescripcion"], fg_color='#69a3d6', text_color="black",state="readonly", font=("Arial", 12, "bold"))
-        orden_nombre_combobox.grid(row=4, column=1, sticky="we", padx=10, pady=10)
-        orden_combobox.set("cdescripcion")
+        self.orden_nombre_combobox = CTkComboBox(right_container, fg_color='#69a3d6', text_color="black", state="readonly", font=("Arial", 10, "bold"))
+        self.orden_nombre_combobox.grid(row=4, column=1, sticky="we", padx=10, pady=10)
+
+        # Asegurarse de que el índice predeterminado se maneja desde el inicio
+        self.actualizar_indice(indexSeleccionado, tables[indexSeleccionado].name, tables[indexSeleccionado])
 
         # Footer con botones
         footer_frame = CTkFrame(self, fg_color="#E0E0E0")
@@ -638,7 +634,7 @@ class VentanaPaso3(CTkFrame):
         
         btn_back = CTkButton(footer_frame, text="Back", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
-        btn_next = CTkButton(footer_frame, text="Next", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : self.master.mostrarSpinner("paso4To5"))
+        btn_next = CTkButton(footer_frame, text="Next", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anaydir_data_mantenimineto() , self.master.mostrarSpinner("paso4To5")])
         btn_next.pack(side="left", padx=10, pady=5)
         btn_cancel = CTkButton(footer_frame, text="Cancel" ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
@@ -650,8 +646,17 @@ class VentanaPaso3(CTkFrame):
         self.master.quit()
         self.main_menu.MainMenuLoop()
 
+    def anaydir_data_mantenimineto(self):
+        
+        if  len(self.data_mantenimiento) > 12: 
+            self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 3]
+        self.data_mantenimiento.append(("alias", self.alias_entry.get()))
+        self.data_mantenimiento.append(("cargar_check", self.cargar_check.get()))
+        self.data_mantenimiento.append(("alias", self.obtener_posicion(self.orden_nombre_combobox.get())))
 
-    def actualizar_indice(self, index, name):
+
+
+    def actualizar_indice(self, index, name, table):
         """Actualizar el índice de la tabla seleccionada."""
         self.tabla_seleccionada_index = index
         # Borrar contenido existente
@@ -662,6 +667,21 @@ class VentanaPaso3(CTkFrame):
         
         logging.info("Índice seleccionado:" + str(index))
 
+        self.orden_nombre_combobox.set("")
+
+        # crea el array con los nombres de las columnas y una lista con nombre y posicion
+        columnas = [column.name for column in table.columns]
+        self.column_dict = {name: pos for pos, name in enumerate(columnas)}
+        
+        # Actualizar los valores del combobox
+        self.orden_nombre_combobox.configure(values=columnas)
+        self.orden_nombre_combobox.set(columnas[0])
+
+        
+    def obtener_posicion(self, nombre):
+        """Obtener la posición del nombre dado en el combobox."""
+        return self.column_dict.get(nombre, None)
+    
     def abrir_ventana_columnas(self):
         """Usar el índice seleccionado para abrir otra ventana o realizar alguna acción."""
         index_seleccionado = self.tabla_seleccionada_index
