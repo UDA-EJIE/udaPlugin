@@ -27,7 +27,8 @@ d = os.path.join(base_path, 'instantclient_21_12')
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 ruta_war = utl.readConfig("RUTA", "ruta_war")
 tables_original = None
-
+CADENA_COLUMN = "TTTABLA"
+PRIMARY_COLUMN = "PPPRIMARY"
 class PaginaUno(CTkFrame):
     
     def __init__(self, master, main_menu, tables=None, columns=None, *args, **kwargs):
@@ -178,7 +179,10 @@ class PaginaDos(CTkFrame):
     def choose(self,table,index):
      
      for column in table.columns:
-        columna = self.listaColumnas[table.name+column.name]
+        if (column.primaryKey == 'P'):
+            columna = self.listaColumnas[table.name+CADENA_COLUMN+PRIMARY_COLUMN+column.name]
+        else:  
+            columna = self.listaColumnas[table.name+CADENA_COLUMN+column.name]  
         if(self.var_list[index].get() == 1):
             columna.select()
         else:
@@ -187,7 +191,11 @@ class PaginaDos(CTkFrame):
     def estado_tables_checkbox(self, estado_checkboxes):
         for tables in estado_checkboxes:
             for column in tables['columns']:
-                columna = self.listaColumnas[tables['name']+column.name]
+                
+                if (column.primaryKey == 'P'):
+                    columna = self.listaColumnas[tables['name']+CADENA_COLUMN+PRIMARY_COLUMN+column.name]
+                else:    
+                    columna = self.listaColumnas[tables['name']+CADENA_COLUMN+column.name]
                 columna.select()
    
     def populate_scrollable_frame(self, frame, tables_original):
@@ -214,12 +222,19 @@ class PaginaDos(CTkFrame):
 
             # Correct placement of column checkboxes inside the columns_frame
             for column in table.columns:
-                column_checkbox = CTkCheckBox(columns_frame, text=column.name, variable=tk.BooleanVar(value=False), 
+                nombreColumna = column.name
+                if (column.primaryKey == 'P'):
+                    nombreColumna = nombreColumna + " - PK"
+                column_checkbox = CTkCheckBox(columns_frame, text=nombreColumna, variable=tk.BooleanVar(value=False), 
                                                 text_color="black", font=("Arial", 10, "bold"),
                                                 command=partial(self.selectTableFromColumn,table_checkbox,column.name),
                                                 checkbox_height=15, checkbox_width=15, border_color='#337ab7')
                 column_checkbox.pack(anchor="w", padx=20)
-                self.listaColumnas[table.name+column.name] = column_checkbox
+                column_checkbox.primaryKey = column.primaryKey
+                if (column.primaryKey == 'P'):
+                    self.listaColumnas[table.name+CADENA_COLUMN+PRIMARY_COLUMN+column.name] = column_checkbox
+                else:
+                    self.listaColumnas[table.name+CADENA_COLUMN+column.name] = column_checkbox
             self.tables.append(table_frame)
 
     def toggle_columns(self, table_frame):
@@ -231,9 +246,24 @@ class PaginaDos(CTkFrame):
             table_frame.columns_frame.pack(fill="x", expand=True, padx=20, pady=2)
             table_frame.winfo_children()[1].configure(text="▲")  # Icono cambia a 'contraer'
     def selectTableFromColumn(self,tableCheck,columnName):
+        if (tableCheck._text+CADENA_COLUMN+columnName in self.listaColumnas):
+            columnCheckbox = self.listaColumnas[tableCheck._text+CADENA_COLUMN+columnName]
+        else : #Si no lo encuentra , es por que es PK
+            columnCheckbox = self.listaColumnas[tableCheck._text+CADENA_COLUMN+PRIMARY_COLUMN+columnName]
+        #si es campo clave siempre tiene que estar activado
+        if (columnCheckbox.primaryKey == 'P'):
+            columnCheckbox.select()
+        #comprueba si, alguna de las columnas esta activa para dejar marcada la tabla padre
         if (len(self.listaColumnas) != 0 and 
-            self.listaColumnas[tableCheck._text+columnName].get() == 1):
+            columnCheckbox.get() == 1):
             tableCheck.select()
+            #Comprobar que la PK tambien esta seleccionada SIEMPRE
+            #Buscar primaries y activarlas todas
+            cadenaPrimaria = tableCheck._text+CADENA_COLUMN+PRIMARY_COLUMN
+            listaClaves = [v for k,v in self.listaColumnas.items() if k.startswith(cadenaPrimaria)]
+            for clave in listaClaves:
+              clave.select()
+                
     def obtener_seleccion_checkbox(self):
         seleccion_checkbox = []
         
