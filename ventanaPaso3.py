@@ -798,6 +798,11 @@ class VentanaColumnas(CTkFrame):
         self.master.withdraw()
         self.master.quit()
         self.main_menu.MainMenuLoop()  
+    
+    def cancelar_cerrar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
 
 class VentanaPrincipal(CTk):
     def __init__(self, main_menu):
@@ -933,12 +938,12 @@ class VentanaPrincipal(CTk):
 
         # Create the 'Volver al menu' button
         boton_menu = ctk.CTkButton(button_container, text="Volver al menú", fg_color='#69a3d6', text_color="black", 
-                                font=("Arial", 12, "bold"), command=lambda: m.MainMenuLoop(self.master))
+                                font=("Arial", 12, "bold"), command=lambda: self.cancelar())
         boton_menu.grid(row=0, column=0, padx=5, pady=(200,0), sticky="se")
 
         # Create the 'cerrar' button
         boton_cerrar = ctk.CTkButton(button_container, text="cerrar", fg_color='#69a3d6', text_color="black", 
-                                    font=("Arial", 12, "bold"), command=lambda: self.master.destroy())
+                                    font=("Arial", 12, "bold"), command=lambda: self.cancelar_cerrar())
         boton_cerrar.grid(row=0, column=1, padx=5, pady=(200,0), sticky="sw")
 
 if __name__ == "__main__":
