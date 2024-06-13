@@ -72,12 +72,17 @@ def contains(list, filter):
 # Function to convert the string
 # from snake case to camel case
 def snakeToCamel(str):
+    
+    if type(str) == type(""):
     # split underscore using split
-    str = str.lower()
-    temp = str.split('_')
+        str = str.lower()
+        temp = str.split('_')
     
     # joining result 
-    res = temp[0] + ''.join(ele.title() for ele in temp[1:])
+        res = temp[0] + ''.join(ele.title() for ele in temp[1:])
+    else:
+        return None
+    
     return res
 
 def modifyTiles(ruta,entityName, final):
