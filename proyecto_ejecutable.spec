@@ -12,7 +12,7 @@ a = Analysis(
         ('Column.py', '.'),
         ('interfazTkinter.py', '.'),
         ('Table.py', '.'),
-        ('ventanaPaso2Buena.py', '.'),
+        ('ventanaPaso2.py', '.'),
         ('ventanaPaso3.py', '.'),
         ('templates/generateCode/controller/*', 'templates/generateCode/controller'),
         ('templates/generateCode/dao/*', 'templates/generateCode/dao'),
