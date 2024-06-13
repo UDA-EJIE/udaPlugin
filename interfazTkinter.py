@@ -317,7 +317,7 @@ class Paso1(CTk):
         frame_boton = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
         frame_boton.grid(row = 1, column= 0, columnspan = 3)
 
-        close_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : self.cancelar(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        close_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : [popup_final.destroy(), self.cancelar()], bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         close_button.grid(row = 0, column = 1, pady = (30,30), sticky= 's')
 
 

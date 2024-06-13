@@ -653,7 +653,7 @@ class VentanaPaso3(CTkFrame):
         self.data_mantenimiento.append(("alias", self.alias_entry.get()))
         self.data_mantenimiento.append(("cargar_check", self.cargar_check.get()))
         self.data_mantenimiento.append(("ordenacion_por", self.obtener_posicion(self.orden_nombre_combobox.get())))
-        self.data_mantenimiento.append(("ordenacion", self.obtener_posicion(self.orden_combobox.get())))
+        self.data_mantenimiento.append(("ordenacion", (self.orden_combobox.get())))
 
 
 
