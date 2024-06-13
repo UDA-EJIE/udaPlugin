@@ -589,6 +589,10 @@ class PaginaTres(CTkFrame):
         self.master.quit()
         self.main_menu.MainMenuLoop()
 
+    def cancelar_cerrar(self):
+        # Cancela todos los eventos pendientes
+        self.master.withdraw()
+        self.master.quit()
 
 class VentanaPrincipal(CTk):
    
@@ -873,14 +877,9 @@ class VentanaPrincipal(CTk):
         button_cerrar = CTkButton(frame_boton, text="Volver al menu",command=lambda: self.cancelar() , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
         button_cerrar.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
 
-        button_menu = CTkButton(frame_boton,text="Cerrar" ,command=lambda: self.master.destroy() , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button_menu = CTkButton(frame_boton,text="Cerrar" ,command=lambda: self.cancelar_cerrar() , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
         button_menu.grid(row=0, column=1, pady=(100, 30), padx=(10,0), sticky="w")
-
-    def cancelar(self):
-        # Cancela todos los eventos pendientes
-        self.master.withdraw()
-        self.master.quit()
-        self.main_menu.MainMenuLoop()
+    
 
 
 if __name__ == "__main__":
