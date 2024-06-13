@@ -72,17 +72,17 @@ def contains(list, filter):
 # Function to convert the string
 # from snake case to camel case
 def snakeToCamel(str):
-    
-    if type(str) == type(""):
+    res = ""
+    try:
     # split underscore using split
         str = str.lower()
         temp = str.split('_')
     
     # joining result 
         res = temp[0] + ''.join(ele.title() for ele in temp[1:])
-    else:
-        return None
-    
+    except Exception as e:
+        logging.error('An exception occurred: snakeToCamel:')
+
     return res
 
 def modifyTiles(ruta,entityName, final):
@@ -99,7 +99,7 @@ def modifyTiles(ruta,entityName, final):
          includes = Element("put-attribute")
          includes.set('name','includes')
          includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
-         etree.indent(diag, space="    ")
+         etree.indent(padre, space="    ")
          padre.append(content)
          padre.append(includes)
          root.append(padre)
