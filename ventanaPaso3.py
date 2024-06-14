@@ -714,7 +714,7 @@ class VentanaColumnas(CTkFrame):
         description_label = CTkLabel(self.configuration_frame, text="Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar")
         description_label.grid(row=1, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
 
-        desc_label = CTkLabel(self.configuration_frame, text="Seleccione el WAR al que se quiere añadir el mantenimiento y configure una conexión a la base de datos")
+        desc_label = CTkLabel(self.configuration_frame, text="Los campos con primary key y el campo seleccionado para ordenar, no se pueden deshabilitar")
         desc_label.grid(row=2, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
         # Contenedor principal
         self.contenedor_principal = ctk.CTkFrame(self)
@@ -738,6 +738,8 @@ class VentanaColumnas(CTkFrame):
             var = ctk.BooleanVar(value=True)
             checkbox = ctk.CTkCheckBox(self.scrollable_container, text=f"{columna.name}: {columna.type}{text}", variable=var, text_color="black", font=("Arial", 12, "bold"))
             checkbox.grid(row=i, column=0, sticky="w")
+            if columna.primaryKey or self.data_mantenimiento[15][1] == i:
+                checkbox.configure(state="disabled")
             self.column_checkboxes.append(var)
 
         # Botones
