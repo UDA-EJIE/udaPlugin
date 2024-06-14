@@ -60,6 +60,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["title"]  = data_mantenimiento[1][1]
         data["maint"]["isMaint"] = data_mantenimiento[2][1]
         data["maint"]["type"] = 'INLINE' if data_mantenimiento[3][1] == 'Edición en línea' else "DETAIL"
+        data["maint"]["detail"]  = {}
         data["maint"]["detail"]["requestData"]  = data_mantenimiento[4][1]
         data["maint"]["detail"]["saveButton"]  = data_mantenimiento[5][1]
         data["maint"]["buttons"]  = data_mantenimiento[6][1]
@@ -69,6 +70,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["clientValidation"]  = data_mantenimiento[10][1]
         data["maint"]["multiselection"]  = data_mantenimiento[11][1]
         data["maint"]["loadOnStartUp"]  = data_mantenimiento[13][1]
+        data["maint"]["order"]  = {}
         data["maint"]["order"]["sord"]  = data_mantenimiento[14][1]
         data["maint"]["order"]["sidx"]  = data_mantenimiento[15][1]
         data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])
