@@ -50,6 +50,10 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["allColumns"] = allColumns
         data["allColumnsNoPk"] = allColumnsNoPk
         tNameOriginal = table["name"]
+        alias = data_mantenimiento[12][1].strip().lower() 
+        if(alias == ''):
+          alias = tNameOriginal.lower()
+        data["alias"] = alias
         tName = snakeToCamel(tNameOriginal) 
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
@@ -75,9 +79,9 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["order"]["sidx"]  = data_mantenimiento[15][1]
         data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])
         
-        data["urlBase"]  = "../"+table["name"]
-        data["urlStatics"]  = "../"+table["name"]
-        destinoWarViewsFinal = destinoWarViews + tName.lower() +"/"
+        data["urlBase"]  = "../"+tNameOriginal
+        data["urlStatics"]  = "../"+tNameOriginal
+        destinoWarViewsFinal = destinoWarViews + alias +"/"
         destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/"
 
         logging.info("SRC MAINT Jsp:: " +dirMaintJsp)
@@ -104,8 +108,8 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
          worker.run_copy() 
          if(x == len(tables) - 1):
            lastTable = True
-        modifyTiles(rutaTiles,table["name"].lower(),lastTable)
-        modifyMenu(rutaMenu,table["name"].lower(),lastTable)
+        modifyTiles(rutaTiles,alias,lastTable)
+        modifyMenu(rutaMenu,tNameOriginal.lower(),lastTable)
         logging.info("Fin mantenimento: "+data["tableName"])  
     
     print("Fin paso 3")

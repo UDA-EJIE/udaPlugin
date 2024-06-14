@@ -100,9 +100,9 @@ def modifyTiles(ruta,entityName, final):
          includes = Element("put-attribute")
          includes.set('name','includes')
          includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
-         etree.indent(padre, space="    ")
          padre.append(content)
          padre.append(includes)
+         etree.indent(padre, space="")
          root.append(padre)
          tree.write(ruta, encoding='utf-8', xml_declaration=True)
     if(final):
