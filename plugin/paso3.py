@@ -60,6 +60,8 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = tName
+        data["titleMaint"]  = data_mantenimiento[1][1]
+        data["nameMaint"]  = data_mantenimiento[00][1].strip()
         
         # Opciones mantenimiento
         data["maint"]["name"]  = data_mantenimiento[00][1].strip()
