@@ -117,12 +117,12 @@ def modifyJackson(ruta,entityName, final, packageName):
          serial = Element("property")
          serial.set('name',"serializers")
          # crear ulti map
-         utilMap = Element("util")
+         utilMap = Element("{http://www.springframework.org/schema/util}map")
          serial.append(utilMap)
          diag.append(serial) 
     else:  
         utilMap = serial.find("./")           
-    if (utilMap.find("./*[@key='#{T("+packageName+")}']") == None):
+    if (utilMap != None and utilMap.find("./*[@key='#{T("+packageName+")}']") == None):
         entry = Element("entry")
         entry.set('key','#{T('+packageName+')}')
         entry.set('value-ref',"customSerializer")

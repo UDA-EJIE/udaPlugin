@@ -96,7 +96,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
          if(x == len(tables) - 1):
            lastTable = True
         modifyTiles(rutaTiles,alias,lastTable)
-        modifyMenu(rutaMenu,tNameOriginal.lower(),lastTable)
+        modifyMenu(rutaMenu,alias,lastTable)
         logging.info("Fin mantenimento: "+data["tableName"])  
     
     print("Fin paso 3")
