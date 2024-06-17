@@ -27,7 +27,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
     data["proyectName"] = proyectName
     
     dirMaintJspIncludes = dirMaintJsp + "includes/"
-    data["maint"] = {"detailSaveButton":True, "filterMaint":True}
+   
     dest = yaml_data["destinoApp"].replace(proyectWar,"")
     proyectWar = proyectWar.replace("War","")
     data["proyectWar"] = proyectWar
