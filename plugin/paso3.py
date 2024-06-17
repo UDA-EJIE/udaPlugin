@@ -52,7 +52,9 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         tNameOriginal = table["name"]
         alias = data_mantenimiento[12][1].strip().lower() 
         if(alias == ''):
-          alias = tNameOriginal.lower()
+          alias = snakeToCamel(tNameOriginal)
+        else: 
+          alias =  snakeToCamel(alias)
         data["alias"] = alias
         tName = snakeToCamel(tNameOriginal) 
         data["tableNameOriginal"] = tNameOriginal
