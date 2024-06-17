@@ -27,7 +27,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
     data["proyectName"] = proyectName
     
     dirMaintJspIncludes = dirMaintJsp + "includes/"
-    data["maint"] = {"detailSaveButton":True, "filterMaint":True}
+   
     dest = yaml_data["destinoApp"].replace(proyectWar,"")
     proyectWar = proyectWar.replace("War","")
     data["proyectWar"] = proyectWar
@@ -60,6 +60,24 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = tName  
+
+        # Opciones mantenimiento
+        data["maint"] = {}
+        data["maint"]["isMaint"] = data_mantenimiento[2][1]
+        data["maint"]["type"] = 'INLINE' if data_mantenimiento[3][1] == 'Edición en línea' else "DETAIL"
+        data["maint"]["detail"]  = {}
+        data["maint"]["detail"]["requestData"]  = data_mantenimiento[4][1]
+        data["maint"]["detail"]["saveButton"]  = data_mantenimiento[5][1]
+        data["maint"]["buttons"]  = data_mantenimiento[6][1]
+        data["maint"]["contextMenu"]  = data_mantenimiento[7][1]
+        data["maint"]["filter"]  = data_mantenimiento[8][1]
+        data["maint"]["search"]  = data_mantenimiento[9][1]
+        data["maint"]["clientValidation"]  = data_mantenimiento[10][1]
+        data["maint"]["multiselection"]  = data_mantenimiento[11][1]
+        data["maint"]["loadOnStartUp"]  = data_mantenimiento[13][1]
+        data["maint"]["order"]  = {}
+        data["maint"]["order"]["sord"]  = data_mantenimiento[14][1]
+        data["maint"]["order"]["sidx"]  = data_mantenimiento[15][1]
         data["titleMaint"]  = data_mantenimiento[1][1]
         data["nameMaint"]  = data_mantenimiento[00][1].strip() 
         data["urlBase"]  = "../"+tNameOriginal
@@ -68,11 +86,8 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["urlStatics"]  = "../"+tNameOriginal
         destinoWarViewsFinal = destinoWarViews + alias +"/"
         destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/"  
-        data["maint"]["primaryKey"] = data["listPks"][0]      
-        data["maint"]["isMaint"] = True
-        data["maint"]["typeMaint"] = 'INLINE' if data_mantenimiento[3][1] == 'Edición en línea' else "DETAIL"
-        data["maint"]["clientValidationMaint"] = True
-
+        data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])     
+        
         logging.info("SRC MAINT Jsp:: " +dirMaintJsp)
         logging.info("DEST MAINT Jsp:: " +destinoWarViewsFinal)
         now = datetime.now()
