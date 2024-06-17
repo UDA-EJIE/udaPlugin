@@ -79,8 +79,8 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["multiselection"]  = data_mantenimiento[11][1]
         data["maint"]["loadOnStartUp"]  = data_mantenimiento[13][1]
         data["maint"]["order"]  = {}
-        data["maint"]["order"]["sord"]  = data_mantenimiento[14][1]
-        data["maint"]["order"]["sidx"]  = data_mantenimiento[15][1]
+        data["maint"]["order"]["sidx"]  = data_mantenimiento[14][1]
+        data["maint"]["order"]["sord"]  = data_mantenimiento[15][1]
         data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])
         
         data["urlBase"]  = "../"+tNameOriginal
