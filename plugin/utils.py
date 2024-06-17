@@ -13,7 +13,8 @@ def getColumnsDates(columns):
     columnsPks = []
     for columnOld in columns:   
         newColumn = columnOld
-        type = columnOld["type"] 
+        type = columnOld["type"]
+        newColumn["activate"] = "true"
         newColumn["editable"] = "true"
         newColumn["hidden"] = "false"
         newColumn["requiredEditRules"] = "false"
