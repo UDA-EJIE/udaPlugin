@@ -64,6 +64,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["nameMaint"]  = data_mantenimiento[00][1].strip()
         
         # Opciones mantenimiento
+        data["maint"] = {}
         data["maint"]["name"]  = data_mantenimiento[00][1].strip()
         data["maint"]["title"]  = data_mantenimiento[1][1]
         data["maint"]["isMaint"] = data_mantenimiento[2][1]
