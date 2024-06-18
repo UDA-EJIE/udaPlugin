@@ -81,7 +81,6 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["titleMaint"]  = data_mantenimiento[1][1]
         data["nameMaint"]  = data_mantenimiento[00][1].strip() 
         data["urlBase"]  = "../"+tNameOriginal
-        data["filterMaint"]  = True
         data["typeMaint"] = "DETAIL"
         data["urlStatics"]  = "../"+tNameOriginal
         destinoWarViewsFinal = destinoWarViews + alias +"/"
@@ -93,17 +92,18 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         now = datetime.now()
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')
         #Generando jsp MAINT 
-        with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js"],overwrite=True) as worker:
+        with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js","*nameMaint*"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
          worker.template.version = ":  1.0 Paso 3 Jsps ::: "+data["date"]
          worker.run_copy() 
-        #Generando jsp Includes MAINT 
-        with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,overwrite=True) as worker:
-         worker.jinja_env.filters["toCamelCase"] = toCamelCase
-         worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
-         worker.template.version = ": 1.0 Paso 3 Includes ::: "+data["date"]
-         worker.run_copy()
+        if data["maint"]["isMaint"]: 
+            #Generando jsp Includes MAINT 
+            with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,overwrite=True) as worker:
+                worker.jinja_env.filters["toCamelCase"] = toCamelCase
+                worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
+                worker.template.version = ": 1.0 Paso 3 Includes ::: "+data["date"]
+                worker.run_copy()
         #Generando js MAINT 
         with Worker(src_path=dirMaintJsp, dst_path=destinoStaticsJs, data=data, exclude=["*.jsp"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
