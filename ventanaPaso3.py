@@ -42,7 +42,7 @@ class PaginaUno(CTkFrame):
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
         self.configuration_warning.grid(row=0, column=2, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
-        description_label = CTkLabel(configuration_frame, text="Este Wizard genera un nuevo mantenimineto para una aplicación UDA")
+        description_label = CTkLabel(configuration_frame, text="Este Wizard genera un nuevo mantenimiento para una aplicación UDA")
         description_label.grid(row=1, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
 
         desc_label = CTkLabel(configuration_frame, text="Seleccione el WAR al que se quiere añadir el mantenimiento y configure una conexión a la base de datos")
@@ -540,8 +540,8 @@ class ventanaPaso2(CTkFrame):
 
             ("nombre_mantenimiento", self.nombre_entry.get()),
             ("titulo_mantenimiento", self.titulo_entry.get()),
-            ("mantenimineto", self.mantenimiento_checkbox.get()),  
-            ("tipo_mantenimineto", self.tipo_var),
+            ("mantenimiento", self.mantenimiento_checkbox.get()),  
+            ("tipo_mantenimiento", self.tipo_var),
             ("datos_servidor", datos_servidor),
             ("tipologia_botones", self.tipologia_label_combobox.get()),
             ("botonera", self.botonera_checkbox.get()), 
@@ -635,7 +635,7 @@ class VentanaPaso3(CTkFrame):
         
         btn_back = CTkButton(footer_frame, text="Back", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
-        btn_next = CTkButton(footer_frame, text="Next", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anaydir_data_mantenimineto() , self.master.mostrarSpinner("paso4To5")])
+        btn_next = CTkButton(footer_frame, text="Next", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anaydir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
         btn_next.pack(side="left", padx=10, pady=5)
         btn_cancel = CTkButton(footer_frame, text="Cancel" ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
@@ -647,7 +647,7 @@ class VentanaPaso3(CTkFrame):
         self.master.quit()
         self.main_menu.MainMenuLoop()
 
-    def anaydir_data_mantenimineto(self):
+    def anaydir_data_mantenimiento(self):
         
         if  len(self.data_mantenimiento) > 12: 
             self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 3]
@@ -816,13 +816,13 @@ class VentanaPrincipal(CTk):
 
         self.pagina_actual = None
 
-        self.mostrar_pagina(PaginaUno, main_menu=self.main_menu, tables=None, data_mantenimineto=None, indexSeleccionado=None)
+        self.mostrar_pagina(PaginaUno, main_menu=self.main_menu, tables=None, data_mantenimiento=None, indexSeleccionado=None)
 
-    def mostrar_pagina(self, pagina, main_menu, tables, data_mantenimineto, indexSeleccionado):
+    def mostrar_pagina(self, pagina, main_menu, tables, data_mantenimiento, indexSeleccionado):
         
         if self.pagina_actual:
             self.pagina_actual.destroy()
-        nueva_pagina = pagina(self, main_menu, tables, data_mantenimineto, indexSeleccionado) 
+        nueva_pagina = pagina(self, main_menu, tables, data_mantenimiento, indexSeleccionado) 
         self.mostrarSpinner("") 
         self.update()  
         nueva_pagina.grid(row=0, column=0, sticky="nsew")
@@ -835,8 +835,8 @@ class VentanaPrincipal(CTk):
     def mostrar_pagina_tres(self, main_menu, data_mantenimiento, tables, indexSeleccionado=None):
         self.mostrar_pagina(VentanaPaso3, main_menu, tables, data_mantenimiento, indexSeleccionado)
 
-    def mostrar_pagina_cuatro(self, main_menu, tables, data_mantenimineto, indexSeleccionado):
-        self.mostrar_pagina(VentanaColumnas, main_menu,  tables, data_mantenimineto, indexSeleccionado)   
+    def mostrar_pagina_cuatro(self, main_menu, tables, data_mantenimiento, indexSeleccionado):
+        self.mostrar_pagina(VentanaColumnas, main_menu,  tables, data_mantenimiento, indexSeleccionado)   
 
     def mostrar_pagina_uno(self, main_menu, tables = None, data_mantenimiento=None , indexSeleccionado=None):
         self.mostrar_pagina(PaginaUno, main_menu, tables, data_mantenimiento, indexSeleccionado )
