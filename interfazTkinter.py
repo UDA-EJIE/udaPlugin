@@ -9,6 +9,8 @@ import plugin.utils as utl
 import menuPrincipal as m
 import customtkinter as ctk
 from datetime import datetime
+from screeninfo import get_monitors
+import threading
 
 
 self = CTk()
@@ -21,10 +23,13 @@ class Paso1(CTk):
         super().__init__()
 
         self.title("Crear nueva aplicación")
-        self.geometry("900x700")
+        width = self.winfo_screenwidth() - 100
+        height = self.winfo_screenheight() - 100
+        self.geometry(f"{self.winfo_screenwidth() - 100}x{self.winfo_screenheight() - 100}")
+        
         self.main_menu = main_menu
         # Configurar el color de fondo de la ventana
-        self.config(bg="#E0E0E0")
+        self.config(bg="#FFFFFF")
 
         self.columnconfigure(1, weight=1)
 
@@ -225,7 +230,8 @@ class Paso1(CTk):
             #guardar ultima ruta creada
             utl.writeConfig(
                 "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
-        self.ocultarSpinner()
+        #self.ocultarSpinner()
+        self.close_loading_frame()
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
         fin = datetime.now()
         logging.info('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
@@ -236,6 +242,12 @@ class Paso1(CTk):
         self.ventana_final_popup()
 
             
+    def close_loading_frame(self):
+        if self.loading_frame:
+            self.loading_frame.place_forget()  # Oculta el frame
+            # Si no planeas reutilizar el frame, puedes destruirlo en su lugar
+            self.loading_frame.destroy()
+            self.loading_frame = None
         
 
         
@@ -255,36 +267,72 @@ class Paso1(CTk):
         if os.path.isdir(self.entry_location.get()) == False:
             self.configuration_warning.configure(text="La localización no existe")
             return FALSE
-        self.wm_attributes('-alpha',0.4)
-        resultados_window2 = ctk.CTkToplevel(self)
-        resultados_window2.title("")
-        resultados_window2.attributes('-topmost', True)
-        resultados_window2.wm_attributes('-alpha',0.8)
-        self.title("Cargando...")
-        resultados_window2.overrideredirect(True)
-        toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        padx = -10 # the padding you need.
-        pady = -10
-        resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        width = self.winfo_screenwidth() - 80
-        height = self.winfo_screenheight() - 80
-        resultados_window2.geometry(str(width)+"x"+str(height))
-        self.resultados_window2 = resultados_window2  
+       
+        # resultados_window2 = ctk.CTkToplevel(self)
+        # resultados_window2.title("")
+        # resultados_window2.attributes('-topmost', True)
+        
+        # self.title("Cargando...")
+       
+        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
+        # padx = -20 # the padding you need.
+        # pady = 50
+        # self.update_idletasks()
 
-        l_frame = CTkFrame(resultados_window2, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
-        l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        l = CTkLabel(l_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
-        l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
+        # monitors = get_monitors() 
+        # width = self.winfo_width()
+        # height = self.winfo_height()
+        # x = self.winfo_x()
+        # y = self.winfo_y()
+        # # Ajustar tamaño y posición de la ventana Toplevel
+        # #resultados_window2.geometry(f'{width}x{height}+{x}+{y}')
+        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
+        # width = self.winfo_screenwidth() - 50
+        # height = self.winfo_screenheight() -50
+        # resultados_window2.geometry(str(width)+"x"+str(height))
+        # #resultados_window2.overrideredirect(True)
+        # resultados_window2.wm_attributes('-alpha',0.8)
+        # self.resultados_window2 = resultados_window2  
+
+        # monitors = get_monitors()
+        # current_monitor = None
+        # for monitor in monitors:
+        #     if self.winfo_x() >= monitor.x and self.winfo_x() < monitor.x + monitor.width and \
+        #        self.winfo_y() >= monitor.y and self.winfo_y() < monitor.y + monitor.height:
+        #         current_monitor = monitor
+        #         break
+        
+        # if current_monitor:
+        #     x_offset = self.winfo_x() - current_monitor.x
+        #     y_offset = self.winfo_y() - current_monitor.y
+        #     width = self.winfo_width()
+        #     height = self.winfo_height()
+        #     resultados_window2.geometry(f'{width}x{height}+{current_monitor.x + x_offset}+{current_monitor.y + y_offset}')
+
+        # Crear y configurar el Frame de carga
+        self.loading_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        l.place(relx=0.5, rely=0.5, anchor='center')
+        
+        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        progressbar.place(relx=0.5, rely=0.5, anchor='center')
         progressbar.start()
         l.pack()
         self.update()
-        resultados_window2.after(710, self.save_to_yaml())
+
+        # Iniciar el proceso en segundo plano
+        threading.Thread(target=self.save_to_yaml).start()
 
 
     def ocultarSpinner(self):
         self.resultados_window2.destroy()
+
+    def close_toplevel(self):
+        if self.resultados_window2:
+            self.resultados_window2.destroy()
+        self.destroy()
 
 
     # Function to create and show the popup
@@ -318,8 +366,11 @@ class Paso1(CTk):
         frame_boton = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
         frame_boton.grid(row = 1, column= 0, columnspan = 3)
 
-        close_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : [popup_final.destroy(), self.cancelar()], bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        close_button.grid(row = 0, column = 1, pady = (30,30), sticky= 's')
+        menu_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : [popup_final.destroy(), self.cancelar()], bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        menu_button.grid(row = 0, column = 1, pady = (30,30), padx=(5, 5), sticky= 's')
+
+        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command= lambda : popup_final.destroy(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        close_button.grid(row = 0, column = 0, pady = (30,30), padx=(5, 5), sticky= 's')
 
 
 

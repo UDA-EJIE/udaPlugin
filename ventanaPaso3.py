@@ -15,6 +15,7 @@ import menuPrincipal as m
 from pathlib import Path
 import time
 import logging
+import threading
 
 d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instantclient_21_12')
 #sys.stderr = open('logs/log.log', 'a')
@@ -170,7 +171,7 @@ class PaginaUno(CTkFrame):
         if self.war_entry.get() == "":
            self.configuration_warning.configure(text="Seleccione un proyecto WAR")
            self.configuration_warning.configure(text_color ="red")
-           self.master.ocultarSpinner()
+           #self.master.ocultarSpinner()
            return False
        
         un = self.entries[4].get()
@@ -217,7 +218,7 @@ class PaginaUno(CTkFrame):
             logging.exception("An exception occurred BBDD:  ")  
             self.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.configuration_warning.configure(text_color ="red")
-            self.master.ocultarSpinner()
+            #self.master.ocultarSpinner()
             return False  
         with connection.cursor() as cursor:
                 cursor.execute(query, esquema=pw.upper())
@@ -471,7 +472,7 @@ class ventanaPaso2(CTkFrame):
 
 
         self.edicion_linea()
-        self.master.ocultarSpinner()
+        #self.master.ocultarSpinner()
 
     # Otras configuraciones de CheckBox
        
@@ -639,7 +640,7 @@ class VentanaPaso3(CTkFrame):
         btn_next.pack(side="left", padx=10, pady=5)
         btn_cancel = CTkButton(footer_frame, text="Cancel" ,fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
-        self.master.ocultarSpinner()
+        #self.master.ocultarSpinner()
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -754,7 +755,7 @@ class VentanaColumnas(CTkFrame):
 
         cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancel", fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         cancel_button.grid(row=0, column=2, padx=5, sticky="e")
-        self.master.ocultarSpinner()
+        #self.master.ocultarSpinner()
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -791,7 +792,9 @@ class VentanaColumnas(CTkFrame):
         this = self.master
         tablaResultados = self.getTablaResultados(tables[index_seleccionado])
         p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento)
-        this.mostrarResumenFinal(tablaResultados)  
+        self.master.close_loading_frame()
+        this.mostrarResumenFinal(tablaResultados) 
+        
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -814,6 +817,8 @@ class VentanaPrincipal(CTk):
         self.grid_rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
+        self.stop_event = threading.Event()
+
         self.pagina_actual = None
 
         self.mostrar_pagina(PaginaUno, main_menu=self.main_menu, tables=None, data_mantenimiento=None, indexSeleccionado=None)
@@ -823,22 +828,27 @@ class VentanaPrincipal(CTk):
         if self.pagina_actual:
             self.pagina_actual.destroy()
         nueva_pagina = pagina(self, main_menu, tables, data_mantenimiento, indexSeleccionado) 
-        self.mostrarSpinner("") 
-        self.update()  
+        #self.mostrarSpinner("") 
+        #self.update()  
         nueva_pagina.grid(row=0, column=0, sticky="nsew")
         self.pagina_actual = nueva_pagina
-        self.ocultarSpinner()
+
+        #self.ocultarSpinner()
 
     def mostrar_pagina_dos(self, main_menu ,tables, data_mantenimiento=None , indexSeleccionado=None):
+        self.close_loading_frame()
         self.mostrar_pagina(ventanaPaso2,  main_menu, tables, data_mantenimiento, indexSeleccionado), 
 
     def mostrar_pagina_tres(self, main_menu, data_mantenimiento, tables, indexSeleccionado=None):
+        self.close_loading_frame()
         self.mostrar_pagina(VentanaPaso3, main_menu, tables, data_mantenimiento, indexSeleccionado)
 
     def mostrar_pagina_cuatro(self, main_menu, tables, data_mantenimiento, indexSeleccionado):
+        self.close_loading_frame()
         self.mostrar_pagina(VentanaColumnas, main_menu,  tables, data_mantenimiento, indexSeleccionado)   
 
     def mostrar_pagina_uno(self, main_menu, tables = None, data_mantenimiento=None , indexSeleccionado=None):
+        self.close_loading_frame()
         self.mostrar_pagina(PaginaUno, main_menu, tables, data_mantenimiento, indexSeleccionado )
 
     def getDatos(self,rutaActual):
@@ -857,49 +867,72 @@ class VentanaPrincipal(CTk):
         return data  
 
     def mostrarSpinner(self,caso):
-        resultados_window2 = ctk.CTkToplevel(self)
-        resultados_window2.title("")
-        resultados_window2.attributes('-topmost', True)
-        resultados_window2.wm_attributes('-alpha',0.8)
-        #resultados_window2.resizable(width=None, height=None)
-        #resultados_window2.transient()
-        resultados_window2.overrideredirect(True)
-        toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        padx = -10 # the padding you need.
-        pady = -10
-        resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        width = self.winfo_screenwidth() - 80
-        height = self.winfo_screenheight() - 80
-        resultados_window2.geometry(str(width)+"x"+str(height))
-        # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
-        # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        l_frame = CTkFrame(resultados_window2, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
-        l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        l = CTkLabel(l_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
-        l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
+        # resultados_window2 = ctk.CTkToplevel(self)
+        # resultados_window2.title("")
+        # resultados_window2.attributes('-topmost', True)
+        # resultados_window2.wm_attributes('-alpha',0.8)
+        # #resultados_window2.resizable(width=None, height=None)
+        # #resultados_window2.transient()
+        # resultados_window2.overrideredirect(True)
+        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
+        # padx = -10 # the padding you need.
+        # pady = -10
+        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
+        # width = self.winfo_screenwidth() - 80
+        # height = self.winfo_screenheight() - 80
+        # resultados_window2.geometry(str(width)+"x"+str(height))
+        # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
+        # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
+        # l_frame = CTkFrame(resultados_window2, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
+        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
+        # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
+        # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
+        # progressbar.start()
+        # l.pack()
+
+        self.loading_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        l.place(relx=0.5, rely=0.5, anchor='center')
+        
+        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        progressbar.place(relx=0.5, rely=0.5, anchor='center')
         progressbar.start()
         l.pack()
-
-        label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
-        label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-        self.resultados_window2 = resultados_window2   
+        self.update()
+        l.pack()
+        self.update()
         if(caso == "avanzarPaso2"):
-            resultados_window2.after(710, self.pagina_actual.avanzar_paso2)
+            threading.Thread(target=self.pagina_actual.avanzar_paso2()).start()
+            #resultados_window2.after(710, self.pagina_actual.avanzar_paso2)
         elif caso == "paso3To4":#ir a las columnas
             self.update()
-            resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)) 
+            threading.Thread(target=self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)).start()
+            #resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)) 
         elif caso == "paso4To5":
-            resultados_window2.after(710,self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas()))
+            threading.Thread(target=self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas())).start()
+            #resultados_window2.after(710,self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas()))
         elif caso == "finalizar":
             self.update()
             pfinal = self.pagina_actual
             rutaActual = utl.rutaActual(__file__)
-            resultados_window2.after(710, pfinal.paso3(pfinal.tables, pfinal.index_seleccionado, self.getDatos(rutaActual), pfinal.data_mantenimiento))                   
+            threading.Thread(target=pfinal.paso3(pfinal.tables, pfinal.index_seleccionado, self.getDatos(rutaActual), pfinal.data_mantenimiento)).start()
+            
+            #resultados_window2.after(710, pfinal.paso3(pfinal.tables, pfinal.index_seleccionado, self.getDatos(rutaActual), pfinal.data_mantenimiento))                   
 
-    def ocultarSpinner(self):
-        self.resultados_window2.destroy()  
+    def close_loading_frame(self):
+        self.stop_event.set()
+        if self.loading_frame:
+            self.loading_frame.place_forget()  # Oculta el frame
+            # Si no planeas reutilizar el frame, puedes destruirlo en su lugar
+            self.loading_frame.destroy()
+            self.loading_frame = None
+
+    # def ocultarSpinner(self):
+    #     self.resultados_window2.destroy()  
 
     def mostrarResumenFinal(self,tablas):
         self = self.pagina_actual
@@ -909,7 +942,7 @@ class VentanaPrincipal(CTk):
         self.contenedor_principal.destroy()
         
         
-        self.master.ocultarSpinner()
+        #self.master.ocultarSpinner()
         # Create the main container frame
         main_container = CTkFrame(self, fg_color="#E0E0E0")
         main_container.grid(row=0, column=0, sticky="nsew")
