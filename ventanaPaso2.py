@@ -19,6 +19,8 @@ from plugin.GIFLabel import *
 import menuPrincipal as m
 from pathlib import Path
 import logging
+import threading
+
 
 
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -169,7 +171,8 @@ class PaginaDos(CTkFrame):
         self.footer_frame = CTkFrame(self, fg_color="#E0E0E0")
         self.footer_frame.grid(row=2, column=0, pady=(5, 30) ,sticky="ew")
         self.setup_footer_buttons()
-        self.master.ocultarSpinner()
+        self.master.close_loading_frame()
+        #self.master.ocultarSpinner()
         
         if estado_tables != None:
             self.estado_tables_checkbox(estado_tables)
@@ -642,6 +645,7 @@ class VentanaPrincipal(CTk):
         toplevel_offsety = 50
         self.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
         self.resizable(width=True, height=True)
+        self.stop_event = threading.Event()
 
         self.main_menu = main_menu
 
@@ -665,55 +669,86 @@ class VentanaPrincipal(CTk):
         if(len(tables) == 0):
           self.configuration_warning.configure(text="Debe seleccionar al menos una tabla y una columna")
           return False
+        self.close_loading_frame()
         self.mostrar_pagina(PaginaTres, main_menu, tables, estado_tables)
 
     def mostrar_pagina_uno(self, main_menu):
         self.mostrar_pagina(PaginaUno, main_menu)
+
     
     def mostrarSpinner(self,caso):
-        resultados_window2 = ctk.CTkToplevel(self)
-        resultados_window2.title("")
-        resultados_window2.attributes('-topmost', True)
-        resultados_window2.wm_attributes('-alpha',0.8)
-        #resultados_window2.resizable(width=None, height=None)
-        #resultados_window2.transient()
-        resultados_window2.overrideredirect(True)
-        toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        padx = -10 # the padding you need.
-        pady = -10
-        resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        width = self.winfo_screenwidth() - 80
-        height = self.winfo_screenheight() - 80
-        resultados_window2.geometry(str(width)+"x"+str(height))
-        # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
-        # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        l_frame = CTkFrame(resultados_window2, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
-        l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        l = CTkLabel(l_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
-        l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
+        # resultados_window2 = ctk.CTkToplevel(self)
+        # resultados_window2.title("")
+        # resultados_window2.attributes('-topmost', True)
+        # resultados_window2.wm_attributes('-alpha',0.8)
+        # #resultados_window2.resizable(width=None, height=None)
+        # #resultados_window2.transient()
+        # resultados_window2.overrideredirect(True)
+        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
+        # padx = -10 # the padding you need.
+        # pady = -10
+        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
+        # width = self.winfo_screenwidth() - 80
+        # height = self.winfo_screenheight() - 80
+        # resultados_window2.geometry(str(width)+"x"+str(height))
+        # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
+        # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
+        # l_frame = CTkFrame(resultados_window2, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
+        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
+        # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
+        # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
+        # progressbar.start()
+        # l.pack()
+
+        # label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
+        # label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+        # self.resultados_window2 = resultados_window2
+
+        # Crear y configurar el Frame de carga
+        self.loading_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        l.place(relx=0.5, rely=0.5, anchor='center')
+        
+        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        progressbar.place(relx=0.5, rely=0.5, anchor='center')
         progressbar.start()
         l.pack()
+        self.update()
 
-        label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
-        label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-        self.resultados_window2 = resultados_window2   
         if(caso == "avanzarPaso2"):
-            resultados_window2.after(710, self.avanzar_paso2)
+            # Iniciar el proceso en segundo plano
+            threading.Thread(target=self.avanzar_paso2()).start()
+            #resultados_window2.after(710, self.avanzar_paso2)
         elif caso == "selectAll": 
-            resultados_window2.after(710, self.select_all) 
+            threading.Thread(target=self.select_all()).start()
+            #resultados_window2.after(710, self.select_all) 
         elif caso == "deselectAll": 
-            resultados_window2.after(710, self.deselect_all) 
+            threading.Thread(target=self.deselect_all()).start()
+            #resultados_window2.after(710, self.deselect_all) 
         elif caso == "finalizar":
-            resultados_window2.after(710, self.validarPaso2) 
+            threading.Thread(target=self.validarPaso2()).start()
+            #resultados_window2.after(710, self.validarPaso2) 
         elif caso == "paso2To3":
-            resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_seleccion_checkbox())) 
+            threading.Thread(target=self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_seleccion_checkbox())).start()
+            #resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_seleccion_checkbox())) 
         elif caso == "paso2To1":
-            resultados_window2.after(710,self.mostrar_pagina_uno(self.main_menu))               
+            threading.Thread(target=self.mostrar_pagina_uno(self.main_menu)).start()
+            #resultados_window2.after(710,self.mostrar_pagina_uno(self.main_menu))               
 
-    def ocultarSpinner(self):
-        self.resultados_window2.destroy()  
+    # def ocultarSpinner(self):
+    #     self.resultados_window2.destroy()
+
+    def close_loading_frame(self):
+        self.stop_event.set()
+        if self.loading_frame:
+            self.loading_frame.place_forget()  # Oculta el frame
+            # Si no planeas reutilizar el frame, puedes destruirlo en su lugar
+            self.loading_frame.destroy()
+            self.loading_frame = None 
 
     def avanzar_paso2(self):         
 
@@ -765,7 +800,7 @@ class VentanaPrincipal(CTk):
             logging.exception("An exception occurred BBDD:  " )  
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.pagina_actual.configuration_warning.configure(text_color ="red")
-            self.ocultarSpinner()
+            #self.ocultarSpinner()
             return False
         
         with connection.cursor() as cursor:
@@ -799,8 +834,7 @@ class VentanaPrincipal(CTk):
                     
                     if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
-                    tableName = tableNameBBDD   
-     
+                    tableName = tableNameBBDD       
         self.mostrar_pagina_dos(self.main_menu, tables)  
 
     def select_all(self):
@@ -809,15 +843,14 @@ class VentanaPrincipal(CTk):
             table_frame.winfo_children()[0].select()  # Checkbox de la tabla
             for checkbox in table_frame.columns_frame.winfo_children():
                 checkbox.select()
-        self.ocultarSpinner()        
-
+        self.close_loading_frame()
     def deselect_all(self):
         for table_frame in self.pagina_actual.tables:
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].deselect()  # Checkbox de la tabla
             for checkbox in table_frame.columns_frame.winfo_children():
                 checkbox.deselect() # Checkbox de las columnas   
-        self.ocultarSpinner() 
+        self.close_loading_frame() 
 
     def validarPaso2(self):
         this = self
@@ -831,19 +864,23 @@ class VentanaPrincipal(CTk):
             negocioActivado = True
         if (self.controladores_var.get() == False and negocioActivado == False): 
             self.configuration_warning.configure(text="Debe seleccionar al menos un componente")
-            this.ocultarSpinner()
+            this.close_loading_frame()
+            #this.ocultarSpinner()
             return False   
         if(self.search_entry_negocio.get() == '' and negocioActivado):
             self.configuration_warning.configure(text="Ninguna carpeta EarClasses seleccionada")
-            this.ocultarSpinner()
+            this.close_loading_frame()
+           #this.ocultarSpinner()
             return False
         if(self.controladores_var.get() and self.search_entry_presentacion.get() == ''):
             self.configuration_warning.configure(text="Ninguna carpeta War seleccionada")
-            this.ocultarSpinner()
+            this.close_loading_frame()
+            #this.ocultarSpinner()
             return False
         
         p2.initPaso2(tabla_resultados, self.getDatos(rutaActual,archivoClases,archivoWar),self)
-        this.ocultarSpinner()
+        this.close_loading_frame()
+        #this.ocultarSpinner()
         this.mostrarResumenFinal(tabla_resultados)
 
     def mostrarResumenFinal(self,tablas):

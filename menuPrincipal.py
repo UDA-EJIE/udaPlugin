@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 import logging
 import plugin.utils as utl
 
+
 base_path = os.path.dirname(os.path.abspath(__file__))
 logsPath = os.path.join(base_path, 'logs\\log.log')
 logsInfoPath = os.path.join(base_path, 'logs\\info.log')
@@ -22,7 +23,7 @@ class MainMenu(CTkToplevel):
 
         self.title("Menú Principal")
         self.geometry("600x600")  # Configura el tamaño de la ventana
-        self.config(bg="#E0E0E0")
+        self.config(bg="#FFFFFF")
 
         self.configure(columnspan = 3)
         self.grid_columnconfigure(1, weight=1)
@@ -31,8 +32,7 @@ class MainMenu(CTkToplevel):
         logo_ejie = CTkImage(light_image=Image.open(image_path), size=(200,200))
         label_logo = CTkLabel(self, text="", image=logo_ejie, bg_color='#E0E0E0')
         label_logo.grid(row=0, column = 1, pady=(20, 10), padx=20)
-
-        
+       
         # Botón para Paso 1
         self.button_paso_1 = CTkButton(self, text="1. Crear una nueva aplicación", command= lambda: self.abrir_paso1(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
         self.button_paso_1.grid(row= 1 , column = 1, pady=(20, 10), padx=20)
@@ -66,7 +66,7 @@ class MainMenu(CTkToplevel):
         self.withdraw()
         ventana = paso3.VentanaPrincipal(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
-        ventana.ocultarSpinner()
+        #ventana.ocultarSpinner()
         ventana.mainloop()
 
     def MainMenuLoop(self):   
