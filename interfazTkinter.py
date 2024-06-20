@@ -46,17 +46,17 @@ class Paso1(CTk):
 
         code_label = CTkLabel(self, text="Código de aplicación:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         code_label.grid(row=2, column=0, sticky="w", padx=(20, 10), pady=(20, 2))
-        self.entry_code = CTkEntry(self, bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', height=2.5, border_width=3, text_color="black" )
+        self.entry_code = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
         self.entry_code.grid(row=2, column=1, padx=(30, 400), pady=(20, 2), sticky="ew")
 
         self.use_default_location = tk.BooleanVar()
-        location_checkbox = CTkCheckBox(self,hover=True, text="Usar localización por defecto", checkbox_height=20, checkbox_width=20, border_color='#9dd4d7',fg_color='#9dd4d7', variable=self.use_default_location, command=self.toggle_textbox, bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        location_checkbox = CTkCheckBox(self,hover=True, text="Usar localización por defecto", checkbox_height=20, checkbox_width=20, border_color='#84bfc4',fg_color='#84bfc4', variable=self.use_default_location, command=self.toggle_textbox, bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         location_checkbox.grid(row=3, column=0, columnspan=2, pady=(5, 2), padx=20, sticky="w")
         location_checkbox.select()
 
         localizacion_label = CTkLabel(self, text="Localización:",  bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         localizacion_label.grid(row=4, column=0, sticky="w", padx=(20, 10), pady=(5, 2))
-        self.entry_location = CTkEntry(self, state="normal", bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', height=2.5, border_width=3)
+        self.entry_location = CTkEntry(self, state="normal", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3)
         self.entry_location.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.entry_location.configure(placeholder_text=os.getcwd())
         self.entry_location.configure(placeholder_text_color="grey")
@@ -69,19 +69,19 @@ class Paso1(CTk):
             self.entry_location.insert(0, rutaUltimoProyecto)    
         self.entry_location.configure(state="disabled")
 
-        self.location_button = CTkButton(self,state="disabled", text="Explorar", command=self.browse_location, bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        self.location_button = CTkButton(self,state="disabled", text="Explorar", command=self.browse_location, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.location_button.grid(row=4, column=1, pady=(5, 2), padx= (0, 20), sticky="e")
 
         war_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         war_label.grid(row=5, column=0, sticky="w", padx=(20, 10), pady=(5, 30))
-        self.entry_war = CTkEntry(self, bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', height=2.5, border_width=3, text_color="black")
+        self.entry_war = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
         self.entry_war.grid(row=5, column=1, padx=(30, 20), pady=(5, 30), sticky="ew")
 
-        languages_frame = CTkFrame(self,  bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#9dd4d7', border_width=3)
+        languages_frame = CTkFrame(self,  bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         languages_frame.grid(row=6, column=0, columnspan=2, pady=(5, 30), padx=20, sticky="ew")
 
         # Crear un marco interno para organizar los widgets dentro del contenedor "Idiomas"
-        self.idiomas_inner_frame = CTkFrame(languages_frame, fg_color='#FFFFFF', bg_color='#FFFFFF', border_color='#9dd4d7')
+        self.idiomas_inner_frame = CTkFrame(languages_frame, fg_color='#FFFFFF', bg_color='#FFFFFF', border_color='#84bfc4')
         self.idiomas_inner_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # Crear un widget Label encima del borde del marco
@@ -100,14 +100,14 @@ class Paso1(CTk):
         for i, (lang_option, lang_var) in enumerate(zip(self.language_options, self.language_vars)):
             if(lang_option != 'Castellano' and lang_option != 'Euskera'):
                 stateCheck = "normal"
-            CTkCheckBox(self.idiomas_inner_frame,state=stateCheck, text=lang_option, variable=lang_var, checkbox_height=20, checkbox_width=20, border_color='#9dd4d7', bg_color='#FFFFFF', fg_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold")).grid(row=0, column=i, padx=5, pady=(10, 2), sticky="w")
+            CTkCheckBox(self.idiomas_inner_frame,state=stateCheck, text=lang_option, variable=lang_var, checkbox_height=20, checkbox_width=20, border_color='#84bfc4', bg_color='#FFFFFF', fg_color='#84bfc4', text_color="black", font=("Arial", 12, "bold")).grid(row=0, column=i, padx=5, pady=(10, 2), sticky="w")
 
         default_language_label = CTkLabel(self.idiomas_inner_frame, text="Idioma por defecto:", text_color="black", font=("Arial", 12, "bold"))
         default_language_label.grid(row=7, column=0, sticky="w", padx=(10, 10), pady=(25, 2))
         self.default_language_var = tk.StringVar()
 
         self.default_language_combobox = self.update_default_language_options()
-        security_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#9dd4d7', border_width=3)
+        security_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         security_frame.grid(row=8, column=0, columnspan=2, pady=(30, 20), padx=20, sticky="ew")
 
         # Crear un widget Label encima del borde del marco
@@ -115,15 +115,15 @@ class Paso1(CTk):
         labelSecurityFrame.place(in_=security_frame, anchor="sw" )
 
         self.security_var = tk.StringVar(value="Si")
-        self.security_yes_radio = CTkRadioButton(security_frame, text="Sí", value="Si", variable=self.security_var, text_color="black", fg_color='#9dd4d7', radiobutton_height= 18 , radiobutton_width= 18)
+        self.security_yes_radio = CTkRadioButton(security_frame, text="Sí", value="Si", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
         self.security_yes_radio.grid(row=0, column=0, padx=(20, 0), pady=(20, 10), sticky="nsew")
-        security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", fg_color='#9dd4d7', radiobutton_height= 18 , radiobutton_width= 18)
+        security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
         security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
-        finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
 
-        cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
 
