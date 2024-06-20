@@ -85,7 +85,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["order"]["sord"]  = data_mantenimiento[15][1]
         data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])
         
-        data["urlBase"]  = "../"+tNameOriginal
+        data["urlBase"]  = "../"+toRestUrlNaming(tNameOriginal)
         data["urlStatics"]  = "../"+tNameOriginal
         destinoWarViewsFinal = destinoWarViews + alias +"/"
         destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/"
