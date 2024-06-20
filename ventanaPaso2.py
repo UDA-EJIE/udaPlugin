@@ -801,6 +801,7 @@ class VentanaPrincipal(CTk):
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.pagina_actual.configuration_warning.configure(text_color ="red")
             #self.ocultarSpinner()
+            self.close_loading_frame()
             return False
         
         with connection.cursor() as cursor:

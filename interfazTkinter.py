@@ -293,21 +293,6 @@ class Paso1(CTk):
         # resultados_window2.wm_attributes('-alpha',0.8)
         # self.resultados_window2 = resultados_window2  
 
-        # monitors = get_monitors()
-        # current_monitor = None
-        # for monitor in monitors:
-        #     if self.winfo_x() >= monitor.x and self.winfo_x() < monitor.x + monitor.width and \
-        #        self.winfo_y() >= monitor.y and self.winfo_y() < monitor.y + monitor.height:
-        #         current_monitor = monitor
-        #         break
-        
-        # if current_monitor:
-        #     x_offset = self.winfo_x() - current_monitor.x
-        #     y_offset = self.winfo_y() - current_monitor.y
-        #     width = self.winfo_width()
-        #     height = self.winfo_height()
-        #     resultados_window2.geometry(f'{width}x{height}+{current_monitor.x + x_offset}+{current_monitor.y + y_offset}')
-
         # Crear y configurar el Frame de carga
         self.loading_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
