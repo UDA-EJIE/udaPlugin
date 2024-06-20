@@ -36,7 +36,7 @@ class PaginaUno(CTkFrame):
     def __init__(self, master, main_menu, tables=None, columns=None,estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-        self.configure(corner_radius=10, fg_color="#E0E0E0", border_color="#69a3d6", border_width=4)
+        self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
 
         self.main_menu = main_menu
         # Configura el contenedor principal para que las columnas se expandan
@@ -63,9 +63,9 @@ class PaginaUno(CTkFrame):
             
             sv = StringVar(self)
             sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.urlModify())
-            label = CTkLabel(self, text=label_text, fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
+            label = CTkLabel(self, text=label_text, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
             label.grid(row=i+1, column=0, sticky="w", padx=(20, 10), pady=(20, 2))
-            entry = CTkEntry(self,textvariable=sv, fg_color='#69a3d6', border_color='#69a3d6', height=2.5, 
+            entry = CTkEntry(self,textvariable=sv, fg_color='#84bfc4', border_color='#84bfc4', height=2.5, 
                              width=500, text_color="grey" if label_text == 'URL:' else 'black', show='*' if label_text == 'Contraseña:' else None,state='disabled' if label_text == 'URL:' else 'normal')
             entry.grid(row=i+1, column=1, padx=(0, 200), pady=(20, 2), sticky="ew")
             
@@ -77,13 +77,13 @@ class PaginaUno(CTkFrame):
             self.entries.append(entry)
         self.urlModify()
         # Botones
-        self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.test_button.grid(row=len(labels) + 1, column=0, columnspan=2, pady=20, padx=20, sticky="ew")
 
-        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         next_button.grid(row=len(labels) + 2, column=1, pady=10, padx=20, sticky="e")
 
-        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         back_button.grid(row=len(labels) + 2, column=1, pady=10, padx=(50, 130), sticky="e")
                  
     
@@ -125,6 +125,7 @@ class PaginaUno(CTkFrame):
             self.update_button_color('#FF0000')  # Red color on error
             self.configuration_warning.configure(text="Error connecting to Oracle Database")
             self.configuration_warning.configure(text_color ="#FF0000")
+        
             
     def update_button_color(self, color):
         self.test_button.configure(fg_color=color)    
@@ -139,7 +140,7 @@ class PaginaUno(CTkFrame):
 class PaginaDos(CTkFrame):
     def __init__(self, master, main_menu, tables, estado_tables=None,  *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        self.configure(corner_radius=10, fg_color="#E0E0E0")
+        self.configure(corner_radius=10, fg_color="#FFFFFF")
 
         self.original_tables = copy.deepcopy(tables)
         self.tables = []
@@ -168,7 +169,7 @@ class PaginaDos(CTkFrame):
         self.populate_scrollable_frame(self.scrollable_frame, tables_original)
 
         # Footer frame using grid for buttons
-        self.footer_frame = CTkFrame(self, fg_color="#E0E0E0")
+        self.footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         self.footer_frame.grid(row=2, column=0, pady=(5, 30) ,sticky="ew")
         self.setup_footer_buttons()
         self.master.close_loading_frame()
@@ -212,7 +213,7 @@ class PaginaDos(CTkFrame):
             #check con la lista de tablas
             table_checkbox = CTkCheckBox(table_frame, text=table.name,command=partial(self.choose,table,index), variable=self.var_list[index], 
                                             text_color="black", font=("Arial", 10, "bold"),
-                                            checkbox_height=15, checkbox_width=15, border_color='#337ab7')
+                                            checkbox_height=15, checkbox_width=15, border_color='#84bfc4', fg_color='#84bfc4')
             table_checkbox.pack(side="left", padx=5)
             if self.estado_tables != None and len([x for x in self.estado_tables if x['name'] == table.name]) == 1:
                 table_checkbox.select()
@@ -235,7 +236,7 @@ class PaginaDos(CTkFrame):
                 column_checkbox = CTkCheckBox(columns_frame, text=nombreColumna, variable=tk.BooleanVar(value=False), 
                                                 text_color="black", font=("Arial", 10, "bold"),
                                                 command=partial(self.selectTableFromColumn,table_checkbox,column.name),
-                                                checkbox_height=15, checkbox_width=15, border_color='#337ab7')
+                                                checkbox_height=15, checkbox_width=15, border_color='#84bfc4', fg_color='#84bfc4')
                 column_checkbox.pack(anchor="w", padx=20)
                 column_checkbox.primaryKey = column.primaryKey
                 if (column.primaryKey == 'P'):
@@ -292,10 +293,10 @@ class PaginaDos(CTkFrame):
         return seleccion_checkbox
     
     def setup_footer_buttons(self):
-        select_all_button = CTkButton(self.footer_frame, text="Seleccionar Todas",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda:self.master.mostrarSpinner("selectAll"))
+        select_all_button = CTkButton(self.footer_frame, text="Seleccionar Todas",bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda:self.master.mostrarSpinner("selectAll"))
         select_all_button.pack(side="left", padx=5)
 
-        deselect_all_button = CTkButton(self.footer_frame, text="Deseleccionar Todas",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda:self.master.mostrarSpinner("deselectAll"))
+        deselect_all_button = CTkButton(self.footer_frame, text="Deseleccionar Todas",bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda:self.master.mostrarSpinner("deselectAll"))
         deselect_all_button.pack(side="left", padx=5)
 
         configuration_warning = CTkLabel(self.footer_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
@@ -303,13 +304,13 @@ class PaginaDos(CTkFrame):
         self.master.configuration_warning = configuration_warning
 
 
-        next_button = CTkButton(self.footer_frame, text="Siguiente", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,  command=lambda: self.master.mostrar_pagina_tres(self.main_menu, self.obtener_seleccion_checkbox()))
+        next_button = CTkButton(self.footer_frame, text="Siguiente", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,  command=lambda: self.master.mostrar_pagina_tres(self.main_menu, self.obtener_seleccion_checkbox()))
         next_button.pack(side="right", padx=5)
 
-        back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno(self.main_menu))
+        back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno(self.main_menu))
         back_button.pack(side="right", padx=5)
      
-        cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
+        cancel_button = CTkButton(self.footer_frame, text="Cancelar", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
         cancel_button.pack(side="right", padx=5)
 
     def cancelar(self):
@@ -342,7 +343,7 @@ class PaginaTres(CTkFrame):
         header_label.pack(pady=10, padx=10)
 
         # Contenedor principal
-        main_container = CTkFrame(self, fg_color="#E0E0E0")
+        main_container = CTkFrame(self, fg_color="#FFFFFF")
         main_container.grid(row=1, column=0, sticky="nsew")
         main_container.grid_columnconfigure(0, weight=1)
         main_container.grid_rowconfigure(0, weight=1)
@@ -350,7 +351,7 @@ class PaginaTres(CTkFrame):
         self.main_container = main_container
 
         # Contenedor de Componentes de Negocio
-        negocio_container = CTkFrame(main_container, fg_color="#E0E0E0", border_width=3, border_color="#69a3d6")
+        negocio_container = CTkFrame(main_container, fg_color="#FFFFFF", border_width=3, border_color="#84bfc4")
         negocio_container.grid(row=0, column=0, sticky="nsew")
         negocio_container.grid_columnconfigure(0, weight=1)
 
@@ -361,9 +362,9 @@ class PaginaTres(CTkFrame):
         for index, (component, var) in enumerate([("Modelo de Datos", self.modelo_datos_var), 
                                                   ("DAOs", self.daos_var), 
                                                   ("Servicios", self.servicios_var)]):
-            component_container = CTkFrame(negocio_container, fg_color="#E0E0E0")
+            component_container = CTkFrame(negocio_container, fg_color="#FFFFFF")
             component_container.grid(row=index+1, column=0, sticky="ew", pady=5, padx=(20, 20))
-            CTkCheckBox(component_container, variable=var, onvalue=True, offvalue=False, text=component,command=self.update_search_state, text_color="black", font=("Arial", 11, "bold")).grid(row=0, column=0, padx=(20, 0), sticky="w")
+            CTkCheckBox(component_container, variable=var, onvalue=True, offvalue=False, text=component,command=self.update_search_state, border_color='#84bfc4', fg_color='#84bfc4', text_color="black", font=("Arial", 11, "bold")).grid(row=0, column=0, padx=(20, 0), sticky="w")
         
         # Entry y Botón de Buscar para Componentes de Negocio
         rutaActual = utl.rutaActual(__file__)
@@ -385,39 +386,39 @@ class PaginaTres(CTkFrame):
            textRutaControlador = textRutaControlador+"\\"+archivoWar  
         else:
             textRutaControlador = ""
-        self.search_entry_negocio = CTkEntry(negocio_container, width=600, fg_color='#69a3d6')
+        self.search_entry_negocio = CTkEntry(negocio_container, width=600, fg_color='#84bfc4')
         self.search_entry_negocio.insert(0, textRutaNegocio)
         self.search_entry_negocio.configure(text_color="grey")
         self.search_entry_negocio.configure(state="disabled")
         self.search_entry_negocio.grid(row=4, column=0, padx=(0,230), pady=(10,0))
-        search_button_negocio = CTkButton(negocio_container, text="Buscar",bg_color='#E0E0E0',fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.buscar_archivos("negocio",self.selectDirectory(self.search_entry_negocio.get())))
+        search_button_negocio = CTkButton(negocio_container, text="Buscar",bg_color='#FFFFFF',fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.buscar_archivos("negocio",self.selectDirectory(self.search_entry_negocio.get())))
         search_button_negocio.grid(row=4, column=0, padx=(670, 0), pady=(10,0))
 
         # Contenedor de Componentes de Presentacións
-        presentacion_container = CTkFrame(main_container, fg_color="#E0E0E0", bg_color="#E0E0E0", border_width=3, border_color="#69a3d6")
+        presentacion_container = CTkFrame(main_container, fg_color="#FFFFFF", bg_color="#FFFFFF", border_width=3, border_color="#84bfc4")
         presentacion_container.grid(row=1, column=0, sticky="nsew")
         presentacion_container.grid_columnconfigure(0, weight=1)
 
         # Título "Componentes de Presentación"
         CTkLabel(presentacion_container, text="Componentes de Presentación",text_color="black", font=("Arial", 13, "bold")).grid(row=0, column=0, sticky="w", pady=(10, 20), padx=(20, 20))
 
-        contenedor_controlador = CTkFrame(presentacion_container, fg_color="#E0E0E0")
+        contenedor_controlador = CTkFrame(presentacion_container, fg_color="#FFFFFF")
         contenedor_controlador.grid(row=1, column=0, sticky="ew", pady=5, padx=(20, 20))
         # Checkbox para "Controladores"
-        controladores_checkbox = CTkCheckBox(contenedor_controlador, onvalue=True, offvalue=False, text="Controladores", text_color="black", font=("Arial", 12, "bold"), variable=self.controladores_var, command=self.update_search_state)
+        controladores_checkbox = CTkCheckBox(contenedor_controlador, onvalue=True, offvalue=False, text="Controladores", text_color="black",border_color='#84bfc4', fg_color='#84bfc4', font=("Arial", 12, "bold"), variable=self.controladores_var, command=self.update_search_state)
         controladores_checkbox.grid(row=1, column=0, padx=(20, 0), sticky="w")
 
         # Entry y Botón de Buscar para Componentes de Presentación
-        self.search_entry_presentacion = CTkEntry(presentacion_container, width=600, fg_color='#69a3d6')
+        self.search_entry_presentacion = CTkEntry(presentacion_container, width=600, fg_color='#84bfc4')
         self.search_entry_presentacion.insert(0, textRutaControlador)
         self.search_entry_presentacion.configure(text_color="grey")
         self.search_entry_presentacion.configure(state="disabled")
         self.search_entry_presentacion.grid(row=2, column=0, padx=(0,230), pady=(10,0))
-        search_button_presentacion = CTkButton(presentacion_container, text="Buscar", bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.buscar_archivos("presentacion",self.selectDirectory(self.search_entry_presentacion.get())))
+        search_button_presentacion = CTkButton(presentacion_container, text="Buscar", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.buscar_archivos("presentacion",self.selectDirectory(self.search_entry_presentacion.get())))
         search_button_presentacion.grid(row=2, column=0, padx=(670, 0), pady=(10,0))
 
         # Botones finales en el pie de página
-        buttons_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        buttons_container = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
         buttons_container.grid(row=2, column=0, sticky="sew")
         buttons_container.grid_columnconfigure(0, weight=1)  # Distribuir espacio uniformemente
         buttons_container.grid_columnconfigure(1, weight=1)
@@ -446,9 +447,9 @@ class PaginaTres(CTkFrame):
         self.rutaActual = rutaActual
         self.archivoClases = archivoClases
         self.archivoWar = archivoWar
-        CTkButton(buttons_container, text="Finalizar", command=lambda: self.master.mostrarSpinner("finalizar"), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
-        CTkButton(buttons_container, text="Atras",bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_dos(self.main_menu, tables_original, estado_tables=tables)).pack(side="right", padx=5, pady=20)
-        CTkButton(buttons_container, text="Cancelar", command=lambda: self.cancelar(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
+        CTkButton(buttons_container, text="Finalizar", command=lambda: self.master.mostrarSpinner("finalizar"), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',  hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
+        CTkButton(buttons_container, text="Atras",bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_dos(self.main_menu, tables_original, estado_tables=tables)).pack(side="right", padx=5, pady=20)
+        CTkButton(buttons_container, text="Cancelar", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25).pack(side="right", padx=5, pady=20)
         self.configuration_warning = CTkLabel(buttons_container,  text="", font=("Arial", 13, "bold"),text_color="red")
         self.configuration_warning.pack(side="left", padx=5, pady=20)
 
@@ -693,35 +694,37 @@ class VentanaPrincipal(CTk):
         # resultados_window2.geometry(str(width)+"x"+str(height))
         # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
         # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        # l_frame = CTkFrame(resultados_window2, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        # l_frame = CTkFrame(resultados_window2, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
         # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
         # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
         # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
         # progressbar.start()
         # l.pack()
 
-        # label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
+        # label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         # label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
         # self.resultados_window2 = resultados_window2
 
         # Crear y configurar el Frame de carga
-        self.loading_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
         l.place(relx=0.5, rely=0.5, anchor='center')
         
-        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
-        progressbar.place(relx=0.5, rely=0.5, anchor='center')
-        progressbar.start()
+        self.progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
+        self.progressbar.start()
         l.pack()
         self.update()
 
         if(caso == "avanzarPaso2"):
             # Iniciar el proceso en segundo plano
+            #self.actualizar_progress_bar()
             threading.Thread(target=self.avanzar_paso2()).start()
+           
             #resultados_window2.after(710, self.avanzar_paso2)
         elif caso == "selectAll": 
             threading.Thread(target=self.select_all()).start()
@@ -749,6 +752,12 @@ class VentanaPrincipal(CTk):
             # Si no planeas reutilizar el frame, puedes destruirlo en su lugar
             self.loading_frame.destroy()
             self.loading_frame = None 
+
+    def actualizar_progress_bar(self):
+        if  self.stop_event.is_set():
+            # Aquí puedes actualizar el estado del progress bar
+            self.progressbar.step(1)  # Actualiza el progress bar
+            self.after(100, self.actualizar_progress_bar)  
 
     def avanzar_paso2(self):         
 
@@ -895,7 +904,7 @@ class VentanaPrincipal(CTk):
         servicios = " Servicios" if self.servicios_var.get() == True else ""
         controladores = " Controladores" if self.controladores_var.get() == True else ""
         
-        cabecera_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        cabecera_container = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
         cabecera_container.grid(row=0, column=0, columnspan=3, sticky="nsew")
 
          # Checkbox for the table
@@ -905,7 +914,7 @@ class VentanaPrincipal(CTk):
 
 
 
-        scrollbar_container = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        scrollbar_container = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
         scrollbar_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
         scrollbar_container.grid_columnconfigure(0, weight=1)
         scrollbar_container.grid_rowconfigure(0, weight=1)
@@ -943,13 +952,13 @@ class VentanaPrincipal(CTk):
                 column_label.pack(anchor="w", padx=20)
             self.tables.append(table_frame)
      
-        frame_boton = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
+        frame_boton = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
         frame_boton.grid(row = 2, column= 0, columnspan=3, sticky="nsew")
 
-        button_cerrar = CTkButton(frame_boton, text="Volver al menu",command=lambda: self.cancelar() , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button_cerrar = CTkButton(frame_boton, text="Volver al menu",command=lambda: self.cancelar() , bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
         button_cerrar.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
 
-        button_menu = CTkButton(frame_boton,text="Cerrar" ,command=lambda: self.cancelar_cerrar() , bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
+        button_menu = CTkButton(frame_boton,text="Cerrar" ,command=lambda: self.cancelar_cerrar() , bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
         button_menu.grid(row=0, column=1, pady=(100, 30), padx=(10,0), sticky="w")
     
 
