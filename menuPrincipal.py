@@ -34,15 +34,15 @@ class MainMenu(CTkToplevel):
         label_logo.grid(row=0, column = 1, pady=(20, 10), padx=20)
        
         # Botón para Paso 1
-        self.button_paso_1 = CTkButton(self, text="1. Crear una nueva aplicación", command= lambda: self.abrir_paso1(), bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
+        self.button_paso_1 = CTkButton(self, text="1. Crear una nueva aplicación", command= lambda: self.abrir_paso1(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
         self.button_paso_1.grid(row= 1 , column = 1, pady=(20, 10), padx=20)
 
         # Botón para Paso 2
-        self.button_paso_2 = CTkButton(self, text="2. Generar código de negocio y control", command= lambda: self.abrir_paso2(), bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
+        self.button_paso_2 = CTkButton(self, text="2. Generar código de negocio y control", command= lambda: self.abrir_paso2(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
         self.button_paso_2.grid(row= 2 , column = 1,pady=10, padx=20)
 
         # Botón para Paso 3
-        self.button_paso_3 = CTkButton(self, text="3. Generar mantenimiento", command= lambda:self.abrir_paso3(), bg_color='#FFFFFF', fg_color='#9dd4d7', border_color='#9dd4d7', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
+        self.button_paso_3 = CTkButton(self, text="3. Generar mantenimiento", command= lambda:self.abrir_paso3(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
         self.button_paso_3.grid(row= 3 , column = 1,pady=10, padx=20)
 
     def on_close(self,ventana):
