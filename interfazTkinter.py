@@ -9,7 +9,6 @@ import plugin.utils as utl
 import menuPrincipal as m
 import customtkinter as ctk
 from datetime import datetime
-from screeninfo import get_monitors
 import threading
 
 
