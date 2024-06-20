@@ -670,7 +670,7 @@ class VentanaPaso3(CTkFrame):
         # Borrar contenido existente
         self.url_entry.delete(0, "end") 
         self.alias_entry.delete(0, "end")  
-        self.url_entry.insert(0, "../" + name)
+        self.url_entry.insert(0, "../" + utl.toRestUrlNaming(name))
         self.alias_entry.insert(0, name)
         
         logging.info("Índice seleccionado:" + str(index))

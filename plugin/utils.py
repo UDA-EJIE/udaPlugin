@@ -87,6 +87,15 @@ def snakeToCamel(str):
 
     return res
 
+def toRestUrlNaming(str):
+    res = ""
+    try:
+        res = str.lower().replace("_", "-")
+    except Exception as e:
+        logging.error('An exception occurred: toRestUrlNaming:')
+
+    return res
+
 def modifyTiles(ruta,entityName, final):
     tree = etree.parse(ruta)
     root = tree.getroot()   

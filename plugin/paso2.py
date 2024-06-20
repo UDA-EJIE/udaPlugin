@@ -5,6 +5,7 @@ from plugin.utils import getColumnsDates
 from datetime import datetime
 from plugin.utils import snakeToCamel
 from plugin.utils import toCamelCase
+from plugin.utils import toRestUrlNaming
 from plugin.utils import modifyJackson
 import operator
 import logging
@@ -82,6 +83,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
+             worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
              worker.template.version = ":  1.0 Paso 2 Controllers ::: "+data["date"]
              worker.run_copy() 
              writeConfig("RUTA", {"ruta_war":destinoSrcWar})
@@ -108,6 +110,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
          with Worker(src_path=dirDao, dst_path=destinoEarDao, data=data, exclude=["*Rel*"],overwrite=True) as worker:
              worker.jinja_env.filters["toCamelCase"] = toCamelCase
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
+             worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
              worker.template.version = ": 1.0 Paso 2 daos ::: "+data["date"]
              worker.run_copy()  
              generoEar = True
@@ -121,6 +124,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             with Worker(src_path=dirModel, dst_path=destinoEarModel, data=data, exclude=["*model*"],overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
+                worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
                 worker.template.version = ": 1.0 Paso 2 modelos ::: "+data["date"]
                 worker.run_copy()
                 if(x == len(tables) - 1):
