@@ -92,7 +92,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         now = datetime.now()
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')
         #Generando jsp MAINT 
-        with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js","*nameMaint*"],overwrite=True) as worker:
+        with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js","includes","*Filter*"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
          worker.template.version = ":  1.0 Paso 3 Jsps ::: "+data["date"]
