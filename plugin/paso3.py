@@ -5,7 +5,6 @@ from plugin.utils import getColumnsDates
 from datetime import datetime
 from plugin.utils import snakeToCamel
 from plugin.utils import toCamelCase
-from plugin.utils import toRestUrlNaming
 from plugin.utils import modifyTiles
 from plugin.utils import modifyMenu
 import operator
@@ -98,7 +97,6 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js","includes"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
-         worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
          worker.template.version = ":  1.0 Paso 3 Jsps ::: "+data["date"]
          worker.run_copy() 
         if data["maint"]["isMaint"]: 
@@ -106,14 +104,12 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
             with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
-                worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
                 worker.template.version = ": 1.0 Paso 3 Includes ::: "+data["date"]
                 worker.run_copy()
         #Generando js MAINT 
         with Worker(src_path=dirMaintJsp, dst_path=destinoStaticsJs, data=data, exclude=["*.jsp","includes"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
-         worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
          worker.template.version = ":  1.0 Paso 3 Js ::: "+data["date"]
          worker.run_copy() 
          if(x == len(tables) - 1):
