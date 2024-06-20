@@ -110,7 +110,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
                 worker.template.version = ": 1.0 Paso 3 Includes ::: "+data["date"]
                 worker.run_copy()
         #Generando js MAINT 
-        with Worker(src_path=dirMaintJsp, dst_path=destinoStaticsJs, data=data, exclude=["*.jsp"],overwrite=True) as worker:
+        with Worker(src_path=dirMaintJsp, dst_path=destinoStaticsJs, data=data, exclude=["*.jsp","includes"],overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
          worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
