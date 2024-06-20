@@ -460,14 +460,14 @@ class ventanaPaso2(CTkFrame):
             self.nombre_entry.insert(0, data_mantenimiento[00][1])
             self.titulo_entry.insert(0, data_mantenimiento[1][1])
             self.tipo_var.set(data_mantenimiento[3][1])
-            self.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento[4][1])  
+            self.master.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento[4][1])  
             self.tipologia_label_combobox.set(data_mantenimiento[5][1])
-            self.configurar_checkbox(self.botonera_checkbox, data_mantenimiento[6][1])   
-            self.configurar_checkbox(self.menu_contextual_checkbox, data_mantenimiento[7][1])
-            self.configurar_checkbox(self.filtrado_datos_checkbox, data_mantenimiento[8][1])
-            self.configurar_checkbox(self.busqueda_checkbox, data_mantenimiento[9][1])
-            self.configurar_checkbox(self.validaciones_cliente_checkbox, data_mantenimiento[10][1])
-            self.configurar_checkbox(self.multiseleccion_checkbox, data_mantenimiento[11][1])
+            self.master.configurar_checkbox(self.botonera_checkbox, data_mantenimiento[6][1])   
+            self.master.configurar_checkbox(self.menu_contextual_checkbox, data_mantenimiento[7][1])
+            self.master.configurar_checkbox(self.filtrado_datos_checkbox, data_mantenimiento[8][1])
+            self.master.configurar_checkbox(self.busqueda_checkbox, data_mantenimiento[9][1])
+            self.master.configurar_checkbox(self.validaciones_cliente_checkbox, data_mantenimiento[10][1])
+            self.master.configurar_checkbox(self.multiseleccion_checkbox, data_mantenimiento[11][1])
 
 
 
@@ -483,13 +483,6 @@ class ventanaPaso2(CTkFrame):
             self.configuration_warning.configure(text_color ="red")
             return FALSE
         self.master.mostrarSpinner("paso3To4")
-
-    def configurar_checkbox(self, checkbox, valor):
-        """Configura el estado de un CTkCheckBox basado en un valor entero."""
-        if valor == 1:
-            checkbox.select()
-        else:
-            checkbox.deselect()
 
     def mantenimiento_activo(self, data_mantenimiento): 
         #Funcion para deshabilitar botones ne funcion de mantenimiento
@@ -641,6 +634,16 @@ class VentanaPaso3(CTkFrame):
         btn_next.pack(side="left", padx=10, pady=5)
         btn_cancel = CTkButton(footer_frame, text="Cancel" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
+        if data_mantenimiento is not None and len(self.data_mantenimiento) > 12:
+            self.url_entry.delete(0, "end") 
+            self.alias_entry.delete(0, "end")  
+            self.url_entry.insert(0, data_mantenimiento[16][1])
+            self.alias_entry.insert(0, data_mantenimiento[12][1])
+            self.master.configurar_checkbox(self.cargar_check, data_mantenimiento[13][1])
+            self.orden_combobox.set(data_mantenimiento[15][1])
+            self.orden_nombre_combobox.set(self.orden_nombre_combobox._values[data_mantenimiento[14][1]])
+            tablaName = self.tables[self.tabla_seleccionada_index].name
+            self.radio_var.set(tablaName)
         #self.master.ocultarSpinner()
 
     def cancelar(self):
@@ -652,11 +655,12 @@ class VentanaPaso3(CTkFrame):
     def anyadir_data_mantenimiento(self):
         
         if  len(self.data_mantenimiento) > 12: 
-            self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 3]
+            self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 4]
         self.data_mantenimiento.append(("alias", self.alias_entry.get()))
         self.data_mantenimiento.append(("cargar_check", self.cargar_check.get()))
         self.data_mantenimiento.append(("ordenacion_por", self.obtener_posicion(self.orden_nombre_combobox.get())))
         self.data_mantenimiento.append(("ordenacion", (self.orden_combobox.get())))
+        self.data_mantenimiento.append(("url", self.url_entry.get()))
 
 
 
@@ -740,8 +744,9 @@ class VentanaColumnas(CTkFrame):
             var = ctk.BooleanVar(value=True)
             checkbox = ctk.CTkCheckBox(self.scrollable_container, text=f"{columna.name}: {columna.type}{text}", variable=var, text_color="black", font=("Arial", 12, "bold"), border_color='#84bfc4', fg_color='#84bfc4')
             checkbox.grid(row=i, column=0, sticky="w")
-            if columna.primaryKey or self.data_mantenimiento[15][1] == i:
+            if columna.primaryKey or self.data_mantenimiento[14][1] == i:
                 checkbox.configure(state="disabled")
+                
             self.column_checkboxes.append(var)
 
         # Botones
@@ -792,6 +797,10 @@ class VentanaColumnas(CTkFrame):
     def paso3(self,tables, index_seleccionado, datosCargados, data_mantenimiento): 
         this = self.master
         tablaResultados = self.getTablaResultados(tables[index_seleccionado])
+        #cambiar el reorden por si no estan todas seleccionadas
+        columnsDeletes = len(self.column_checkboxes) - len(tablaResultados[0]['columns'])
+        if (columnsDeletes > 0):# restar a la ordenación
+            data_mantenimiento[14][1] = data_mantenimiento[14][1] - columnsDeletes
         p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento)
         self.master.close_loading_frame()
         this.mostrarResumenFinal(tablaResultados) 
@@ -933,7 +942,15 @@ class VentanaPrincipal(CTk):
             self.loading_frame = None
 
     # def ocultarSpinner(self):
-    #     self.resultados_window2.destroy()  
+    #     self.resultados_window2.destroy() 
+
+    def configurar_checkbox(self, checkbox, valor):
+        """Configura el estado de un CTkCheckBox basado en un valor entero."""
+        if valor == 1:
+            checkbox.select()
+        else:
+            checkbox.deselect() 
+     
 
     def mostrarResumenFinal(self,tablas):
         self = self.pagina_actual
