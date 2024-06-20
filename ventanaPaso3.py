@@ -609,6 +609,9 @@ class VentanaPaso3(CTkFrame):
         var_cargar = ctk.BooleanVar(value=True)    
         self.cargar_check = CTkCheckBox(right_container, text="Cargar al inicio de la ventana", text_color="black", variable=var_cargar, border_color='#84bfc4', fg_color='#84bfc4')
         self.cargar_check.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=10)
+        # Cuando la tabla no tiene filtrado, se fuerza su carga automática.
+        if not self.data_mantenimiento[8][1]:
+            self.cargar_check.configure(state="disabled")
 
         orden_label = CTkLabel(right_container, text="Ordenación:", text_color="black")
         orden_label.grid(row=3, column=0, sticky="w", padx=10, pady=10)
