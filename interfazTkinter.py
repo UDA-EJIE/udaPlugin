@@ -69,7 +69,7 @@ class Paso1(CTk):
             self.entry_location.insert(0, rutaUltimoProyecto)    
         self.entry_location.configure(state="disabled")
 
-        self.location_button = CTkButton(self,state="disabled", text="Explorar", command=self.browse_location, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        self.location_button = CTkButton(self,state="disabled", text="Explorar", command=self.browse_location, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         self.location_button.grid(row=4, column=1, pady=(5, 2), padx= (0, 20), sticky="e")
 
         war_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
@@ -120,10 +120,10 @@ class Paso1(CTk):
         security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
         security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
-        finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
 
-        cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
 
@@ -238,7 +238,10 @@ class Paso1(CTk):
         dates = now.strftime('%d-%b-%Y %H:%M:%S')
         print(F"Final: paso 1 creado ::: "+dates,file=sys.stderr)
         sys.stderr.flush()
+        
+        self.withdraw()
         self.ventana_final_popup()
+        
 
             
     def close_loading_frame(self):
@@ -294,10 +297,10 @@ class Paso1(CTk):
         # self.resultados_window2 = resultados_window2  
 
         # Crear y configurar el Frame de carga
-        self.loading_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#69a3d6', border_width=3)
+        self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 50, "bold"))
+        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
         l.place(relx=0.5, rely=0.5, anchor='center')
         
         progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
@@ -326,34 +329,34 @@ class Paso1(CTk):
         popup_final.geometry("800x300")
         popup_final.attributes('-topmost', True)
 
-        popup_final.config(bg="#E0E0E0")
+        popup_final.config(bg="#FFFFFF")
         popup_final.grid_columnconfigure(0, weight=1)
         popup_final.grid_rowconfigure(0, weight=1)
 
-        frame_labels = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
+        frame_labels = CTkFrame(popup_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
         frame_labels.grid(row= 0, column = 0, columnspan = 3)
 
-        nombre_label = CTkLabel(frame_labels, text="Has creado el siguiente proyecto " + self.entry_code.get(), fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        nombre_label = CTkLabel(frame_labels, text="Has creado el siguiente proyecto " + self.entry_code.get(), fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
         nombre_label.grid(row=0, column=2,  pady=(0, 0))
 
-        war_label = CTkLabel(frame_labels, text="El war del proyecto es " + self.entry_war.get(), fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        war_label = CTkLabel(frame_labels, text="El war del proyecto es " + self.entry_war.get(), fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
         war_label.grid(row=1, column=2, pady=(10, 5))
 
-        ruta_label = CTkLabel(frame_labels, text="Has guardado el proyecto en la ruta " + self.entry_location.get(),  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        ruta_label = CTkLabel(frame_labels, text="Has guardado el proyecto en la ruta " + self.entry_location.get(),  fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
         ruta_label.grid(row=2, column=2,  pady=(10, 5))
 
 
         ruta = base_path + "/logs"
-        ruta_label = CTkLabel(frame_labels, text="Para mas informacion consultar los logs en la ruta " + ruta ,  fg_color="#E0E0E0", text_color="black", font=("Arial", 10, "bold"))
+        ruta_label = CTkLabel(frame_labels, text="Para mas informacion consultar los logs en la ruta " + ruta ,  fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
         ruta_label.grid(row=3, column=2,  pady=(10, 5))
 
-        frame_boton = CTkFrame(popup_final, bg_color="#E0E0E0", fg_color="#E0E0E0")
+        frame_boton = CTkFrame(popup_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
         frame_boton.grid(row = 1, column= 0, columnspan = 3)
 
-        menu_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : [popup_final.destroy(), self.cancelar()], bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        menu_button = ctk.CTkButton(frame_boton, text="Volver al menu", command= lambda : [popup_final.destroy(), self.cancelar()], bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         menu_button.grid(row = 0, column = 1, pady = (30,30), padx=(5, 5), sticky= 's')
 
-        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command= lambda : popup_final.destroy(), bg_color='#E0E0E0', fg_color='#69a3d6', border_color='#69a3d6', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command= lambda : popup_final.destroy(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         close_button.grid(row = 0, column = 0, pady = (30,30), padx=(5, 5), sticky= 's')
 
 
