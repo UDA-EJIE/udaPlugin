@@ -547,12 +547,14 @@ class ventanaPaso2(CTkFrame):
             self.tipo_var.set("Edición en línea")
             self.tipo_radio1.configure(state="normal")
             self.tipo_radio2.configure(state="normal")
+            self.validaciones_cliente_checkbox.configure(state="normal")
             
             self.checkbox_var = BooleanVar(value=True)
 
         elif self.checkbox_var.get() == True: 
             self.tipo_radio1.configure(state="disabled")
             self.tipo_radio2.configure(state="disabled")
+            self.validaciones_cliente_checkbox.configure(state="disabled")
             
             self.checkbox_var = BooleanVar(value=False)
 
