@@ -737,12 +737,13 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox.set("")
 
         # crea el array con los nombres de las columnas y una lista con nombre y posicion
-        columnas = [column.name for column in table.columns]
+        columnas = [column.name for column in table.columns if column.primaryKey != 'P']
         self.column_dict = {name: pos for pos, name in enumerate(columnas)}
         
         # Actualizar los valores del combobox
         self.orden_nombre_combobox.configure(values=columnas)
         self.orden_nombre_combobox.set(columnas[0])
+        self.master.ordenColumnas = columnas
 
         
     def obtener_posicion(self, nombre):
@@ -794,6 +795,7 @@ class VentanaColumnas(CTkFrame):
 
         # Checkbuttons para cada columna
         self.column_checkboxes = []
+        columnaOrdenada = self.master.ordenColumnas[self.data_mantenimiento[14][1]]
         for i, columna in enumerate(tables[index_seleccionado].columns):
             text = ""
             if columna.nullable:
@@ -803,7 +805,7 @@ class VentanaColumnas(CTkFrame):
             var = ctk.BooleanVar(value=True)
             checkbox = ctk.CTkCheckBox(self.scrollable_container, text=f"{columna.name}: {columna.type}{text}", variable=var, text_color="black", font=("Arial", 12, "bold"), border_color='#84bfc4', fg_color='#84bfc4')
             checkbox.grid(row=i, column=0, sticky="w")
-            if columna.primaryKey or self.data_mantenimiento[14][1] == i:
+            if columna.primaryKey or columna.name == columnaOrdenada:
                 checkbox.configure(state="disabled")
                 
             self.column_checkboxes.append(var)
@@ -854,17 +856,14 @@ class VentanaColumnas(CTkFrame):
         return tabla_resultados 
     
     def paso3(self,tables, index_seleccionado, datosCargados, data_mantenimiento): 
-        this = self.master
+        this = self.master        
         tablaResultados = self.getTablaResultados(tables[index_seleccionado])
-        #cambiar el reorden por si no estan todas seleccionadas
-        columnsDeletes = len(self.column_checkboxes) - len(tablaResultados[0]['columns'])
-        if (columnsDeletes > 0):# restar a la ordenación
-            data_mantenimiento[14][1] = data_mantenimiento[14][1] - columnsDeletes
-        p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento)
+
+        p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento, self.master.ordenColumnas)
+
         self.master.close_loading_frame()
         this.mostrarResumenFinal(tablaResultados) 
         
-
     def cancelar(self):
         # Cancela todos los eventos pendientes
         self.master.withdraw()

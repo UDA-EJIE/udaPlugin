@@ -13,7 +13,7 @@ from customtkinter import *
 from datetime import datetime
 
 #INICIO función principal
-def initPaso3(tables,yaml_data, data_mantenimiento):
+def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
     # work only controller
     proyectName = yaml_data["project_name"]
     proyectWar = yaml_data["war_project_name"]
@@ -46,6 +46,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         columnas = columnsDates[0]
         allColumnsNoPk = [x for x in columnas if x['primaryKey'] != 'P']
         allColumns = columnsDates[1] + allColumnsNoPk
+        sord = calcularOrden(data_mantenimiento[14][1],columnsOriginal,allColumnsNoPk)
         data["columnsDates"] = columnsDates[0]
         data["allColumns"] = allColumns
         data["allColumnsNoPk"] = allColumnsNoPk
@@ -76,7 +77,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
         data["maint"]["multiselection"]  = data_mantenimiento[11][1]
         data["maint"]["loadOnStartUp"]  = data_mantenimiento[13][1]
         data["maint"]["order"]  = {}
-        data["maint"]["order"]["sord"]  = data_mantenimiento[14][1]
+        data["maint"]["order"]["sord"]  = sord
         data["maint"]["order"]["sidx"]  = data_mantenimiento[15][1]
         data["titleMaint"]  = data_mantenimiento[1][1]
         data["nameMaint"]  = data_mantenimiento[00][1].strip() 
@@ -122,3 +123,12 @@ def initPaso3(tables,yaml_data, data_mantenimiento):
     sys.stderr.flush()
         
 #FIN función principal
+def calcularOrden(pos,columns, columsSelected):
+  orden = 0
+  columna = columns[pos]
+  
+  for i, col in enumerate(columsSelected):
+    if (columna == col['name']):
+     orden = i
+     break
+  return orden
