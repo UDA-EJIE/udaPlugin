@@ -270,8 +270,7 @@ class PaginaUno(CTkFrame):
 
 
 
-    def mostrar_resultados(self, files, ruta):
-        """Muestra los archivos encontrados en una nueva ventana con radiobuttons."""
+    def mostrar_resultados_scrollbar(self, files, ruta):
         resultados_window = ctk.CTkToplevel(self)
         resultados_window.title("Resultados de Búsqueda")
         resultados_window.geometry("600x300")
@@ -281,35 +280,92 @@ class PaginaUno(CTkFrame):
         # Variable para almacenar el archivo seleccionado
         selected_file = tk.StringVar(value=None)
 
-        # Frame para contener los radiobuttons
-        file_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
-        file_frame.pack(fill="both", expand=True)
-        desc_label = CTkLabel(file_frame, text="Seleccione un WAR ", text_color= "black")
-        desc_label.grid(row=0, column=0, columnspan=3, pady=(5, 1), padx=20, sticky="w")
-        if (ruta != ''):
-            desc_label2 = CTkLabel(file_frame, text="(" + ruta +")" , text_color= "black")
-            desc_label2.grid(row=1, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+        # Frame para contener los radiobuttons con scrollbar
+        scrollbar_container = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        scrollbar_container.grid(row=1, column=0, columnspan=3, sticky="nsew")
+        scrollbar_container.grid_columnconfigure(0, weight=1)
+        scrollbar_container.grid_rowconfigure(0, weight=1)
+        
+        scrollbar_resumen = ctk.CTkScrollableFrame(scrollbar_container, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+        scrollbar_resumen.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Descripción
+        desc_label = ctk.CTkLabel(scrollbar_resumen, text="Seleccione un WAR", text_color="black")
+        desc_label.pack(fill="x", pady=(5, 1), padx=20, anchor="w")
+        
+        if ruta != '':
+            desc_label2 = ctk.CTkLabel(scrollbar_resumen, text="(" + ruta + ")", text_color="black")
+            desc_label2.pack(fill="x", pady=(0, 2), padx=30, anchor="w")
 
         # Añadir radiobuttons para cada archivo
-        if(files != None and len(files) > 0):
-            for index, file in enumerate(files):
-                radiobutton = ctk.CTkRadioButton(file_frame, text=file, variable=selected_file, value=file, border_color='#84bfc4', fg_color='#84bfc4', text_color= "black", font=("Arial", 12, "bold"))
-                radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
-        else:    
-            desc_label3 = CTkLabel(file_frame, text="Esta ruta no contiene ningún War",text_color="red")
-            desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")   
+        if files and len(files) > 0:
+            for file in files:
+                radiobutton = ctk.CTkRadioButton(scrollbar_resumen, text=file, variable=selected_file, value=file, border_color='#84bfc4', fg_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"))
+                radiobutton.pack(fill="x", padx=60, pady=3, anchor="w")
+        else:
+            desc_label3 = ctk.CTkLabel(scrollbar_resumen, text="Esta ruta no contiene ningún War", text_color="red")
+            desc_label3.pack(fill="x", pady=(0, 2), padx=30, anchor="w")
 
         # Botones de acción en el pie de página
         button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
-        button_frame.pack(fill="x", pady=20)
-            
-        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command= lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold")) 
+        button_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=20)
+        
+        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         buscar_button.pack(side="left", padx=10, expand=True)
-            
-        cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+        
+        cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         cancel_button.pack(side="right", padx=10, expand=True)
-        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(),ruta), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
-        accept_button.pack(side="right", padx=10, expand=True)        
+        
+        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        accept_button.pack(side="right", padx=10, expand=True)
+
+    def mostrar_resultados(self, files, ruta):
+
+
+        if len(files) > 6:
+            self.mostrar_resultados_scrollbar(files, ruta)
+        
+        else:
+
+            """Muestra los archivos encontrados en una nueva ventana con radiobuttons."""
+            resultados_window = ctk.CTkToplevel(self)
+            resultados_window.title("Resultados de Búsqueda")
+            resultados_window.geometry("600x300")
+            resultados_window.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
+            resultados_window.attributes('-topmost', True)  # Asegura que la ventana emergente se muestre al frente
+
+            # Variable para almacenar el archivo seleccionado
+            selected_file = tk.StringVar(value=None)
+
+            # Frame para contener los radiobuttons
+            file_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
+            file_frame.pack(fill="both", expand=True)
+            desc_label = CTkLabel(file_frame, text="Seleccione un WAR ", text_color= "black")
+            desc_label.grid(row=0, column=0, columnspan=3, pady=(5, 1), padx=20, sticky="w")
+            if (ruta != ''):
+                desc_label2 = CTkLabel(file_frame, text="(" + ruta +")" , text_color= "black")
+                desc_label2.grid(row=1, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+
+            # Añadir radiobuttons para cada archivo
+            if(files != None and len(files) > 0):
+                for index, file in enumerate(files):
+                    radiobutton = ctk.CTkRadioButton(file_frame, text=file, variable=selected_file, value=file, border_color='#84bfc4', fg_color='#84bfc4', text_color= "black", font=("Arial", 12, "bold"))
+                    radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
+            else:    
+                desc_label3 = CTkLabel(file_frame, text="Esta ruta no contiene ningún War",text_color="red")
+                desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")   
+
+            # Botones de acción en el pie de página
+            button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
+            button_frame.pack(fill="x", pady=20)
+                
+            buscar_button = ctk.CTkButton(button_frame, text="Buscar", command= lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold")) 
+            buscar_button.pack(side="left", padx=10, expand=True)
+                
+            cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+            cancel_button.pack(side="right", padx=10, expand=True)
+            accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(),ruta), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+            accept_button.pack(side="right", padx=10, expand=True)        
 
 
     def aceptar(self, frame, selected_file,ruta):
