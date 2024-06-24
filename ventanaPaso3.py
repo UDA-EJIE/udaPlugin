@@ -508,22 +508,22 @@ class ventanaPaso2(CTkFrame):
         if data_mantenimiento ==None:
             self.checkbox_var = BooleanVar(value=True)
         else: 
-           self.checkbox_var = BooleanVar(value=True if data_mantenimiento[2][1] == 0  else False)
+           self.checkbox_var = BooleanVar(value=True if data_mantenimiento["isMaint"] == 0  else False)
 
            self.mantenimiento_activo(data_mantenimiento)
 
         if data_mantenimiento is not None:
-            self.nombre_entry.insert(0, data_mantenimiento[00][1])
-            self.titulo_entry.insert(0, data_mantenimiento[1][1])
-            self.tipo_var.set(data_mantenimiento[3][1])
-            self.master.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento[4][1])  
-            self.tipologia_label_combobox.set(data_mantenimiento[5][1])
-            self.master.configurar_checkbox(self.botonera_checkbox, data_mantenimiento[6][1])   
-            self.master.configurar_checkbox(self.menu_contextual_checkbox, data_mantenimiento[7][1])
-            self.master.configurar_checkbox(self.filtrado_datos_checkbox, data_mantenimiento[8][1])
-            self.master.configurar_checkbox(self.busqueda_checkbox, data_mantenimiento[9][1])
-            self.master.configurar_checkbox(self.validaciones_cliente_checkbox, data_mantenimiento[10][1])
-            self.master.configurar_checkbox(self.multiseleccion_checkbox, data_mantenimiento[11][1])
+            self.nombre_entry.insert(0, data_mantenimiento["nombre_mantenimiento"])
+            self.titulo_entry.insert(0, data_mantenimiento["titulo_mantenimiento"])
+            self.tipo_var.set(data_mantenimiento["type"])
+            self.master.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento["requestData"])  
+            self.tipologia_label_combobox.set(data_mantenimiento["saveButton"])
+            self.master.configurar_checkbox(self.botonera_checkbox, data_mantenimiento["buttons"])   
+            self.master.configurar_checkbox(self.menu_contextual_checkbox, data_mantenimiento["contextMenu"])
+            self.master.configurar_checkbox(self.filtrado_datos_checkbox, data_mantenimiento["filter"])
+            self.master.configurar_checkbox(self.busqueda_checkbox, data_mantenimiento["search"])
+            self.master.configurar_checkbox(self.validaciones_cliente_checkbox, data_mantenimiento["clientValidation"])
+            self.master.configurar_checkbox(self.multiseleccion_checkbox, data_mantenimiento["multiselection"])
 
 
 
@@ -589,21 +589,21 @@ class ventanaPaso2(CTkFrame):
             self.tipo_var = self.tipo_var.get()
             datos_servidor = self.recuperar_checkbox.get()
        
-        datos = [
+        datos = {}#lista
 
-            ("nombre_mantenimiento", self.nombre_entry.get()),
-            ("titulo_mantenimiento", self.titulo_entry.get()),
-            ("mantenimiento", self.mantenimiento_checkbox.get()),  
-            ("tipo_mantenimiento", self.tipo_var),
-            ("datos_servidor", datos_servidor),
-            ("tipologia_botones", self.tipologia_label_combobox.get()),
-            ("botonera", self.botonera_checkbox.get()), 
-            ("menu_contextual", self.menu_contextual_checkbox.get()),
-            ("filtrado_datos", self.filtrado_datos_checkbox.get()),
-            ("busqueda", self.busqueda_checkbox.get()),
-            ("validaciones_cliente", self.validaciones_cliente_checkbox.get()),
-            ("multiseleccion", self.multiseleccion_checkbox.get())
-        ]
+        datos["nombre_mantenimiento"] = self.nombre_entry.get()
+        datos["titulo_mantenimiento"] = self.titulo_entry.get()
+        datos["isMaint"] = self.mantenimiento_checkbox.get()  
+        datos["tipoMantenimiento"] = self.tipo_var
+        datos["requestData"] = datos_servidor
+        datos["saveButton"] = self.tipologia_label_combobox.get()
+        datos["buttons"] = self.botonera_checkbox.get() 
+        datos["contextMenu"] = self.menu_contextual_checkbox.get()
+        datos["filter"] = self.filtrado_datos_checkbox.get()
+        datos["search"] = self.busqueda_checkbox.get()
+        datos["clientValidation"] = self.validaciones_cliente_checkbox.get()
+        datos["multiselection"] = self.multiseleccion_checkbox.get()
+        
         return datos
     
     def cancelar(self):
@@ -668,7 +668,7 @@ class VentanaPaso3(CTkFrame):
         self.cargar_check = CTkCheckBox(right_container, text="Cargar al inicio de la ventana", text_color="black", variable=var_cargar, border_color='#84bfc4', fg_color='#84bfc4')
         self.cargar_check.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=10)
         # Cuando la tabla no tiene filtrado, se fuerza su carga automática.
-        if not self.data_mantenimiento[8][1]:
+        if not "filter" in self.data_mantenimiento:
             self.cargar_check.configure(state="disabled")
 
         orden_label = CTkLabel(right_container, text="Ordenación:", text_color="black")
@@ -698,11 +698,11 @@ class VentanaPaso3(CTkFrame):
         if data_mantenimiento is not None and len(self.data_mantenimiento) > 12:
             self.url_entry.delete(0, "end") 
             self.alias_entry.delete(0, "end")  
-            self.url_entry.insert(0, data_mantenimiento[16][1])
-            self.alias_entry.insert(0, data_mantenimiento[12][1])
-            self.master.configurar_checkbox(self.cargar_check, data_mantenimiento[13][1])
-            self.orden_combobox.set(data_mantenimiento[15][1])
-            self.orden_nombre_combobox.set(self.orden_nombre_combobox._values[data_mantenimiento[14][1]])
+            self.url_entry.insert(0, data_mantenimiento["urlBase"])
+            self.alias_entry.insert(0, data_mantenimiento["alias"])
+            self.master.configurar_checkbox(self.cargar_check, data_mantenimiento["loadOnStartUp"])
+            self.orden_combobox.set(data_mantenimiento["sidx"])
+            self.orden_nombre_combobox.set(self.orden_nombre_combobox._values[data_mantenimiento["sord"]])
             tablaName = self.tables[self.tabla_seleccionada_index].name
             self.radio_var.set(tablaName)
         #self.master.ocultarSpinner()
@@ -717,11 +717,11 @@ class VentanaPaso3(CTkFrame):
         
         if  len(self.data_mantenimiento) > 12: 
             self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 4]
-        self.data_mantenimiento.append(("alias", self.alias_entry.get()))
-        self.data_mantenimiento.append(("cargar_check", self.cargar_check.get()))
-        self.data_mantenimiento.append(("ordenacion_por", self.obtener_posicion(self.orden_nombre_combobox.get())))
-        self.data_mantenimiento.append(("ordenacion", (self.orden_combobox.get())))
-        self.data_mantenimiento.append(("url", self.url_entry.get()))
+        self.data_mantenimiento["alias"] = self.alias_entry.get()
+        self.data_mantenimiento["loadOnStartUp"] = self.cargar_check.get()
+        self.data_mantenimiento["sord"] =  self.obtener_posicion(self.orden_nombre_combobox.get())
+        self.data_mantenimiento["sidx"] = self.orden_combobox.get()
+        self.data_mantenimiento["urlBase"] = self.url_entry.get()
 
 
 
@@ -797,7 +797,7 @@ class VentanaColumnas(CTkFrame):
 
         # Checkbuttons para cada columna
         self.column_checkboxes = []
-        columnaOrdenada = self.master.ordenColumnas[self.data_mantenimiento[14][1]]
+        columnaOrdenada = self.master.ordenColumnas[self.data_mantenimiento["sord"]]
         for i, columna in enumerate(tables[index_seleccionado].columns):
             text = ""
             if columna.nullable:
