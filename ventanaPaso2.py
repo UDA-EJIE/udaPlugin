@@ -586,7 +586,7 @@ class PaginaTres(CTkFrame):
 
 
 
-        if len(files) > 6:
+        if files != None and len(files) > 6:
             self.mostrar_resultados_scrollbar(files, ruta)
 
         else:

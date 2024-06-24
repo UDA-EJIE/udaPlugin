@@ -168,12 +168,6 @@ class PaginaUno(CTkFrame):
         print("Conexión probada")
         logging.info("Conexión probada")
         
-        if self.war_entry.get() == "":
-           self.configuration_warning.configure(text="Seleccione un proyecto WAR")
-           self.configuration_warning.configure(text_color ="red")
-           #self.master.ocultarSpinner()
-           return False
-       
         un = self.entries[4].get()
         pw = self.entries[5].get()
         sid = self.entries[1].get()
@@ -322,7 +316,7 @@ class PaginaUno(CTkFrame):
     def mostrar_resultados(self, files, ruta):
 
 
-        if len(files) > 6:
+        if files != None and len(files) > 6:
             self.mostrar_resultados_scrollbar(files, ruta)
         
         else:
@@ -942,31 +936,11 @@ class VentanaPrincipal(CTk):
         return data  
 
     def mostrarSpinner(self,caso):
-        # resultados_window2 = ctk.CTkToplevel(self)
-        # resultados_window2.title("")
-        # resultados_window2.attributes('-topmost', True)
-        # resultados_window2.wm_attributes('-alpha',0.8)
-        # #resultados_window2.resizable(width=None, height=None)
-        # #resultados_window2.transient()
-        # resultados_window2.overrideredirect(True)
-        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        # padx = -10 # the padding you need.
-        # pady = -10
-        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        # width = self.winfo_screenwidth() - 80
-        # height = self.winfo_screenheight() - 80
-        # resultados_window2.geometry(str(width)+"x"+str(height))
-        # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
-        # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        # l_frame = CTkFrame(resultados_window2, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
-        # progressbar.start()
-        # l.pack()
-
+        # validar al paso 2
+        if(caso == "avanzarPaso2" and self.pagina_actual.war_entry.get() == ""):
+            self.pagina_actual.configuration_warning.configure(text="Seleccione un proyecto WAR")
+            self.pagina_actual.configuration_warning.configure(text_color ="red")
+            return False
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
@@ -982,7 +956,6 @@ class VentanaPrincipal(CTk):
         self.update()
         if(caso == "avanzarPaso2"):
             threading.Thread(target=self.pagina_actual.avanzar_paso2()).start()
-            #resultados_window2.after(710, self.pagina_actual.avanzar_paso2)
         elif caso == "paso3To4":#ir a las columnas
             self.update()
             threading.Thread(target=self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)).start()
