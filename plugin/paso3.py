@@ -84,8 +84,14 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         data["urlBase"]  = data_mantenimiento["urlBase"]
         data["urlStatics"]  = "../"+tNameOriginal
         destinoWarViewsFinal = destinoWarViews + alias +"/"
-        destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/"
-
+        destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/" 
+        pks = ""
+        for pk in data["listPks"] :
+          if pks != "":
+            pks = pks +";"
+          pks = pks + snakeToCamel(pk["name"])
+        data["maint"]["primaryKey"] = pks     
+        
         logging.info("SRC MAINT Jsp:: " +dirMaintJsp)
         logging.info("DEST MAINT Jsp:: " +destinoWarViewsFinal)
         now = datetime.now()
