@@ -168,12 +168,6 @@ class PaginaUno(CTkFrame):
         print("Conexión probada")
         logging.info("Conexión probada")
         
-        if self.war_entry.get() == "":
-           self.configuration_warning.configure(text="Seleccione un proyecto WAR")
-           self.configuration_warning.configure(text_color ="red")
-           #self.master.ocultarSpinner()
-           return False
-       
         un = self.entries[4].get()
         pw = self.entries[5].get()
         sid = self.entries[1].get()
@@ -322,7 +316,7 @@ class PaginaUno(CTkFrame):
     def mostrar_resultados(self, files, ruta):
 
 
-        if len(files) > 6:
+        if files != None and len(files) > 6:
             self.mostrar_resultados_scrollbar(files, ruta)
         
         else:
@@ -457,7 +451,7 @@ class ventanaPaso2(CTkFrame):
         tipo_label.grid(row=3, column=0, sticky="w", padx=(20, 0))
         
 
-        self.tipo_var = tk.StringVar(value="Edición en línea")
+        self.tipo_var = tk.StringVar(value="Formulario de detalle")
         self.tipo_radio1 = CTkRadioButton(contenedor_opciones, text="Edición en línea", variable=self.tipo_var, value="Edición en línea", text_color="black", command=lambda: self.edicion_linea(), border_color='#84bfc4', fg_color='#84bfc4' )
         self.tipo_radio1.grid(row=3, column=0, sticky="w", padx=(200, 0))
         self.tipo_radio2 = CTkRadioButton(contenedor_opciones, text="Formulario de detalle", variable=self.tipo_var, value="Formulario de detalle", text_color="black", command=lambda: self.edicion_formulario_detalle(), border_color='#84bfc4', fg_color='#84bfc4')
@@ -466,6 +460,7 @@ class ventanaPaso2(CTkFrame):
         # Radiobuttons para tipo de mantenimiento / se inicializan antes para poder deshabilitarlos
         self.recuperar_checkbox = CTkCheckBox(contenedor_opciones, text="Recuperar datos de detalle desde servidor", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.recuperar_checkbox.grid(row=5, column=0, sticky="w", padx=(200, 0) ,pady=(10,10))
+        self.recuperar_checkbox.select()
 
 
         self.label_tipologia = CTkLabel(contenedor_opciones, text="Tipología de botones:", text_color="black")
@@ -479,18 +474,22 @@ class ventanaPaso2(CTkFrame):
         # Opciones adicionales
         self.botonera_checkbox = CTkCheckBox(contenedor_opciones, text="Botonera", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.botonera_checkbox.grid(row=7, column=0, padx=20, pady=5, sticky="w")
+        self.botonera_checkbox.select()
 
         self.menu_contextual_checkbox = CTkCheckBox(contenedor_opciones, text="Menú contextual", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.menu_contextual_checkbox.grid(row=8, column=0, padx=20, pady=5, sticky="w")
+        self.menu_contextual_checkbox.select()
 
         self.filtrado_datos_checkbox = CTkCheckBox(contenedor_opciones, text="Filtrado de datos", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.filtrado_datos_checkbox.grid(row=9, column=0, padx=20, pady=5, sticky="w")
+        self.filtrado_datos_checkbox.select()
 
         self.busqueda_checkbox = CTkCheckBox(contenedor_opciones, text="Búsqueda", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.busqueda_checkbox.grid(row=10, column=0, padx=20, pady=5, sticky="w")
 
         self.validaciones_cliente_checkbox = CTkCheckBox(contenedor_opciones, text="Validaciones cliente", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.validaciones_cliente_checkbox.grid(row=11, column=0, padx=20, pady=5, sticky="w")
+        self.validaciones_cliente_checkbox.select()
 
         self.multiseleccion_checkbox = CTkCheckBox(contenedor_opciones, text="Multiselección", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.multiseleccion_checkbox.grid(row=12, column=0, padx=20, pady=(5, 20), sticky="w")
@@ -937,31 +936,11 @@ class VentanaPrincipal(CTk):
         return data  
 
     def mostrarSpinner(self,caso):
-        # resultados_window2 = ctk.CTkToplevel(self)
-        # resultados_window2.title("")
-        # resultados_window2.attributes('-topmost', True)
-        # resultados_window2.wm_attributes('-alpha',0.8)
-        # #resultados_window2.resizable(width=None, height=None)
-        # #resultados_window2.transient()
-        # resultados_window2.overrideredirect(True)
-        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        # padx = -10 # the padding you need.
-        # pady = -10
-        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        # width = self.winfo_screenwidth() - 80
-        # height = self.winfo_screenheight() - 80
-        # resultados_window2.geometry(str(width)+"x"+str(height))
-        # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
-        # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        # l_frame = CTkFrame(resultados_window2, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
-        # progressbar.start()
-        # l.pack()
-
+        # validar al paso 2
+        if(caso == "avanzarPaso2" and self.pagina_actual.war_entry.get() == ""):
+            self.pagina_actual.configuration_warning.configure(text="Seleccione un proyecto WAR")
+            self.pagina_actual.configuration_warning.configure(text_color ="red")
+            return False
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
@@ -977,7 +956,6 @@ class VentanaPrincipal(CTk):
         self.update()
         if(caso == "avanzarPaso2"):
             threading.Thread(target=self.pagina_actual.avanzar_paso2()).start()
-            #resultados_window2.after(710, self.pagina_actual.avanzar_paso2)
         elif caso == "paso3To4":#ir a las columnas
             self.update()
             threading.Thread(target=self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)).start()
