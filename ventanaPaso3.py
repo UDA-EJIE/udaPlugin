@@ -457,7 +457,7 @@ class ventanaPaso2(CTkFrame):
         tipo_label.grid(row=3, column=0, sticky="w", padx=(20, 0))
         
 
-        self.tipo_var = tk.StringVar(value="Edición en línea")
+        self.tipo_var = tk.StringVar(value="Formulario de detalle")
         self.tipo_radio1 = CTkRadioButton(contenedor_opciones, text="Edición en línea", variable=self.tipo_var, value="Edición en línea", text_color="black", command=lambda: self.edicion_linea(), border_color='#84bfc4', fg_color='#84bfc4' )
         self.tipo_radio1.grid(row=3, column=0, sticky="w", padx=(200, 0))
         self.tipo_radio2 = CTkRadioButton(contenedor_opciones, text="Formulario de detalle", variable=self.tipo_var, value="Formulario de detalle", text_color="black", command=lambda: self.edicion_formulario_detalle(), border_color='#84bfc4', fg_color='#84bfc4')
@@ -466,6 +466,7 @@ class ventanaPaso2(CTkFrame):
         # Radiobuttons para tipo de mantenimiento / se inicializan antes para poder deshabilitarlos
         self.recuperar_checkbox = CTkCheckBox(contenedor_opciones, text="Recuperar datos de detalle desde servidor", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.recuperar_checkbox.grid(row=5, column=0, sticky="w", padx=(200, 0) ,pady=(10,10))
+        self.recuperar_checkbox.select()
 
 
         self.label_tipologia = CTkLabel(contenedor_opciones, text="Tipología de botones:", text_color="black")
@@ -479,18 +480,22 @@ class ventanaPaso2(CTkFrame):
         # Opciones adicionales
         self.botonera_checkbox = CTkCheckBox(contenedor_opciones, text="Botonera", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.botonera_checkbox.grid(row=7, column=0, padx=20, pady=5, sticky="w")
+        self.botonera_checkbox.select()
 
         self.menu_contextual_checkbox = CTkCheckBox(contenedor_opciones, text="Menú contextual", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.menu_contextual_checkbox.grid(row=8, column=0, padx=20, pady=5, sticky="w")
+        self.menu_contextual_checkbox.select()
 
         self.filtrado_datos_checkbox = CTkCheckBox(contenedor_opciones, text="Filtrado de datos", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.filtrado_datos_checkbox.grid(row=9, column=0, padx=20, pady=5, sticky="w")
+        self.filtrado_datos_checkbox.select()
 
         self.busqueda_checkbox = CTkCheckBox(contenedor_opciones, text="Búsqueda", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.busqueda_checkbox.grid(row=10, column=0, padx=20, pady=5, sticky="w")
 
         self.validaciones_cliente_checkbox = CTkCheckBox(contenedor_opciones, text="Validaciones cliente", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.validaciones_cliente_checkbox.grid(row=11, column=0, padx=20, pady=5, sticky="w")
+        self.validaciones_cliente_checkbox.select()
 
         self.multiseleccion_checkbox = CTkCheckBox(contenedor_opciones, text="Multiselección", text_color="black", border_color='#84bfc4', fg_color='#84bfc4')
         self.multiseleccion_checkbox.grid(row=12, column=0, padx=20, pady=(5, 20), sticky="w")
