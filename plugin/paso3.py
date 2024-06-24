@@ -46,12 +46,12 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         columnas = columnsDates[0]
         allColumnsNoPk = [x for x in columnas if x['primaryKey'] != 'P']
         allColumns = columnsDates[1] + allColumnsNoPk
-        sord = calcularOrden(data_mantenimiento[14][1],columnsOriginal,allColumnsNoPk)
+        sord = calcularOrden(data_mantenimiento["sord"],columnsOriginal,allColumnsNoPk)
         data["columnsDates"] = columnsDates[0]
         data["allColumns"] = allColumns
         data["allColumnsNoPk"] = allColumnsNoPk
         tNameOriginal = table["name"]
-        alias = data_mantenimiento[12][1].strip().lower() 
+        alias = data_mantenimiento["alias"].strip().lower() 
         if(alias == ''):
           alias = snakeToCamel(tNameOriginal)
         else: 
@@ -66,26 +66,24 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         
         # Opciones mantenimiento
         data["maint"] = {}
-        data["maint"]["name"]  = data_mantenimiento[00][1].strip()
-        data["maint"]["title"]  = data_mantenimiento[1][1]
-        data["maint"]["isMaint"] = data_mantenimiento[2][1]
-        data["maint"]["type"] = 'INLINE' if data_mantenimiento[3][1] == 'Edición en línea' else "DETAIL"
+        data["maint"]["isMaint"] = data_mantenimiento["isMaint"]
+        data["maint"]["type"] = 'INLINE' if data_mantenimiento["tipoMantenimiento"] == 'Edición en línea' else "DETAIL"
         data["maint"]["detail"]  = {}
-        data["maint"]["detail"]["requestData"]  = data_mantenimiento[4][1]
-        data["maint"]["detail"]["saveButton"]  = data_mantenimiento[5][1]
-        data["maint"]["buttons"]  = data_mantenimiento[6][1]
-        data["maint"]["contextMenu"]  = data_mantenimiento[7][1]
-        data["maint"]["filter"]  = data_mantenimiento[8][1]
-        data["maint"]["search"]  = data_mantenimiento[9][1]
-        data["maint"]["clientValidation"]  = data_mantenimiento[10][1]
-        data["maint"]["multiselection"]  = data_mantenimiento[11][1]
-        data["maint"]["loadOnStartUp"]  = data_mantenimiento[13][1]
+        data["maint"]["detail"]["requestData"]  = data_mantenimiento["requestData"]
+        data["maint"]["detail"]["saveButton"]  = data_mantenimiento["saveButton"]
+        data["maint"]["buttons"]  = data_mantenimiento["buttons"]
+        data["maint"]["contextMenu"]  = data_mantenimiento["contextMenu"]
+        data["maint"]["filter"]  = data_mantenimiento["filter"]
+        data["maint"]["search"]  = data_mantenimiento["search"]
+        data["maint"]["clientValidation"]  = data_mantenimiento["clientValidation"]
+        data["maint"]["multiselection"]  = data_mantenimiento["multiselection"]
+        data["maint"]["loadOnStartUp"]  = data_mantenimiento["loadOnStartUp"]
         data["maint"]["order"]  = {}
-        data["maint"]["order"]["sidx"]  = data_mantenimiento[14][1]
-        data["maint"]["order"]["sord"]  = data_mantenimiento[15][1]
-        data["maint"]["primaryKey"] = snakeToCamel(data["listPks"][0]["name"])
-        
-        data["urlBase"]  = "../"+toRestUrlNaming(tNameOriginal)
+        data["maint"]["order"]["sord"]  = sord
+        data["maint"]["order"]["sidx"]  = data_mantenimiento["sidx"]
+        data["maint"]["title"]  = data_mantenimiento["titulo_mantenimiento"]
+        data["maint"]["name"]  = data_mantenimiento["nombre_mantenimiento"].strip() 
+        data["urlBase"]  = data_mantenimiento["urlBase"]
         data["urlStatics"]  = "../"+tNameOriginal
         destinoWarViewsFinal = destinoWarViews + alias +"/"
         destinoWarViewsFinalIncludes = destinoWarViewsFinal +"includes/"
