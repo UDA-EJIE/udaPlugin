@@ -11,6 +11,7 @@ import operator
 import logging
 from customtkinter import *
 from datetime import datetime
+from plugin.utils import writeConfig
 
 #INICIO función principal
 def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
@@ -119,6 +120,9 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
            lastTable = True
         modifyTiles(rutaTiles,alias,lastTable)
         modifyMenu(rutaMenu,alias,lastTable)
+        destinoWar = destinoWar.replace(proyectWar+"War/","")
+        writeConfig("RUTA", {"ruta_war":destinoWar})
+        writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoWar})
         logging.info("Fin mantenimento: "+data["tableName"])  
     
     print("Fin paso 3")
