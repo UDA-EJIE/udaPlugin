@@ -533,7 +533,7 @@ class PaginaTres(CTkFrame):
 
 
 
-    def mostrar_resultados_scrollbar(self, files, ruta):
+    def mostrar_resultados_scrollbar(self, files, boton_pulsado, ruta):
         resultados_window = ctk.CTkToplevel(self)
         resultados_window.title("Resultados de Búsqueda")
         resultados_window.geometry("600x300")
@@ -566,20 +566,23 @@ class PaginaTres(CTkFrame):
                 radiobutton = ctk.CTkRadioButton(scrollbar_resumen, text=file, variable=selected_file, value=file, border_color='#84bfc4', fg_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"))
                 radiobutton.pack(fill="x", padx=60, pady=3, anchor="w")
         else:
-            desc_label3 = ctk.CTkLabel(scrollbar_resumen, text="Esta ruta no contiene ningún War", text_color="red")
+            texto = "Esta ruta no contiene ningún War"
+            if boton_pulsado == "negocio" :
+                texto = "Esta ruta no contiene ningún EarClasses"  
+            desc_label3 = CTkLabel(scrollbar_container, text=texto,text_color="red")
             desc_label3.pack(fill="x", pady=(0, 2), padx=30, anchor="w")
 
         # Botones de acción en el pie de página
         button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
         button_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=20)
         
-        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window, boton_pulsado), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         buscar_button.pack(side="left", padx=10, expand=True)
         
         cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         cancel_button.pack(side="right", padx=10, expand=True)
         
-        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(),boton_pulsado, ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         accept_button.pack(side="right", padx=10, expand=True)
 
     def mostrar_resultados(self, files, boton_pulsado,ruta):
@@ -587,7 +590,7 @@ class PaginaTres(CTkFrame):
 
 
         if files != None and len(files) > 6:
-            self.mostrar_resultados_scrollbar(files, ruta)
+            self.mostrar_resultados_scrollbar(files, boton_pulsado, ruta)
 
         else:
 
@@ -627,12 +630,12 @@ class PaginaTres(CTkFrame):
             button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
             button_frame.pack(fill="x", pady=20)
                 
-            buscar_button = ctk.CTkButton(button_frame, text="Buscar", command= lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold")) 
+            buscar_button = ctk.CTkButton(button_frame, text="Buscar", command= lambda: self.open_file_explorer(resultados_window, boton_pulsado), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold")) 
             buscar_button.pack(side="left", padx=10, expand=True)
                 
             cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
             cancel_button.pack(side="right", padx=10, expand=True)
-            accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(),ruta), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+            accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), boton_pulsado,ruta), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
             accept_button.pack(side="right", padx=10, expand=True) 
 
 
