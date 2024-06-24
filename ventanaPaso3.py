@@ -515,7 +515,7 @@ class ventanaPaso2(CTkFrame):
         if data_mantenimiento is not None:
             self.nombre_entry.insert(0, data_mantenimiento["nombre_mantenimiento"])
             self.titulo_entry.insert(0, data_mantenimiento["titulo_mantenimiento"])
-            self.tipo_var.set(data_mantenimiento["type"])
+            self.tipo_var.set(data_mantenimiento["tipoMantenimiento"])
             self.master.configurar_checkbox(self.recuperar_checkbox, data_mantenimiento["requestData"])  
             self.tipologia_label_combobox.set(data_mantenimiento["saveButton"])
             self.master.configurar_checkbox(self.botonera_checkbox, data_mantenimiento["buttons"])   
