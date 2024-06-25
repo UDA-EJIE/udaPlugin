@@ -158,12 +158,13 @@ def modifyMenu(ruta,entityName, final):
             print (linea2)
             print (linea3)
             print (linea4)
-          print (linea)
+          print (linea, end='')
       else:   
-        if linea in (entityName+"/maint"):#encontrado
+        if entityName+"/maint" in (linea):#encontrado
             encontrado = True
             logging.warning('Mantenimiento ya definido en el menu.jsp')
-        print (linea)
+        print (linea, end='')
+
 #section String padre, keyArray array de llaves
 def writeConfig(section,key):
     try:
