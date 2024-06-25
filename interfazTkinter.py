@@ -134,6 +134,14 @@ class Paso1(CTk):
         self.quit()
         self.main_menu.MainMenuLoop()
 
+    def cerrar(self):
+        # Cancela todos los eventos pendientes
+        self.withdraw()
+        self.quit()
+
+
+
+
 
     def toggle_textbox(self):# check localización por defecto
         if self.use_default_location.get():
@@ -370,7 +378,7 @@ class Paso1(CTk):
         menu_button = ctk.CTkButton(frame_boton, text="Volver al menú", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
         menu_button.grid(row=0, column=1, padx=(6, 200))
 
-        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.destroy(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.cerrar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
         close_button.grid(row=0, column=0, padx=(350, 5))
 
         # Mostrar el nuevo frame
