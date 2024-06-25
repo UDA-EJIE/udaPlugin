@@ -53,7 +53,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='mi_proyecto',
+    name='UDA_PLUGIN',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
