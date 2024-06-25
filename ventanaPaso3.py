@@ -65,6 +65,8 @@ class PaginaUno(CTkFrame):
         archivoWar = utl.buscarArchivo(rutaActual,"War") 
         if(archivoWar != ''):
            rutaActual = rutaActual+"/"+archivoWar
+           rutaActual = rutaActual.replace("///","\\")
+           rutaActual = rutaActual.replace("//","\\")
            nombreProyecto = utl.obtenerNombreProyectoWar(rutaActual) 
            self.master.nombreProyecto = nombreProyecto
            self.master.archivoWar = rutaActual 
@@ -922,6 +924,8 @@ class VentanaPrincipal(CTk):
 
     def getDatos(self,rutaActual):
         project_name = self.nombreProyecto
+        #cambiar barras
+        self.archivoWar = self.archivoWar.replace('\\','/')
         splits = self.archivoWar.split('/')
         war_name = splits[len(splits) - 1]
 

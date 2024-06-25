@@ -82,6 +82,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         data["maint"]["order"]["sidx"]  = data_mantenimiento["sidx"]
         data["maint"]["title"]  = data_mantenimiento["titulo_mantenimiento"]
         data["maint"]["name"]  = data_mantenimiento["nombre_mantenimiento"].strip() 
+        data["nameMaint"] = data["maint"]["name"]# para los archivos de los includes
         data["urlBase"]  = data_mantenimiento["urlBase"]
         data["urlStatics"]  = "../"+tNameOriginal
         destinoWarViewsFinal = destinoWarViews + alias +"/"
