@@ -741,7 +741,7 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox.set("")
 
         # crea el array con los nombres de las columnas y una lista con nombre y posicion
-        columnas = [column.name for column in table.columns if column.primaryKey != 'P']
+        columnas = [column.name for column in table.columns]
         self.column_dict = {name: pos for pos, name in enumerate(columnas)}
         
         # Actualizar los valores del combobox
