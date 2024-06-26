@@ -16,6 +16,8 @@ def getColumnsDates(columns):
         type = columnOld["type"]
         newColumn["activate"] = "true"
         newColumn["editable"] = "true"
+        if columnOld["primaryKey"] == "P": 
+            newColumn["editable"] = "false"
         newColumn["hidden"] = "false"
         newColumn["requiredEditRules"] = "false"
         

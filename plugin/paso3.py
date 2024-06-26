@@ -47,7 +47,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         columnas = columnsDates[0]
         allColumnsNoPk = [x for x in columnas if x['primaryKey'] != 'P']
         allColumns = columnsDates[1] + allColumnsNoPk
-        sord = calcularOrden(data_mantenimiento["sord"],columnsOriginal,allColumnsNoPk)
+        sord = calcularOrden(data_mantenimiento["sord"],columnsOriginal,allColumns)
         data["columnsDates"] = columnsDates[0]
         data["allColumns"] = allColumns
         data["allColumnsNoPk"] = allColumnsNoPk
