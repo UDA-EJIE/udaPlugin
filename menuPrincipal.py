@@ -6,7 +6,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 import logging
 import plugin.utils as utl
-
+import sys
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 logsPath = os.path.join(base_path, 'logs\\log.log')
@@ -22,8 +22,9 @@ class MainMenu(CTkToplevel):
         super().__init__()
 
         self.title("Menú Principal")
-        self.geometry("600x600")  # Configura el tamaño de la ventana
+        self.geometry("900x700")   # Configura el tamaño de la ventana
         self.config(bg="#FFFFFF")
+        self.resizable(width=False, height=False)
 
         self.configure(columnspan = 3)
         self.grid_columnconfigure(1, weight=1)
@@ -44,7 +45,7 @@ class MainMenu(CTkToplevel):
         # Botón para Paso 3
         self.button_paso_3 = CTkButton(self, text="3. Generar mantenimiento", command= lambda:self.abrir_paso3(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
         self.button_paso_3.grid(row= 3 , column = 1,pady=10, padx=20)
-
+        self.protocol("WM_DELETE_WINDOW", lambda: close_win())
     def on_close(self,ventana):
         ventana.destroy()  # Destruye la ventana del paso
         self.deiconify()   # Muestra el menú principal
@@ -66,12 +67,13 @@ class MainMenu(CTkToplevel):
         self.withdraw()
         ventana = paso3.VentanaPrincipal(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
-        #ventana.ocultarSpinner()
         ventana.mainloop()
 
     def MainMenuLoop(self):   
        self.deiconify()
-    
+
+def close_win():
+    sys.exit(0)    
 
 if __name__ == "__main__":
-    MainMenu().mainloop()
+    MainMenu().mainloop()   

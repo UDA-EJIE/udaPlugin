@@ -555,6 +555,7 @@ class ventanaPaso2(CTkFrame):
         elif self.checkbox_var.get() == True: 
             self.tipo_radio1.configure(state="disabled")
             self.tipo_radio2.configure(state="disabled")
+            self.validaciones_cliente_checkbox.deselect()
             self.validaciones_cliente_checkbox.configure(state="disabled")
             
             self.checkbox_var = BooleanVar(value=False)
@@ -883,7 +884,7 @@ class VentanaPrincipal(CTk):
         super().__init__()
         self.title("Generar código para una aplicación UDA")
         self.geometry("900x700") # Puedes ajustar las dimensiones según tus necesidades
-        self.resizable(width=True, height=True)
+        self.resizable(width=False, height=False)
         self.main_menu = main_menu
         self.grid_rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
