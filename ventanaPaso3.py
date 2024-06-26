@@ -235,7 +235,7 @@ class PaginaUno(CTkFrame):
                         if row[4]  == 'P': #primarykey
                             contPrimaryKey = contPrimaryKey + 1
                     else:
-                        if cont > 1 and contPrimaryKey < len(columns):
+                        if cont > 1 and contPrimaryKey > 0 and contPrimaryKey < len(columns):
                             tables.append(Table(tableName,columns)) 
                         contPrimaryKey = 0    
                         if row[4]  == 'P': #primarykey
@@ -245,7 +245,7 @@ class PaginaUno(CTkFrame):
                         column = Column(tableNameBBDD,row[1],row[2],row[3],row[4],None,None,row[6])
                         columns.append(column)  
                     
-                    if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
+                    if cont == len(rows) and contPrimaryKey > 0 and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
         self.master.mostrar_pagina_dos(self.main_menu, tables)           
@@ -703,8 +703,8 @@ class VentanaPaso3(CTkFrame):
             self.url_entry.insert(0, data_mantenimiento["urlBase"])
             self.alias_entry.insert(0, data_mantenimiento["alias"])
             self.master.configurar_checkbox(self.cargar_check, data_mantenimiento["loadOnStartUp"])
-            self.orden_combobox.set(data_mantenimiento["sidx"])
-            self.orden_nombre_combobox.set(self.orden_nombre_combobox._values[data_mantenimiento["sord"]])
+            self.orden_combobox.set(data_mantenimiento["sord"])
+            self.orden_nombre_combobox.set(self.orden_nombre_combobox._values[data_mantenimiento["sidx"]])
             tablaName = self.tables[self.tabla_seleccionada_index].name
             self.radio_var.set(tablaName)
         #self.master.ocultarSpinner()
@@ -721,8 +721,8 @@ class VentanaPaso3(CTkFrame):
             self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 4]
         self.data_mantenimiento["alias"] = self.alias_entry.get()
         self.data_mantenimiento["loadOnStartUp"] = self.cargar_check.get()
-        self.data_mantenimiento["sord"] =  self.obtener_posicion(self.orden_nombre_combobox.get())
-        self.data_mantenimiento["sidx"] = self.orden_combobox.get()
+        self.data_mantenimiento["sidx"] =  self.obtener_posicion(self.orden_nombre_combobox.get())
+        self.data_mantenimiento["sord"] = self.orden_combobox.get()
         self.data_mantenimiento["urlBase"] = self.url_entry.get()
 
 
@@ -799,7 +799,7 @@ class VentanaColumnas(CTkFrame):
 
         # Checkbuttons para cada columna
         self.column_checkboxes = []
-        columnaOrdenada = self.master.ordenColumnas[self.data_mantenimiento["sord"]]
+        columnaOrdenada = self.master.ordenColumnas[self.data_mantenimiento["sidx"]]
         for i, columna in enumerate(tables[index_seleccionado].columns):
             text = ""
             if columna.nullable:

@@ -47,7 +47,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         columnas = columnsDates[0]
         allColumnsNoPk = [x for x in columnas if x['primaryKey'] != 'P']
         allColumns = columnsDates[1] + allColumnsNoPk
-        sord = calcularOrden(data_mantenimiento["sord"],columnsOriginal,allColumns)
+        sidx = calcularOrden(data_mantenimiento["sidx"],columnsOriginal,allColumns)
         data["columnsDates"] = columnsDates[0]
         data["allColumns"] = allColumns
         data["allColumnsNoPk"] = allColumnsNoPk
@@ -78,8 +78,8 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         data["maint"]["multiselection"]  = data_mantenimiento["multiselection"]
         data["maint"]["loadOnStartUp"]  = data_mantenimiento["loadOnStartUp"]
         data["maint"]["order"]  = {}
-        data["maint"]["order"]["sord"]  = sord
-        data["maint"]["order"]["sidx"]  = data_mantenimiento["sidx"]
+        data["maint"]["order"]["sord"]  = data_mantenimiento["sord"]
+        data["maint"]["order"]["sidx"]  = sidx
         data["maint"]["title"]  = data_mantenimiento["titulo_mantenimiento"]
         data["maint"]["name"]  = data_mantenimiento["nombre_mantenimiento"].strip() 
         data["nameMaint"] = data["maint"]["name"]# para los archivos de los includes
