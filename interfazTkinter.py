@@ -328,10 +328,9 @@ class Paso1(CTk):
         self.destroy()
 
 
-    # Function to create and show the popup
+    
     def ventana_final_popup(self):
-
-            # Guardar los valores de los widgets de entrada
+        # Guardar los valores de los widgets de entrada
         entry_code_value = self.entry_code.get()
         entry_war_value = self.entry_war.get()
         entry_location_value = self.entry_location.get()
@@ -342,48 +341,37 @@ class Paso1(CTk):
 
         # Crear un nuevo frame que ocupe toda la ventana
         frame_final = CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
-        frame_final.grid(row=0, column=0, sticky='nsew')
-
-        # Configurar el grid para que el frame ocupe todo el espacio
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-
-        frame_final.grid_rowconfigure(0, weight=1)
-        frame_final.grid_columnconfigure(0, weight=1)
+        frame_final.pack(fill="both", expand=True)
 
         # Frame interno centrado
         frame_center = CTkFrame(frame_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
-        frame_center.grid(row=0, column=0, sticky='nsew') 
+        frame_center.pack(expand=True)
+
 
         nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto " + entry_code_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        nombre_label.grid(row=1, column=1, pady=(75, 10), padx =(30,0), sticky='ew')
+        nombre_label.pack(pady=(0, 10), padx=30)
 
-        war_label = CTkLabel(frame_center, text="El war del proyecto es " +entry_war_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        war_label.grid(row=2, column=1, pady=(10, 10), padx =(30,0), sticky='ew')
+        war_label = CTkLabel(frame_center, text="El war del proyecto es " + entry_war_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        war_label.pack(pady=10, padx=30)
 
-        ruta_label = CTkLabel(frame_center, text="Has guardado els proyecto en la ruta " + entry_location_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        ruta_label.grid(row=3, column=1, pady=(10, 10), padx =(30,0), sticky='ew')
+        ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta " + entry_location_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.pack(pady=10, padx=30)
 
         ruta = base_path + "/logs"
-        ruta_label = CTkLabel(frame_center, text="Para más información consultar los logs en la ruta " + ruta, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        ruta_label.grid(row=4, column=1, pady=(10, 10), padx =(40,0), sticky='ew')
+        logs_label = CTkLabel(frame_center, text="Para más información consultar los logs en la ruta " + ruta, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        logs_label.pack(pady=10, padx=40)
 
         frame_boton = CTkFrame(frame_center, bg_color="#FFFFFF", fg_color="#FFFFFF")
-        frame_boton.grid(row=5, column=1, pady=(10, 10), sticky='ew')
-
-        frame_boton.grid_columnconfigure(0, weight=1)
-        frame_boton.grid_columnconfigure(1, weight=1)
+        frame_boton.pack(pady=10)
 
         menu_button = ctk.CTkButton(frame_boton, text="Volver al menú", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        menu_button.grid(row=0, column=1, padx=(6, 100), pady=(40, 10))
+        menu_button.pack(side="right", padx=(6, 100), pady=(40, 10))
 
         close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.cerrar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        close_button.grid(row=0, column=0, padx=(150, 5), pady=(40, 10))
+        close_button.pack(side="left", padx=(150, 5), pady=(40, 10))
 
         # Mostrar el nuevo frame
-        frame_final.grid()
-
-
+        frame_final.pack(fill="both", expand=True)
 
 if __name__ == "__main__":
 
