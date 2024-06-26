@@ -22,9 +22,8 @@ class Paso1(CTk):
         super().__init__()
 
         self.title("Crear nueva aplicación")
-        width = self.winfo_screenwidth() - 100
-        height = self.winfo_screenheight() - 100
-        self.geometry(f"{self.winfo_screenwidth() - 100}x{self.winfo_screenheight() - 100}")
+        self.geometry("900x700")
+        self.resizable(width=False, height=False)
         
         self.main_menu = main_menu
         # Configurar el color de fondo de la ventana
@@ -162,7 +161,7 @@ class Paso1(CTk):
         for lang_option, lang_var in zip(self.language_options, self.language_vars):
             idiomas_seleccionados.append(lang_option)
 
-        self.default_language_combobox = CTkComboBox(self.idiomas_inner_frame, values= idiomas_seleccionados, command=self.validarIdioma)
+        self.default_language_combobox = CTkComboBox(self.idiomas_inner_frame, values= idiomas_seleccionados, command=self.validarIdioma, fg_color='#84bfc4', text_color="black",state="readonly", font=("Arial", 12, "bold"))
         self.default_language_combobox.grid(row=7, column=1, padx=(0, 20), pady=(25, 2), sticky="ew")
         self.default_language_combobox.set(idiomas_seleccionados[0] if idiomas_seleccionados else "")
         self.default_language_combobox._values = idiomas_seleccionados
@@ -356,18 +355,18 @@ class Paso1(CTk):
         frame_center = CTkFrame(frame_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
         frame_center.grid(row=0, column=0, sticky='nsew') 
 
-        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto " + entry_code_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
-        nombre_label.grid(row=1, column=1, pady=(50, 5), padx =(250,0), sticky='ew')
+        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto " + entry_code_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        nombre_label.grid(row=1, column=1, pady=(75, 10), padx =(30,0), sticky='ew')
 
-        war_label = CTkLabel(frame_center, text="El war del proyecto es " + entry_war_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
-        war_label.grid(row=2, column=1, pady=(5, 5), padx =(250,0), sticky='ew')
+        war_label = CTkLabel(frame_center, text="El war del proyecto es " +entry_war_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        war_label.grid(row=2, column=1, pady=(10, 10), padx =(30,0), sticky='ew')
 
-        ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta " + entry_location_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
-        ruta_label.grid(row=3, column=1, pady=(5, 5), padx =(50,0), sticky='ew')
+        ruta_label = CTkLabel(frame_center, text="Has guardado els proyecto en la ruta " + entry_location_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.grid(row=3, column=1, pady=(10, 10), padx =(30,0), sticky='ew')
 
         ruta = base_path + "/logs"
-        ruta_label = CTkLabel(frame_center, text="Para más información consultar los logs en la ruta " + ruta, fg_color="#FFFFFF", text_color="black", font=("Arial", 10, "bold"))
-        ruta_label.grid(row=4, column=1, pady=(5, 10), padx =(250,0), sticky='ew')
+        ruta_label = CTkLabel(frame_center, text="Para más información consultar los logs en la ruta " + ruta, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.grid(row=4, column=1, pady=(10, 10), padx =(40,0), sticky='ew')
 
         frame_boton = CTkFrame(frame_center, bg_color="#FFFFFF", fg_color="#FFFFFF")
         frame_boton.grid(row=5, column=1, pady=(10, 10), sticky='ew')
@@ -376,10 +375,10 @@ class Paso1(CTk):
         frame_boton.grid_columnconfigure(1, weight=1)
 
         menu_button = ctk.CTkButton(frame_boton, text="Volver al menú", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        menu_button.grid(row=0, column=1, padx=(6, 200))
+        menu_button.grid(row=0, column=1, padx=(6, 100), pady=(40, 10))
 
         close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.cerrar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        close_button.grid(row=0, column=0, padx=(350, 5))
+        close_button.grid(row=0, column=0, padx=(150, 5), pady=(40, 10))
 
         # Mostrar el nuevo frame
         frame_final.grid()

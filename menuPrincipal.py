@@ -22,8 +22,9 @@ class MainMenu(CTkToplevel):
         super().__init__()
 
         self.title("Menú Principal")
-        self.geometry("600x600")  # Configura el tamaño de la ventana
+        self.geometry("900x700")   # Configura el tamaño de la ventana
         self.config(bg="#FFFFFF")
+        self.resizable(width=False, height=False)
 
         self.configure(columnspan = 3)
         self.grid_columnconfigure(1, weight=1)

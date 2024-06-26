@@ -698,15 +698,16 @@ class VentanaPrincipal(CTk):
     def __init__(self, main_menu):
         super().__init__()
         self.title("Generar código de negocio y control")
-        width = self.winfo_screenwidth() - 100
-        height = self.winfo_screenheight() - 100
-        self.geometry(str(width)+"x"+str(height)) # Puedes ajustar las dimensiones según tus necesidades
-        padx = 0 # the padding you need.
-        pady = 0
-        toplevel_offsetx = 50
-        toplevel_offsety = 50
-        self.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        self.resizable(width=True, height=True)
+        # width = self.winfo_screenwidth() - 100
+        # height = self.winfo_screenheight() - 100
+        # self.geometry(str(width)+"x"+str(height)) # Puedes ajustar las dimensiones según tus necesidades
+        # padx = 0 # the padding you need.
+        # pady = 0
+        # toplevel_offsetx = 50
+        # toplevel_offsety = 50
+        # self.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
+        self.geometry("900x700") 
+        self.resizable(width=False, height=False)
         self.stop_event = threading.Event()
 
         self.main_menu = main_menu

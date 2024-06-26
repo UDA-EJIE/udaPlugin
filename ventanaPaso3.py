@@ -884,7 +884,7 @@ class VentanaPrincipal(CTk):
         super().__init__()
         self.title("Generar código para una aplicación UDA")
         self.geometry("900x700") # Puedes ajustar las dimensiones según tus necesidades
-        self.resizable(width=True, height=True)
+        self.resizable(width=False, height=False)
         self.main_menu = main_menu
         self.grid_rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
