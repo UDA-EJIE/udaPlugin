@@ -235,7 +235,7 @@ class PaginaUno(CTkFrame):
                         if row[4]  == 'P': #primarykey
                             contPrimaryKey = contPrimaryKey + 1
                     else:
-                        if cont > 1 and contPrimaryKey < len(columns):
+                        if cont > 1 and contPrimaryKey > 0 and contPrimaryKey < len(columns):
                             tables.append(Table(tableName,columns)) 
                         contPrimaryKey = 0    
                         if row[4]  == 'P': #primarykey
@@ -245,7 +245,7 @@ class PaginaUno(CTkFrame):
                         column = Column(tableNameBBDD,row[1],row[2],row[3],row[4],None,None,row[6])
                         columns.append(column)  
                     
-                    if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
+                    if cont == len(rows) and contPrimaryKey > 0 and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
         self.master.mostrar_pagina_dos(self.main_menu, tables)           
