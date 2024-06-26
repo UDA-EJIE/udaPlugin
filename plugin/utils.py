@@ -42,7 +42,7 @@ def getColumnsDates(columns):
                newColumn["DATA_IMPORT"] = "java.sql.Clob"
         elif type == "BLOB":
               newColumn["DATO_TYPE"] = "Blob"
-              newColumn["DATA_IMPORT"] = "java.sql.Clob"
+              newColumn["DATA_IMPORT"] = "java.sql.Blob"
         elif type == "DATE":
               newColumn["DATO_TYPE"] = "Date"
               newColumn["DATA_IMPORT"] = "java.util.Date"
