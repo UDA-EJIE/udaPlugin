@@ -10,7 +10,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('Column.py', '.'),
-        ('interfazTkinter.py', '.'),
+        ('VentanaPaso1.py', '.'),
         ('Table.py', '.'),
         ('ventanaPaso2.py', '.'),
         ('ventanaPaso3.py', '.'),

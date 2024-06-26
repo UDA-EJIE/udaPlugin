@@ -1,5 +1,5 @@
 from customtkinter import *
-import interfazTkinter as paso1
+import VentanaPaso1 as paso1
 import ventanaPaso2 as paso2
 import ventanaPaso3 as paso3
 from tkinter import *
