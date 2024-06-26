@@ -365,10 +365,10 @@ class Paso1(CTk):
         frame_boton.pack(pady=10)
 
         menu_button = ctk.CTkButton(frame_boton, text="Volver al menú", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        menu_button.pack(side="right", padx=(6, 100), pady=(40, 10))
+        menu_button.pack(side="right", padx=(6, 5), pady=(40, 10))
 
         close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.cerrar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        close_button.pack(side="left", padx=(150, 5), pady=(40, 10))
+        close_button.pack(side="left", padx=(5, 5), pady=(40, 10))
 
         # Mostrar el nuevo frame
         frame_final.pack(fill="both", expand=True)
