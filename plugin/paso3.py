@@ -5,6 +5,7 @@ from plugin.utils import getColumnsDates
 from datetime import datetime
 from plugin.utils import snakeToCamel
 from plugin.utils import toCamelCase
+from plugin.utils import toRestUrlNaming
 from plugin.utils import modifyTiles
 from plugin.utils import modifyMenu
 import operator
@@ -62,6 +63,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = tName
+        tableRequestMapping = toRestUrlNaming(tNameOriginal)
         
         # Opciones mantenimiento
         data["maint"] = {}
@@ -120,7 +122,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
          if(x == len(tables) - 1):
            lastTable = True
         modifyTiles(rutaTiles,alias,lastTable)
-        modifyMenu(rutaMenu,alias,lastTable)
+        modifyMenu(rutaMenu, tableRequestMapping, alias, lastTable)
         destinoWar = destinoWar.replace(proyectWar+"War/","")
         writeConfig("RUTA", {"ruta_war":destinoWar})
         writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoWar})

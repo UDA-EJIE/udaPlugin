@@ -146,8 +146,8 @@ def modifyJackson(ruta,entityName, final, packageName):
        #etree.indent(root, space="    ") 
        tree.write(ruta, encoding='utf-8', xml_declaration=True)    
 
-def modifyMenu(ruta,entityName, final):
- linea1 = "	<spring:url value=\"/"+entityName+"/maint\" var=\""+entityName+"Maint\" htmlEscape=\"true\"/>"
+def modifyMenu(ruta, tableRequestMapping, entityName, final):
+ linea1 = "	<spring:url value=\"/"+tableRequestMapping+"/maint\" var=\""+entityName+"Maint\" htmlEscape=\"true\"/>"
  linea2 = "	<a class=\"dropdown-item\" href=\"${"+entityName+"Maint}\">"
  linea3 = "		<spring:message code=\""+entityName+"Maint\" />"
  linea4 = "	</a>"
