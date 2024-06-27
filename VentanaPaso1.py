@@ -119,7 +119,7 @@ class Paso1(CTk):
         security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
         security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
-        finish_button = CTkButton(self, text="Finish", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        finish_button = CTkButton(self, text="Terminar", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
 
         cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
