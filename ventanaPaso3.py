@@ -526,12 +526,6 @@ class ventanaPaso2(CTkFrame):
             self.master.configurar_checkbox(self.validaciones_cliente_checkbox, data_mantenimiento["clientValidation"])
             self.master.configurar_checkbox(self.multiseleccion_checkbox, data_mantenimiento["multiselection"])
 
-
-
-
-        self.edicion_linea()
-        #self.master.ocultarSpinner()
-
     # Otras configuraciones de CheckBox
        
     def validarPaso3(self):
@@ -556,14 +550,11 @@ class ventanaPaso2(CTkFrame):
             self.tipo_radio1.configure(state="disabled")
             self.tipo_radio2.configure(state="disabled")
             self.validaciones_cliente_checkbox.deselect()
-            self.validaciones_cliente_checkbox.configure(state="disabled")
-            
+            self.validaciones_cliente_checkbox.configure(state="disabled")            
             self.checkbox_var = BooleanVar(value=False)
-
-            
-
-        self.recuperar_checkbox.configure(state="disabled")
-        self.tipologia_label_combobox.configure(state="disabled")
+            self.recuperar_checkbox.configure(state="disabled")
+            self.tipologia_label_combobox.configure(state="disabled")
+       
         self.label_tipologia.configure(text_color="grey")
 
     def edicion_linea(self):
