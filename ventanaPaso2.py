@@ -691,7 +691,7 @@ class PaginaTres(CTkFrame):
     def cancelar_cerrar(self):
         # Cancela todos los eventos pendientes
         self.master.withdraw()
-        self.master.quit()
+        sys.exit(0)
 
 class VentanaPrincipal(CTk):
    
