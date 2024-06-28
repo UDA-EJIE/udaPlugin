@@ -103,7 +103,7 @@ class Paso4(CTk):
         security_frame.grid(row=8, column=0, columnspan=2, pady=(30, 20), padx=20, sticky="ew")
 
         # Crear un widget Label encima del borde del marco
-        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNets", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
+        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNetS", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
         labelSecurityFrame.place(in_=security_frame, anchor="sw" )
 
         self.security_var = tk.StringVar(value="Si")
