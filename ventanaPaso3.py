@@ -1011,13 +1011,18 @@ class VentanaPrincipal(CTk):
         label_container.grid_columnconfigure(0, weight=1)
 
         # Create the information label
-        label_info = CTkLabel(label_container, text="Has creado el mantenimiento de la siguiente tabla " + tablas[0]['name'], 
+        label_info = CTkLabel(label_container, text="Has creado el mantenimiento de la siguiente tabla: ", 
                             bg_color="#FFFFFF", text_color="black", font=("Arial", 15, "bold"))
         label_info.grid(row=0, column=0, pady=20, padx=20, sticky="n")
 
+        nombre_tabla_label = CTkLabel(label_container, text=tablas[0]['name'], 
+                            bg_color="#FFFFFF", text_color="black", font=("Arial", 18, "bold"))
+        nombre_tabla_label.grid(row=1, column=0, pady=20, padx=20, sticky="n")
+
+
         # Create a button container frame for buttons at the bottom
         button_container = CTkFrame(main_container, fg_color="#FFFFFF")
-        button_container.grid(row=1, column=0, columnspan=3, pady=20, sticky="s")
+        button_container.grid(row=2, column=0, columnspan=3, pady=20, sticky="s")
         button_container.grid_columnconfigure(0, weight=1)
         button_container.grid_columnconfigure(1, weight=1)
 
