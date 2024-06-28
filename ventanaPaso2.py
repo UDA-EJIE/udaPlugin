@@ -691,7 +691,7 @@ class PaginaTres(CTkFrame):
     def cancelar_cerrar(self):
         # Cancela todos los eventos pendientes
         self.master.withdraw()
-        self.master.quit()
+        sys.exit(0)
 
 class VentanaPrincipal(CTk):
    
@@ -972,7 +972,7 @@ class VentanaPrincipal(CTk):
          # Checkbox for the table
         cabecera_label = ctk.CTkLabel(cabecera_container, text="Se han creado los" + modelos + daos + servicios + controladores+ " de las siguientes tablas y columnas",
                                             text_color="black", font=("Arial", 10, "bold"))
-        cabecera_label.grid(row=0, column= 1, padx=350, pady = (30, 0), sticky = "we")
+        cabecera_label.grid(row=0, column= 1, padx=230, pady = (30, 0), sticky = "we")
 
 
 
@@ -1018,10 +1018,10 @@ class VentanaPrincipal(CTk):
         frame_boton.grid(row = 2, column= 0, columnspan=3, sticky="nsew")
 
         button_cerrar = CTkButton(frame_boton, text="Volver al menu",command=lambda: self.cancelar() , bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
-        button_cerrar.grid(row=0, column=0, pady=(100, 30), padx=(500,0), sticky="w")
+        button_cerrar.grid(row=0, column=0, pady=(100, 30), padx=(350,0), sticky="w")
 
         button_menu = CTkButton(frame_boton,text="Cerrar" ,command=lambda: self.cancelar_cerrar() , bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25) 
-        button_menu.grid(row=0, column=1, pady=(100, 30), padx=(10,0), sticky="w")
+        button_menu.grid(row=0, column=0, pady=(100, 30), padx=(470,0), sticky="w")
     
 
 

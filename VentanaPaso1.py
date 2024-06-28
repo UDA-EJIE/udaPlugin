@@ -348,11 +348,17 @@ class Paso1(CTk):
         frame_center.pack(expand=True)
 
 
-        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto " + entry_code_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        nombre_label.pack(pady=(0, 10), padx=30)
+        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        nombre_label.pack(pady=(0, 0), padx=30)
+        
+        nombre_proyecto_label = CTkLabel(frame_center, text=entry_code_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_proyecto_label.pack(pady=(0, 0), padx=30)
 
-        war_label = CTkLabel(frame_center, text="El war del proyecto es " + entry_war_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        war_label.pack(pady=10, padx=30)
+        war_label = CTkLabel(frame_center, text="El war del proyecto es: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        war_label.pack(pady=(0, 0), padx=30)
+
+        nombre_war_label = CTkLabel(frame_center, text= entry_war_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_war_label.pack(pady=10, padx=30)
 
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta " + entry_location_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
