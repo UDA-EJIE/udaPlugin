@@ -1,4 +1,4 @@
 [submodule "templates"]
 	path = templates
 	url = https://github.com/UDA-EJIE/udaTemplates
-	branch = develop-6.x
+	branch = master
