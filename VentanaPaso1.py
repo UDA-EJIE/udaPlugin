@@ -272,6 +272,12 @@ class Paso1(CTk):
         if(self.entry_war.get() == ''):
             self.configuration_warning.configure(text="Campo 'Nombre del WAR' obligatorio")
             return FALSE 
+        if(self.entry_code.get().isalnum() == False):
+            self.configuration_warning.configure(text="Campo 'Código de aplicación' es solo alfanumérico")
+            return FALSE
+        if(self.entry_war.get().isalnum() == False):
+            self.configuration_warning.configure(text="Campo 'Nombre del WAR' es solo alfanumérico")
+            return FALSE
         if os.path.isdir(self.entry_location.get()) == False:
             self.configuration_warning.configure(text="La localización no existe")
             return FALSE
