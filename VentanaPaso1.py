@@ -136,7 +136,7 @@ class Paso1(CTk):
     def cerrar(self):
         # Cancela todos los eventos pendientes
         self.withdraw()
-        self.quit()
+        sys.exit(0)
 
 
 
