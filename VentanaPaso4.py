@@ -4,6 +4,8 @@ from customtkinter import *
 import plugin.utils as utl
 from pathlib import Path
 import logging
+from copier import Worker
+from datetime import datetime
 
 
 self = CTk()
@@ -21,6 +23,7 @@ class Paso4(CTk):
         self.config(bg="#E0E0E0")
 
         self.columnconfigure(1, weight=1)
+        self.rowconfigure(12, weight=1)
 
         configuration_frame = CTkFrame(self, bg_color="black")
         configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
@@ -61,14 +64,21 @@ class Paso4(CTk):
         # WAR name
         war_name_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
         war_name_label.grid(row=3, column=0, sticky="w", padx= (20,20), pady=5)
-        war_name_entry = CTkEntry(self, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
-        war_name_entry.grid(row=3, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
+        self.war_name_entry = CTkEntry(self, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.war_name_entry.grid(row=3, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
+        
+
 
         # Full WAR name
         full_war_name_label = CTkLabel(self, text="Nombre Completo del WAR:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
         full_war_name_label.grid(row=4, column=0, sticky="w", padx= (20,20), pady=5)
-        full_war_name_entry = CTkEntry(self, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
-        full_war_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
+        self.full_war_name_entry = CTkEntry(self, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.full_war_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
+        self.full_war_name_entry.configure(text_color="grey")
+        self.full_war_name_entry.configure(state="disabled")
+
+        self.war_name_entry.bind("<KeyRelease>", self.update_entry())
+
         # Idiomas
         idiomas_label = CTkLabel(self, text="Idiomas", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
         idiomas_label.grid(row=6, column=0, sticky="w", padx= (20,20), pady=5)
@@ -103,7 +113,7 @@ class Paso4(CTk):
         security_frame.grid(row=8, column=0, columnspan=2, pady=(30, 20), padx=20, sticky="ew")
 
         # Crear un widget Label encima del borde del marco
-        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNetS", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
+        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNets", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
         labelSecurityFrame.place(in_=security_frame, anchor="sw" )
 
         self.security_var = tk.StringVar(value="Si")
@@ -115,15 +125,20 @@ class Paso4(CTk):
         # Buttons
         buttons_frame = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
         buttons_frame.grid(row=12, column=0, columnspan=2, pady=10)
-        
-        back_button = CTkButton(buttons_frame, text="Back", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        back_button.grid(row=0, column=0, padx=5)
-        next_button = CTkButton(buttons_frame, text="Next", state="disabled", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        next_button.grid(row=0, column=1, padx=5)
-        finish_button = CTkButton(buttons_frame, text="Finish", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        finish_button.grid(row=0, column=2, padx=5)
-        cancel_button = CTkButton(buttons_frame, text="Cancel", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        cancel_button.grid(row=0, column=3, padx=5)
+        back_button = CTkButton(buttons_frame, text="Atrás", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        back_button.grid(row=0, column=0, padx=(400,0), pady= (100, 0))
+        next_button = CTkButton(buttons_frame, text="Siguiente", state="disabled", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        next_button.grid(row=0, column=1, padx=5, pady= (100, 0))
+        finish_button = CTkButton(buttons_frame, command= lambda : self.save_to_yaml(), text="Terminar", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        finish_button.grid(row=0, column=2, padx=5, pady= (100, 0))
+        cancel_button = CTkButton(buttons_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        cancel_button.grid(row=0, column=4, padx=5, pady= (100, 0))
+
+    def update_entry(self):
+        content = self.war_name_entry.get()
+        self.full_war_name_entry.delete(0, tk.END)
+        self.full_war_name_entry.insert(0, content)
+
 
     def update_default_language_options(self):
             idiomas_seleccionados = []
@@ -194,7 +209,7 @@ class Paso4(CTk):
         scrollbar_resumen.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Descripción
-        desc_label = ctk.CTkLabel(scrollbar_resumen, text="Seleccione un WAR", text_color="black")
+        desc_label = ctk.CTkLabel(scrollbar_resumen, text="Seleccione un EAR", text_color="black")
         desc_label.pack(fill="x", pady=(5, 1), padx=20, anchor="w")
         
         if ruta != '':
@@ -248,7 +263,7 @@ class Paso4(CTk):
             # Frame para contener los radiobuttons
             file_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
             file_frame.pack(fill="both", expand=True)
-            desc_label = CTkLabel(file_frame, text="Seleccione un WAR ", text_color= "black")
+            desc_label = CTkLabel(file_frame, text="Seleccione un EAR ", text_color= "black")
             desc_label.grid(row=0, column=0, columnspan=3, pady=(5, 1), padx=20, sticky="w")
             if (ruta != ''):
                 desc_label2 = CTkLabel(file_frame, text="(" + ruta +")" , text_color= "black")
@@ -300,11 +315,83 @@ class Paso4(CTk):
             frame.destroy()
 
         else:
-            print("No se seleccionó ningún archivo.")     
+            print("No se seleccionó ningún archivo.")
 
+    def save_to_yaml(self):      
+
+        inicio = datetime.now()
+        array_proyect = self.ear_entry.get().split("/")
+        proyect_name = array_proyect[len(array_proyect)-1].split("EARClasses")
+        yaml_data = {
+            "i18n_app": [lang_option for lang_option, lang_var in zip(self.language_options, self.language_vars) if lang_var.get()],
+            "i18n_default_app": self.default_language_var.get(),
+            "security_app": self.security_var.get(),
+            "war_project_name": self.war_name_entry.get(),
+            "project_name" : proyect_name[0]
+        }
+
+        if self.security_yes_radio._check_state:
+            yaml_data["xlnets"] = TRUE
+        else:
+            yaml_data["xlnets"] = FALSE     
+
+        rutaPath = utl.rutaActual(__file__)
+        directorio_actual = rutaPath + "\\templates\\proyectoPaso4"
+        filesExcludes = []
+        availableLangs = "es, eu"
+        
+        for lang_option, lang_var in zip(self.language_options, self.language_vars):
+            if lang_var.get() == FALSE:
+                if lang_option == "Inglés":
+                    filesExcludes.append("*i18n_en*")
+                if lang_option == "Francés":
+                    filesExcludes.append("*i18n_fr*") 
+            else:  
+                if lang_option == "Inglés":
+                    availableLangs = availableLangs + " ,en"
+                if lang_option == "Francés":
+                    availableLangs = availableLangs + " ,fr"   
+        filesExcludes.append("*EJB") 
+        defaultLanguage = self.default_language_combobox.get() 
+        
+        if  defaultLanguage == "Castellano":      
+            yaml_data["defaultLanguage"] = "es"
+        if  defaultLanguage == "Euskera":      
+            yaml_data["defaultLanguage"] = "eu"
+        elif  defaultLanguage == "Inglés":      
+            yaml_data["defaultLanguage"] = "en"
+        elif  defaultLanguage == "Francés":      
+            yaml_data["defaultLanguage"] = "fr"
+        else:
+            yaml_data["defaultLanguage"] = "es"    
+
+        yaml_data["availableLangs"] = availableLangs
+        #destinoPath = self.entry_location.get()
+        #if(destinoPath == ''):
+        destinoPath = rutaPath
+        now = datetime.now()
+        dates = now.strftime('%d-%b-%Y %H:%M:%S') 
+        print('Inicio: proyecto Creando... ' + yaml_data["war_project_name"])    
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path=destinoPath, data=yaml_data,exclude=filesExcludes) as worker:
+            logging.info('Inicio: Crear proyecto: ' + yaml_data["war_project_name"])
+            worker.template.version = ": 1.0 Paso 1 ::: "+dates
+            worker.run_copy()
+            logging.info('Fin: Crear proyecto: ' + yaml_data["war_project_name"])
+            #guardar ultima ruta creada
+            utl.writeConfig(
+                "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
+        #self.ocultarSpinner()
+        #self.close_loading_frame()
+        print('Fin: proyecto Creado: ' + yaml_data["war_project_name"])
+        fin = datetime.now()
+        logging.info('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
+        now = datetime.now()
+        dates = now.strftime('%d-%b-%Y %H:%M:%S')
+        print(F"Final: paso 1 creado ::: "+dates,file=sys.stderr)
+        sys.stderr.flush()
     
+        #self.ventana_final_popup()
 if __name__ == "__main__":
 
     app = Paso4()
     app.mainloop()
-
