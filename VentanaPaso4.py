@@ -332,6 +332,8 @@ class Paso4(CTk):
         self.proyecto_EAR = self.ear_entry.get()
         entry_war_value_full = self.full_war_name_entry.get()
 
+
+        ruta_proyecto = proyect_name = self.ear_entry.get().split("/")
         proyect_name = self.ear_entry.get().split("/")[1]
         
         
@@ -365,7 +367,7 @@ class Paso4(CTk):
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
-        ruta_label = CTkLabel(frame_center, text=self.proyecto_EAR , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label = CTkLabel(frame_center, text=ruta_proyecto[0] , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
         #ruta = base_path + "/logs"
@@ -441,7 +443,7 @@ class Paso4(CTk):
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' + yaml_data["war_project_name"])    
-        with Worker(src_path=directorio_actual,overwrite=True, dst_path=self.ear_entry.get(), data=yaml_data,exclude=filesExcludes) as worker:
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path= array_proyect[0], data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["war_project_name"])
             worker.template.version = ": 1.0 Paso 1 ::: "+dates
             worker.run_copy()

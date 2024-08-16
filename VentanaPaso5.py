@@ -265,7 +265,7 @@ class Paso5(CTk):
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' +yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")    
-        with Worker(src_path=directorio_actual,overwrite=True, dst_path=self.ear_entry.get(), data=yaml_data,exclude=filesExcludes) as worker:
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path=array_proyect[0], data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["ejb_project_name"])
             worker.template.version = ": 1.0 Paso 1 ::: "+dates
             worker.run_copy()
@@ -291,6 +291,8 @@ class Paso5(CTk):
         self.proyecto_EAR = self.ear_entry.get()
         ejb_full_value = self.full_ejb_name_entry.get()
 
+
+        ruta_proyecto = self.ear_entry.get().split("/")
         proyect_name = self.ear_entry.get().split("/")[1]
         
         
@@ -324,7 +326,7 @@ class Paso5(CTk):
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
-        ruta_label = CTkLabel(frame_center, text=self.proyecto_EAR , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label = CTkLabel(frame_center, text=ruta_proyecto[0] , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
         #ruta = base_path + "/logs"
