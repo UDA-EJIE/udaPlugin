@@ -12,12 +12,14 @@ self = CTk()
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 
 class Paso4(CTk):
-    def __init__(self):
+    def __init__(self,main_menu):
         super().__init__()
         
         
         self.title("Crear nueva aplicación")
         self.geometry("900x700")
+
+        self.main_menu = main_menu
 
         # Configurar el color de fondo de la ventana
         self.config(bg="#E0E0E0")
@@ -44,7 +46,7 @@ class Paso4(CTk):
         ruta_war = utl.readConfig("RUTA", "ruta_war")
         if(ruta_classes != None and ruta_classes != ""):
            textRutaNegocio = ruta_classes 
-        archivoClases = utl.buscarArchivo(textRutaNegocio,"EARClasses") 
+        archivoClases = utl.buscarArchivo(textRutaNegocio,"EAR") 
         archivoWar = utl.buscarArchivo(textRutaControlador,"War") 
         if(archivoClases != '' ):
            textRutaNegocio = textRutaNegocio+"\\"+archivoClases 
@@ -125,14 +127,21 @@ class Paso4(CTk):
         # Buttons
         buttons_frame = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
         buttons_frame.grid(row=12, column=0, columnspan=2, pady=10)
-        back_button = CTkButton(buttons_frame, text="Atrás", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        back_button.grid(row=0, column=0, padx=(400,0), pady= (100, 0))
+        back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        back_button.grid(row=0, column=0, padx=(450,0), pady= (100, 0))
         next_button = CTkButton(buttons_frame, text="Siguiente", state="disabled", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         next_button.grid(row=0, column=1, padx=5, pady= (100, 0))
         finish_button = CTkButton(buttons_frame, command= lambda : self.save_to_yaml(), text="Terminar", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=0, column=2, padx=5, pady= (100, 0))
-        cancel_button = CTkButton(buttons_frame, text="Cancelar", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        cancel_button.grid(row=0, column=4, padx=5, pady= (100, 0))
+
+
+    
+    def cancelar(self):
+        # Cancela todos los eventos pendientes
+        self.withdraw()
+        self.quit()
+        self.main_menu.MainMenuLoop()
+
 
     def update_entry(self):
         content = self.war_name_entry.get()
@@ -176,13 +185,13 @@ class Paso4(CTk):
         
         if ruta_personalizada == None:
             try:
-                files = [file for file in os.listdir(ruta_classes) if file.endswith("Classes")]
+                files = [file for file in os.listdir(ruta_classes) if file.endswith("EAR")]
             except:
                 logging.exception("No encontro la ruta: " + ruta_classes)
             self.mostrar_resultados(files,ruta_classes)
         else:
             try:
-                files = [file for file in os.listdir(ruta_personalizada) if file.endswith("Classes")]
+                files = [file for file in os.listdir(ruta_personalizada) if file.endswith("EAR")]
             except:
                 logging.exception("No encontro la ruta: " + ruta_personalizada)    
             self.mostrar_resultados(files,ruta_personalizada)
@@ -222,7 +231,7 @@ class Paso4(CTk):
                 radiobutton = ctk.CTkRadioButton(scrollbar_resumen, text=file, variable=selected_file, value=file, border_color='#84bfc4', fg_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"))
                 radiobutton.pack(fill="x", padx=60, pady=3, anchor="w")
         else:
-            texto = "Esta ruta no contiene ningún EarClasses"  
+            texto = "Esta ruta no contiene ningún EAR"  
             desc_label3 = CTkLabel(scrollbar_container, text=texto,text_color="red")
             desc_label3.pack(fill="x", pady=(0, 2), padx=30, anchor="w")
 
@@ -276,7 +285,7 @@ class Paso4(CTk):
                     radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
             else:    
     
-                texto = "Esta ruta no contiene ningún EarClasses"  
+                texto = "Esta ruta no contiene ningún EAR"  
                 desc_label3 = CTkLabel(file_frame, text=texto,text_color="red")
                 desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
             # Botones de acción en el pie de página
@@ -317,11 +326,71 @@ class Paso4(CTk):
         else:
             print("No se seleccionó ningún archivo.")
 
+
+    def ventana_final_popup(self):
+        # Guardar los valores de los widgets de entrada
+        self.proyecto_EAR = self.ear_entry.get()
+        entry_war_value_full = self.full_war_name_entry.get()
+
+        proyect_name = self.ear_entry.get().split("/")[1]
+        
+        
+        
+
+        # Destruir todos los widgets hijos del frame actual
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        # Crear un nuevo frame que ocupe toda la ventana
+        frame_final = CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        frame_final.pack(fill="both", expand=True)
+
+        # Frame interno centrado
+        frame_center = CTkFrame(frame_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        frame_center.pack(expand=True)
+
+
+        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente WAR: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        nombre_label.pack(pady=(0, 0), padx=30)
+        
+        nombre_proyecto_label = CTkLabel(frame_center, text= entry_war_value_full, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_proyecto_label.pack(pady=(0, 0), padx=30)
+
+        war_label = CTkLabel(frame_center, text="El proyecto EAR es" , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        war_label.pack(pady=(0, 0), padx=30)
+
+        nombre_war_label = CTkLabel(frame_center, text= proyect_name, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_war_label.pack(pady=10, padx=30) 
+
+        ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.pack(pady=10, padx=30)
+
+        ruta_label = CTkLabel(frame_center, text=self.proyecto_EAR , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.pack(pady=10, padx=30)
+
+        #ruta = base_path + "/logs"
+        # logs_label = CTkLabel(frame_center, text="Para más información consultar los logs en la ruta " + ruta, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        # logs_label.pack(pady=10, padx=40)
+
+        frame_boton = CTkFrame(frame_center, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        frame_boton.pack(pady=10)
+
+        menu_button = ctk.CTkButton(frame_boton, text="Volver al menú", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        menu_button.pack(side="right", padx=(6, 5), pady=(40, 10))
+
+        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.cerrar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        close_button.pack(side="left", padx=(5, 5), pady=(40, 10))
+
+        # Mostrar el nuevo frame
+        frame_final.pack(fill="both", expand=True)
+
+
     def save_to_yaml(self):      
 
         inicio = datetime.now()
         array_proyect = self.ear_entry.get().split("/")
-        proyect_name = array_proyect[len(array_proyect)-1].split("EARClasses")
+        proyect_name = array_proyect[len(array_proyect)-1].split("EAR")
+
         yaml_data = {
             "i18n_app": [lang_option for lang_option, lang_var in zip(self.language_options, self.language_vars) if lang_var.get()],
             "i18n_default_app": self.default_language_var.get(),
@@ -372,7 +441,7 @@ class Paso4(CTk):
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' + yaml_data["war_project_name"])    
-        with Worker(src_path=directorio_actual,overwrite=True, dst_path=destinoPath, data=yaml_data,exclude=filesExcludes) as worker:
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path=self.ear_entry.get(), data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["war_project_name"])
             worker.template.version = ": 1.0 Paso 1 ::: "+dates
             worker.run_copy()
@@ -390,7 +459,8 @@ class Paso4(CTk):
         print(F"Final: paso 1 creado ::: "+dates,file=sys.stderr)
         sys.stderr.flush()
     
-        #self.ventana_final_popup()
+        self.ventana_final_popup()
+
 if __name__ == "__main__":
 
     app = Paso4()
