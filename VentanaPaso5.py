@@ -56,7 +56,7 @@ class Paso5(CTk):
         # EAR to bind
         ear_label = CTkLabel(self, text="EAR a vincular:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         ear_label.grid(row=2, column=0, sticky="w", padx= (20,20), pady=(30, 0))
-        self.ear_entry = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.ear_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
         self.ear_entry.grid(row=2, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.ear_entry.insert(0, textRutaNegocio)
         ear_button = CTkButton(self, text="Buscar Proyecto", command= lambda : self.buscar_archivos(self.selectDirectory(self.ear_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=23)
@@ -74,7 +74,7 @@ class Paso5(CTk):
         # Full EJB module
         full_ejb_name_label = CTkLabel(self, text="Nombre Completo del modulo EJB:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         full_ejb_name_label.grid(row=4, column=0, sticky="w", padx= (20,20), pady=5)
-        self.full_ejb_name_entry = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.full_ejb_name_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
         self.full_ejb_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.full_ejb_name_entry.configure(state="disabled")
 

@@ -57,7 +57,7 @@ class Paso4(CTk):
         # EAR to bind
         ear_label = CTkLabel(self, text="EAR a vincular:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
         ear_label.grid(row=2, column=0, sticky="w", padx= (20,20), pady=5)
-        self.ear_entry = CTkEntry(self, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.ear_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
         self.ear_entry.grid(row=2, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.ear_entry.insert(0, textRutaNegocio)
         ear_button = CTkButton(self, text="Buscar Proyecto", command= lambda : self.buscar_archivos(self.selectDirectory(self.ear_entry.get())), bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
@@ -78,7 +78,7 @@ class Paso4(CTk):
         full_war_name_label = CTkLabel(self, text="Nombre Completo del WAR:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
         full_war_name_label.grid(row=4, column=0, sticky="w", padx= (20,20), pady=5)
 
-        self.full_war_name_entry = CTkEntry(self, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.full_war_name_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
         self.full_war_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.full_war_name_entry.configure(text_color="grey")
         self.full_war_name_entry.configure(state="disabled")
