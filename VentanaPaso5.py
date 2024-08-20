@@ -61,18 +61,22 @@ class Paso5(CTk):
         self.ear_entry.insert(0, textRutaNegocio)
         ear_button = CTkButton(self, text="Buscar Proyecto", command= lambda : self.buscar_archivos(self.selectDirectory(self.ear_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=23)
         ear_button.grid(row=2, column=1, sticky="e", padx=(100, 20))
+        self.ear_entry.configure(state="disabled")
 
-        # WAR name
+        # EJB proyect
+        sv = StringVar(self)
+        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_entry())
         ejb_name_label = CTkLabel(self, text="Nombre del proyecto EJB:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         ejb_name_label.grid(row=3, column=0, sticky="w", padx= (20,20), pady=5)
-        self.ejb_name_entry = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        self.ejb_name_entry = CTkEntry(self,textvariable=sv, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
         self.ejb_name_entry.grid(row=3, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
-
-        # Full WAR name
+        
+        # Full EJB module
         full_ejb_name_label = CTkLabel(self, text="Nombre Completo del modulo EJB:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
         full_ejb_name_label.grid(row=4, column=0, sticky="w", padx= (20,20), pady=5)
         self.full_ejb_name_entry = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
         self.full_ejb_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
+        self.full_ejb_name_entry.configure(state="disabled")
 
         # Buttons
         buttons_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
@@ -85,6 +89,15 @@ class Paso5(CTk):
         finish_button = CTkButton(buttons_frame, text="Terminar", command= lambda: self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=0, column=2, padx=5, pady = (400, 0))
 
+    def update_entry(self):
+        if self.ear_entry.get() != '' and self.ejb_name_entry.get() != '':
+            content = self.ejb_name_entry.get()
+            array_proyect = self.ear_entry.get().split("/")
+            proyect_name = array_proyect[len(array_proyect)-1].replace("EAR","")            
+            self.full_ejb_name_entry.configure(state="normal")
+            self.full_ejb_name_entry.delete(0, tk.END)
+            self.full_ejb_name_entry.insert(0, proyect_name+content+"EJB")
+            self.full_ejb_name_entry.configure(state="disabled")
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -249,9 +262,10 @@ class Paso5(CTk):
 
         inicio = datetime.now()
         array_proyect = self.ear_entry.get().split("/")
-        proyect_name = array_proyect[len(array_proyect)-1].split("EAR")
+        self.proyect_name = array_proyect[len(array_proyect)-1].replace("EAR","")
+        self.rutaDest = self.ear_entry.get().replace("/"+self.proyect_name+"EAR","")
         yaml_data = {
-            "project_name": proyect_name[0],
+            "project_name": self.proyect_name,
             "ejb_project_name": self.ejb_name_entry.get(),
         }
 
@@ -265,7 +279,7 @@ class Paso5(CTk):
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' +yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")    
-        with Worker(src_path=directorio_actual,overwrite=True, dst_path=array_proyect[0], data=yaml_data,exclude=filesExcludes) as worker:
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path=self.rutaDest, data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["ejb_project_name"])
             worker.template.version = ": 1.0 Paso 1 ::: "+dates
             worker.run_copy()
@@ -288,15 +302,9 @@ class Paso5(CTk):
 
     def ventana_final_popup(self):
         # Guardar los valores de los widgets de entrada
-        self.proyecto_EAR = self.ear_entry.get()
+        
         ejb_full_value = self.full_ejb_name_entry.get()
-
-
-        ruta_proyecto = self.ear_entry.get().split("/")
-        proyect_name = self.ear_entry.get().split("/")[1]
-        
-        
-        
+   
 
         # Destruir todos los widgets hijos del frame actual
         for widget in self.winfo_children():
@@ -320,13 +328,13 @@ class Paso5(CTk):
         war_label = CTkLabel(frame_center, text="El proyecto EAR es" , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         war_label.pack(pady=(0, 0), padx=30)
 
-        nombre_war_label = CTkLabel(frame_center, text= proyect_name, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_war_label = CTkLabel(frame_center, text= self.proyect_name, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
         nombre_war_label.pack(pady=10, padx=30) 
 
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
-        ruta_label = CTkLabel(frame_center, text=ruta_proyecto[0] , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label = CTkLabel(frame_center, text=self.rutaDest , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
         #ruta = base_path + "/logs"

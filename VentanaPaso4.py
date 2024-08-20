@@ -336,15 +336,9 @@ class Paso4(CTk):
 
     def ventana_final_popup(self):
         # Guardar los valores de los widgets de entrada
-        self.proyecto_EAR = self.ear_entry.get()
+        
         entry_war_value_full = self.full_war_name_entry.get()
-
-
-        ruta_proyecto = proyect_name = self.ear_entry.get().split("/")
-        proyect_name = self.ear_entry.get().split("/")[1]
-        
-        
-        
+  
 
         # Destruir todos los widgets hijos del frame actual
         for widget in self.winfo_children():
@@ -368,13 +362,13 @@ class Paso4(CTk):
         war_label = CTkLabel(frame_center, text="El proyecto EAR es" , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         war_label.pack(pady=(0, 0), padx=30)
 
-        nombre_war_label = CTkLabel(frame_center, text= proyect_name, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_war_label = CTkLabel(frame_center, text= self.proyect_name, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
         nombre_war_label.pack(pady=10, padx=30) 
 
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
-        ruta_label = CTkLabel(frame_center, text=ruta_proyecto[0] , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label = CTkLabel(frame_center, text=self.rutaDest , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ruta_label.pack(pady=10, padx=30)
 
         #ruta = base_path + "/logs"
@@ -398,14 +392,15 @@ class Paso4(CTk):
 
         inicio = datetime.now()
         array_proyect = self.ear_entry.get().split("/")
-        proyect_name = array_proyect[len(array_proyect)-1].split("EAR")
+        self.proyect_name = array_proyect[len(array_proyect)-1].replace("EAR","")
+        self.rutaDest = self.ear_entry.get().replace("/"+self.proyect_name+"EAR","")
 
         yaml_data = {
             "i18n_app": [lang_option for lang_option, lang_var in zip(self.language_options, self.language_vars) if lang_var.get()],
             "i18n_default_app": self.default_language_var.get(),
             "security_app": self.security_var.get(),
             "war_project_name": self.war_name_entry.get(),
-            "project_name" : proyect_name[0]
+            "project_name" : self.proyect_name
         }
 
         if self.security_yes_radio._check_state:
@@ -450,7 +445,7 @@ class Paso4(CTk):
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' + yaml_data["war_project_name"])    
-        with Worker(src_path=directorio_actual,overwrite=True, dst_path= array_proyect[0], data=yaml_data,exclude=filesExcludes) as worker:
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path= self.rutaDest, data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["war_project_name"])
             worker.template.version = ": 1.0 Paso 1 ::: "+dates
             worker.run_copy()
