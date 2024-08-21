@@ -3,9 +3,10 @@ import tkinter as tk
 from customtkinter import *
 import plugin.utils as utl
 from pathlib import Path
+self = CTk()
 
 class VentanaPaso6(CTk):
-    def __init__(self ):
+    def __init__(self, main_menu ):
         super().__init__()
         # Configurar la ventana principal
         self.title("Crear nueva aplicación")
@@ -13,7 +14,7 @@ class VentanaPaso6(CTk):
         self.resizable(width=False, height=False)
         self.config(bg="#FFFFFF")
 
-        #self.main_menu = main_menu
+        self.main_menu = main_menu
 
         self.columnconfigure(1, weight=1)
         self.rowconfigure(4, weight=1 )
@@ -123,6 +124,59 @@ class VentanaPaso6(CTk):
         finish_button.grid(row=0, column=2, padx=5)
         cancel_button = CTkButton(buttons_frame, text="Cancel", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         cancel_button.grid(row=0, column=3, padx=5)
+
+    def cancelar(self):
+       # Cancela todos los eventos pendientes
+       self.withdraw()
+       self.quit()
+       self.main_menu.MainMenuLoop()
+
+    def ventana_final_popup(self):
+        # Guardar los valores de los widgets de entrada
+        
+        ejb_full_value = self.full_ejb_name_entry.get()   
+
+        # Destruir todos los widgets hijos del frame actual
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        # Crear un nuevo frame que ocupe toda la ventana
+        frame_final = CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        frame_final.pack(fill="both", expand=True)
+
+        # Frame interno centrado
+        frame_center = CTkFrame(frame_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        frame_center.pack(expand=True)
+
+        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto  EJB: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        nombre_label.pack(pady=(0, 0), padx=30)
+        
+        nombre_proyecto_label = CTkLabel(frame_center, text= ejb_full_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_proyecto_label.pack(pady=(0, 0), padx=30)
+
+        war_label = CTkLabel(frame_center, text="El proyecto EAR es" , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        war_label.pack(pady=(0, 0), padx=30)
+
+        nombre_war_label = CTkLabel(frame_center, text= self.proyect_name, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_war_label.pack(pady=10, padx=30) 
+
+        ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.pack(pady=10, padx=30)
+
+        ruta_label = CTkLabel(frame_center, text=self.rutaDest , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        ruta_label.pack(pady=10, padx=30)
+
+        frame_boton = CTkFrame(frame_center, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        frame_boton.pack(pady=10)
+
+        menu_button = ctk.CTkButton(frame_boton, text="Volver al menú", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        menu_button.pack(side="right", padx=(6, 5), pady=(40, 10))
+
+        close_button = ctk.CTkButton(frame_boton, text="Cerrar", command=lambda: self.cerrar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        close_button.pack(side="left", padx=(5, 5), pady=(40, 10))
+
+        # Mostrar el nuevo frame
+        frame_final.pack(fill="both", expand=True)  
 
 if __name__ == '__main__':
     app = VentanaPaso6()
