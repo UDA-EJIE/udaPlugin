@@ -29,13 +29,16 @@ class Paso5(CTk):
         configuration_frame = CTkFrame(self, bg_color="black")
         configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
 
-        configuration_label = CTkLabel(configuration_frame,  text="Crear nueva aplicación", font=("Arial", 14, "bold"))
+        configuration_label = CTkLabel(configuration_frame,  text="Añadir un módulo EJB a la aplicación", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+
+        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
+        self.configuration_warning.grid(row=0, column=2, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
         self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
-        description_label = CTkLabel(configuration_frame, text="Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar")
+        description_label = CTkLabel(configuration_frame, text="Este Wizard genera un nuevo modulo EJB y lo añade a un EAR existente")
         description_label.grid(row=1, column=0, columnspan=3, pady=(10, 5), padx=20, sticky="w")
 
         rutaActual = utl.rutaActual(__file__)
@@ -84,8 +87,7 @@ class Paso5(CTk):
         
         back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         back_button.grid(row=0, column=0, padx=(400, 5), pady = (400, 0))
-        next_button = CTkButton(buttons_frame, text="Siguiente", state="disabled", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        next_button.grid(row=0, column=1, padx=5, pady = (400, 0))
+
         finish_button = CTkButton(buttons_frame, text="Terminar", command= lambda: self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=0, column=2, padx=5, pady = (400, 0))
 
@@ -259,6 +261,10 @@ class Paso5(CTk):
 
 
     def save_to_yaml(self):      
+        if self.ear_entry.get() == '' and self.ejb_name_entry.get() == '':
+            self.configuration_warning.configure(text="El nombre del proyecto y el ear son obligatorios")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
 
         inicio = datetime.now()
         array_proyect = self.ear_entry.get().split("/")
