@@ -257,3 +257,15 @@ def obtenerNombreProyectoByEar(ruta):
     except ValueError:
         print("An exception occurred: obtenerNombreProyecto: ", ValueError)
     return path
+
+def buscarPropiedadInXml(ruta,prop,valor):
+    encontrado = False
+    try:
+        tree = etree.parse(ruta)
+        root = tree.getroot()
+        diag = root.find("./*[@"+prop+"='"+valor+"']")
+        if(diag != None):
+            return True
+    except Exception as e:
+        print("An exception occurred: obtenerNombreProyectoWar",e)
+    return encontrado

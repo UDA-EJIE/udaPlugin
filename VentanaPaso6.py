@@ -4,7 +4,7 @@ from customtkinter import *
 import plugin.utils as utl
 from pathlib import Path
 self = CTk()
-
+ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 class VentanaPaso6(CTk):
     def __init__(self, main_menu ):
         super().__init__()
@@ -34,9 +34,10 @@ class VentanaPaso6(CTk):
 
         ejb_container_label = CTkLabel(ejb_frame, text="Proyecto EJB contenedor:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ejb_container_label.grid(row=0, column=0, sticky="w", padx=(20, 5), pady=(10, 2))
-        ejb_container_entry = CTkEntry(ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',width= 550, height=2.5, border_width=3, text_color="black")
-        ejb_container_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
-        ejb_container_button = CTkButton(ejb_frame, text="Buscar Proyecto", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=23)
+        self.ejb_container_entry = CTkEntry(ejb_frame, bg_color='#599398', fg_color='#599398', border_color='#599398',width= 550, height=2.5, border_width=3, text_color="black")
+        self.ejb_container_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
+        self.ejb_container_entry.configure(state="disabled")
+        ejb_container_button = CTkButton(ejb_frame, text="Buscar Proyecto",command= lambda : self.buscar_archivos(self.selectDirectory(self.ejb_container_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=23)
         ejb_container_button.grid(row=0, column=2, sticky="e", padx=(5, 10), pady=(10, 2))
 
         ejb_remote_type_label = CTkLabel(ejb_frame, text="Tipo de EJB Remoto:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
@@ -53,10 +54,12 @@ class VentanaPaso6(CTk):
 
         ejb_interface_label = CTkLabel(ejb_frame, text="Interface del EJB Remoto:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ejb_interface_label.grid(row=2, column=0, sticky="w", padx=(10, 5), pady=(10, 10))
-        ejb_interface_entry = CTkEntry(ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width= 550, height=2.5, border_width=3, text_color="black")
-        ejb_interface_entry.grid(row=2, column=1, padx=(10, 5), pady=(10, 10), sticky="ew")
-        ejb_interface_button = CTkButton(ejb_frame, text="Buscar Interface", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold") , width= 100, height=23)
-        ejb_interface_button.grid(row=2, column=2, sticky="e", padx=(5, 10), pady=(10, 10))
+        self.ejb_interface_entry = CTkEntry(ejb_frame, bg_color='#599398', fg_color='#599398', border_color='#599398', width= 550, height=2.5, border_width=3, text_color="black")
+        self.ejb_interface_entry.grid(row=2, column=1, padx=(10, 5), pady=(10, 10), sticky="ew")
+        self.ejb_interface_entry.configure(state="disabled")
+        self.ejb_interface_button = CTkButton(ejb_frame, text="Buscar Interface",command= lambda : self.buscar_archivos_interfaz(self.selectDirectory(self.ejb_container_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold") , width= 100, height=23)
+        self.ejb_interface_button.grid(row=2, column=2, sticky="e", padx=(5, 10), pady=(10, 10))
+        self.ejb_interface_button.configure(state="disabled", text_color="white")
 
 
         servidor_despliegue_frame =  CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF", border_color='#84bfc4', border_width=3)
@@ -70,11 +73,13 @@ class VentanaPaso6(CTk):
         ip_label.grid(row=0, column=0, sticky="w", padx=(10, 5), pady=(10, 10))
         ip_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=550, height=2.5, border_width=3, text_color="black")
         ip_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 10), sticky="ew")
+        ip_entry.insert(0, "127.0.0.1")
 
         port_label = CTkLabel(servidor_despliegue_frame, text="Puerto:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         port_label.grid(row=0, column=2, sticky="w", padx=(10, 5), pady=(10, 10))
         port_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
         port_entry.grid(row=0, column=3, padx=(10, 5), pady=(10, 10), sticky="ew")
+        ip_entry.insert(0, "7001")
 
         remote_ejb_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color="#FFFFFF", border_color='#84bfc4', border_width=3)
         remote_ejb_frame.grid(row=4, column=0, columnspan=3, pady=5, padx=(10, 5), sticky="ew")
@@ -116,20 +121,135 @@ class VentanaPaso6(CTk):
         buttons_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color="#FFFFFF")
         buttons_frame.grid(row=5, column=0, columnspan=3, pady=10)
 
-        back_button = CTkButton(buttons_frame, text="Back", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         back_button.grid(row=0, column=0, padx=(300, 0))
-        next_button = CTkButton(buttons_frame, text="Next", state="disabled", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        next_button.grid(row=0, column=1, padx=5)
-        finish_button = CTkButton(buttons_frame, text="Finish", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+
+        finish_button = CTkButton(buttons_frame, text="Finalizar",command= lambda : self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         finish_button.grid(row=0, column=2, padx=5)
-        cancel_button = CTkButton(buttons_frame, text="Cancel", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        cancel_button.grid(row=0, column=3, padx=5)
+
 
     def cancelar(self):
        # Cancela todos los eventos pendientes
        self.withdraw()
        self.quit()
        self.main_menu.MainMenuLoop()
+
+    def buscar_archivos_interfaz(self, ruta_personalizada = None):
+        files = None
+        """Busca archivos con jst.ejb."""
+        rutaBusqueda = ruta_personalizada
+        if ruta_personalizada == None:
+            rutaBusqueda = ruta_classes
+        files = []
+        try:
+            for file in os.listdir(rutaBusqueda):
+                rutaSettings = rutaBusqueda+"/"+file+"/.settings/org.eclipse.wst.common.project.facet.core.xml"
+                
+                if len(file) > 3 and file.endswith("EJB") and utl.buscarPropiedadInXml(rutaSettings,"facet","jst.ejb"):
+                   files.append(file)
+        except:
+            print("No encontro la ruta: " + rutaBusqueda)    
+        self.mostrar_resultados(files,rutaBusqueda)
+
+    def buscar_archivos(self, ruta_personalizada = None):
+        files = None
+        """Busca archivos con jst.ejb."""
+        rutaBusqueda = ruta_personalizada
+        if ruta_personalizada == None:
+            rutaBusqueda = ruta_classes
+        files = []
+        try:
+            for file in os.listdir(rutaBusqueda):
+                rutaSettings = rutaBusqueda+"/"+file+"/.settings/org.eclipse.wst.common.project.facet.core.xml"
+                
+                if len(file) > 3 and file.endswith("EJB") and utl.buscarPropiedadInXml(rutaSettings,"facet","jst.ejb"):
+                   files.append(file)
+        except:
+            print("No encontro la ruta: " + rutaBusqueda)    
+        self.mostrar_resultados(files,rutaBusqueda)    
+
+    def selectDirectory(self,directory):
+        if(directory == ""):
+            return directory
+        else:
+            par = Path(directory)
+            return str(par.parent)  
+
+    def open_file_explorer(self, frame):
+        # Esta función se llama cuando el usuario hace clic en "Buscar"
+        # Abre un diálogo para seleccionar un directorio
+        frame.destroy()
+        directory = filedialog.askdirectory(parent=self)      
+        if directory:  # Si se selecciona un directorio
+            selected_directory = directory  # Guardar la ruta del directorio seleccionado
+            self.buscar_archivos(selected_directory)
+            print(f"Directorio seleccionado: {selected_directory}")
+        else:
+            print("No se seleccionó ningún directorio.")
+
+    def aceptar(self, frame, selected_file, ruta):
+        if selected_file:
+            #Comprobar la configuración
+            print(f"Archivo seleccionado: {selected_file}")
+            self.ejb_container_entry.configure(state="normal")
+            self.ejb_container_entry.delete(0, "end")
+            self.ejb_container_entry.insert(0, ruta+"/"+selected_file)
+            self.ejb_container_entry.configure(state="disabled")
+            self.ejb_interface_button.configure(state="normal")
+            self.archivoClases = selected_file
+            frame.destroy()
+
+        else:
+            print("No se seleccionó ningún archivo.") 
+       
+    def mostrar_resultados(self, files,ruta):
+        if files != None and len(files) > 6:
+            self.mostrar_resultados_scrollbar(files, ruta)
+
+        else:
+
+            """Muestra los archivos encontrados en una nueva ventana con radiobuttons."""
+
+            resultados_window = ctk.CTkToplevel(self)
+            resultados_window.title("Resultados de Búsqueda")
+            resultados_window.geometry("600x300")
+            resultados_window.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
+            
+            resultados_window.attributes('-topmost', True)  # Asegura que la ventana emergente se muestre al frente
+
+            # Variable para almacenar el archivo seleccionado
+            selected_file = tk.StringVar(value=None)
+
+            # Frame para contener los radiobuttons
+            file_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
+            file_frame.pack(fill="both", expand=True)
+            desc_label = CTkLabel(file_frame, text="Seleccione un proyecto EJB ", text_color= "black")
+            desc_label.grid(row=0, column=0, columnspan=3, pady=(5, 1), padx=20, sticky="w")
+            if (ruta != ''):
+                desc_label2 = CTkLabel(file_frame, text="(" + ruta +")" , text_color= "black")
+                desc_label2.grid(row=1, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+
+            # Añadir radiobuttons para cada archivo
+            if(files != None and len(files) > 0):
+                for index, file in enumerate(files):
+                    radiobutton = ctk.CTkRadioButton(file_frame, text=file, variable=selected_file, value=file, border_color='#84bfc4', fg_color='#84bfc4', text_color= "black", font=("Arial", 12, "bold"))
+                    radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
+            else:    
+    
+                texto = "Esta ruta no contiene ningún proyecto EJB valido"  
+                desc_label3 = CTkLabel(file_frame, text=texto,text_color="red")
+                desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+            # Botones de acción en el pie de página
+            button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
+            button_frame.pack(fill="x", pady=20)
+                
+            buscar_button = ctk.CTkButton(button_frame, text="Buscar", command= lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold")) 
+            buscar_button.pack(side="left", padx=10, expand=True)
+                
+            cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+            cancel_button.pack(side="right", padx=10, expand=True)
+            accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(),ruta), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+            accept_button.pack(side="right", padx=10, expand=True)          
 
     def ventana_final_popup(self):
         # Guardar los valores de los widgets de entrada
