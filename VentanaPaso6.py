@@ -33,6 +33,9 @@ class VentanaPaso6(CTk):
         configuration_label = CTkLabel(configuration_frame, text="Generar EJB Cliente", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(10, 5), padx=10, sticky="w")
 
+        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
+        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+
         description_label = CTkLabel(configuration_frame, text="Este Wizard genera el EJB Cliente de un servicio existente")
         description_label.grid(row=1, column=0, columnspan=3, pady=(5, 5), padx=10, sticky="w")
 
@@ -399,6 +402,7 @@ class VentanaPaso6(CTk):
             self.configuration_warning.configure(text_color ="red")
             return FALSE
         
+
         if (self.ip_entry.get() == '' or self.ejb_port_entry.get() == ''  or self.remote_ejb_name_entry.get() == ''  or self.remote_ip_entry.get() == '' or 
             self.remote_port_entry.get() == '' or self.user_entry.get() == ''  or self.password_entry.get() == ''  or self.jndi_entry.get() == ''):
             self.configuration_warning.configure(text="Los parámetros de servidor y remotos EJB son obligatorios")
