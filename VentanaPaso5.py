@@ -258,7 +258,7 @@ class Paso5(CTk):
 
 
     def save_to_yaml(self):      
-        if self.ear_entry.get() == '' and self.ejb_name_entry.get() == '':
+        if self.ear_entry.get() == '' or self.ejb_name_entry.get() == '':
             self.configuration_warning.configure(text="El nombre del proyecto y el ear son obligatorios")
             self.configuration_warning.configure(text_color ="red")
             return FALSE

@@ -79,15 +79,15 @@ class VentanaPaso6(CTk):
 
         ip_label = CTkLabel(servidor_despliegue_frame, text="IP Servidor:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ip_label.grid(row=0, column=0, sticky="w", padx=(10, 5), pady=(10, 10))
-        ip_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=550, height=2.5, border_width=3, text_color="black")
-        ip_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 10), sticky="ew")
-        ip_entry.insert(0, "127.0.0.1")
+        self.ip_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=550, height=2.5, border_width=3, text_color="black")
+        self.ip_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 10), sticky="ew")
+        self.ip_entry.insert(0, "127.0.0.1")
 
         port_label = CTkLabel(servidor_despliegue_frame, text="Puerto:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         port_label.grid(row=0, column=2, sticky="w", padx=(10, 5), pady=(10, 10))
-        port_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
-        port_entry.grid(row=0, column=3, padx=(10, 5), pady=(10, 10), sticky="ew")
-        port_entry.insert(0, "7001")
+        self.port_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
+        self.port_entry.grid(row=0, column=3, padx=(10, 5), pady=(10, 10), sticky="ew")
+        self.port_entry.insert(0, "7001")
 
         remote_ejb_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color="#FFFFFF", border_color='#84bfc4', border_width=3)
         remote_ejb_frame.grid(row=4, column=0, columnspan=3, pady=5, padx=(10, 5), sticky="ew")
@@ -98,33 +98,33 @@ class VentanaPaso6(CTk):
 
         remote_ejb_name_label = CTkLabel(remote_ejb_frame, text="Nombre Servidor EJB:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         remote_ejb_name_label.grid(row=0, column=0, sticky="w", padx=(10, 5), pady=(10, 2))
-        remote_ejb_name_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=300, height=2.5, border_width=3, text_color="black")
-        remote_ejb_name_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
+        self.remote_ejb_name_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=300, height=2.5, border_width=3, text_color="black")
+        self.remote_ejb_name_entry.grid(row=0, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
 
         remote_ip_label = CTkLabel(remote_ejb_frame, text="Dirección IP:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         remote_ip_label.grid(row=1, column=0, sticky="w", padx=(10, 5), pady=(10, 2))
-        remote_ip_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=300,  height=2.5, border_width=3, text_color="black")
-        remote_ip_entry.grid(row=1, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
+        self.remote_ip_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width=300,  height=2.5, border_width=3, text_color="black")
+        self.remote_ip_entry.grid(row=1, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
 
         remote_port_label = CTkLabel(remote_ejb_frame, text="Puerto:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         remote_port_label.grid(row=1, column=2, sticky="w", padx=(10, 5), pady=(10, 2))
-        remote_port_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
-        remote_port_entry.grid(row=1, column=3, padx=(10, 5), pady=(10, 2), sticky="ew")
+        self.remote_port_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
+        self.remote_port_entry.grid(row=1, column=3, padx=(10, 5), pady=(10, 2), sticky="ew")
 
         user_label = CTkLabel(remote_ejb_frame, text="Usuario:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         user_label.grid(row=2, column=0, sticky="w", padx=(10, 5), pady=(10, 2))
-        user_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',  width=300, height=2.5, border_width=3, text_color="black")
-        user_entry.grid(row=2, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
+        self.user_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',  width=300, height=2.5, border_width=3, text_color="black")
+        self.user_entry.grid(row=2, column=1, padx=(10, 5), pady=(10, 2), sticky="ew")
 
         password_label = CTkLabel(remote_ejb_frame, text="Password:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         password_label.grid(row=2, column=2, sticky="w", padx=(10, 5), pady=(10, 2))
-        password_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, show="*", text_color="black")
-        password_entry.grid(row=2, column=3, padx=(10, 5), pady=(10, 2), sticky="ew")
+        self.password_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, show="*", text_color="black")
+        self.password_entry.grid(row=2, column=3, padx=(10, 5), pady=(10, 2), sticky="ew")
 
         jndi_label = CTkLabel(remote_ejb_frame, text="Nombre JNDI:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         jndi_label.grid(row=3, column=0, sticky="w", padx=(10, 5), pady=(10, 20))
-        jndi_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',  width=400, height=2.5, border_width=3, text_color="black")
-        jndi_entry.grid(row=3, column=1, padx=(10, 5), pady=(10, 20), sticky="ew")
+        self.jndi_entry = CTkEntry(remote_ejb_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',  width=400, height=2.5, border_width=3, text_color="black")
+        self.jndi_entry.grid(row=3, column=1, padx=(10, 5), pady=(10, 20), sticky="ew")
 
         buttons_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color="#FFFFFF")
         buttons_frame.grid(row=5, column=0, columnspan=3, pady=10)
@@ -392,10 +392,16 @@ class VentanaPaso6(CTk):
 
         # Mostrar el nuevo frame
         frame_final.pack(fill="both", expand=True)  
-        
+
     def save_to_yaml(self):      
-        if self.ear_entry.get() == '' and self.ejb_name_entry.get() == '':
-            self.configuration_warning.configure(text="El nombre del proyecto y el ear son obligatorios")
+        if self.ejb_container_entry.get() == '' or self.ejb_interface_entry.get() == '':
+            self.configuration_warning.configure(text="El proyecto y el interfaz del EJB son obligatorios")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
+        
+        if self.ip_entry.get() == '' or self.ejb_port_entry.get() == ''  or self.remote_ejb_name_entry.get() == ''  or self.remote_ip_entry.get() == '' or 
+            self.remote_port_entry.get() == '' or self.user_entry.get() == ''  or self.password_entry.get() == ''  or self.jndi_entry.get() == '':
+            self.configuration_warning.configure(text="Los parámetros de servidor y remotos EJB son obligatorios")
             self.configuration_warning.configure(text_color ="red")
             return FALSE
 
