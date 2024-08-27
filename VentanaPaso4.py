@@ -388,7 +388,7 @@ class Paso4(CTk):
 
 
     def save_to_yaml(self):      
-        if self.ear_entry.get() == '' and self.war_name_entry.get() == '':
+        if self.ear_entry.get() == '' or self.war_name_entry.get() == '':
             self.configuration_warning.configure(text="El nombre del WAR y el ear son obligatorios")
             self.configuration_warning.configure(text_color ="red")
             return FALSE
