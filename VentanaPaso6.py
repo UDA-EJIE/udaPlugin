@@ -3,6 +3,14 @@ import tkinter as tk
 from customtkinter import *
 import plugin.utils as utl
 from pathlib import Path
+import re
+import zipfile
+import subprocess
+import os
+from datetime import datetime
+import logging
+from copier import Worker
+
 self = CTk()
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 class VentanaPaso6(CTk):
@@ -57,9 +65,9 @@ class VentanaPaso6(CTk):
         self.ejb_interface_entry = CTkEntry(ejb_frame, bg_color='#599398', fg_color='#599398', border_color='#599398', width= 550, height=2.5, border_width=3, text_color="black")
         self.ejb_interface_entry.grid(row=2, column=1, padx=(10, 5), pady=(10, 10), sticky="ew")
         self.ejb_interface_entry.configure(state="disabled")
-        self.ejb_interface_button = CTkButton(ejb_frame, text="Buscar Interface",command= lambda : self.buscar_archivos_interfaz(self.selectDirectory(self.ejb_container_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold") , width= 100, height=23)
+        self.ejb_interface_button = CTkButton(ejb_frame, text="Buscar Interface",command= lambda : self.buscar_archivos_interfaz(self.ejb_container_entry.get()), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold") , width= 100, height=23)
         self.ejb_interface_button.grid(row=2, column=2, sticky="e", padx=(5, 10), pady=(10, 10))
-        self.ejb_interface_button.configure(state="disabled", text_color="white")
+        self.ejb_interface_button.configure(state="disabled")
 
 
         servidor_despliegue_frame =  CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF", border_color='#84bfc4', border_width=3)
@@ -79,7 +87,7 @@ class VentanaPaso6(CTk):
         port_label.grid(row=0, column=2, sticky="w", padx=(10, 5), pady=(10, 10))
         port_entry = CTkEntry(servidor_despliegue_frame, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
         port_entry.grid(row=0, column=3, padx=(10, 5), pady=(10, 10), sticky="ew")
-        ip_entry.insert(0, "7001")
+        port_entry.insert(0, "7001")
 
         remote_ejb_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color="#FFFFFF", border_color='#84bfc4', border_width=3)
         remote_ejb_frame.grid(row=4, column=0, columnspan=3, pady=5, padx=(10, 5), sticky="ew")
@@ -136,20 +144,44 @@ class VentanaPaso6(CTk):
 
     def buscar_archivos_interfaz(self, ruta_personalizada = None):
         files = None
-        """Busca archivos con jst.ejb."""
-        rutaBusqueda = ruta_personalizada
-        if ruta_personalizada == None:
-            rutaBusqueda = ruta_classes
+
+        fileName = ruta_personalizada.split("/")[len(ruta_personalizada.split("/")) - 1] 
+        parte = re.split(r'(?=[A-Z])', fileName)[0]   
+        rutaBusqueda = self.ejbEntryRoute + "/" + parte + "EAR/EarContent/APP-INF/lib"
         files = []
         try:
-            for file in os.listdir(rutaBusqueda):
-                rutaSettings = rutaBusqueda+"/"+file+"/.settings/org.eclipse.wst.common.project.facet.core.xml"
-                
-                if len(file) > 3 and file.endswith("EJB") and utl.buscarPropiedadInXml(rutaSettings,"facet","jst.ejb"):
-                   files.append(file)
+            for file in os.listdir(rutaBusqueda): #buscar jar acabdos en Remoting , 
+               if file.endswith(".jar") and "Remoting" in file:#dentro buscar los serives a usar
+                   # Extraer el archivo JAR 
+                    jar_path  = rutaBusqueda+"/"+file
+                    class_files = self.listar_clases_de_jar(jar_path)
+                    print("Archivos .class encontrados:", class_files)
+                    files.append(class_files)
         except:
             print("No encontro la ruta: " + rutaBusqueda)    
-        self.mostrar_resultados(files,rutaBusqueda)
+        self.mostrar_resultados_interfaz(files,rutaBusqueda)
+
+    def listar_clases_de_jar(self,jar_path):
+        """
+        Lista las clases contenidas en un archivo JAR.
+
+        :param jar_path: Ruta al archivo JAR.
+        :return: Lista de nombres de clases completamente calificados.
+        """
+        clases = []
+
+        # Abrir el archivo JAR como un archivo ZIP
+        with zipfile.ZipFile(jar_path, 'r') as jar:
+            # Iterar sobre todos los archivos en el JAR
+            for archivo in jar.namelist():
+                # Filtrar solo archivos .class
+                if archivo.endswith('SkeletonRemote.class') and not archivo.startswith('META-INF/'):
+                    # Convertir la ruta del archivo en un nombre de clase
+                    # Reemplazar '/' o '\' por '.' y eliminar la extensión '.class'
+                    clase = archivo.replace('/', '.').replace('\\', '.').rstrip('.class')
+                    clases.append(clase)
+
+        return clases
 
     def buscar_archivos(self, ruta_personalizada = None):
         files = None
@@ -196,11 +228,74 @@ class VentanaPaso6(CTk):
             self.ejb_container_entry.insert(0, ruta+"/"+selected_file)
             self.ejb_container_entry.configure(state="disabled")
             self.ejb_interface_button.configure(state="normal")
+            self.ejbEntryRoute = ruta
             self.archivoClases = selected_file
             frame.destroy()
 
         else:
             print("No se seleccionó ningún archivo.") 
+
+    def aceptar_interfaz(self, frame, selected_file, ruta):
+        if selected_file:
+            #Comprobar la configuración
+            print(f"Archivo seleccionado: {selected_file}")
+            self.ejb_interface_entry.configure(state="normal")
+            self.ejb_interface_entry.delete(0, "end")
+            self.ejb_interface_entry.insert(0, selected_file)
+            self.ejb_interface_entry.configure(state="disabled")
+
+            frame.destroy()
+
+        else:
+            print("No se seleccionó ningún archivo.")             
+
+    def mostrar_resultados_interfaz(self, files,ruta):
+        if files != None and len(files) > 6:
+            self.mostrar_resultados_scrollbar(files, ruta)
+
+        else:
+
+            """Muestra los archivos encontrados en una nueva ventana con radiobuttons."""
+
+            resultados_window = ctk.CTkToplevel(self)
+            resultados_window.title("Resultados de Búsqueda")
+            resultados_window.geometry("600x300")
+            resultados_window.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
+            
+            resultados_window.attributes('-topmost', True)  # Asegura que la ventana emergente se muestre al frente
+
+            # Variable para almacenar el archivo seleccionado
+            selected_file = tk.StringVar(value=None)
+
+            # Frame para contener los radiobuttons
+            file_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
+            file_frame.pack(fill="both", expand=True)
+            desc_label = CTkLabel(file_frame, text="Seleccione un proyecto EJB ", text_color= "black")
+            desc_label.grid(row=0, column=0, columnspan=3, pady=(5, 1), padx=20, sticky="w")
+
+            # Botones de acción en el pie de página
+            button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
+            button_frame.pack(fill="x", pady=20)
+
+            if (ruta != ''):
+                desc_label2 = CTkLabel(file_frame, text="(" + ruta +")" , text_color= "black")
+                desc_label2.grid(row=1, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+
+            # Añadir radiobuttons para cada archivo
+            if(files != None and len(files) > 0):
+                for index, file in enumerate(files):
+                    radiobutton = ctk.CTkRadioButton(file_frame, text=file, variable=selected_file, value=file[index], border_color='#84bfc4', fg_color='#84bfc4', text_color= "black", font=("Arial", 12, "bold"))
+                    radiobutton.grid(row=index + 3, column=0, sticky="w", padx=60, pady=3)
+
+                accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar_interfaz(resultados_window, selected_file.get(),ruta), fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+                accept_button.pack(side="right", padx=10, expand=True)    
+            else:    
+    
+                texto = "No se ha encontrado ninguna interfaz de EJB remoto"  
+                desc_label3 = CTkLabel(file_frame, text=texto,text_color="red")
+                desc_label3.grid(row=3, column=0, columnspan=3, pady=(0,2), padx=30, sticky="w")
+                ok_button = ctk.CTkButton(button_frame, text="Ok", command=resultados_window.destroy, fg_color='#84bfc4',  hover_color='#41848a', text_color= "black", font=("Arial", 12, "bold"))
+                ok_button.pack(side="right", padx=10, expand=True)           
        
     def mostrar_resultados(self, files,ruta):
         if files != None and len(files) > 6:
@@ -297,6 +392,49 @@ class VentanaPaso6(CTk):
 
         # Mostrar el nuevo frame
         frame_final.pack(fill="both", expand=True)  
+        
+    def save_to_yaml(self):      
+        if self.ear_entry.get() == '' and self.ejb_name_entry.get() == '':
+            self.configuration_warning.configure(text="El nombre del proyecto y el ear son obligatorios")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
+
+        inicio = datetime.now()
+        array_proyect = self.ear_entry.get().split("/")
+        self.proyect_name = array_proyect[len(array_proyect)-1].replace("EAR","")
+        self.rutaDest = self.ear_entry.get().replace("/"+self.proyect_name+"EAR","")
+        yaml_data = {
+            "project_name": self.proyect_name,
+            "ejb_project_name": self.ejb_name_entry.get(),
+        }
+
+        rutaPath = utl.rutaActual(__file__)
+        directorio_actual = rutaPath + "\\templates\\proyectoPaso5"
+        filesExcludes = []
+
+        #destinoPath = self.entry_location.get()
+        #if(destinoPath == ''):
+        destinoPath = rutaPath
+        now = datetime.now()
+        dates = now.strftime('%d-%b-%Y %H:%M:%S') 
+        print('Inicio: proyecto Creando... ' +yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")    
+        with Worker(src_path=directorio_actual,overwrite=True, dst_path=self.rutaDest, data=yaml_data,exclude=filesExcludes) as worker:
+            logging.info('Inicio: Crear proyecto: ' + yaml_data["ejb_project_name"])
+            worker.template.version = ": 1.0 Paso 1 ::: "+dates
+            worker.run_copy()
+            logging.info('Fin: Crear proyecto: ' + yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")
+            #guardar ultima ruta creada5
+            utl.writeConfig(
+                "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
+        print('Fin: proyecto Creado: ' + yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")
+        fin = datetime.now()
+        logging.info('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
+        now = datetime.now()
+        dates = now.strftime('%d-%b-%Y %H:%M:%S')
+        print(F"Final: paso 1 creado ::: "+dates,file=sys.stderr)
+        sys.stderr.flush()
+    
+        self.ventana_final_popup()        
 
 if __name__ == '__main__':
     app = VentanaPaso6()
