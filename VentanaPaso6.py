@@ -10,6 +10,7 @@ import os
 from datetime import datetime
 import logging
 from copier import Worker
+import plugin.utilsPaso6 as utlPaso6
 
 self = CTk()
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
@@ -149,15 +150,15 @@ class VentanaPaso6(CTk):
         files = None
 
         fileName = ruta_personalizada.split("/")[len(ruta_personalizada.split("/")) - 1] 
-        parte = re.split(r'(?=[A-Z])', fileName)[0]   
-        rutaBusqueda = self.ejbEntryRoute + "/" + parte + "EAR/EarContent/APP-INF/lib"
+        self.proyect_name = re.split(r'(?=[A-Z])', fileName)[0]   
+        rutaBusqueda = self.ejbEntryRoute + "/" + self.proyect_name + "EAR/EarContent/APP-INF/lib"
         files = []
         try:
             for file in os.listdir(rutaBusqueda): #buscar jar acabdos en Remoting , 
                if file.endswith(".jar") and "Remoting" in file:#dentro buscar los serives a usar
                    # Extraer el archivo JAR 
-                    jar_path  = rutaBusqueda+"/"+file
-                    class_files = self.listar_clases_de_jar(jar_path)
+                    self.jar_path  = rutaBusqueda+"/"+file
+                    class_files = self.listar_clases_de_jar(self.jar_path)
                     print("Archivos .class encontrados:", class_files)
                     files.append(class_files)
         except:
@@ -352,7 +353,7 @@ class VentanaPaso6(CTk):
     def ventana_final_popup(self):
         # Guardar los valores de los widgets de entrada
         
-        ejb_full_value = self.full_ejb_name_entry.get()   
+        ejb_full_value = self.remote_ejb_name_entry.get()   
 
         # Destruir todos los widgets hijos del frame actual
         for widget in self.winfo_children():
@@ -366,7 +367,7 @@ class VentanaPaso6(CTk):
         frame_center = CTkFrame(frame_final, bg_color="#FFFFFF", fg_color="#FFFFFF")
         frame_center.pack(expand=True)
 
-        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto  EJB: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        nombre_label = CTkLabel(frame_center, text="Has creado el siguiente proyecto  cliente EJB: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         nombre_label.pack(pady=(0, 0), padx=30)
         
         nombre_proyecto_label = CTkLabel(frame_center, text= ejb_full_value, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
@@ -397,51 +398,72 @@ class VentanaPaso6(CTk):
         frame_final.pack(fill="both", expand=True)  
 
     def save_to_yaml(self):      
+        
         if self.ejb_container_entry.get() == '' or self.ejb_interface_entry.get() == '':
             self.configuration_warning.configure(text="El proyecto y el interfaz del EJB son obligatorios")
             self.configuration_warning.configure(text_color ="red")
             return FALSE
         
-
-        if (self.ip_entry.get() == '' or self.ejb_port_entry.get() == ''  or self.remote_ejb_name_entry.get() == ''  or self.remote_ip_entry.get() == '' or 
+        if (self.ip_entry.get() == '' or self.port_entry == ''  or self.remote_ejb_name_entry.get() == ''  or self.remote_ip_entry.get() == '' or 
             self.remote_port_entry.get() == '' or self.user_entry.get() == ''  or self.password_entry.get() == ''  or self.jndi_entry.get() == ''):
             self.configuration_warning.configure(text="Los parámetros de servidor y remotos EJB son obligatorios")
             self.configuration_warning.configure(text_color ="red")
-            return FALSE
-
+            return FALSE 
+    
         inicio = datetime.now()
-        array_proyect = self.ear_entry.get().split("/")
-        self.proyect_name = array_proyect[len(array_proyect)-1].replace("EAR","")
-        self.rutaDest = self.ear_entry.get().replace("/"+self.proyect_name+"EAR","")
+        namePropServidor = self.remote_ejb_name_entry.get() + "."
+        interfazEntry = self.ejb_interface_entry.get()
+        cadenaInterfaz = interfazEntry.split(".")
+        skeletonRemote = cadenaInterfaz[len(cadenaInterfaz ) - 1]
+        nameProperties = self.proyect_name+".properties"
+        rutaProperties = self.ejbEntryRoute+"/"+self.proyect_name+"Config/"
+        utl.writeProperties(rutaProperties,nameProperties,"CLIENTE EJB", {
+                                    "java.naming.factory.initial":"weblogic.jndi.WLInitialContextFactory",
+                                    "java.naming.provider.url":"t3://"+self.ip_entry.get()+":"+self.port_entry.get(),
+                                    namePropServidor+skeletonRemote+".jndi":self.jndi_entry.get()+"#"+interfazEntry,
+                                    namePropServidor+"url":"t3://"+self.remote_ip_entry.get()+":"+self.remote_port_entry.get(),
+                                    namePropServidor+"user":self.user_entry.get(),
+                                    namePropServidor+"password":self.password_entry.get()
+                                    })
+
+        self.rutaDest = self.ejb_container_entry.get()+"/ejbModule/com/ejie/"+self.proyect_name+"/remoting/"
         yaml_data = {
             "project_name": self.proyect_name,
-            "ejb_project_name": self.ejb_name_entry.get(),
+            "ejb_project_name": self.remote_ejb_name_entry.get(),
+            "serviceName":skeletonRemote.replace("SkeletonRemote",""),
+            "namePackageEjb":interfazEntry.replace(".skeletonRemote",""),
+            "packageNameRemoting":"com.ejie."+self.proyect_name+".remoting",
+            "jndiName":self.jndi_entry.get(),
+            "nameServer":self.remote_ejb_name_entry.get(),
         }
 
+        metodos = utlPaso6.get_methods_from_class(self.jar_path,interfazEntry)
+        listaImports = utlPaso6.generate_parameter_imports(metodos, FALSE)
+        yaml_data["listaImports"] = listaImports
+        yaml_data["metodos"] = metodos
+
         rutaPath = utl.rutaActual(__file__)
-        directorio_actual = rutaPath + "\\templates\\proyectoPaso5"
+        directorio_actual = rutaPath + "\\templates\\proyectoPaso6"
         filesExcludes = []
 
-        #destinoPath = self.entry_location.get()
-        #if(destinoPath == ''):
-        destinoPath = rutaPath
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' +yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")    
         with Worker(src_path=directorio_actual,overwrite=True, dst_path=self.rutaDest, data=yaml_data,exclude=filesExcludes) as worker:
             logging.info('Inicio: Crear proyecto: ' + yaml_data["ejb_project_name"])
-            worker.template.version = ": 1.0 Paso 1 ::: "+dates
+            worker.template.version = ": 1.0 Paso 6 ::: "+dates
+            worker.jinja_env.filters["fistLetterMin"] = utl.fistLetterMin
+            worker.jinja_env.filters["replaceDto"] = utlPaso6.replace_dto
+            worker.jinja_env.globals['extract_java_types'] = utlPaso6.extract_java_types
             worker.run_copy()
             logging.info('Fin: Crear proyecto: ' + yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")
-            #guardar ultima ruta creada5
-            utl.writeConfig(
-                "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
+
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+ yaml_data["ejb_project_name"]+  "EJB")
         fin = datetime.now()
         logging.info('Tiempo: proyecto Creado en: ' + str((fin-inicio).total_seconds()) + " segundos")
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S')
-        print(F"Final: paso 1 creado ::: "+dates,file=sys.stderr)
+        print(F"Final: paso 6 creado ::: "+dates,file=sys.stderr)
         sys.stderr.flush()
     
         self.ventana_final_popup()        
