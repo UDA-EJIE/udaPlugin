@@ -98,6 +98,11 @@ def toRestUrlNaming(str):
 
     return res
 
+def fistLetterMin(cadena):
+    if cadena:
+        return cadena[0].lower() + cadena[1:]
+    return cadena
+
 def modifyTiles(ruta,entityName, final):
     tree = etree.parse(ruta)
     root = tree.getroot()   
@@ -172,6 +177,23 @@ def writeConfig(section,key):
     try:
         base_path = os.path.dirname(os.path.abspath(__file__))
         configfile_name = os.path.join(base_path, 'config.ini')
+        config = configparser.ConfigParser()
+        config.read(configfile_name)
+        if(len(key) == 1):
+          for k in key:
+            config.set(section,k,key[k])
+        else:      
+          config[section] = key
+    
+        with open(configfile_name, 'w') as configfile:
+            config.write(configfile)
+    except ValueError:
+        print("An exception occurred al escribir el config: " + ValueError)
+
+#escriba las propiedades en un archivo properties
+def writeProperties(path,nameFile,section,key):
+    try:
+        configfile_name = os.path.join(path, nameFile)
         config = configparser.ConfigParser()
         config.read(configfile_name)
         if(len(key) == 1):
