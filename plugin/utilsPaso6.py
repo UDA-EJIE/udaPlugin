@@ -32,7 +32,7 @@ def get_methods_from_class(jar_path, class_name):
         lines = result.stdout.splitlines()
         for line in lines:
             line = line.strip()
-            if line.endswith(';') and not line.startswith('Compiled'):
+            if line.endswith(';') and not line.startswith('Compiled') and "main." not in line:
                 methods.append(line)
 
         return methods
@@ -167,4 +167,4 @@ def extract_java_types(method_declaration):
 
         return method_name,return_type, param_types
     else:
-        return None, None  
+        return None, None  , None
