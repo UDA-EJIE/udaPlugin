@@ -192,10 +192,25 @@ def writeConfig(section,key):
 
 #escriba las propiedades en un archivo properties
 def writeProperties(path,nameFile,section,key):
+
+    configfile_name = os.path.join(path, nameFile)
+    config = configparser.ConfigParser()
+    
     try:
-        configfile_name = os.path.join(path, nameFile)
-        config = configparser.ConfigParser()
+        # Leer el archivo
         config.read(configfile_name)
+    except configparser.MissingSectionHeaderError:
+        # Si falta una sección, añadirla automáticamente
+        with open(configfile_name, 'r') as f:
+            content = f.read()
+
+        # Añadir una sección predeterminada y guardar el archivo corregido
+        with open(configfile_name, 'w') as f:
+            f.write('[CONFIG]\n' + content)
+
+        # Reintentar leer el archivo
+        config.read(configfile_name)    
+    try:
         if(len(key) == 1):
           for k in key:
             config.set(section,k,key[k])
