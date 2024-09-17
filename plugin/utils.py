@@ -98,6 +98,11 @@ def toRestUrlNaming(str):
 
     return res
 
+def fistLetterMin(cadena):
+    if cadena:
+        return cadena[0].lower() + cadena[1:]
+    return cadena
+
 def modifyTiles(ruta,entityName, final):
     tree = etree.parse(ruta)
     root = tree.getroot()   
@@ -185,6 +190,38 @@ def writeConfig(section,key):
     except ValueError:
         print("An exception occurred al escribir el config: " + ValueError)
 
+#escriba las propiedades en un archivo properties
+def writeProperties(path,nameFile,section,key):
+
+    configfile_name = os.path.join(path, nameFile)
+    config = configparser.ConfigParser()
+    
+    try:
+        # Leer el archivo
+        config.read(configfile_name)
+    except configparser.MissingSectionHeaderError:
+        # Si falta una sección, añadirla automáticamente
+        with open(configfile_name, 'r') as f:
+            content = f.read()
+
+        # Añadir una sección predeterminada y guardar el archivo corregido
+        with open(configfile_name, 'w') as f:
+            f.write('[CONFIG]\n' + content)
+
+        # Reintentar leer el archivo
+        config.read(configfile_name)    
+    try:
+        if(len(key) == 1):
+          for k in key:
+            config.set(section,k,key[k])
+        else:      
+          config[section] = key
+    
+        with open(configfile_name, 'w') as configfile:
+            config.write(configfile)
+    except ValueError:
+        print("An exception occurred al escribir el config: " + ValueError)
+
 def readConfig(valor,key):
 
     try:
@@ -257,3 +294,15 @@ def obtenerNombreProyectoByEar(ruta):
     except ValueError:
         print("An exception occurred: obtenerNombreProyecto: ", ValueError)
     return path
+
+def buscarPropiedadInXml(ruta,prop,valor):
+    encontrado = False
+    try:
+        tree = etree.parse(ruta)
+        root = tree.getroot()
+        diag = root.find("./*[@"+prop+"='"+valor+"']")
+        if(diag != None):
+            return True
+    except Exception as e:
+        print("An exception occurred: obtenerNombreProyectoWar",e)
+    return encontrado
