@@ -11,6 +11,9 @@ from PIL import Image, ImageTk
 import logging
 import plugin.utils as utl
 import sys
+from dotenv.main import load_dotenv
+import os
+
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 logsPath = os.path.join(base_path, 'logs\\log.log')
@@ -24,12 +27,11 @@ sys.stderr = open(logsPath, 'a')
 class MainMenu(CTkToplevel):
     def __init__(self):
         super().__init__()
-
         self.title("Menú Principal")
         self.geometry("900x700")   # Configura el tamaño de la ventana
         self.config(bg="#FFFFFF")
         self.resizable(width=False, height=False)
-
+    
         self.configure(columnspan = 3)
         self.grid_columnconfigure(1, weight=1)
         # Load the image
@@ -121,8 +123,15 @@ class MainMenu(CTkToplevel):
     def MainMenuLoop(self):   
        self.deiconify()
 
+
+
 def close_win():
     sys.exit(0)    
 
 if __name__ == "__main__":
-    MainMenu().mainloop()   
+    utl.setup_embedded_git()
+    utl.check_git_path()
+    utl.run_git_directly()
+    utl.run_plumbum_git()
+    MainMenu().mainloop() 
+    

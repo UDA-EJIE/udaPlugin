@@ -7,6 +7,9 @@ import logging
 import configparser
 import os
 from pathlib import Path
+from plumbum import local
+import subprocess
+import sys
 
 def getColumnsDates(columns):
     newColumns = []
@@ -306,3 +309,38 @@ def buscarPropiedadInXml(ruta,prop,valor):
     except Exception as e:
         print("An exception occurred: obtenerNombreProyectoWar",e)
     return encontrado
+
+
+def setup_embedded_git():
+    if hasattr(sys, '_MEIPASS'):
+        # Cuando la aplicación es ejecutada por PyInstaller
+        print("Paso por aqui")
+        git_base_path = os.path.join(sys._MEIPASS, "embedded_git")
+    else:
+        # Cuando ejecutas en local
+        git_base_path = os.path.join(os.path.dirname(__file__), "embedded_git")
+    
+
+    git_bin_path = os.path.join(git_base_path, "bin")
+    git_executable_path = os.path.join(git_bin_path, "git.exe")
+    os.environ["PATH"] = git_bin_path + os.pathsep + git_executable_path + os.pathsep + os.environ["PATH"]
+    
+
+def check_git_path():
+    git_path = os.path.join(os.path.dirname(__file__), "embedded_git", "bin", "git.exe")
+    if os.path.exists(git_path):
+        print(f"Git found at: {git_path}")
+    else:
+        print("Git not found in the expected location")
+
+
+def run_git_directly():
+    git_path = os.path.join(os.path.dirname(__file__), "embedded_git", "bin", "git.exe")
+    result = subprocess.run([git_path, "--version"], capture_output=True, text=True)
+    print(result.stdout)
+
+def run_plumbum_git():
+    git_path = os.path.join(os.path.dirname(__file__), "embedded_git", "bin", "git.exe")
+    git = local[git_path]  # Usar la ruta completa de Git embebido
+    result = git("--version")
+    print(result)
