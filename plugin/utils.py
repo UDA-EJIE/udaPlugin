@@ -16,7 +16,9 @@ def getColumnsDates(columns):
     columnsPks = []
     for columnOld in columns:   
         newColumn = columnOld
-        type = columnOld["type"] 
+        name = columnOld["name"].capitalize() 
+        type = columnOld["type"]
+        type_cap = columnOld["type"].capitalize()   
         newColumn["editable"] = "true"
         if columnOld["primaryKey"] == "P": 
             newColumn["editable"] = "false"
@@ -27,37 +29,57 @@ def getColumnsDates(columns):
         if type == "FLOAT":
                newColumn["DATO_TYPE"] = "BigDecimal"
                newColumn["DATA_IMPORT"] = "java.math.BigDecimal"
+               newColumn["DATA_IMPORT2"] = ""
         if type == "NUMBER":
                if columnOld["dataPrecision"] != None and columnOld["dataPrecision"] > 1 and columnOld["dataPrecision"] < 5:
                 newColumn["DATO_TYPE"] = "Long"
                 newColumn["DATA_IMPORT"] = ""
+                newColumn["DATA_IMPORT2"] = ""
                elif columnOld["dataPrecision"] != None and columnOld["dataPrecision"] >= 5:
                 newColumn["DATO_TYPE"] = "BigDecimal"
                 newColumn["DATA_IMPORT"] = "java.math.BigDecimal"
+                newColumn["DATA_IMPORT2"] = ""
                else :
                 newColumn["DATO_TYPE"] = "Integer"
                 newColumn["DATA_IMPORT"] = ""
+                newColumn["DATA_IMPORT2"] = ""
         elif type == "LONG":
                newColumn["DATO_TYPE"] = "Long"
                newColumn["DATA_IMPORT"] = ""
+               newColumn["DATA_IMPORT2"] = ""
         elif type == "CLOB":
                newColumn["DATO_TYPE"] = "Clob"
                newColumn["DATA_IMPORT"] = "java.sql.Clob"
+               newColumn["DATA_IMPORT2"] = ""
         elif type == "BLOB":
               newColumn["DATO_TYPE"] = "Blob"
               newColumn["DATA_IMPORT"] = "java.sql.Blob"
+              newColumn["DATA_IMPORT2"] = ""
         elif type == "DATE":
               newColumn["DATO_TYPE"] = "Date"
               newColumn["DATA_IMPORT"] = "java.util.Date"
+              newColumn["DATA_IMPORT2"] = ""
         elif type == "TIMESTAMP":
               newColumn["DATO_TYPE"] = "Date"
               newColumn["DATA_IMPORT"] = "java.util.Date"
+              newColumn["DATA_IMPORT2"] = ""
+        elif type == "LIST":
+            newColumn["DATO_TYPE"] = "List"
+            newColumn["DATA_IMPORT"] = "java.util.List"
+            newColumn["DATA_IMPORT2"] = "java.util.ArrayList"
+        elif name == type:
+            newColumn["DATO_TYPE"] = type
+            newColumn["DATA_IMPORT"] = ""
+            newColumn["DATA_IMPORT2"] = ""
         else :
               newColumn["DATO_TYPE"] = "String"
               newColumn["DATA_IMPORT"] = ""
+              newColumn["DATA_IMPORT2"] = ""
         #si el import ya esta, no repetimos
         if contains(newColumns, lambda x: x["DATA_IMPORT"] == newColumn["DATA_IMPORT"]): 
-             newColumn["DATA_IMPORT"] = ""          
+             newColumn["DATA_IMPORT"] = ""
+        if contains(newColumns, lambda x: x["DATA_IMPORT2"] == newColumn["DATA_IMPORT2"]): 
+             newColumn["DATA_IMPORT2"] = ""               
         newColumns.append(newColumn) 
         if columnOld["primaryKey"] == "P":
             columnsPks.append(newColumn)       
