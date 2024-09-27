@@ -11,7 +11,6 @@ from PIL import Image, ImageTk
 import logging
 import plugin.utils as utl
 import sys
-from dotenv.main import load_dotenv
 import os
 
 
@@ -129,9 +128,4 @@ def close_win():
     sys.exit(0)    
 
 if __name__ == "__main__":
-    utl.setup_embedded_git()
-    utl.check_git_path()
-    utl.run_git_directly()
-    utl.run_plumbum_git()
-    MainMenu().mainloop() 
-    
+    MainMenu().mainloop()     

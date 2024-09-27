@@ -1,0 +1,35 @@
+README.portable
+=======================
+
+This version of Git for Windows is portable, i.e. does not need to
+be installed. It will run from any directory you place it in, even
+from a USB thumbdrive. It will not write permanent entries into the
+Windows registry. It does not need administrator privileges to "install".
+
+
+Instalaciones necesarias
+------------
+
+pip install customtkinter
+pip install pyinstaller
+pip install copier
+pip install oracledb
+pip install lxml
+
+Para no instalar git, se debe cambiar en Copier, la ruta de git embebida , actualmente 2.46.1
+
+En el fichero:
+	C:\python\Lib\site-packages\copier\vcs.py
+
+en el método:
+	get_git
+
+cambiar:
+	command = local['git']
+por:
+	ruta_actual = os.path.abspath(__file__)
+	ruta_superior = os.path.abspath(os.path.join(ruta_actual, "../../plugin/embedded_git/bin/git.exe"))
+	command = local[ruta_superior] //busca el ejutable del git portable  y le obliga a copier(v.9.3.1) a usarlo
+
+
+
