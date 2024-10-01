@@ -1224,7 +1224,13 @@ class VentanaPrincipal(CTk):
                     
                     if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         self.tables.append(Table(tableName,columns))   
-                    tableName = tableNameBBDD       
+                    tableName = tableNameBBDD   
+
+        if(len(self.tables) == 0): 
+           self.pagina_actual.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
+           self.pagina_actual.configuration_warning.configure(text_color ="red")
+           self.close_loading_frame()    
+           return False                   
         self.mostrar_pagina_dos(self.main_menu, self.tables, connection.cursor(), rows)  
 
     def select_all(self):
@@ -1270,8 +1276,6 @@ class VentanaPrincipal(CTk):
         if len(tabla_resultados) > 1:
             relaciones_encontradas, tablas_seleccionadas = self.comprobar_relaciones(self.tables_original, tabla_resultados) 
 
-
-        
 
         tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
 

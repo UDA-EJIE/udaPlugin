@@ -249,6 +249,11 @@ class PaginaUno(CTkFrame):
                     if cont == len(rows) and contPrimaryKey > 0 and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
+        if(len(tables) == 0): 
+            self.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
+            self.configuration_warning.configure(text_color ="red")
+            self.close_loading_frame()    
+            return False       
         self.master.mostrar_pagina_dos(self.main_menu, tables)           
 
 
