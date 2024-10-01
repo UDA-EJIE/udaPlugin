@@ -859,9 +859,13 @@ class PaginaTres(CTkFrame):
             tabla_obj_2 = self.encontrar_tabla(tabla_2, tablas_seleccionadas)
             tName = snakeToCamel(tabla_1)
             tName2 = snakeToCamel(tabla_2)
-            
+
             if not tabla_obj_1 or not tabla_obj_2:
                 continue  # Si no encontramos las tablas, pasamos a la siguiente relación
+            
+            #Se añaden metodos para el dao
+            
+            
 
             if tipo_relacion == 'One to One':
 
@@ -878,6 +882,9 @@ class PaginaTres(CTkFrame):
                 }
                 tabla_obj_2['columns'].append(nueva_columna_2)
 
+                tabla_obj_1['dao'] =  None
+                tabla_obj_2['dao'] =  None
+
             elif tipo_relacion == 'One to Many':
                 # Para One to Many, agregamos una lista en la segunda tabla (la que tiene "Many")
                 nueva_lista_2 = {
@@ -892,6 +899,24 @@ class PaginaTres(CTkFrame):
                     'tableName': tabla_1
                 }
                 tabla_obj_2['columns'].append(nueva_lista_2)
+
+                #Extraer primary key del padre
+                numero_columna = 0
+                for index, columns in enumerate(tabla_obj_2['columns']):
+
+                    if columns['primaryKey']  == 'P':
+                        numero_columna = index
+                        break
+            
+                #Se pasan los datos necesarios para las plantillas del dao 
+                tabla_obj_1['dao'] =  {
+                        'entidadPadre': tabla_obj_2['name'].capitalize(), 
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'columns' : tabla_obj_2['columns']
+                        
+                    }
+                
+                tabla_obj_2['dao'] =  None
 
                 # En la primera tabla, agregamos una referencia a la segunda tabla como entidad
                 nueva_columna_1 = {
@@ -932,6 +957,47 @@ class PaginaTres(CTkFrame):
                 }
                 tabla_obj_1['columns'].append(nueva_lista_1)
                 tabla_obj_2['columns'].append(nueva_lista_2)
+                
+                
+                
+                #Extraer primary key del padre
+                numero_columna_tab1 = 0
+                for index, columns in enumerate(tabla_obj_1['columns']):
+
+                    if columns['primaryKey']  == 'P':
+                        numero_columna_tab1 = index
+                        break
+
+            #Extraer primary key del padre
+                numero_columna_tab2 = 0
+                for index, columns in enumerate(tabla_obj_2['columns']):
+
+                    if columns['primaryKey']  == 'P':
+                        numero_columna_tab2 = index
+                        break
+            
+                #Se guardan los datos necesarios para modificar las plantillas del controler 
+                tabla_obj_1['controller'] =  {
+                        'entidadRelacion': tabla_obj_2['name'].capitalize(), 
+                        'primaryKeyCol': [tabla_obj_1['columns'][numero_columna_tab1]],
+                        'columns' : tabla_obj_1['columns'],
+                        'colPrimaryRelacion': [tabla_obj_2['columns'][numero_columna_tab2]]
+    
+
+                        
+                    }
+                
+                 #Se guardan los datos necesarios para modificar las plantillas del controler 
+                tabla_obj_2['controller'] =  {
+                        'entidadRelacion': tabla_obj_2['name'].capitalize(), 
+                        'primaryKeyCol': [tabla_obj_2['columns'][numero_columna_tab2]],
+                        'columns' : tabla_obj_2['columns'],
+                        'colPrimaryRelacion': [tabla_obj_1['columns'][numero_columna_tab1]],
+                        
+                    }
+                tabla_obj_1['dao'] =  None
+                tabla_obj_2['dao'] =  None
+
         return tablas_seleccionadas
 
      # Función para encontrar una tabla seleccionada
@@ -1205,7 +1271,11 @@ class VentanaPrincipal(CTk):
             relaciones_encontradas, tablas_seleccionadas = self.comprobar_relaciones(self.tables_original, tabla_resultados) 
 
 
+        
+
         tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
+
+
 
         p2.initPaso2(tablas_seleccionadas_modificadas, self.getDatos(rutaActual,archivoClases,archivoWar),self)
         this.close_loading_frame()
