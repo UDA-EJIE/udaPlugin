@@ -51,7 +51,7 @@ class PaginaUno(CTkFrame):
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=10, sticky="w")
 
         description_label = CTkLabel(configuration_frame, text="Este Wizard genera el código fuente para desplegar una aplicación UDA")
         description_label.grid(row=1, column=0, columnspan=3, pady=(10, 5), padx=20, sticky="w")
@@ -1194,7 +1194,7 @@ class VentanaPrincipal(CTk):
             return False
         
         with connection.cursor() as cursor:
-                cursor.execute(query, esquema=pw.upper())
+                cursor.execute(query, esquema=esquema.upper())
                 rows = cursor.fetchall()
                 tableName = ''
                 cont = 0
