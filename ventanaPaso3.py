@@ -696,7 +696,7 @@ class VentanaPaso3(CTkFrame):
         
         btn_back = CTkButton(footer_frame, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
-        btn_next = CTkButton(footer_frame, text="Siguiente", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
+        btn_next = CTkButton(footer_frame, text="Finalizar", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
         btn_next.pack(side="left", padx=10, pady=5)
         btn_cancel = CTkButton(footer_frame, text="Cancelar" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)

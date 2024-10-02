@@ -1249,6 +1249,7 @@ class VentanaPrincipal(CTk):
         archivoClases = self.archivoClases
         archivoWar = self.archivoWar
         negocioActivado = False
+        self.master.update_progress(0.1)
         if(self.modelo_datos_var.get() == True or self.daos_var.get() == True or self.servicios_var.get() == True):
             negocioActivado = True
         if (self.controladores_var.get() == False and negocioActivado == False): 
