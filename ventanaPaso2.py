@@ -22,8 +22,6 @@ import logging
 import threading
 from plugin.utils import *
 
-
-
 base_path = os.path.dirname(os.path.abspath(__file__))
 d = os.path.join(base_path, 'instantclient_21_12')
 
@@ -169,7 +167,7 @@ class PaginaDos(CTkFrame):
         self.scrollable_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         self.populate_scrollable_frame(self.scrollable_frame, tables_original)
-
+        self.master.update_progress(1.0)
         # Footer frame using grid for buttons
         self.footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         self.footer_frame.grid(row=2, column=0, pady=(5, 30) ,sticky="ew")
@@ -208,6 +206,8 @@ class PaginaDos(CTkFrame):
    
     def populate_scrollable_frame(self, frame, tables_original):
         self.var_list = []
+        total_pasos = len(tables_original) + 1
+        pasos_por_parte = total_pasos // 8
         for index, table in enumerate(tables_original):
             self.var_list.append(IntVar(value=0))
             table_frame = CTkFrame(frame, fg_color="#FFFFFF", corner_radius=10)
@@ -246,6 +246,12 @@ class PaginaDos(CTkFrame):
                 else:
                     self.listaColumnas[table.name+CADENA_COLUMN+column.name] = column_checkbox
             self.tables.append(table_frame)
+            if index % pasos_por_parte == 0:  
+                porcentaje = (index / total_pasos) 
+                if(porcentaje < 0.2): 
+                    porcentaje = 0.2 
+                self.master.update_progress(porcentaje)     
+        self.master.update_progress(1.0)    
 
     def toggle_columns(self, table_frame):
     # Asegúrate de referirte al columns_frame para expandir/contraer
@@ -1053,47 +1059,22 @@ class VentanaPrincipal(CTk):
     def mostrar_pagina_uno(self, main_menu):
         self.mostrar_pagina(PaginaUno, main_menu)
 
+    def update_progress(self,value):
+        self.progressbar.set(value)
+        self.loading_frame.update_idletasks()
+        self.update()
     
     def mostrarSpinner(self,caso):
-        # resultados_window2 = ctk.CTkToplevel(self)
-        # resultados_window2.title("")
-        # resultados_window2.attributes('-topmost', True)
-        # resultados_window2.wm_attributes('-alpha',0.8)
-        # #resultados_window2.resizable(width=None, height=None)
-        # #resultados_window2.transient()
-        # resultados_window2.overrideredirect(True)
-        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        # padx = -10 # the padding you need.
-        # pady = -10
-        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        # width = self.winfo_screenwidth() - 80
-        # height = self.winfo_screenheight() - 80
-        # resultados_window2.geometry(str(width)+"x"+str(height))
-        # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
-        # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        # l_frame = CTkFrame(resultados_window2, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
-        # progressbar.start()
-        # l.pack()
-
-        # label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        # label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-        # self.resultados_window2 = resultados_window2
-
         # Crear y configurar el Frame de carga
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
         l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
         l.place(relx=0.5, rely=0.5, anchor='center')
-        
-        self.progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        self.progress_var = tk.IntVar()
+        self.progressbar = CTkProgressBar(self.loading_frame, variable=self.progress_var)
         self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
-        self.progressbar.start()
+      #  self.progressbar.start()
         l.pack()
         self.update()
 
@@ -1174,7 +1155,7 @@ class VentanaPrincipal(CTk):
         
 
 
-        
+        self.update_progress(0.1)
         oracledb.init_oracle_client(lib_dir=d)
         try:
             if(sid == ''):
@@ -1189,7 +1170,6 @@ class VentanaPrincipal(CTk):
             logging.exception("An exception occurred BBDD:  " )  
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.pagina_actual.configuration_warning.configure(text_color ="red")
-            #self.ocultarSpinner()
             self.close_loading_frame()
             return False
         
@@ -1199,6 +1179,7 @@ class VentanaPrincipal(CTk):
                 tableName = ''
                 cont = 0
                 contPrimaryKey = 0
+
                 for row in rows:
                     cont = cont + 1
                     tableNameBBDD = row[0]
@@ -1230,22 +1211,34 @@ class VentanaPrincipal(CTk):
            self.pagina_actual.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
            self.pagina_actual.configuration_warning.configure(text_color ="red")
            self.close_loading_frame()    
-           return False                   
+           return False  
+  
+        self.update_progress(0.2)               
         self.mostrar_pagina_dos(self.main_menu, self.tables, connection.cursor(), rows)  
 
     def select_all(self):
-        for table_frame in self.pagina_actual.tables:
+        total_pasos = len(self.pagina_actual.tables) + 1
+        pasos_por_parte = total_pasos // 10
+        for cont,table_frame in enumerate(self.pagina_actual.tables, start = 1):
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].select()  # Checkbox de la tabla
             for checkbox in table_frame.columns_frame.winfo_children():
                 checkbox.select()
+            if cont % pasos_por_parte == 0:  
+                porcentaje = (cont / total_pasos)  
+                self.update_progress(porcentaje)        
         self.close_loading_frame()
     def deselect_all(self):
-        for table_frame in self.pagina_actual.tables:
+        total_pasos = len(self.pagina_actual.tables) + 1
+        pasos_por_parte = total_pasos // 10
+        for cont,table_frame in enumerate(self.pagina_actual.tables, start = 1):
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].deselect()  # Checkbox de la tabla
             for checkbox in table_frame.columns_frame.winfo_children():
-                checkbox.deselect() # Checkbox de las columnas   
+                checkbox.deselect() # Checkbox de las columnas  
+            if cont % pasos_por_parte == 0:  
+                porcentaje = (cont / total_pasos)  
+                self.update_progress(porcentaje)      
         self.close_loading_frame() 
 
     def validarPaso2(self):
@@ -1275,10 +1268,9 @@ class VentanaPrincipal(CTk):
             return False
         if len(tabla_resultados) > 1:
             relaciones_encontradas, tablas_seleccionadas = self.comprobar_relaciones(self.tables_original, tabla_resultados) 
-
-
-        tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
-
+            tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
+        else:    
+            tablas_seleccionadas_modificadas = tabla_resultados
 
 
         p2.initPaso2(tablas_seleccionadas_modificadas, self.getDatos(rutaActual,archivoClases,archivoWar),self)
