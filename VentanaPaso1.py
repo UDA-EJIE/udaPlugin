@@ -10,7 +10,8 @@ import menuPrincipal as m
 import customtkinter as ctk
 from datetime import datetime
 import threading
-
+import subprocess
+import shutil
 
 self = CTk()
 
@@ -236,7 +237,7 @@ class Paso1(CTk):
             #guardar ultima ruta creada
             utl.writeConfig(
                 "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
-        #self.ocultarSpinner()
+        self.ejecutarBuild(destinoPath+yaml_data["project_name"]+"EAR/build.xml")    
         self.close_loading_frame()
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
         fin = datetime.now()
@@ -248,7 +249,24 @@ class Paso1(CTk):
     
         self.ventana_final_popup()
         
-
+    def ejecutarBuild(self,fichBuild):
+        if os.path.exists(fichBuild):
+            print(f"El archivo {fichBuild} existe, ejecutando tarea maven...")  
+            if shutil.which("mvn") is not None:
+                print("El comando maven está disponible.")
+            else:
+                print("El comando de maven(mvn), no está en el PATH o no está instalado." )     
+            try:
+                mvn_command = ["mvn", "clean", "validate", "compile", "test", "package", "install"]
+                #result = subprocess.run(["mvn", "-s", fichBuild, "compile"], check=True)
+                result = subprocess.run(mvn_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                print("Salida estándar:", result.stdout)  # Salida de mvn
+                print("Error estándar:", result.stderr)   # Cualquier error generado por mvn
+            except subprocess.CalledProcessError as e:
+                print(f"Error al ejecutar Maven: {e.stderr}")
+            except Exception as e:
+                # Captura cualquier otro error no específico
+                print(f"Error inesperado: {str(e)}")    
             
     def close_loading_frame(self):
         if self.loading_frame:
