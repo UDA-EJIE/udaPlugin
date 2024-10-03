@@ -237,7 +237,7 @@ class Paso1(CTk):
             #guardar ultima ruta creada
             utl.writeConfig(
                 "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
-        self.ejecutarBuild(destinoPath+yaml_data["project_name"]+"EAR/build.xml")    
+           
         self.close_loading_frame()
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
         fin = datetime.now()
@@ -257,9 +257,7 @@ class Paso1(CTk):
             else:
                 print("El comando de maven(mvn), no está en el PATH o no está instalado." )     
             try:
-                mvn_command = ["mvn", "clean", "validate", "compile", "test", "package", "install"]
-                #result = subprocess.run(["mvn", "-s", fichBuild, "compile"], check=True)
-                result = subprocess.run(mvn_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                result = subprocess.run(["mvn", "-s", fichBuild, "compile"], check=True)
                 print("Salida estándar:", result.stdout)  # Salida de mvn
                 print("Error estándar:", result.stderr)   # Cualquier error generado por mvn
             except subprocess.CalledProcessError as e:
