@@ -20,11 +20,11 @@ import menuPrincipal as m
 from pathlib import Path
 import logging
 import threading
-
-
+from plugin.utils import *
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 d = os.path.join(base_path, 'instantclient_21_12')
+
 
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 ruta_war = utl.readConfig("RUTA", "ruta_war")
@@ -33,7 +33,7 @@ CADENA_COLUMN = "TTTABLA"
 PRIMARY_COLUMN = "PPPRIMARY"
 class PaginaUno(CTkFrame):
     
-    def __init__(self, master, main_menu, tables=None, columns=None,estado_tables=None, *args, **kwargs):
+    def __init__(self, master, main_menu, tables=None, tables_ori=None, columns=None,estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
@@ -49,7 +49,7 @@ class PaginaUno(CTkFrame):
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=10, sticky="w")
 
         description_label = CTkLabel(configuration_frame, text="Este Wizard genera el código fuente para desplegar una aplicación UDA")
         description_label.grid(row=1, column=0, columnspan=3, pady=(10, 5), padx=20, sticky="w")
@@ -138,15 +138,15 @@ class PaginaUno(CTkFrame):
         self.main_menu.MainMenuLoop()
         
 class PaginaDos(CTkFrame):
-    def __init__(self, master, main_menu, tables, estado_tables=None,  *args, **kwargs):
+    def __init__(self, master, main_menu, tables, cursor, tables_ori=None,  estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#FFFFFF")
 
         self.original_tables = copy.deepcopy(tables)
         self.tables = []
-
+        self.tables_ori = tables_ori
         global tables_original
-        
+        self.cursor = cursor
         self.main_menu = main_menu
         tables_original = tables
 
@@ -167,7 +167,7 @@ class PaginaDos(CTkFrame):
         self.scrollable_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         self.populate_scrollable_frame(self.scrollable_frame, tables_original)
-
+        self.master.update_progress(1.0)
         # Footer frame using grid for buttons
         self.footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         self.footer_frame.grid(row=2, column=0, pady=(5, 30) ,sticky="ew")
@@ -206,6 +206,8 @@ class PaginaDos(CTkFrame):
    
     def populate_scrollable_frame(self, frame, tables_original):
         self.var_list = []
+        total_pasos = len(tables_original) + 1
+        pasos_por_parte = total_pasos // 8
         for index, table in enumerate(tables_original):
             self.var_list.append(IntVar(value=0))
             table_frame = CTkFrame(frame, fg_color="#FFFFFF", corner_radius=10)
@@ -244,6 +246,12 @@ class PaginaDos(CTkFrame):
                 else:
                     self.listaColumnas[table.name+CADENA_COLUMN+column.name] = column_checkbox
             self.tables.append(table_frame)
+            if index % pasos_por_parte == 0:  
+                porcentaje = (index / total_pasos) 
+                if(porcentaje < 0.2): 
+                    porcentaje = 0.2 
+                self.master.update_progress(porcentaje)     
+        self.master.update_progress(1.0)    
 
     def toggle_columns(self, table_frame):
     # Asegúrate de referirte al columns_frame para expandir/contraer
@@ -304,7 +312,7 @@ class PaginaDos(CTkFrame):
         self.master.configuration_warning = configuration_warning
 
 
-        next_button = CTkButton(self.footer_frame, text="Siguiente", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,  command=lambda: self.master.mostrar_pagina_tres(self.main_menu, self.obtener_seleccion_checkbox()))
+        next_button = CTkButton(self.footer_frame, text="Siguiente", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25,  command=lambda: self.master.mostrar_pagina_tres(self.main_menu, self.obtener_seleccion_checkbox(),  self.cursor,self.tables_ori))
         next_button.pack(side="right", padx=5)
 
         back_button = CTkButton(self.footer_frame, text="Atras",bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.master.mostrar_pagina_uno(self.main_menu))
@@ -320,10 +328,10 @@ class PaginaDos(CTkFrame):
         self.main_menu.MainMenuLoop()
             
 class PaginaTres(CTkFrame):
-    def __init__(self, master, main_menu, tables, estado_tables=None, *args, **kwargs):
+    def __init__(self, master, main_menu, tables,  cursor, tables_ori, estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-    
-
+        self.tables_original = tables_ori
+        self.cursor = cursor
         # Variables para controlar los checkboxes
         self.modelo_datos_var = tk.BooleanVar(value=False)
         self.daos_var = tk.BooleanVar(value=False)
@@ -693,6 +701,319 @@ class PaginaTres(CTkFrame):
         self.master.withdraw()
         sys.exit(0)
 
+    def comprobar_relaciones(self, tablas_originales, tablasSeleccionadas):
+        
+        ##Esta query saca las relaciones entre las tablas
+        query_relations = """WITH fk_tables AS (
+                            -- Seleccionamos las tablas que tienen claves foráneas
+                            SELECT acc.table_name, acc.column_name, ac.constraint_name AS fk_constraint_name,
+                                acc.position, ac.constraint_type, acc2.table_name AS referenced_table, acc2.column_name AS referenced_column
+                            FROM all_cons_columns acc
+                            JOIN all_constraints ac 
+                                ON acc.constraint_name = ac.constraint_name
+                            JOIN all_cons_columns acc2 
+                                ON ac.r_constraint_name = acc2.constraint_name
+                            WHERE ac.constraint_type = 'R' -- Clave foránea (Foreign Key)
+                        ),
+                        pk_tables AS (
+                            -- Seleccionamos las tablas que tienen claves primarias
+                            SELECT acc.table_name, acc.column_name
+                            FROM all_cons_columns acc
+                            JOIN all_constraints ac 
+                                ON acc.constraint_name = ac.constraint_name
+                            WHERE ac.constraint_type = 'P' -- Primary Key
+                        ),
+                        unique_constraints AS (
+                            -- Seleccionamos las columnas que tienen restricciones de unicidad (UNIQUE)
+                            SELECT acc.table_name, acc.column_name
+                            FROM all_cons_columns acc
+                            JOIN all_constraints ac 
+                                ON acc.constraint_name = ac.constraint_name
+                            WHERE ac.constraint_type = 'U' -- Unique Key
+                        )
+                        SELECT fk.table_name AS child_table, 
+                            fk.column_name AS child_column, 
+                            fk.referenced_table AS parent_table, 
+                            fk.referenced_column AS parent_column,
+                            CASE 
+                                -- Relación Many-to-Many: Si la tabla intermedia contiene únicamente claves PF (Primary/Foreign Keys)
+                                WHEN fk.table_name IN (
+                                        SELECT pf.table_name FROM (
+                                            SELECT fk.table_name
+                                            FROM fk_tables fk
+                                            JOIN pk_tables pk 
+                                                ON fk.table_name = pk.table_name 
+                                                AND fk.column_name = pk.column_name
+                                            GROUP BY fk.table_name
+                                            HAVING COUNT(DISTINCT fk.column_name) = (
+                                                SELECT COUNT(*) FROM user_tab_columns utc WHERE utc.table_name = fk.table_name)
+                                        ) pf
+                                )
+                                THEN 'Many to Many'
+
+                                -- Relación One-to-One: Si la clave foránea es también la clave primaria de la tabla hija
+                                WHEN fk.column_name IN (
+                                        SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
+                                ) 
+                                THEN 'One to One'
+
+                                -- Relación One-to-Many: Si la clave foránea **no es** la clave primaria en la tabla hija
+                                WHEN fk.column_name NOT IN (
+                                        SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
+                                )
+                                THEN 'One to Many'
+
+                                ELSE 'Unknown'
+                            END AS relationship_type
+                        FROM fk_tables fk
+                        LEFT JOIN pk_tables pk 
+                            ON fk.referenced_table = pk.table_name 
+                            AND fk.referenced_column = pk.column_name
+                        ORDER BY fk.table_name, relationship_type
+                        """
+        
+        self.cursor.execute(query_relations)
+
+        resultados = self.cursor.fetchall()
+        for table in tablasSeleccionadas:
+            for table_ori in tablas_originales:
+                if table['name'] == table_ori[5]:
+                    table['original_table'] = table_ori[0]
+                    
+                    break
+                    
+                else:
+                    if table_ori[5] is None:
+                        table['original_table'] = table['name']
+                        break
+
+                    
+            
+        tablas_seleccionadas_nombres = [tabla['original_table'] for tabla in tablasSeleccionadas]
+        relaciones_encontradas = []
+    
+        relaciones_combinadas = []
+        
+        relaciones_temp = {}
+
+        relaciones_a_eliminar = []  # Para almacenar las relaciones que serán eliminadas
+        
+        #En este buble se eliminan la redundancia de relaciones entre las tablas que son intermedias
+        # Y se unifican unicamente en las tablas que realmente estan relacionadas
+        for relacion in resultados:
+            tabla_intermedia, columna_intermedia, tabla_1, columna_1, tipo_relacion = relacion
+            
+            # Solo procesamos las relaciones de tipo "Many to Many"
+            if tipo_relacion == 'Many to Many':
+       
+                if tabla_intermedia in relaciones_temp:
+
+                    relacion_previa = relaciones_temp[tabla_intermedia]
+                    nueva_relacion = (relacion_previa[2], relacion_previa[3], tabla_1, columna_1, tipo_relacion)
+                    
+                    relaciones_combinadas.append(nueva_relacion)
+                    
+                    relaciones_a_eliminar.append(relacion_previa)
+                    relaciones_a_eliminar.append(relacion)
+                    
+                    del relaciones_temp[tabla_intermedia]
+                else:
+
+                    relaciones_temp[tabla_intermedia] = relacion
+
+        # Se eliminan de las relaciones originales las que han sido combinadas
+        for relacion in relaciones_a_eliminar:
+            resultados.remove(relacion)
+        resultados.extend(relaciones_combinadas)
+
+        # Recorrer las relaciones de resultados  con las modificaciones y comprueba si
+        # dos tablas que han sido seleccionadas estan relacionadas entre si 
+        for relacion in resultados:
+            # Desempaquetar los valores de la relación
+            tabla_1, columna_1, tabla_2, columna_2, tipo_relacion = relacion
+            
+            if tabla_1 in tablas_seleccionadas_nombres and tabla_2 in tablas_seleccionadas_nombres:
+                relaciones_encontradas.append(relacion)
+                continue
+
+            # Si es una relación many-to-many con una tabla intermedia
+            if tipo_relacion == 'Many to Many':
+
+                tabla_intermedia, columna_intermedia = tabla_1, columna_1
+                
+                if tabla_intermedia in relaciones_temp:
+
+                    relacion_previa = relaciones_temp[tabla_intermedia]
+                    nueva_relacion = (relacion_previa[2], relacion_previa[3], tabla_2, columna_2, tipo_relacion)
+                    relaciones_combinadas.append(nueva_relacion)
+
+                    del relaciones_temp[tabla_intermedia]
+                else:
+                    relaciones_temp[tabla_intermedia] = relacion
+
+
+        return relaciones_encontradas, tablasSeleccionadas
+
+
+    # Añadir relaciones a las tablas seleccionadas
+    def agregar_relaciones_a_tablas(self, tablas_seleccionadas, relaciones):
+        for relacion in relaciones:
+            tabla_1, columna_1, tabla_2, columna_2, tipo_relacion = relacion
+            
+            # Encontrar ambas tablas en la lista de tablas seleccionadas
+            tabla_obj_1 = self.encontrar_tabla(tabla_1, tablas_seleccionadas)
+            tabla_obj_2 = self.encontrar_tabla(tabla_2, tablas_seleccionadas)
+            tName = snakeToCamel(tabla_1)
+            tName2 = snakeToCamel(tabla_2)
+
+            if not tabla_obj_1 or not tabla_obj_2:
+                continue  # Si no encontramos las tablas, pasamos a la siguiente relación
+            
+            #Se añaden metodos para el dao
+            
+            
+
+            if tipo_relacion == 'One to One':
+
+                #En los casos One to One solo guardo en la tabla "Padre"
+                nueva_columna_2 = {
+                    'name': tName, 
+                    'type': tName.capitalize(),
+                    'dataPrecision': None,
+                    'datoImport': None,
+                    'datoType': None,
+                    'nullable': 'N',
+                    'primaryKey': ' ',
+                    'tableName': tabla_1
+                }
+                tabla_obj_2['columns'].append(nueva_columna_2)
+
+                tabla_obj_1['dao'] =  None
+                tabla_obj_2['dao'] =  None
+
+            elif tipo_relacion == 'One to Many':
+                # Para One to Many, agregamos una lista en la segunda tabla (la que tiene "Many")
+                nueva_lista_2 = {
+                    'name': tabla_1.lower(), 
+                    'type': 'LIST',  
+                    'entidad': tabla_1.capitalize(),  # Aqui guardo la entidad para cuando se genera la variable de tipo List
+                    'dataPrecision': None,
+                    'datoImport': None,
+                    'datoType': None,
+                    'nullable': 'N',
+                    'primaryKey': ' ',
+                    'tableName': tabla_1
+                }
+                tabla_obj_2['columns'].append(nueva_lista_2)
+
+                #Extraer primary key del padre
+                numero_columna = 0
+                for index, columns in enumerate(tabla_obj_2['columns']):
+
+                    if columns['primaryKey']  == 'P':
+                        numero_columna = index
+                        break
+            
+                #Se pasan los datos necesarios para las plantillas del dao 
+                tabla_obj_1['dao'] =  {
+                        'entidadPadre': tabla_obj_2['name'].capitalize(), 
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'columns' : tabla_obj_2['columns']
+                        
+                    }
+                
+                tabla_obj_2['dao'] =  None
+
+                # En la primera tabla, agregamos una referencia a la segunda tabla como entidad
+                nueva_columna_1 = {
+                    'name': tName2,
+                    'type': tName2.capitalize(),
+                    'dataPrecision': None,
+                    'datoImport': None,
+                    'datoType': None,
+                    'nullable': 'N',
+                    'primaryKey': ' ',
+                    'tableName': tabla_2
+                }
+                tabla_obj_1['columns'].append(nueva_columna_1)
+
+            elif tipo_relacion == 'Many to Many':
+                # Para Many to Many, agregamos una lista en ambas tablas
+                nueva_lista_1 = {
+                    'name': tName2,
+                    'type': 'LIST',
+                    'entidad': tName2.capitalize(),
+                    'dataPrecision': None,
+                    'datoImport': None,
+                    'datoType': None,
+                    'nullable': 'N',
+                    'primaryKey': ' ',
+                    'tableName': tabla_2
+                }
+                nueva_lista_2 = {
+                    'name': tName,
+                    'type': 'LIST',
+                    'entidad': tName.capitalize(),
+                    'dataPrecision': None,
+                    'datoImport': None,
+                    'datoType': None,
+                    'nullable': 'N',
+                    'primaryKey': ' ',
+                    'tableName': tabla_1
+                }
+                tabla_obj_1['columns'].append(nueva_lista_1)
+                tabla_obj_2['columns'].append(nueva_lista_2)
+                
+                
+                
+                #Extraer primary key del padre
+                numero_columna_tab1 = 0
+                for index, columns in enumerate(tabla_obj_1['columns']):
+
+                    if columns['primaryKey']  == 'P':
+                        numero_columna_tab1 = index
+                        break
+
+            #Extraer primary key del padre
+                numero_columna_tab2 = 0
+                for index, columns in enumerate(tabla_obj_2['columns']):
+
+                    if columns['primaryKey']  == 'P':
+                        numero_columna_tab2 = index
+                        break
+            
+                #Se guardan los datos necesarios para modificar las plantillas del controler 
+                tabla_obj_1['controller'] =  {
+                        'entidadRelacion': tabla_obj_2['name'].capitalize(), 
+                        'primaryKeyCol': [tabla_obj_1['columns'][numero_columna_tab1]],
+                        'columns' : tabla_obj_1['columns'],
+                        'colPrimaryRelacion': [tabla_obj_2['columns'][numero_columna_tab2]]
+    
+
+                        
+                    }
+                
+                 #Se guardan los datos necesarios para modificar las plantillas del controler 
+                tabla_obj_2['controller'] =  {
+                        'entidadRelacion': tabla_obj_2['name'].capitalize(), 
+                        'primaryKeyCol': [tabla_obj_2['columns'][numero_columna_tab2]],
+                        'columns' : tabla_obj_2['columns'],
+                        'colPrimaryRelacion': [tabla_obj_1['columns'][numero_columna_tab1]],
+                        
+                    }
+                tabla_obj_1['dao'] =  None
+                tabla_obj_2['dao'] =  None
+
+        return tablas_seleccionadas
+
+     # Función para encontrar una tabla seleccionada
+    def encontrar_tabla(self, tabla_nombre, tablas_seleccionadas):
+        for tabla in tablas_seleccionadas:
+            if tabla['name'] == tabla_nombre:
+                return tabla
+        return None
+
+
 class VentanaPrincipal(CTk):
    
     def __init__(self, main_menu):
@@ -718,67 +1039,42 @@ class VentanaPrincipal(CTk):
         self.pagina_actual = None
         self.mostrar_pagina(PaginaUno, self.main_menu)
 
-    def mostrar_pagina(self, pagina, main_menu=None, tables=None, estado_tables=None):      
+    def mostrar_pagina(self, pagina, main_menu=None, tables=None, cursor = None, tables_ori=None, estado_tables=None):      
         if self.pagina_actual is not None:
             self.pagina_actual.destroy()
 
-        self.pagina_actual = pagina(self, main_menu=main_menu,tables= tables,estado_tables=estado_tables)
+        self.pagina_actual = pagina(self, main_menu=main_menu,tables= tables, cursor=cursor, tables_ori=tables_ori, estado_tables=estado_tables)
         self.pagina_actual.grid(row=0, column=0, sticky="nsew")
 
-    def mostrar_pagina_dos(self, main_menu=None, tables=None, estado_tables=None):
-        self.mostrar_pagina(PaginaDos, main_menu, tables, estado_tables)
+    def mostrar_pagina_dos(self, main_menu=None, tables=None, cursor = None, tables_ori=None,  estado_tables=None):
+        self.mostrar_pagina(PaginaDos, main_menu, tables, cursor, tables_ori, estado_tables)
 
-    def mostrar_pagina_tres(self, main_menu= None ,tables=None, estado_tables=None):
+    def mostrar_pagina_tres(self, main_menu= None ,tables=None, cursor=None, tables_ori=None,  estado_tables=None):
         if(len(tables) == 0):
           self.configuration_warning.configure(text="Debe seleccionar al menos una tabla y una columna")
           return False
         self.close_loading_frame()
-        self.mostrar_pagina(PaginaTres, main_menu, tables, estado_tables)
+        self.mostrar_pagina(PaginaTres, main_menu, tables, cursor, tables_ori, estado_tables)
 
     def mostrar_pagina_uno(self, main_menu):
         self.mostrar_pagina(PaginaUno, main_menu)
 
+    def update_progress(self,value):
+        self.progressbar.set(value)
+        self.loading_frame.update_idletasks()
+        self.update()
     
     def mostrarSpinner(self,caso):
-        # resultados_window2 = ctk.CTkToplevel(self)
-        # resultados_window2.title("")
-        # resultados_window2.attributes('-topmost', True)
-        # resultados_window2.wm_attributes('-alpha',0.8)
-        # #resultados_window2.resizable(width=None, height=None)
-        # #resultados_window2.transient()
-        # resultados_window2.overrideredirect(True)
-        # toplevel_offsetx, toplevel_offsety = self.winfo_x(), self.winfo_y()
-        # padx = -10 # the padding you need.
-        # pady = -10
-        # resultados_window2.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
-        # width = self.winfo_screenwidth() - 80
-        # height = self.winfo_screenheight() - 80
-        # resultados_window2.geometry(str(width)+"x"+str(height))
-        # # label2 = GIFLabel(resultados_window2, "./plugin/images/spinner.gif")
-        # # label2.grid(row=11, column=11, columnspan=10, pady=(50, 5), padx=50, sticky="w")
-        # l_frame = CTkFrame(resultados_window2, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        # l_frame.grid(row=8, column=4, columnspan=4, pady=(200, 20), padx=100, sticky="ew")
-        # l = CTkLabel(l_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        # l.grid(row=3, column=6, columnspan=6, pady=(200, 5), padx=200, sticky="w")
-        # progressbar = CTkProgressBar(resultados_window2, orientation="horizontal")
-        # progressbar.grid(row=10, column=6, pady=10, padx=20, sticky="n")
-        # progressbar.start()
-        # l.pack()
-
-        # label = CTkLabel(resultados_window2, text="Cargando...", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        # label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-        # self.resultados_window2 = resultados_window2
-
         # Crear y configurar el Frame de carga
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
         l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
         l.place(relx=0.5, rely=0.5, anchor='center')
-        
-        self.progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        self.progress_var = tk.IntVar()
+        self.progressbar = CTkProgressBar(self.loading_frame, variable=self.progress_var)
         self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
-        self.progressbar.start()
+      #  self.progressbar.start()
         l.pack()
         self.update()
 
@@ -836,7 +1132,7 @@ class VentanaPrincipal(CTk):
         esquema = self.pagina_actual.entries[6].get()
         url = self.pagina_actual.entries[7].get()
         
-        tables = [] 
+        self.tables = [] 
         columns = [] 
         query = """select tb1.table_name, tb1.column_name,tb1.DATA_TYPE,tb1.NULLABLE,tb2.constraint_type, tb1.SYNONYM_NAME, tb1.DATA_PRECISION
          FROM  
@@ -857,6 +1153,9 @@ class VentanaPrincipal(CTk):
             order by all_cons_columns.owner,all_cons_columns.table_name) tb2
         ON tb1.table_name = tb2.table_name AND tb1.column_name = tb2.column_name"""
         
+
+
+        self.update_progress(0.1)
         oracledb.init_oracle_client(lib_dir=d)
         try:
             if(sid == ''):
@@ -871,16 +1170,16 @@ class VentanaPrincipal(CTk):
             logging.exception("An exception occurred BBDD:  " )  
             self.pagina_actual.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.pagina_actual.configuration_warning.configure(text_color ="red")
-            #self.ocultarSpinner()
             self.close_loading_frame()
             return False
         
         with connection.cursor() as cursor:
-                cursor.execute(query, esquema=pw.upper())
+                cursor.execute(query, esquema=esquema.upper())
                 rows = cursor.fetchall()
                 tableName = ''
                 cont = 0
                 contPrimaryKey = 0
+
                 for row in rows:
                     cont = cont + 1
                     tableNameBBDD = row[0]
@@ -895,7 +1194,7 @@ class VentanaPrincipal(CTk):
                             contPrimaryKey = contPrimaryKey + 1
                     else:
                         if cont > 1 and contPrimaryKey < len(columns):
-                            tables.append(Table(tableName,columns)) 
+                            self.tables.append(Table(tableName,columns)) 
                         contPrimaryKey = 0    
                         if row[4]  == 'P': #primarykey
                             contPrimaryKey = contPrimaryKey + 1    
@@ -905,33 +1204,52 @@ class VentanaPrincipal(CTk):
                         columns.append(column)  
                     
                     if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
-                        tables.append(Table(tableName,columns))   
-                    tableName = tableNameBBDD       
-        self.mostrar_pagina_dos(self.main_menu, tables)  
+                        self.tables.append(Table(tableName,columns))   
+                    tableName = tableNameBBDD   
+
+        if(len(self.tables) == 0): 
+           self.pagina_actual.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
+           self.pagina_actual.configuration_warning.configure(text_color ="red")
+           self.close_loading_frame()    
+           return False  
+  
+        self.update_progress(0.2)               
+        self.mostrar_pagina_dos(self.main_menu, self.tables, connection.cursor(), rows)  
 
     def select_all(self):
-        for table_frame in self.pagina_actual.tables:
+        total_pasos = len(self.pagina_actual.tables) + 1
+        pasos_por_parte = total_pasos // 10
+        for cont,table_frame in enumerate(self.pagina_actual.tables, start = 1):
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].select()  # Checkbox de la tabla
             for checkbox in table_frame.columns_frame.winfo_children():
                 checkbox.select()
+            if cont % pasos_por_parte == 0:  
+                porcentaje = (cont / total_pasos)  
+                self.update_progress(porcentaje)        
         self.close_loading_frame()
     def deselect_all(self):
-        for table_frame in self.pagina_actual.tables:
+        total_pasos = len(self.pagina_actual.tables) + 1
+        pasos_por_parte = total_pasos // 10
+        for cont,table_frame in enumerate(self.pagina_actual.tables, start = 1):
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].deselect()  # Checkbox de la tabla
             for checkbox in table_frame.columns_frame.winfo_children():
-                checkbox.deselect() # Checkbox de las columnas   
+                checkbox.deselect() # Checkbox de las columnas  
+            if cont % pasos_por_parte == 0:  
+                porcentaje = (cont / total_pasos)  
+                self.update_progress(porcentaje)      
         self.close_loading_frame() 
 
     def validarPaso2(self):
         this = self
-        self = self.pagina_actual
+        self = self.pagina_actual        
         tabla_resultados = self.tabla_resultados
         rutaActual = self.rutaActual
         archivoClases = self.archivoClases
         archivoWar = self.archivoWar
         negocioActivado = False
+        self.master.update_progress(0.1)
         if(self.modelo_datos_var.get() == True or self.daos_var.get() == True or self.servicios_var.get() == True):
             negocioActivado = True
         if (self.controladores_var.get() == False and negocioActivado == False): 
@@ -949,12 +1267,19 @@ class VentanaPrincipal(CTk):
             this.close_loading_frame()
             #this.ocultarSpinner()
             return False
-        
-        p2.initPaso2(tabla_resultados, self.getDatos(rutaActual,archivoClases,archivoWar),self)
+        if len(tabla_resultados) > 1:
+            relaciones_encontradas, tablas_seleccionadas = self.comprobar_relaciones(self.tables_original, tabla_resultados) 
+            tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
+        else:    
+            tablas_seleccionadas_modificadas = tabla_resultados
+
+
+        p2.initPaso2(tablas_seleccionadas_modificadas, self.getDatos(rutaActual,archivoClases,archivoWar),self)
         this.close_loading_frame()
         #this.ocultarSpinner()
         this.mostrarResumenFinal(tabla_resultados)
 
+     
     def mostrarResumenFinal(self,tablas):
         self = self.pagina_actual
         self.header_frame.destroy()

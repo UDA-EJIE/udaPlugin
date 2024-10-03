@@ -28,7 +28,7 @@ class PaginaUno(CTkFrame):
          # Configura el contenedor principal para que las columnas se expandan
         self.grid_columnconfigure(0, weight=1)  # Esto hace que la columna se expanda
         self.grid_columnconfigure(1, weight=1) 
-
+        self.stop_event = threading.Event()
         self.main_menu = main_menu
 
         configuration_frame = CTkFrame(self)
@@ -41,7 +41,7 @@ class PaginaUno(CTkFrame):
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
 
         self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=2, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+        self.configuration_warning.grid(row=0, column=2, columnspan=3, pady=(20, 5), padx=10, sticky="w")
 
         description_label = CTkLabel(configuration_frame, text="Este Wizard genera un nuevo mantenimiento para una aplicación UDA")
         description_label.grid(row=1, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
@@ -215,9 +215,10 @@ class PaginaUno(CTkFrame):
             self.configuration_warning.configure(text="An exception occurred: " + str(e))
             self.configuration_warning.configure(text_color ="red")
             #self.master.ocultarSpinner()
+            self.close_loading_frame()
             return False  
         with connection.cursor() as cursor:
-                cursor.execute(query, esquema=pw.upper())
+                cursor.execute(query, esquema=esquema.upper())
                 rows = cursor.fetchall()
                 tableName = ''
                 cont = 0
@@ -248,6 +249,11 @@ class PaginaUno(CTkFrame):
                     if cont == len(rows) and contPrimaryKey > 0 and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
+        if(len(tables) == 0): 
+            self.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
+            self.configuration_warning.configure(text_color ="red")
+            self.close_loading_frame()    
+            return False       
         self.master.mostrar_pagina_dos(self.main_menu, tables)           
 
 
@@ -264,7 +270,13 @@ class PaginaUno(CTkFrame):
                     logging.exception("No encontro la ruta: " + ruta_personalizada)    
                 self.mostrar_resultados(files,ruta_personalizada)
 
-
+    def close_loading_frame(self):
+        self.master.stop_event.set()
+        if self.master.loading_frame:
+            self.master.loading_frame.place_forget()  # Oculta el frame
+            # Si no planeas reutilizar el frame, puedes destruirlo en su lugar
+            self.master.loading_frame.destroy()
+            self.master.loading_frame = None    
 
     def mostrar_resultados_scrollbar(self, files, ruta):
         resultados_window = ctk.CTkToplevel(self)
@@ -684,7 +696,7 @@ class VentanaPaso3(CTkFrame):
         
         btn_back = CTkButton(footer_frame, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
-        btn_next = CTkButton(footer_frame, text="Siguiente", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
+        btn_next = CTkButton(footer_frame, text="Finalizar", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
         btn_next.pack(side="left", padx=10, pady=5)
         btn_cancel = CTkButton(footer_frame, text="Cancelar" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
