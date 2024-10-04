@@ -858,6 +858,7 @@ class PaginaTres(CTkFrame):
     # Añadir relaciones a las tablas seleccionadas
     def agregar_relaciones_a_tablas(self, tablas_seleccionadas, relaciones):
         for relacion in relaciones:
+            
             tabla_1, columna_1, tabla_2, columna_2, tipo_relacion = relacion
             
             # Encontrar ambas tablas en la lista de tablas seleccionadas
@@ -890,6 +891,8 @@ class PaginaTres(CTkFrame):
 
                 tabla_obj_1['dao'] =  None
                 tabla_obj_2['dao'] =  None
+                tabla_obj_1['controller'] =  None
+                tabla_obj_2['controller'] =  None
 
             elif tipo_relacion == 'One to Many':
                 # Para One to Many, agregamos una lista en la segunda tabla (la que tiene "Many")
@@ -905,7 +908,7 @@ class PaginaTres(CTkFrame):
                     'tableName': tabla_1
                 }
                 tabla_obj_2['columns'].append(nueva_lista_2)
-
+            
                 #Extraer primary key del padre
                 numero_columna = 0
                 for index, columns in enumerate(tabla_obj_2['columns']):
@@ -936,6 +939,9 @@ class PaginaTres(CTkFrame):
                     'tableName': tabla_2
                 }
                 tabla_obj_1['columns'].append(nueva_columna_1)
+
+                tabla_obj_1['controller'] =  None
+                tabla_obj_2['controller'] =  None
 
             elif tipo_relacion == 'Many to Many':
                 # Para Many to Many, agregamos una lista en ambas tablas
@@ -1009,8 +1015,12 @@ class PaginaTres(CTkFrame):
      # Función para encontrar una tabla seleccionada
     def encontrar_tabla(self, tabla_nombre, tablas_seleccionadas):
         for tabla in tablas_seleccionadas:
-            if tabla['name'] == tabla_nombre:
-                return tabla
+            if tabla['name'] == tabla['original_table']:
+                if tabla['name'] == tabla_nombre:
+                    return tabla
+            else:
+                if tabla['original_table'] == tabla_nombre:
+                    return tabla
         return None
 
 
@@ -1270,8 +1280,21 @@ class VentanaPrincipal(CTk):
         if len(tabla_resultados) > 1:
             relaciones_encontradas, tablas_seleccionadas = self.comprobar_relaciones(self.tables_original, tabla_resultados) 
             tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
+            for tablas_modificadas in tablas_seleccionadas_modificadas:
+                try:
+                    if tablas_modificadas["dao"] is not None:
+                        None
+                    if tablas_modificadas["controller"] is not None:
+                        None
+
+                except KeyError:
+                    tablas_modificadas["dao"] = None
+                    tablas_modificadas["controller"] = None
+
         else:    
             tablas_seleccionadas_modificadas = tabla_resultados
+            tablas_seleccionadas_modificadas[0]["dao"] = None
+            tablas_seleccionadas_modificadas[0]["controller"] = None
 
 
         p2.initPaso2(tablas_seleccionadas_modificadas, self.getDatos(rutaActual,archivoClases,archivoWar),self)

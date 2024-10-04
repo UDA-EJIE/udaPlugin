@@ -62,13 +62,16 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     for x, table in enumerate(tables):
         #añadir funciones
         columnsDates = getColumnsDates(table["columns"])
-        colControllerPk= getColumnsDates(table["controller"]['primaryKeyCol'])
-        colControllerAll = getColumnsDates(table["controller"]['columns'])
-        colControllerPkRel = getColumnsDates(table["controller"]['colPrimaryRelacion'])
-        data["colControllerPk"] = colControllerPk
-        data["colControllerAll"] = colControllerAll
-        data["colControllerPkRel"] = colControllerPkRel
-        data["entidadRelacion"] = table["controller"]["entidadRelacion"]
+        if not table["controller"] is None:
+            colControllerPk= getColumnsDates(table["controller"]['primaryKeyCol'])
+            colControllerAll = getColumnsDates(table["controller"]['columns'])
+            colControllerPkRel = getColumnsDates(table["controller"]['colPrimaryRelacion'])
+            data["colControllerPk"] = colControllerPk
+            data["colControllerAll"] = colControllerAll
+            data["colControllerPkRel"] = colControllerPkRel
+            data["entidadRelacion"] = table["controller"]["entidadRelacion"]
+        else:
+           data["controller"] = None
         data["listPks"] = columnsDates[1]  
         columnas = columnsDates[0]
         allColumns = columnsDates[1] + [x for x in columnas if x['primaryKey'] != 'P']
@@ -83,6 +86,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             data["entidadPadre"] = table["dao"]['entidadPadre']
             data["primaryKeyPadre"] = table["dao"]['primaryKey']
             data["columnasDaos"] = table["dao"]['columns']
+        else:
+           data["dao"] = None
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
