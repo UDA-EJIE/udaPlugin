@@ -786,9 +786,7 @@ class PaginaTres(CTkFrame):
                     if table_ori[5] is None:
                         table['original_table'] = table['name']
                         break
-
-                    
-            
+          
         tablas_seleccionadas_nombres = [tabla['original_table'] for tabla in tablasSeleccionadas]
         relaciones_encontradas = []
     
@@ -886,7 +884,9 @@ class PaginaTres(CTkFrame):
                     'nullable': 'N',
                     'primaryKey': ' ',
                     'tableName': tabla_1
+                    
                 }
+                
                 tabla_obj_2['columns'].append(nueva_columna_2)
 
                 tabla_obj_1['dao'] =  None
@@ -907,8 +907,15 @@ class PaginaTres(CTkFrame):
                     'primaryKey': ' ',
                     'tableName': tabla_1
                 }
-                tabla_obj_2['columns'].append(nueva_lista_2)
-            
+
+                if "columnasDao" not in tabla_obj_2:
+                    tabla_obj_2['columnasDao'] = tabla_obj_2['columns'].copy()
+
+                if "originalCol" not in tabla_obj_2:
+                    tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+                
+                ['columns'].append(nueva_lista_2)
+                
                 #Extraer primary key del padre
                 numero_columna = 0
                 for index, columns in enumerate(tabla_obj_2['columns']):
@@ -921,11 +928,17 @@ class PaginaTres(CTkFrame):
                 tabla_obj_1['dao'] =  {
                         'entidadPadre': tabla_obj_2['name'].capitalize(), 
                         'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
-                        'columns' : tabla_obj_2['columns']
+                        'entidadPadreCol' : tabla_obj_2['originalCol'],
+                        'foreingkey' : columna_1,
+                        'primaryPadre' : columna_2
                         
                     }
                 
-                tabla_obj_2['dao'] =  None
+                try:
+                    if tabla_obj_2['dao'] is not None:
+                        None
+                except KeyError:
+                    tabla_obj_2['dao'] =  None
 
                 # En la primera tabla, agregamos una referencia a la segunda tabla como entidad
                 nueva_columna_1 = {
@@ -938,6 +951,10 @@ class PaginaTres(CTkFrame):
                     'primaryKey': ' ',
                     'tableName': tabla_2
                 }
+
+                if "columnasDao" not in tabla_obj_1:
+                     tabla_obj_1['columnasDao'] = tabla_obj_1['columns'].copy()
+
                 tabla_obj_1['columns'].append(nueva_columna_1)
 
                 tabla_obj_1['controller'] =  None
@@ -994,8 +1011,6 @@ class PaginaTres(CTkFrame):
                         'primaryKeyCol': [tabla_obj_1['columns'][numero_columna_tab1]],
                         'columns' : tabla_obj_1['columns'],
                         'colPrimaryRelacion': [tabla_obj_2['columns'][numero_columna_tab2]]
-    
-
                         
                     }
                 
@@ -1007,6 +1022,7 @@ class PaginaTres(CTkFrame):
                         'colPrimaryRelacion': [tabla_obj_1['columns'][numero_columna_tab1]],
                         
                     }
+                
                 tabla_obj_1['dao'] =  None
                 tabla_obj_2['dao'] =  None
 
