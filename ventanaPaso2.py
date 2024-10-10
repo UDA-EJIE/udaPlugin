@@ -914,7 +914,7 @@ class PaginaTres(CTkFrame):
                 if "originalCol" not in tabla_obj_2:
                     tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
                 
-                ['columns'].append(nueva_lista_2)
+                tabla_obj_2['columns'].append(nueva_lista_2)
                 
                 #Extraer primary key del padre
                 numero_columna = 0
