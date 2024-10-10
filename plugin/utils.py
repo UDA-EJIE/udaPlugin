@@ -23,7 +23,6 @@ def getColumnsDates(columns):
         if columnOld["primaryKey"] == "P": 
             newColumn["editable"] = "false"
         newColumn["hidden"] = "false"
-        newColumn["activate"] = "true"
         newColumn["requiredEditRules"] = "false"
         
         if type == "FLOAT":

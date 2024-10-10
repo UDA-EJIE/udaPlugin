@@ -16,6 +16,7 @@ from plugin.utils import obtenerNombreProyectoByEar
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
     # work only controller
+    ventanaPaso2.master.update_progress(0.2)
     data = {}
     proyectName = yaml_data["project_name"]
     proyectWar = yaml_data["war_project_name"]
@@ -101,6 +102,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         print("Inicio paso 2")
         generoEar = False
         #controller java 
+        ventanaPaso2.master.update_progress(0.4)
         if(ventanaPaso2.controladores_var.get()):            
             logging.info("Inicio: crear controllers...")
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
@@ -164,6 +166,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
         writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
+    ventanaPaso2.master.update_progress(0.8)    
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  
