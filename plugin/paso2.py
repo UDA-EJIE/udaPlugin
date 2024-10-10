@@ -99,7 +99,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
-        print("Inicio paso 2")
+        print("Inicio paso 2 :: Tabla -> " + data["tableName"])
         generoEar = False
         #controller java 
         ventanaPaso2.master.update_progress(0.4)

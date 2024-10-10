@@ -862,8 +862,8 @@ class PaginaTres(CTkFrame):
             # Encontrar ambas tablas en la lista de tablas seleccionadas
             tabla_obj_1 = self.encontrar_tabla(tabla_1, tablas_seleccionadas)
             tabla_obj_2 = self.encontrar_tabla(tabla_2, tablas_seleccionadas)
-            tName = snakeToCamel(tabla_1)
-            tName2 = snakeToCamel(tabla_2)
+            tName = toCamelCase(tabla_1)
+            tName2 = toCamelCase(tabla_2)
 
             if not tabla_obj_1 or not tabla_obj_2:
                 continue  # Si no encontramos las tablas, pasamos a la siguiente relación
@@ -877,7 +877,7 @@ class PaginaTres(CTkFrame):
                 #En los casos One to One solo guardo en la tabla "Padre"
                 nueva_columna_2 = {
                     'name': tName, 
-                    'type': tName.capitalize(),
+                    'type': tName,
                     'dataPrecision': None,
                     'datoImport': None,
                     'datoType': None,
@@ -943,7 +943,7 @@ class PaginaTres(CTkFrame):
                 # En la primera tabla, agregamos una referencia a la segunda tabla como entidad
                 nueva_columna_1 = {
                     'name': tName2,
-                    'type': tName2.capitalize(),
+                    'type': tName2,
                     'dataPrecision': None,
                     'datoImport': None,
                     'datoType': None,
