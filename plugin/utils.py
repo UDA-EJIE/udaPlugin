@@ -16,7 +16,7 @@ def getColumnsDates(columns):
     columnsPks = []
     for columnOld in columns:   
         newColumn = columnOld
-        name = columnOld["name"].capitalize() 
+        name = columnOld["name"]
         type = columnOld["type"]
         newColumn["editable"] = "true"
         if columnOld["primaryKey"] == "P": 
@@ -66,7 +66,7 @@ def getColumnsDates(columns):
             newColumn["DATA_IMPORT"] = "java.util.List"
             newColumn["DATA_IMPORT2"] = "java.util.ArrayList"
         elif name == type:
-            newColumn["DATO_TYPE"] = type
+            newColumn["DATO_TYPE"] = toCamelCase(type)
             newColumn["DATA_IMPORT"] = ""
             newColumn["DATA_IMPORT2"] = ""
         else :
