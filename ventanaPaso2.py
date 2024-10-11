@@ -831,7 +831,12 @@ class PaginaTres(CTkFrame):
             tabla_1, columna_1, tabla_2, columna_2, tipo_relacion = relacion
             
             if tabla_1 in tablas_seleccionadas_nombres and tabla_2 in tablas_seleccionadas_nombres:
-                relaciones_encontradas.append(relacion)
+                tablaSinonimo = list(filter(lambda persona: persona['original_table'] == tabla_1, tablasSeleccionadas))
+                tablaSinonimo2 = list(filter(lambda persona: persona['original_table'] == tabla_2, tablasSeleccionadas))
+                if len(tablaSinonimo) == 1:
+                    tabla_1 = tablaSinonimo[0]['name']
+                    tabla_2 = tablaSinonimo2[0]['name']
+                relaciones_encontradas.append([tabla_1, columna_1, tabla_2, columna_2, tipo_relacion])
                 continue
 
             # Si es una relación many-to-many con una tabla intermedia
@@ -862,8 +867,8 @@ class PaginaTres(CTkFrame):
             # Encontrar ambas tablas en la lista de tablas seleccionadas
             tabla_obj_1 = self.encontrar_tabla(tabla_1, tablas_seleccionadas)
             tabla_obj_2 = self.encontrar_tabla(tabla_2, tablas_seleccionadas)
-            tName = toCamelCase(tabla_1)
-            tName2 = toCamelCase(tabla_2)
+            tName = tabla_1
+            tName2 = tabla_2
 
             if not tabla_obj_1 or not tabla_obj_2:
                 continue  # Si no encontramos las tablas, pasamos a la siguiente relación
@@ -1031,12 +1036,8 @@ class PaginaTres(CTkFrame):
      # Función para encontrar una tabla seleccionada
     def encontrar_tabla(self, tabla_nombre, tablas_seleccionadas):
         for tabla in tablas_seleccionadas:
-            if tabla['name'] == tabla['original_table']:
-                if tabla['name'] == tabla_nombre:
-                    return tabla
-            else:
-                if tabla['original_table'] == tabla_nombre:
-                    return tabla
+            if tabla['name'] == tabla_nombre:
+                return tabla
         return None
 
 
