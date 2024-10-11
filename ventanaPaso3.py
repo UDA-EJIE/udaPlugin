@@ -107,10 +107,10 @@ class PaginaUno(CTkFrame):
         self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         self.test_button.grid(row=len(labels) + 1, column=0, columnspan=2, pady=10, padx=20, sticky="ew")
 
-        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         next_button.grid(row=len(labels) + 2, column=1, pady=0, padx=20, sticky="e")
         
-        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         back_button.grid(row=len(labels) + 2, column=1, pady=0, padx=(0, 180), sticky="e")
         
     def selectDirectory(self,directory):
@@ -318,13 +318,13 @@ class PaginaUno(CTkFrame):
         button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
         button_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=20)
         
-        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         buscar_button.pack(side="left", padx=10, expand=True)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.pack(side="right", padx=10, expand=True)
         
-        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         accept_button.pack(side="right", padx=10, expand=True)
 
     def mostrar_resultados(self, files, ruta):
@@ -511,11 +511,11 @@ class ventanaPaso2(CTkFrame):
         # Footer con botones de navegación
         footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         footer_frame.grid(row=3, column=0, columnspan=2, padx=20, sticky="se")
-        btn_back = CTkButton(footer_frame, text="Atrás", command=lambda :master.mostrar_pagina_uno(self.main_menu),  fg_color='#84bfc4',  hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        btn_back = CTkButton(footer_frame, text="Atrás", command=lambda :master.mostrar_pagina_uno(self.main_menu),  fg_color='#84bfc4',  hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         btn_back.pack(side="left", padx=10)
-        btn_next = CTkButton(footer_frame, text="Siguiente", command=lambda: self.validarPaso3() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        btn_next = CTkButton(footer_frame, text="Siguiente", command=lambda: self.validarPaso3() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         btn_next.pack(side="left", padx=10)
-        btn_cancel = CTkButton(footer_frame, text="Cancelar", command=lambda : self.cancelar() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        btn_cancel = CTkButton(footer_frame, text="Cancelar", command=lambda : self.cancelar() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         btn_cancel.pack(side="left", padx=10)
 
         if data_mantenimiento ==None:
@@ -694,11 +694,11 @@ class VentanaPaso3(CTkFrame):
         footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         footer_frame.grid(row=1, column=0, columnspan=2, sticky="se", padx=10, pady=(20, 20))
         
-        btn_back = CTkButton(footer_frame, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
+        btn_back = CTkButton(footer_frame, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
-        btn_next = CTkButton(footer_frame, text="Finalizar", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
+        btn_next = CTkButton(footer_frame, text="Finalizar", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
         btn_next.pack(side="left", padx=10, pady=5)
-        btn_cancel = CTkButton(footer_frame, text="Cancelar" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
+        btn_cancel = CTkButton(footer_frame, text="Cancelar" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
         if data_mantenimiento is not None and len(self.data_mantenimiento) > 12:
             self.url_entry.delete(0, "end") 
@@ -821,13 +821,13 @@ class VentanaColumnas(CTkFrame):
         self.contenedor_botones = ctk.CTkFrame(self, fg_color="#FFFFFF")
         self.contenedor_botones.grid(row=4, column=0, sticky="se", padx=10, pady=10)
 
-        back_button = ctk.CTkButton(self.contenedor_botones, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command=lambda : master.mostrar_pagina_tres(self.main_menu, data_mantenimiento, tables,  index_seleccionado))
+        back_button = ctk.CTkButton(self.contenedor_botones, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : master.mostrar_pagina_tres(self.main_menu, data_mantenimiento, tables,  index_seleccionado))
         back_button.grid(row=0, column=0, padx=5, sticky="e")
         
-        finish_button = ctk.CTkButton(self.contenedor_botones, text="Siguiente",  fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command=lambda:self.master.mostrarSpinner("finalizar") )
+        finish_button = ctk.CTkButton(self.contenedor_botones, text="Siguiente",  fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda:self.master.mostrarSpinner("finalizar") )
         finish_button.grid(row=0, column=1, padx=5, sticky="e")
 
-        cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancelar", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
+        cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancelar", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
         cancel_button.grid(row=0, column=2, padx=5, sticky="e")
         #self.master.ocultarSpinner()
 
@@ -1040,12 +1040,12 @@ class VentanaPrincipal(CTk):
 
         # Create the 'Volver al menu' button
         boton_menu = ctk.CTkButton(button_container, text="Volver al menú", fg_color='#84bfc4', hover_color='#41848a', text_color="black", 
-                                font=("Arial", 12, "bold"), command=lambda: self.cancelar())
+                                font=("Arial", 12, "bold"), width= 100, height=25, command=lambda: self.cancelar())
         boton_menu.grid(row=0, column=0, padx=5, pady=(200,0), sticky="se")
 
         # Create the 'cerrar' button
         boton_cerrar = ctk.CTkButton(button_container, text="cerrar", fg_color='#84bfc4', hover_color='#41848a', text_color="black", 
-                                    font=("Arial", 12, "bold"), command=lambda: self.cancelar_cerrar())
+                                    font=("Arial", 12, "bold"), width= 100, height=25, command=lambda: self.cancelar_cerrar())
         boton_cerrar.grid(row=0, column=1, padx=5, pady=(200,0), sticky="sw")
 
 if __name__ == "__main__":

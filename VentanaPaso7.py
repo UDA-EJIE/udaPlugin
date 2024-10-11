@@ -84,14 +84,17 @@ class VentanaPaso7(CTk):
         buttons_frame = CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
         buttons_frame.grid(row=2, column=0, columnspan=3, pady= (300, 0))
 
-        back_button = CTkButton(buttons_frame, text="Back", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        back_button = CTkButton(buttons_frame, text="Atrás", command= lambda : self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         back_button.grid(row=0, column=0, padx=(280, 5))
-        next_button = CTkButton(buttons_frame, text="Next", state="disabled", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        next_button.grid(row=0, column=1, padx=5)
         finish_button = CTkButton(buttons_frame, text="Finish", command= lambda : self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        finish_button.grid(row=0, column=2, padx=5)
-        cancel_button = CTkButton(buttons_frame, text="Cancel", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        cancel_button.grid(row=0, column=3, padx=5)
+        finish_button.grid(row=0, column=1, padx=5)
+      
+
+    def cancelar(self):
+       # Cancela todos los eventos pendientes
+       self.withdraw()
+       self.quit()
+       self.main_menu.MainMenuLoop()
 
 
     def buscar_archivos(self, ruta_personalizada = None):

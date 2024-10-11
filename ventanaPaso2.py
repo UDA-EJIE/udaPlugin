@@ -705,71 +705,86 @@ class PaginaTres(CTkFrame):
         
         ##Esta query saca las relaciones entre las tablas
         query_relations = """WITH fk_tables AS (
-                            -- Seleccionamos las tablas que tienen claves foráneas
-                            SELECT acc.table_name, acc.column_name, ac.constraint_name AS fk_constraint_name,
-                                acc.position, ac.constraint_type, acc2.table_name AS referenced_table, acc2.column_name AS referenced_column
-                            FROM all_cons_columns acc
-                            JOIN all_constraints ac 
-                                ON acc.constraint_name = ac.constraint_name
-                            JOIN all_cons_columns acc2 
-                                ON ac.r_constraint_name = acc2.constraint_name
-                            WHERE ac.constraint_type = 'R' -- Clave foránea (Foreign Key)
-                        ),
-                        pk_tables AS (
-                            -- Seleccionamos las tablas que tienen claves primarias
-                            SELECT acc.table_name, acc.column_name
-                            FROM all_cons_columns acc
-                            JOIN all_constraints ac 
-                                ON acc.constraint_name = ac.constraint_name
-                            WHERE ac.constraint_type = 'P' -- Primary Key
-                        ),
-                        unique_constraints AS (
-                            -- Seleccionamos las columnas que tienen restricciones de unicidad (UNIQUE)
-                            SELECT acc.table_name, acc.column_name
-                            FROM all_cons_columns acc
-                            JOIN all_constraints ac 
-                                ON acc.constraint_name = ac.constraint_name
-                            WHERE ac.constraint_type = 'U' -- Unique Key
-                        )
-                        SELECT fk.table_name AS child_table, 
-                            fk.column_name AS child_column, 
-                            fk.referenced_table AS parent_table, 
-                            fk.referenced_column AS parent_column,
-                            CASE 
-                                -- Relación Many-to-Many: Si la tabla intermedia contiene únicamente claves PF (Primary/Foreign Keys)
-                                WHEN fk.table_name IN (
-                                        SELECT pf.table_name FROM (
-                                            SELECT fk.table_name
-                                            FROM fk_tables fk
-                                            JOIN pk_tables pk 
-                                                ON fk.table_name = pk.table_name 
-                                                AND fk.column_name = pk.column_name
-                                            GROUP BY fk.table_name
-                                            HAVING COUNT(DISTINCT fk.column_name) = (
-                                                SELECT COUNT(*) FROM user_tab_columns utc WHERE utc.table_name = fk.table_name)
-                                        ) pf
-                                )
-                                THEN 'Many to Many'
+            -- Seleccionamos las tablas que tienen claves foráneas
+            SELECT acc.table_name, acc.column_name, ac.constraint_name AS fk_constraint_name,
+                acc.position, ac.constraint_type, acc2.table_name AS referenced_table, acc2.column_name AS referenced_column
+            FROM all_cons_columns acc
+            JOIN all_constraints ac 
+                ON acc.constraint_name = ac.constraint_name
+            JOIN all_cons_columns acc2 
+                ON ac.r_constraint_name = acc2.constraint_name
+            WHERE ac.constraint_type = 'R' -- Clave foránea (Foreign Key)
+        ),
+        pk_tables AS (
+            -- Seleccionamos las tablas que tienen claves primarias
+            SELECT acc.table_name, acc.column_name
+            FROM all_cons_columns acc
+            JOIN all_constraints ac 
+                ON acc.constraint_name = ac.constraint_name
+            WHERE ac.constraint_type = 'P' -- Primary Key
+        ),
+        unique_constraints AS (
+            -- Seleccionamos las columnas que tienen restricciones de unicidad (UNIQUE)
+            SELECT acc.table_name, acc.column_name
+            FROM all_cons_columns acc
+            JOIN all_constraints ac 
+                ON acc.constraint_name = ac.constraint_name
+            WHERE ac.constraint_type = 'U' -- Unique Key
+        )
+        SELECT fk.table_name AS child_table, 
+            fk.column_name AS child_column, 
+            fk.referenced_table AS parent_table, 
+            fk.referenced_column AS parent_column,
+            CASE 
+                -- Relación Many-to-Many: Si la tabla intermedia contiene únicamente claves PF (Primary/Foreign Keys)
+                WHEN fk.table_name IN (
+                        SELECT pf.table_name FROM (
+                            SELECT fk.table_name
+                            FROM fk_tables fk
+                            JOIN pk_tables pk 
+                                ON fk.table_name = pk.table_name 
+                                AND fk.column_name = pk.column_name
+                            GROUP BY fk.table_name
+                            HAVING COUNT(DISTINCT fk.column_name) = (
+                                SELECT COUNT(*) FROM user_tab_columns utc WHERE utc.table_name = fk.table_name)
+                        ) pf
+                )
+                THEN 'Many to Many'
 
-                                -- Relación One-to-One: Si la clave foránea es también la clave primaria de la tabla hija
-                                WHEN fk.column_name IN (
-                                        SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
-                                ) 
-                                THEN 'One to One'
+                -- Relación One-to-One: Si **todas** las columnas de la clave primaria de la tabla hija son claves foráneas
+                WHEN fk.table_name IN (
+                    SELECT pk.table_name
+                    FROM pk_tables pk
+                    LEFT JOIN fk_tables fk ON pk.table_name = fk.table_name AND pk.column_name = fk.column_name
+                    GROUP BY pk.table_name
+                    HAVING COUNT(pk.column_name) = COUNT(fk.column_name)
+                )
+                AND fk.column_name IN (
+                    SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
+                )
+                THEN 'One to One'
 
-                                -- Relación One-to-Many: Si la clave foránea **no es** la clave primaria en la tabla hija
-                                WHEN fk.column_name NOT IN (
-                                        SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
-                                )
-                                THEN 'One to Many'
+                -- Relación One-to-Many: Si la clave foránea **no es** parte completa de la clave primaria en la tabla hija
+                WHEN fk.table_name IN (
+                    SELECT pk.table_name
+                    FROM pk_tables pk
+                    LEFT JOIN fk_tables fk ON pk.table_name = fk.table_name AND pk.column_name = fk.column_name
+                    GROUP BY pk.table_name
+                    HAVING COUNT(pk.column_name) > COUNT(fk.column_name)
+                )
+                OR fk.column_name NOT IN (
+                    SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
+                )
+                THEN 'One to Many'
 
-                                ELSE 'Unknown'
-                            END AS relationship_type
-                        FROM fk_tables fk
-                        LEFT JOIN pk_tables pk 
-                            ON fk.referenced_table = pk.table_name 
-                            AND fk.referenced_column = pk.column_name
-                        ORDER BY fk.table_name, relationship_type
+                ELSE 'Unknown'
+            END AS relationship_type
+        FROM fk_tables fk
+        LEFT JOIN pk_tables pk 
+            ON fk.referenced_table = pk.table_name 
+            AND fk.referenced_column = pk.column_name
+        ORDER BY fk.table_name, relationship_type
+
                         """
         
         self.cursor.execute(query_relations)
