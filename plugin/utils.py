@@ -18,7 +18,6 @@ def getColumnsDates(columns):
         newColumn = columnOld
         name = columnOld["name"].capitalize() 
         type = columnOld["type"]
-        type_cap = columnOld["type"].capitalize()   
         newColumn["editable"] = "true"
         if columnOld["primaryKey"] == "P": 
             newColumn["editable"] = "false"
