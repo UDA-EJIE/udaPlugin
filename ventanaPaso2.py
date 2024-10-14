@@ -906,9 +906,8 @@ class PaginaTres(CTkFrame):
                     'tableName': tabla_1
                     
                 }
-                
+                tabla_obj_2['columnasDao'] = tabla_obj_2['columns'].copy()
                 tabla_obj_2['columns'].append(nueva_columna_2)
-
                 tabla_obj_1['dao'] =  None
                 tabla_obj_2['dao'] =  None
                 tabla_obj_1['controller'] =  None
@@ -973,7 +972,7 @@ class PaginaTres(CTkFrame):
                 }
 
                 if "columnasDao" not in tabla_obj_1:
-                     tabla_obj_1['columnasDao'] = tabla_obj_1['columns'].copy()
+                    tabla_obj_1['columnasDao'] = tabla_obj_1['columns'].copy()
 
                 tabla_obj_1['columns'].append(nueva_columna_1)
 

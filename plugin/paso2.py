@@ -95,7 +95,10 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             data["dao"] = "value"
         else:
            data["dao"] = None
-           data["columnasDaos"] = columnsDates[0]
+           try:
+            data["columnasDaos"] = table["columnasDao"]
+           except KeyError:
+              data["columnasDaos"] = columnsDates[0]
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
