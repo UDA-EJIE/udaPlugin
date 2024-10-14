@@ -175,7 +175,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
         writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
-    ventanaPaso2.master.update_progress(0.9)    
+    ventanaPaso2.master.update_progress(1.0)    
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  

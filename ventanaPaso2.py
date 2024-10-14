@@ -1102,6 +1102,10 @@ class VentanaPrincipal(CTk):
 
     def update_progress(self,value):
         self.progressbar.set(value)
+        valor = value*100
+        if(valor > 100):
+            valor = 100
+        self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
         self.loading_frame.update_idletasks()
         self.update()
     
@@ -1110,13 +1114,13 @@ class VentanaPrincipal(CTk):
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        l.place(relx=0.5, rely=0.5, anchor='center')
+        self.percentage_label = CTkLabel(self.loading_frame, text="Cargando... 0%", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
+        self.percentage_label.place(relx=0.5, rely=0.5, anchor='center')
         self.progress_var = tk.IntVar()
         self.progressbar = CTkProgressBar(self.loading_frame, variable=self.progress_var)
         self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
-      #  self.progressbar.start()
-        l.pack()
+
+        self.percentage_label.pack()
         self.update()
 
         if(caso == "avanzarPaso2"):
