@@ -77,7 +77,9 @@ def getColumnsDates(columns):
         if contains(newColumns, lambda x: x["DATA_IMPORT"] == newColumn["DATA_IMPORT"]): 
              newColumn["DATA_IMPORT"] = ""
         if contains(newColumns, lambda x: x["DATA_IMPORT2"] == newColumn["DATA_IMPORT2"]): 
-             newColumn["DATA_IMPORT2"] = ""               
+             newColumn["DATA_IMPORT2"] = "" 
+        if contains(newColumns, lambda x: x["name"] == newColumn["name"]):  
+            newColumn["name"] = newColumn["name"] + "Ext"#en caso raro de tener el mismo nombre la variable cambia.                 
         newColumns.append(newColumn) 
         if columnOld["primaryKey"] == "P":
             columnsPks.append(newColumn)       
