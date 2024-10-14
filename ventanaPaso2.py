@@ -207,7 +207,7 @@ class PaginaDos(CTkFrame):
     def populate_scrollable_frame(self, frame, tables_original):
         self.var_list = []
         total_pasos = len(tables_original) + 1
-        pasos_por_parte = total_pasos // 8
+        pasos_por_parte = total_pasos # 8
         for index, table in enumerate(tables_original):
             self.var_list.append(IntVar(value=0))
             table_frame = CTkFrame(frame, fg_color="#FFFFFF", corner_radius=10)

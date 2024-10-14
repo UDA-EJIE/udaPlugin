@@ -59,7 +59,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         os.makedirs(destinoEarModel)            
     data["packageName"] = "com.ejie."+proyectName  
     lastTable = False
-
+    total_pasos = len(tables) + 1
+    pasos_por_parte = total_pasos # 8
     for x, table in enumerate(tables):
         #añadir funciones
         columnsDates = getColumnsDates(table["columns"])
@@ -105,7 +106,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         print("Inicio paso 2 :: Tabla "+str(x+1)+"/"+str(len(tables))+" -> " + data["tableName"])
         generoEar = False
         #controller java 
-        ventanaPaso2.master.update_progress(0.4)
+        
         if(ventanaPaso2.controladores_var.get()):            
             logging.info("Inicio: crear controllers...")
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
@@ -165,11 +166,16 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                     rutaJackson = destinoWarViews+"jackson-config.xml"    
                     if os.path.isfile(rutaJackson) == True:    
                         modifyJackson(rutaJackson,data["tableName"],lastTable,data["packageName"])  
-                generoEar = True                     
+                generoEar = True   
+         
+        porcentaje = (x+1) / total_pasos
+        if(porcentaje < 0.2): 
+            porcentaje = 0.2 
+        ventanaPaso2.master.update_progress(porcentaje)                          
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
         writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
-    ventanaPaso2.master.update_progress(0.8)    
+    ventanaPaso2.master.update_progress(0.9)    
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  
