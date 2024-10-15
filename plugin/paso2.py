@@ -12,6 +12,7 @@ import logging
 from customtkinter import *
 from plugin.utils import writeConfig
 from plugin.utils import obtenerNombreProyectoByEar
+import numpy as np
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -100,6 +101,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             data["columnasDaos"] = table["columnasDao"]
            except KeyError:
               data["columnasDaos"] = columnsDates[0]
+
+        data["constructorEntidad"] = np.array_equal(data["columnasDaos"], columnsDates[0])
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
