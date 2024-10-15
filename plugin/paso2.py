@@ -88,8 +88,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = tName
         if not table["dao"] is None:
-            data["entidadPadre"] = table["dao"]['entidadPadre']
-            data["primaryKeyPadre"] = table["dao"]['primaryKey']
+            data["entidadPadre"] = toCamelCase(table["dao"]['entidadPadre'])
+            data["primaryKeyPadre"] = toCamelCase(table["dao"]['primaryKey'])
             data["columnasDaos"] = table["columnasDao"]
             data["padreOriginalCol"] = table["dao"]['entidadPadreCol']
             data['tableFKey'] = table["dao"]["foreingkey"]
