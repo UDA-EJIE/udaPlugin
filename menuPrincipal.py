@@ -84,18 +84,21 @@ class MainMenu(CTkToplevel):
     def abrir_paso2(self):
         self.withdraw()
         print("Abriendo Paso 2")
+        sys.stderr = open(logsPath, 'a')
         ventana = paso2.VentanaPrincipal(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.mainloop()
 
     def abrir_paso3(self):
         self.withdraw()
+        sys.stderr = open(logsPath, 'a')
         ventana = paso3.VentanaPrincipal(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.mainloop()
 
     def abrir_paso4(self):
         self.withdraw()
+        sys.stderr = open(logsPath, 'a')
         ventana = paso4.Paso4(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.mainloop()
@@ -103,18 +106,21 @@ class MainMenu(CTkToplevel):
 
     def abrir_paso5(self):
         self.withdraw()
+        sys.stderr = open(logsPath, 'a')
         ventana = paso5.Paso5(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.mainloop()
 
     def abrir_paso6(self):
         self.withdraw()
+        sys.stderr = open(logsPath, 'a')
         ventana = paso6.VentanaPaso6(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.mainloop()   
 
     def abrir_paso7(self):
         self.withdraw()
+        sys.stderr = open(logsPath, 'a')
         ventana = paso7.VentanaPaso7(self)
         ventana.protocol("WM_DELETE_WINDOW", lambda: self.on_close(ventana))
         ventana.mainloop()     

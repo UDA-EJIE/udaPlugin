@@ -35,7 +35,6 @@ class PaginaUno(CTkFrame):
     
     def __init__(self, master, main_menu, tables=None, tables_ori=None, columns=None,estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
 
         self.main_menu = main_menu
@@ -1263,7 +1262,7 @@ class VentanaPrincipal(CTk):
 
     def select_all(self):
         total_pasos = len(self.pagina_actual.tables) + 1
-        pasos_por_parte = total_pasos // 10
+        pasos_por_parte = total_pasos # 10
         for cont,table_frame in enumerate(self.pagina_actual.tables, start = 1):
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].select()  # Checkbox de la tabla
