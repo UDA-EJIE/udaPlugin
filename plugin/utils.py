@@ -62,6 +62,7 @@ def getColumnsDates(columns):
               newColumn["DATA_IMPORT"] = "java.util.Date"
               newColumn["DATA_IMPORT2"] = ""
         elif type == "LIST":
+            newColumn["name"] = name+"s"
             newColumn["DATO_TYPE"] = "List"
             newColumn["DATA_IMPORT"] = "java.util.List"
             newColumn["DATA_IMPORT2"] = "java.util.ArrayList"
@@ -79,7 +80,8 @@ def getColumnsDates(columns):
         if contains(newColumns, lambda x: x["DATA_IMPORT2"] == newColumn["DATA_IMPORT2"]): 
              newColumn["DATA_IMPORT2"] = "" 
         if contains(newColumns, lambda x: x["name"] == newColumn["name"]):  
-            newColumn["name"] = newColumn["name"] + "Ext"#en caso raro de tener el mismo nombre la variable cambia.                 
+            newColumn["name"] = newColumn["name"] + "Ext"#en caso raro de tener el mismo nombre la variable cambia.
+            newColumn["priority"] = True               
         newColumns.append(newColumn) 
         if columnOld["primaryKey"] == "P":
             columnsPks.append(newColumn)       

@@ -13,6 +13,7 @@ from customtkinter import *
 from plugin.utils import writeConfig
 from plugin.utils import obtenerNombreProyectoByEar
 import numpy as np
+from plugin.utils import contains
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -68,7 +69,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         #columnDao = getColumnsDates(table["columnasDao"])
         if not table["controller"] is None:
             colControllerPk= getColumnsDates(table["controller"]['primaryKeyCol'])
-            colControllerAll = getColumnsDates(table["controller"]['columns'])
+            colControllerAll = table["controller"]['columns']
             colControllerPkRel = getColumnsDates(table["controller"]['colPrimaryRelacion'])
             data["colControllerPk"] = colControllerPk
             data["colControllerAll"] = colControllerAll
@@ -86,11 +87,18 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         tName = snakeToCamel(tNameOriginal) 
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
-        data["tableNameDecapitalize"] = tName
+        data["tableNameDecapitalize"] = snakeToCamel(tName)
         if not table["dao"] is None:
             data["entidadPadre"] = toCamelCase(table["dao"]['entidadPadre'])
             data["primaryKeyPadre"] = toCamelCase(table["dao"]['primaryKey'])
-            data["columnasDaos"] = table["columnasDao"]
+            for columns in columnsDates[0]:
+                if contains(table["columnasDao"] , lambda x: x["name"]+"Ext" == columns["name"]): 
+                    data["entidadPadre"] = toCamelCase(columns["name"])
+                    # table["columnasDao"] = [columns if x["name"] + "Ext" == columns["name"] else x for x in table["columnasDao"]]
+                    
+                    # table["columnasDao"] = [x for x in table["columnasDao"] if x["name"] + "Ext" != columns["name"]]
+                
+            data["columnasDaos"] =  table["columnasDao"]
             data["padreOriginalCol"] = table["dao"]['entidadPadreCol']
             data['tableFKey'] = table["dao"]["foreingkey"]
             data['primaryKPadre'] = table["dao"]["primaryPadre"]
@@ -101,8 +109,14 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             data["columnasDaos"] = table["columnasDao"]
            except KeyError:
               data["columnasDaos"] = columnsDates[0]
+              if table["controller"] is not None:
+                    data["constructorEntidad"] = False
+                    data["columnasDaos"] = table['originalCol']
 
-        data["constructorEntidad"] = np.array_equal(data["columnasDaos"], columnsDates[0])
+        try:
+            data["constructorEntidad"] = np.array_equal(table["columns"], table['originalCol'])
+        except KeyError:
+           data["constructorEntidad"] = True
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    

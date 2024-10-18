@@ -953,6 +953,9 @@ class PaginaTres(CTkFrame):
                         
                     }
                 
+                if "originalCol" not in tabla_obj_1:
+                    tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()
+                
                 try:
                     if tabla_obj_2['dao'] is not None:
                         None
@@ -1003,6 +1006,14 @@ class PaginaTres(CTkFrame):
                     'primaryKey': ' ',
                     'tableName': tabla_1
                 }
+
+                if "originalCol" not in tabla_obj_2:
+                    tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+
+                if "originalCol" not in tabla_obj_1:
+                    tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()    
+
+
                 tabla_obj_1['columns'].append(nueva_lista_1)
                 tabla_obj_2['columns'].append(nueva_lista_2)
                 
