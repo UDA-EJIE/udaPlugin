@@ -1046,7 +1046,7 @@ class PaginaTres(CTkFrame):
                 
                  #Se guardan los datos necesarios para modificar las plantillas del controler 
                 tabla_obj_2['controller'] =  {
-                        'entidadRelacion': tabla_obj_2['name'].capitalize(), 
+                        'entidadRelacion': tabla_obj_1['name'].capitalize(), 
                         'primaryKeyCol': [tabla_obj_2['columns'][numero_columna_tab2]],
                         'columns' : tabla_obj_2['columns'],
                         'colPrimaryRelacion': [tabla_obj_1['columns'][numero_columna_tab1]],
