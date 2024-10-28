@@ -53,7 +53,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
         data["allColumns"] = allColumns
         data["allColumnsNoPk"] = allColumnsNoPk
         tNameOriginal = table["name"]
-        tableRequestMapping = toRestUrlNaming(tNameOriginal)
+        tableRequestMapping = snakeToCamel(tNameOriginal)
         alias = data_mantenimiento["alias"].strip().lower() 
         if(alias == ''):
           alias = snakeToCamel(tNameOriginal)
