@@ -140,7 +140,8 @@ class PaginaDos(CTkFrame):
     def __init__(self, master, main_menu, tables, cursor, tables_ori=None,  estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#FFFFFF")
-
+        # Ordena las tablas alfabéticamente según el nombre
+        tables = sorted(tables, key=lambda table: table.name.lower())
         self.original_tables = copy.deepcopy(tables)
         self.tables = []
         self.tables_ori = tables_ori
@@ -207,7 +208,23 @@ class PaginaDos(CTkFrame):
         self.var_list = []
         total_pasos = len(tables_original) + 1
         pasos_por_parte = total_pasos # 8
+
+         # Campo de entrada para autocompletado en la parte superior
+        
+ 
+
+        # Callback para actualizar los checkboxes en función del texto ingresado
+        #search_var.trace_add("write", lambda *args: self.update_checkboxes(search_var.get()))
+        sv = StringVar(self)
+        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
+        self.search_entry = tk.Entry(frame, textvariable=sv, width=40)
+        self.search_entry.pack(pady=5)
+
+        self.checkboxes = []  # Almacenar referencias a los checkboxes para actualizarlos
+
         for index, table in enumerate(tables_original):
+            # Creación del checkbox de la tabla
+            table_var = tk.IntVar(value=0)
             self.var_list.append(IntVar(value=0))
             table_frame = CTkFrame(frame, fg_color="#FFFFFF", corner_radius=10)
             table_frame.pack(fill="x", padx=10, pady=2, expand=True)
@@ -216,6 +233,10 @@ class PaginaDos(CTkFrame):
                                             text_color="black", font=("Arial", 10, "bold"),
                                             checkbox_height=15, checkbox_width=15, border_color='#84bfc4', fg_color='#84bfc4')
             table_checkbox.pack(side="left", padx=5)
+            table_frame.pack(fill="x", padx=10, pady=2, expand=True)
+
+            # Almacenar el nombre y referencia para el autocompletado
+            self.checkboxes.append((table.name, table_frame))
             if self.estado_tables != None and len([x for x in self.estado_tables if x['name'] == table.name]) == 1:
                 table_checkbox.select()
             
@@ -251,6 +272,16 @@ class PaginaDos(CTkFrame):
                     porcentaje = 0.2 
                 self.master.update_progress(porcentaje)     
         self.master.update_progress(1.0)    
+        # Función para actualizar la visibilidad de los checkboxes según el texto de búsqueda
+    def update_checkboxes(self):
+        search_text = self.search_entry.get()
+        for _, checkbox in self.checkboxes:
+            checkbox.pack_forget()
+
+        # Luego, muestra solo los que coinciden en el orden correcto
+        for name, checkbox in self.checkboxes:
+            if search_text.lower() in name.lower():
+                checkbox.pack(fill="x", padx=10, pady=2, expand=True)   
 
     def toggle_columns(self, table_frame):
     # Asegúrate de referirte al columns_frame para expandir/contraer
