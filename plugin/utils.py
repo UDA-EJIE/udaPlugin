@@ -14,6 +14,7 @@ import sys
 def getColumnsDates(columns):
     newColumns = []
     columnsPks = []
+    entidadesRelacionadas = []
     for columnOld in columns:   
         newColumn = columnOld
         name = columnOld["name"]
@@ -70,6 +71,7 @@ def getColumnsDates(columns):
             newColumn["DATO_TYPE"] = toCamelCase(type)
             newColumn["DATA_IMPORT"] = ""
             newColumn["DATA_IMPORT2"] = ""
+            entidadesRelacionadas.append(newColumn)
         else :
               newColumn["DATO_TYPE"] = "String"
               newColumn["DATA_IMPORT"] = ""
@@ -85,7 +87,7 @@ def getColumnsDates(columns):
         newColumns.append(newColumn) 
         if columnOld["primaryKey"] == "P":
             columnsPks.append(newColumn)       
-    return [newColumns,columnsPks]
+    return [newColumns,columnsPks, entidadesRelacionadas]
 
 def toCamelCase(text):
     s = text.replace("-", " ").replace("_", " ")

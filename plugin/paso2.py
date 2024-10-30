@@ -82,6 +82,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         columnas = columnsDates[0]
         allColumns = columnsDates[1] + [x for x in columnas if x['primaryKey'] != 'P']
         data["columnsDates"] = columnsDates[0]
+        data["entidadesRelacionadas"] = columnsDates[2]
         data["allColumns"] = allColumns
         tNameOriginal = table["name"]
         tName = snakeToCamel(tNameOriginal) 
@@ -89,6 +90,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = snakeToCamel(tName)
         if not table["dao"] is None:
+            
             data["entidadPadre"] = toCamelCase(table["dao"]['entidadPadre'])
             data["primaryKeyPadre"] = toCamelCase(table["dao"]['primaryKey'])
             for columns in columnsDates[0]:
@@ -99,14 +101,17 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                     # table["columnasDao"] = [x for x in table["columnasDao"] if x["name"] + "Ext" != columns["name"]]
                 
             data["columnasDaos"] =  table["columnasDao"]
-            data["padreOriginalCol"] = table["dao"]['entidadPadreCol']
+            data["columOriNoForeing"] = getColumnsDates(table["columnasOriNoForeing"])[0]
+            data["padreOriginalCol"] = getColumnsDates(table["dao"]['entidadPadreCol'])
             data['tableFKey'] = table["dao"]["foreingkey"]
             data['primaryKPadre'] = table["dao"]["primaryPadre"]
             data["dao"] = "value"
         else:
            data["dao"] = None
+           data["entidadPadre"] = None
            try:
             data["columnasDaos"] = table["columnasDao"]
+            data["columOriNoForeing"] = table["columnasDao"]
            except KeyError:
               data["columnasDaos"] = columnsDates[0]
               if table["controller"] is not None:

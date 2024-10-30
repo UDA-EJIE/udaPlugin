@@ -941,10 +941,18 @@ class PaginaTres(CTkFrame):
                 if "columnasDao" not in tabla_obj_2:
                     tabla_obj_2['columnasDao'] = tabla_obj_2['columns'].copy()
                 tabla_obj_2['columns'].append(nueva_columna_2)
-                tabla_obj_1['dao'] =  None
-                tabla_obj_2['dao'] =  None
-                tabla_obj_1['controller'] =  None
-                tabla_obj_2['controller'] =  None
+                # Verifica y solo asigna `None` si no están inicializados
+                if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
+                    tabla_obj_1['dao'] = None
+
+                if 'dao' not in tabla_obj_2 or tabla_obj_2['dao'] is None:
+                    tabla_obj_2['dao'] = None
+
+                if 'controller' not in tabla_obj_1 or tabla_obj_1['controller'] is None:
+                    tabla_obj_1['controller'] = None
+
+                if 'controller' not in tabla_obj_2 or tabla_obj_2['controller'] is None:
+                    tabla_obj_2['controller'] = None
 
             elif tipo_relacion == 'One to Many':
                 # Para One to Many, agregamos una lista en la segunda tabla (la que tiene "Many")
@@ -975,16 +983,26 @@ class PaginaTres(CTkFrame):
                     if columns['primaryKey']  == 'P':
                         numero_columna = index
                         break
-            
-                #Se pasan los datos necesarios para las plantillas del dao 
-                tabla_obj_1['dao'] =  {
-                        'entidadPadre': tabla_obj_2['name'].capitalize(), 
+                
+                if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
+                    # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
+                    tabla_obj_1['dao'] = [{
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
                         'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
-                        'entidadPadreCol' : tabla_obj_2['originalCol'],
-                        'foreingkey' : columna_1,
-                        'primaryPadre' : columna_2
-                        
-                    }
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    }]
+                else:
+                    # Si `dao` ya está inicializado y es una lista, agrega el nuevo diccionario
+                    tabla_obj_1['dao'].append({
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    })
+
                 
                 if "originalCol" not in tabla_obj_1:
                     tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()
@@ -1009,6 +1027,15 @@ class PaginaTres(CTkFrame):
 
                 if "columnasDao" not in tabla_obj_1:
                     tabla_obj_1['columnasDao'] = tabla_obj_1['columns'].copy()
+                    
+               
+                for column in tabla_obj_1['columns']:
+                    for coldaos in tabla_obj_1['dao']:
+                        if column['name'] == coldaos['foreingkey']:
+                            tabla_obj_1['columns'].remove(column)
+                            if "columnasOriNoForeing" not in tabla_obj_1:
+                                tabla_obj_1['columnasOriNoForeing'] = tabla_obj_1['columns'].copy()
+
 
                 tabla_obj_1['columns'].append(nueva_columna_1)
 
