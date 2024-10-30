@@ -156,7 +156,7 @@ class PaginaDos(CTkFrame):
         self.grid_columnconfigure(0, weight=1)  # Ensure this column can expand
         self.grid_rowconfigure(1, weight=1)     # Central row where the scrollable frame will go
 
-        header_label = CTkLabel(self.header_frame, text="Seleccione las tablas y sus columnas para la generación de código", font=("Arial", 14, "bold"))
+        header_label = CTkLabel(self.header_frame, text="Seleccione las tablas y sus columnas para la generación de código", font=("Arial", 14, "bold"), text_color="white")
         header_label.pack(pady=10, padx=10)
         self.estado_tables = estado_tables
 
@@ -207,7 +207,7 @@ class PaginaDos(CTkFrame):
     def populate_scrollable_frame(self, frame, tables_original):
         self.var_list = []
         total_pasos = len(tables_original) + 1
-        pasos_por_parte = total_pasos # 8
+        pasos_por_parte = total_pasos // 8
 
          # Campo de entrada para autocompletado en la parte superior
         
@@ -217,9 +217,11 @@ class PaginaDos(CTkFrame):
         #search_var.trace_add("write", lambda *args: self.update_checkboxes(search_var.get()))
         sv = StringVar(self)
         sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
-        self.search_entry = tk.Entry(frame, textvariable=sv, width=40)
-        self.search_entry.pack(pady=5)
 
+        self.search_entry = CTkEntry(frame, textvariable=sv, width=220,placeholder_text="Buscar Tablas...",placeholder_text_color="black")
+        
+        self.search_entry.configure(placeholder_text="Buscar Tablas...")
+        self.search_entry.pack(pady=5)
         self.checkboxes = []  # Almacenar referencias a los checkboxes para actualizarlos
 
         for index, table in enumerate(tables_original):
@@ -1143,13 +1145,14 @@ class VentanaPrincipal(CTk):
         self.mostrar_pagina(PaginaUno, main_menu)
 
     def update_progress(self,value):
-        self.progressbar.set(value)
-        valor = value*100
-        if(valor > 100):
-            valor = 100
-        self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
-        self.loading_frame.update_idletasks()
-        self.update()
+        if self.progressbar.winfo_exists():
+            self.progressbar.set(value)
+            valor = value*100
+            if(valor > 100):
+                valor = 100
+            self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
+            self.loading_frame.update_idletasks()
+            self.update()
     
     def mostrarSpinner(self,caso):
         # Crear y configurar el Frame de carga
@@ -1305,7 +1308,7 @@ class VentanaPrincipal(CTk):
 
     def select_all(self):
         total_pasos = len(self.pagina_actual.tables) + 1
-        pasos_por_parte = total_pasos # 10
+        pasos_por_parte = total_pasos // 10
         for cont,table_frame in enumerate(self.pagina_actual.tables, start = 1):
             # Assuming _state is an attribute that holds the checkbox state
             table_frame.winfo_children()[0].select()  # Checkbox de la tabla
