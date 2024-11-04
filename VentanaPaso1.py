@@ -162,13 +162,14 @@ class Paso1(CTk):
         cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
     def update_progress(self,value):
-        self.progressbar.set(value)
-        valor = value*100
-        if(valor > 100):
-            valor = 100
-        self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
-        self.loading_frame.update_idletasks()
-        self.update()
+        if self.progressbar.winfo_exists():
+            self.progressbar.set(value)
+            valor = value*100
+            if(valor > 100):
+                valor = 100
+            self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
+            self.loading_frame.update_idletasks()
+            self.update()
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
