@@ -940,6 +940,15 @@ class PaginaTres(CTkFrame):
                 }
                 if "columnasDao" not in tabla_obj_2:
                     tabla_obj_2['columnasDao'] = tabla_obj_2['columns'].copy()
+
+                if "columnasOriNoForeing" not in tabla_obj_2:
+                    tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+
+                    for col in tabla_obj_2['originalCol']:
+                        if col['primaryKey'] == 'R':
+                            tabla_obj_2['originalCol'].remove(col)
+
+                    tabla_obj_2['columnasOriNoForeing'] =  tabla_obj_2['originalCol'].copy()
                 tabla_obj_2['columns'].append(nueva_columna_2)
                 # Verifica y solo asigna `None` si no están inicializados
                 if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
@@ -953,6 +962,36 @@ class PaginaTres(CTkFrame):
 
                 if 'controller' not in tabla_obj_2 or tabla_obj_2['controller'] is None:
                     tabla_obj_2['controller'] = None
+
+                if "originalCol" not in tabla_obj_1:
+                    tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()
+
+               
+                numero_columnaOnetOne = 0
+                for indexOnetOne, columnsOnetOne in enumerate(tabla_obj_1['columns']):
+
+                    if columnsOnetOne['primaryKey']  == 'P':
+                        numero_columnaOnetOne = indexOnetOne
+                        break
+  
+                if 'rowMapper' not in tabla_obj_2 or tabla_obj_2['rowMapper'] is None:
+                    # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
+                    tabla_obj_2['rowMapper'] = [{
+                        'entidadPadre': tabla_obj_1['name'].capitalize(),
+                        'primaryKey': tabla_obj_1['columns'][numero_columnaOnetOne]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_1['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    }]
+                else:
+                    # Si `dao` ya está inicializado y es una lista, agrega el nuevo diccionario
+                    tabla_obj_2['rowMapper'].append({
+                        'entidadPadre': tabla_obj_1['name'].capitalize(),
+                        'primaryKey': tabla_obj_1['columns'][numero_columnaOnetOne]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_1['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    })
 
             elif tipo_relacion == 'One to Many':
                 # Para One to Many, agregamos una lista en la segunda tabla (la que tiene "Many")
@@ -973,9 +1012,23 @@ class PaginaTres(CTkFrame):
 
                 if "originalCol" not in tabla_obj_2:
                     tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+
+                    for col in tabla_obj_2['originalCol']:
+                        if col['primaryKey'] == 'R':
+                            tabla_obj_2['originalCol'].remove(col)
+
+                    tabla_obj_2['columnasOriNoForeing'] =  tabla_obj_2['originalCol'].copy()
                 
-                tabla_obj_2['columns'].append(nueva_lista_2)
-                
+                alreadyTab2 = False
+                for sameNameCol2 in tabla_obj_2['columns']:
+                    if sameNameCol2['name'] == nueva_lista_2['name']:
+                        tabla_obj_2['columns'].remove(sameNameCol2)
+                        tabla_obj_2['columns'].append(nueva_lista_2)
+                        alreadyTab2 = True
+                        break
+
+                if not alreadyTab2:
+                    tabla_obj_2['columns'].append(nueva_lista_2)
                 #Extraer primary key del padre
                 numero_columna = 0
                 for index, columns in enumerate(tabla_obj_2['columns']):
@@ -983,6 +1036,7 @@ class PaginaTres(CTkFrame):
                     if columns['primaryKey']  == 'P':
                         numero_columna = index
                         break
+                
                 
                 if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
                     # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
@@ -1003,15 +1057,39 @@ class PaginaTres(CTkFrame):
                         'primaryPadre': columna_2
                     })
 
+                if 'rowMapper' not in tabla_obj_1 or tabla_obj_1['rowMapper'] is None:
+                    # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
+                    tabla_obj_1['rowMapper'] = [{
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    }]
+                else:
+                    # Si `dao` ya está inicializado y es una lista, agrega el nuevo diccionario
+                    tabla_obj_1['rowMapper'].append({
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    })
+
                 
                 if "originalCol" not in tabla_obj_1:
                     tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()
+                    
+                    for col in tabla_obj_1['originalCol']:
+                        if col['primaryKey'] == 'R':
+                            tabla_obj_1['originalCol'].remove(col)
+
+                    tabla_obj_1['columnasOriNoForeing'] =  tabla_obj_1['originalCol'].copy()
+
+                    
                 
-                try:
-                    if tabla_obj_2['dao'] is not None:
-                        None
-                except KeyError:
-                    tabla_obj_2['dao'] =  None
+                if 'dao' not in tabla_obj_2 or tabla_obj_2['dao'] is None:
+                    tabla_obj_2['dao'] = None
 
                 # En la primera tabla, agregamos una referencia a la segunda tabla como entidad
                 nueva_columna_1 = {
@@ -1029,18 +1107,30 @@ class PaginaTres(CTkFrame):
                     tabla_obj_1['columnasDao'] = tabla_obj_1['columns'].copy()
                     
                
-                for column in tabla_obj_1['columns']:
-                    for coldaos in tabla_obj_1['dao']:
-                        if column['name'] == coldaos['foreingkey']:
-                            tabla_obj_1['columns'].remove(column)
-                            if "columnasOriNoForeing" not in tabla_obj_1:
-                                tabla_obj_1['columnasOriNoForeing'] = tabla_obj_1['columns'].copy()
+                # for column in tabla_obj_1['columns']:
+                #     for coldaos in tabla_obj_1['dao']:
+                #         if column['name'] == coldaos['foreingkey']:
+                #             tabla_obj_1['columns'].remove(column)
+                #             if "columnasOriNoForeing" not in tabla_obj_1:
+                #                 tabla_obj_1['columnasOriNoForeing'] = tabla_obj_1['columns'].copy()
+                #             else:
+                #                 tabla_obj_1['columnasOriNoForeing'].remove(column)
+                
+                alreadyTab1 = False
+                for sameNameCol1 in tabla_obj_1['columns']:
+                    if sameNameCol1['name'] == nueva_columna_1['name']:
+                        tabla_obj_1['columns'].remove(sameNameCol1)
+                        tabla_obj_1['columns'].append(nueva_columna_1)
+                        alreadyTab1 = True
+                        break
+            
+                if not alreadyTab1:
+                    tabla_obj_1['columns'].append(nueva_columna_1)
+                if 'controller' not in tabla_obj_1 or tabla_obj_1['controller'] is None:
+                    tabla_obj_1['controller'] = None
 
-
-                tabla_obj_1['columns'].append(nueva_columna_1)
-
-                tabla_obj_1['controller'] =  None
-                tabla_obj_2['controller'] =  None
+                if 'controller' not in tabla_obj_2 or tabla_obj_2['controller'] is None:
+                    tabla_obj_2['controller'] = None
 
             elif tipo_relacion == 'Many to Many':
                 # Para Many to Many, agregamos una lista en ambas tablas
@@ -1113,8 +1203,11 @@ class PaginaTres(CTkFrame):
                         
                     }
                 
-                tabla_obj_1['dao'] =  None
-                tabla_obj_2['dao'] =  None
+                if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
+                    tabla_obj_1['dao'] = None
+
+                if 'dao' not in tabla_obj_2 or tabla_obj_2['dao'] is None:
+                    tabla_obj_2['dao'] = None
 
         return tablas_seleccionadas
 
@@ -1251,24 +1344,28 @@ class VentanaPrincipal(CTk):
         
         self.tables = [] 
         columns = [] 
-        query = """select tb1.table_name, tb1.column_name,tb1.DATA_TYPE,tb1.NULLABLE,tb2.constraint_type, tb1.SYNONYM_NAME, tb1.DATA_PRECISION
-         FROM  
-            (SELECT ta.table_name,sy.SYNONYM_NAME, utc.COLUMN_NAME, utc.data_type,utc.nullable,utc.DATA_PRECISION
-             FROM user_tables ta
-             LEFT JOIN user_synonyms sy
-             ON ta.TABLE_NAME = sy.TABLE_NAME
-             INNER JOIN USER_TAB_COLUMNS utc
-             ON ta.TABLE_NAME = utc.TABLE_NAME 
-             order by sy.SYNONYM_NAME,ta.table_name,utc.column_name) tb1 
-        LEFT JOIN 
-            (select all_cons_columns.owner , all_cons_columns.table_name, all_cons_columns.column_name, all_constraints.constraint_type
-            from all_constraints, all_cons_columns 
-            where 
-                all_constraints.constraint_type = 'P' AND all_constraints.owner = :esquema
-                and all_constraints.constraint_name = all_cons_columns.constraint_name
-                and all_constraints.owner = all_cons_columns.owner 
-            order by all_cons_columns.owner,all_cons_columns.table_name) tb2
-        ON tb1.table_name = tb2.table_name AND tb1.column_name = tb2.column_name"""
+        query = """
+        SELECT tb1.table_name, tb1.column_name, tb1.DATA_TYPE, tb1.NULLABLE,
+            CASE WHEN pk.constraint_type = 'P' THEN 'P' WHEN fk.constraint_type = 'R' THEN 'R' ELSE NULL END AS constraint_type,
+            tb1.SYNONYM_NAME, tb1.DATA_PRECISION
+        FROM (SELECT ta.table_name, sy.SYNONYM_NAME, utc.COLUMN_NAME, utc.data_type, utc.nullable, utc.DATA_PRECISION
+            FROM user_tables ta
+            LEFT JOIN user_synonyms sy ON ta.TABLE_NAME = sy.TABLE_NAME
+            INNER JOIN USER_TAB_COLUMNS utc ON ta.TABLE_NAME = utc.TABLE_NAME
+            ORDER BY sy.SYNONYM_NAME, ta.table_name, utc.column_name) tb1
+        LEFT JOIN (SELECT acc.table_name, acc.column_name, ac.constraint_type
+                FROM all_constraints ac
+                INNER JOIN all_cons_columns acc ON ac.constraint_name = acc.constraint_name AND ac.owner = acc.owner
+                WHERE ac.constraint_type = 'P' AND ac.owner = :esquema) pk
+                ON tb1.table_name = pk.table_name AND tb1.column_name = pk.column_name
+        LEFT JOIN (SELECT acc.table_name, acc.column_name, ac.constraint_type
+                FROM all_constraints ac
+                INNER JOIN all_cons_columns acc ON ac.constraint_name = acc.constraint_name AND ac.owner = acc.owner
+                WHERE ac.constraint_type = 'R' AND ac.owner = :esquema) fk
+                ON tb1.table_name = fk.table_name AND tb1.column_name = fk.column_name
+        ORDER BY tb1.SYNONYM_NAME, tb1.table_name, tb1.column_name
+        """
+
         
 
 

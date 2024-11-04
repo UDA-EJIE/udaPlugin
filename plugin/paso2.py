@@ -89,34 +89,63 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = snakeToCamel(tName)
-        if not table["dao"] is None:
-            
-            data["entidadPadre"] = toCamelCase(table["dao"]['entidadPadre'])
-            data["primaryKeyPadre"] = toCamelCase(table["dao"]['primaryKey'])
-            for columns in columnsDates[0]:
-                if contains(table["columnasDao"] , lambda x: x["name"]+"Ext" == columns["name"]): 
-                    data["entidadPadre"] = toCamelCase(columns["name"])
-                    # table["columnasDao"] = [columns if x["name"] + "Ext" == columns["name"] else x for x in table["columnasDao"]]
-                    
-                    # table["columnasDao"] = [x for x in table["columnasDao"] if x["name"] + "Ext" != columns["name"]]
+        rowMapper_list = []
+        if ('rowMapper' in table )and table['rowMapper'] is not None:
+            # Recorre cada elemento en `table["dao"]`
+            for rowMapper in table['rowMapper']:
+                row = getColumnsDates(rowMapper['entidadPadreCol'])
                 
-            data["columnasDaos"] =  table["columnasDao"]
-            data["columOriNoForeing"] = getColumnsDates(table["columnasOriNoForeing"])[0]
-            data["padreOriginalCol"] = getColumnsDates(table["dao"]['entidadPadreCol'])
-            data['tableFKey'] = table["dao"]["foreingkey"]
-            data['primaryKPadre'] = table["dao"]["primaryPadre"]
+                dataRowMapper = {
+                    "entidadPadre": toCamelCase(rowMapper['entidadPadre']),
+                    "primaryKeyPadre": toCamelCase(rowMapper['primaryKey']),
+                    "padreOriginalCol": row[1] + [x for x in row[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'],
+                    "tableFKey": rowMapper["foreingkey"],
+                    "primaryKPadre": rowMapper["primaryPadre"]
+                }
+                
+                # Agrega el diccionario `data` a la lista `data_list`
+                rowMapper_list.append(dataRowMapper)
+        if'dao' in table and table['dao'] is not None:
+            dao_list = []
+
+            # Recorre cada elemento en `table["dao"]`
+            for daoEntity in table['dao']:
+                dataDaos = {
+                    "entidadPadre": toCamelCase(daoEntity['entidadPadre']),
+                    "primaryKeyPadre": toCamelCase(daoEntity['primaryKey']),
+                    "padreOriginalCol": getColumnsDates(daoEntity['entidadPadreCol'])[0],
+                    "tableFKey": daoEntity["foreingkey"],
+                    "primaryKPadre": daoEntity["primaryPadre"]
+                }
+                
+                # Agrega el diccionario `data` a la lista `data_list`
+                dao_list.append(dataDaos)
+            data["rowMapper"] = rowMapper_list
+
+            data["entidadesRelacionadasDaos"] = dao_list
+        if not table["dao"] is None:
+            columnDaos =  getColumnsDates(table["columnasDao"])
+            data["columnasDaos"] = columnDaos[1] + [x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] + columnDaos[3]
+            data["foreingKDaos"] = columnDaos[3]
+            columnsNoForeing = getColumnsDates(table["columnasOriNoForeing"])
+            colForeing = columnsNoForeing[0]
+            data["columOriNoForeing"]  =    columnsNoForeing[1] + [x for x in colForeing if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST']
             data["dao"] = "value"
         else:
            data["dao"] = None
            data["entidadPadre"] = None
            try:
-            data["columnasDaos"] = table["columnasDao"]
-            data["columOriNoForeing"] = table["columnasDao"]
+            columnDaos =  getColumnsDates(table["columnasDao"])
+            data["columnasDaos"] = columnDaos[1] + [x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] + columnDaos[3]
+            data["foreingKDaos"] = columnDaos[3]
+            data["columOriNoForeing"] = columnDaos[1] + [x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'and x['type'] != 'LIST']
            except KeyError:
-              data["columnasDaos"] = columnsDates[0]
+              data["columnasDaos"] = columnsDates[1] + [x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] + columnsDates[3]
+              data["columOriNoForeing"] = columnsDates[1] + [x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'and x['type'] != 'LIST']
               if table["controller"] is not None:
                     data["constructorEntidad"] = False
                     data["columnasDaos"] = table['originalCol']
+                    
 
         try:
             data["constructorEntidad"] = np.array_equal(table["columns"], table['originalCol'])
@@ -171,7 +200,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')  
         #Models java 
         if(ventanaPaso2.modelo_datos_var.get()):
-            logging.info("Inicio: crear models...")
+            logging.info("Inicio: crear mcolumOriNoForeingodels...")
             with Worker(src_path=dirModel, dst_path=destinoEarModel, data=data, exclude=["*model*"],overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
