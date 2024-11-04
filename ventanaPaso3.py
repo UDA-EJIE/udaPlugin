@@ -622,6 +622,7 @@ class ventanaPaso2(CTkFrame):
 class VentanaPaso3(CTkFrame):
     def __init__(self, master, main_menu, tables, data_mantenimiento, indexSeleccionado=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        tables = sorted(tables, key=lambda table: table.name.lower())
         self.tables = tables
         self.data_mantenimiento = data_mantenimiento
         self.grid_columnconfigure(0, weight=1)
@@ -630,27 +631,30 @@ class VentanaPaso3(CTkFrame):
 
         self.main_menu = main_menu
         # Izquierda: Contenedor para la lista de entidades con radio buttons
-        left_container = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="#84bfc4", )
-        left_container.grid(row=0, column=0, sticky="nswe", padx=10, pady=10)
-        left_container.grid_rowconfigure(0, weight=1)
+        left_container = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red")
+        left_container.grid(row=0, column=0, sticky="nswe", padx=0, pady=10)
+        left_container.grid_rowconfigure(0, weight=0)
+        left_container.grid_rowconfigure(1, weight=1)
         left_container.grid_columnconfigure(0, weight=1)
+
+        # Campo de búsqueda para filtrar tablas
+        search_entry = CTkEntry(left_container, placeholder_text="Buscar tabla...", fg_color='#84bfc4', text_color="black")
+        search_entry.grid(row=0, column=0, padx=(100, 100), pady=1, sticky="ew")
+        search_entry.bind("<KeyRelease>", self.filtrar_tablas)
 
         # Scrollbar para los radio buttons
         self.scrollbar = CTkScrollableFrame(left_container, fg_color="#FFFFFF")
-        self.scrollbar.pack(fill="both", expand=True, padx=10, pady=10)
+        self.scrollbar.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
         
         self.radio_var = tk.StringVar(value=tables[0].name if tables else None)  # Valor predeterminado
-        
-        # Creamos los radio buttons dentro del scrollbar
-        for i, table in enumerate(tables):
-            radio_button = CTkRadioButton(self.scrollbar , text=table.name, variable=self.radio_var, value=table.name, text_color="black", command=lambda table=table, i=i: self.actualizar_indice(i, table.name, table), border_color='#84bfc4', fg_color='#84bfc4')
-            radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
+        self.filtered_tables = tables
+        # Llenar los radio buttons inicialmente
+        self.actualizar_radiobuttons()
 
         # Si no se proporciona un índice seleccionado, usamos 0 por defecto
         if indexSeleccionado is None:
             indexSeleccionado = 0
         self.tabla_seleccionada_index = indexSeleccionado
-
 
 
         # Derecha: Contenedor para los campos de entrada y opciones
@@ -711,6 +715,24 @@ class VentanaPaso3(CTkFrame):
             tablaName = self.tables[self.tabla_seleccionada_index].name
             self.radio_var.set(tablaName)
         #self.master.ocultarSpinner()
+    def filtrar_tablas(self, event):
+        """Filtra la lista de tablas según el texto ingresado en el campo de búsqueda."""
+        search_text = event.widget.get().lower()
+        self.filtered_tables = [table for table in self.tables if search_text in table.name.lower()]
+        self.actualizar_radiobuttons()
+
+    def actualizar_radiobuttons(self):
+        """Actualiza los radio buttons en el scrollbar basado en `self.filtered_tables`."""
+        for widget in self.scrollbar.winfo_children():
+            widget.destroy()  # Elimina los widgets antiguos
+
+        for i, table in enumerate(self.filtered_tables):
+            radio_button = CTkRadioButton(
+                self.scrollbar, text=table.name, variable=self.radio_var, value=table.name, text_color="black",
+                command=lambda table=table, i=i: self.actualizar_indice(i, table.name, table), 
+                border_color='#84bfc4', fg_color='#84bfc4'
+            )
+            radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -721,7 +743,10 @@ class VentanaPaso3(CTkFrame):
     def anyadir_data_mantenimiento(self):
         
         if  len(self.data_mantenimiento) > 12: 
-            self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 4]
+            keys = list(self.data_mantenimiento.keys())    
+            # Mantener solo las claves desde el inicio hasta el índice -4
+            for key in keys[-4:]:
+                del self.data_mantenimiento[key]  # Elimina las últimas 4 claves
         self.data_mantenimiento["alias"] = self.alias_entry.get()
         self.data_mantenimiento["loadOnStartUp"] = self.cargar_check.get()
         self.data_mantenimiento["sidx"] =  self.obtener_posicion(self.orden_nombre_combobox.get())

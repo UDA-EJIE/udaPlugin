@@ -136,73 +136,82 @@ def fistLetterMin(cadena):
     return cadena
 
 def modifyTiles(ruta,entityName, final):
-    tree = etree.parse(ruta)
-    root = tree.getroot()   
-    diag = root.find('definition[@name="'+entityName+'"]') 
-    if (diag == None): 
-         padre = Element("definition")
-         padre.set('extends','template')
-         padre.set('name',entityName)
-         content = Element("put-attribute")
-         content.set('name','content')
-         content.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+".jsp")
-         includes = Element("put-attribute")
-         includes.set('name','includes')
-         includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
-         padre.append(content)
-         padre.append(includes)
-         etree.indent(padre, space="")
-         root.append(padre)
-         tree.write(ruta, encoding='utf-8', xml_declaration=True)
-    if(final):
-        tree.write(ruta, encoding='utf-8', xml_declaration=True) 
+    try:
+        tree = etree.parse(ruta)
+        root = tree.getroot()   
+        diag = root.find('definition[@name="'+entityName+'"]') 
+        if (diag == None): 
+            padre = Element("definition")
+            padre.set('extends','template')
+            padre.set('name',entityName)
+            content = Element("put-attribute")
+            content.set('name','content')
+            content.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+".jsp")
+            includes = Element("put-attribute")
+            includes.set('name','includes')
+            includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
+            padre.append(content)
+            padre.append(includes)
+            etree.indent(padre, space="")
+            root.append(padre)
+            tree.write(ruta, encoding='utf-8', xml_declaration=True)
+        if(final):
+            tree.write(ruta, encoding='utf-8', xml_declaration=True) 
+    except Exception as e:
+        logging.error('An exception occurred: modifyTiles:')        
 
 def modifyJackson(ruta,entityName, final, packageName):
-    packageName = packageName + ".model."+entityName
-    tree = etree.parse(ruta)
-    root = tree.getroot()   
-    diag = root.find("./*[@id='udaModule']") #Debe existir el bean
-    serial = diag.find("./*[@name='serializers']")
-    if (serial == None): #buscar el serializers
-         serial = Element("property")
-         serial.set('name',"serializers")
-         # crear ulti map
-         utilMap = Element("{http://www.springframework.org/schema/util}map")
-         serial.append(utilMap)
-         diag.append(serial) 
-    else:  
-        utilMap = serial.find("./")           
-    if (utilMap != None and utilMap.find("./*[@key='#{T("+packageName+")}']") == None):
-        entry = Element("entry")
-        entry.set('key','#{T('+packageName+')}')
-        entry.set('value-ref',"customSerializer")
-        etree.indent(diag, space="    ")
-        utilMap.append(entry)
-        tree.write(ruta, encoding='utf-8', xml_declaration=True)
-    if(final):
-       #etree.indent(root, space="    ") 
-       tree.write(ruta, encoding='utf-8', xml_declaration=True)    
+    try:
+        packageName = packageName + ".model."+entityName
+        tree = etree.parse(ruta)
+        root = tree.getroot()   
+        diag = root.find("./*[@id='udaModule']") #Debe existir el bean
+        serial = diag.find("./*[@name='serializers']")
+        if (serial == None): #buscar el serializers
+            serial = Element("property")
+            serial.set('name',"serializers")
+            # crear ulti map
+            utilMap = Element("{http://www.springframework.org/schema/util}map")
+            serial.append(utilMap)
+            diag.append(serial) 
+        else:  
+            utilMap = serial.find("./")           
+        if (utilMap != None and utilMap.find("./*[@key='#{T("+packageName+")}']") == None):
+            entry = Element("entry")
+            entry.set('key','#{T('+packageName+')}')
+            entry.set('value-ref',"customSerializer")
+            etree.indent(diag, space="    ")
+            utilMap.append(entry)
+            tree.write(ruta, encoding='utf-8', xml_declaration=True)
+        if(final):
+            #etree.indent(root, space="    ") 
+            tree.write(ruta, encoding='utf-8', xml_declaration=True)    
+    except Exception as e:
+        logging.error('An exception occurred: modifyJackson:')    
 
 def modifyMenu(ruta,tableRequestMapping,entityName, final):
- linea1 = "	<spring:url value=\"/"+tableRequestMapping+"/maint\" var=\""+entityName+"Maint\" htmlEscape=\"true\"/>"
- linea2 = "	<a class=\"dropdown-item\" href=\"${"+entityName+"Maint}\">"
- linea3 = "		<spring:message code=\""+entityName+"Maint\" />"
- linea4 = "	</a>"
- encontrado = False
- with fileinput.input(ruta, inplace=True) as f:
-   for linea in f:
-      if linea == "</div>": #ultima linea 
-          if not encontrado:
-            print (linea1)
-            print (linea2)
-            print (linea3)
-            print (linea4)
-          print (linea, end='')
-      else:   
-        if entityName+"/maint" in (linea):#encontrado
-            encontrado = True
-            logging.warning('Mantenimiento ya definido en el menu.jsp')
-        print (linea, end='')
+ try:
+    linea1 = "	<spring:url value=\"/"+tableRequestMapping+"/maint\" var=\""+entityName+"Maint\" htmlEscape=\"true\"/>"
+    linea2 = "	<a class=\"dropdown-item\" href=\"${"+entityName+"Maint}\">"
+    linea3 = "		<spring:message code=\""+entityName+"Maint\" />"
+    linea4 = "	</a>"
+    encontrado = False
+    with fileinput.input(ruta, inplace=True) as f:
+        for linea in f:
+            if linea == "</div>": #ultima linea 
+                if not encontrado:
+                    print (linea1)
+                    print (linea2)
+                    print (linea3)
+                    print (linea4)
+                print (linea, end='')
+            else:   
+                if entityName+"/maint" in (linea):#encontrado
+                    encontrado = True
+                    logging.warning('Mantenimiento ya definido en el menu.jsp')
+                print (linea, end='')
+ except Exception as e:
+    logging.error('An exception occurred: modifyMenu:')        
 
 #section String padre, keyArray array de llaves
 def writeConfig(section,key):
