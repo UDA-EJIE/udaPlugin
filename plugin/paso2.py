@@ -90,7 +90,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["tableName"] = tName[0].capitalize() + tName[1:] 
         data["tableNameDecapitalize"] = snakeToCamel(tName)
         rowMapper_list = []
-        if ('rowMapper' in table )and table['rowMapper'] is not None:
+        if 'rowMapper' in table and table['rowMapper'] is not None:
             # Recorre cada elemento en `table["dao"]`
             for rowMapper in table['rowMapper']:
                 row = getColumnsDates(rowMapper['entidadPadreCol'])
@@ -105,7 +105,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                 
                 # Agrega el diccionario `data` a la lista `data_list`
                 rowMapper_list.append(dataRowMapper)
-        if'dao' in table and table['dao'] is not None:
+        if 'dao' in table and table['dao'] is not None:
             dao_list = []
 
             # Recorre cada elemento en `table["dao"]`
@@ -132,25 +132,30 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             data["columOriNoForeing"]  =    columnsNoForeing[1] + [x for x in colForeing if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST']
             data["dao"] = "value"
         else:
-           data["dao"] = None
-           data["entidadPadre"] = None
-           try:
-            columnDaos =  getColumnsDates(table["columnasDao"])
-            data["columnasDaos"] = columnDaos[1] + [x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] + columnDaos[3]
-            data["foreingKDaos"] = columnDaos[3]
-            data["columOriNoForeing"] = columnDaos[1] + [x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'and x['type'] != 'LIST']
-           except KeyError:
-              data["columnasDaos"] = columnsDates[1] + [x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] + columnsDates[3]
-              data["columOriNoForeing"] = columnsDates[1] + [x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'and x['type'] != 'LIST']
-              if table["controller"] is not None:
+            data["dao"] = None
+            data["entidadPadre"] = None
+            # Asumiendo que table["columnasDao"] y columnsDates están definidos y contienen datos válidos
+            if "columnasDao" in table:
+                columnDaos = getColumnsDates(table["columnasDao"])
+                
+                # Definimos los valores en 'data' basándonos en 'columnDaos'
+                data["columnasDaos"] = (columnDaos[1] +[x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] +columnDaos[3])
+                data["foreingKDaos"] = columnDaos[3]
+                data["columOriNoForeing"] = (columnDaos[1] +[x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST'])
+            else:
+                # Usamos 'columnsDates' si "columnasDao" no está en 'table'
+                data["columnasDaos"] = (columnsDates[1] +[x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] +columnsDates[3])
+                data["columOriNoForeing"] = (columnsDates[1] +[x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST'])
+                
+                # Verificación adicional de 'controller' en 'table' dentro del else
+                if table["controller"] is not None: 
                     data["constructorEntidad"] = False
-                    data["columnasDaos"] = table['originalCol']
-                    
-
-        try:
-            data["constructorEntidad"] = np.array_equal(table["columns"], table['originalCol'])
-        except KeyError:
-           data["constructorEntidad"] = True
+                    data["columnasDaos"] = table.get("originalCol", [])
+                                
+        if "columns" in table and "originalCol" in table:
+            data["constructorEntidad"] = np.array_equal(table["columns"], table["originalCol"])
+        else:
+            data["constructorEntidad"] = True                  
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
