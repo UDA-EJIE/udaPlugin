@@ -697,7 +697,7 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox.grid(row=4, column=1, sticky="we", padx=10, pady=10)
 
         # Asegurarse de que el índice predeterminado se maneja desde el inicio
-        self.actualizar_indice(indexSeleccionado, tables[indexSeleccionado].name, tables[indexSeleccionado])
+        self.actualizar_indice(tables[indexSeleccionado].name, tables[indexSeleccionado])
 
         # Footer con botones
         footer_frame = CTkFrame(self, fg_color="#FFFFFF")
@@ -734,7 +734,7 @@ class VentanaPaso3(CTkFrame):
         for i, table in enumerate(self.filtered_tables):
             radio_button = CTkRadioButton(
                 self.scrollbar, text=table.name, variable=self.radio_var, value=table.name, text_color="black",
-                command=lambda table=table, i=i: self.actualizar_indice(i, table.name, table), 
+                command=lambda table=table, i=i: self.actualizar_indice(table.name, table), 
                 border_color='#84bfc4', fg_color='#84bfc4'
             )
             radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
@@ -760,8 +760,9 @@ class VentanaPaso3(CTkFrame):
 
 
 
-    def actualizar_indice(self, index, name, table):
+    def actualizar_indice(self, name, table):
         """Actualizar el índice de la tabla seleccionada."""
+        index = self.get_position_by_name(self.tables,name)
         self.tabla_seleccionada_index = index
         # Borrar contenido existente
         self.url_entry.delete(0, "end") 
@@ -782,7 +783,12 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox.set(columnas[0])
         self.master.ordenColumnas = columnas
 
-        
+    def get_position_by_name(self,tables, name):
+        for index, table in enumerate(tables):
+            if table.name == name:
+                return index
+        return 0  
+      
     def obtener_posicion(self, nombre):
         """Obtener la posición del nombre dado en el combobox."""
         return self.column_dict.get(nombre, None)
