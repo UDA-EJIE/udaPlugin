@@ -231,9 +231,9 @@ class Paso1(CTk):
             "war_project_name": self.entry_war.get()
         }
         if self.security_yes_radio._check_state:
-            yaml_data["xlnets"] = TRUE
+            yaml_data["xlnets"] = True
         else:
-            yaml_data["xlnets"] = FALSE     
+            yaml_data["xlnets"] = False     
 
         rutaPath = utl.rutaActual(__file__)
         directorio_actual = rutaPath + "\\templates\\proyecto"
