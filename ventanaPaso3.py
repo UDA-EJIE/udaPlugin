@@ -626,21 +626,26 @@ class VentanaPaso3(CTkFrame):
         self.tables = tables
         self.data_mantenimiento = data_mantenimiento
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=0)
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=2)
 
         self.main_menu = main_menu
         # Izquierda: Contenedor para la lista de entidades con radio buttons
-        left_container = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red")
-        left_container.grid(row=0, column=0, sticky="nswe", padx=0, pady=10)
-        left_container.grid_rowconfigure(0, weight=0)
-        left_container.grid_rowconfigure(1, weight=1)
-        left_container.grid_columnconfigure(0, weight=1)
+        left_title = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red")
+        left_title.grid(row=0, column=0, sticky="n", padx=0, pady=2)
+        left_title.grid_columnconfigure(0, weight=1)
 
         # Campo de búsqueda para filtrar tablas
-        search_entry = CTkEntry(left_container, placeholder_text="Buscar tabla...", fg_color='#84bfc4', text_color="black")
-        search_entry.grid(row=0, column=0, padx=(100, 100), pady=1, sticky="ew")
+        search_entry = CTkEntry(left_title, placeholder_text="Buscar tabla...", fg_color='#84bfc4', text_color="black")
+        search_entry.grid(row=0, column=0, padx=0, pady=1, sticky="ew")
         search_entry.bind("<KeyRelease>", self.filtrar_tablas)
+
+        # Izquierda: Contenedor para la lista de entidades con radio buttons
+        left_container = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red")
+        left_container.grid(row=1, column=0, sticky="nsew", padx=0, pady=0)
+        left_container.grid_rowconfigure(1, weight=1)
+        left_container.grid_columnconfigure(0, weight=1)
 
         # Scrollbar para los radio buttons
         self.scrollbar = CTkScrollableFrame(left_container, fg_color="#FFFFFF")
