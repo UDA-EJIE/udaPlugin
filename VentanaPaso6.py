@@ -149,9 +149,9 @@ class VentanaPaso6(CTk):
     def buscar_archivos_interfaz(self, ruta_personalizada = None):
         files = None
 
-        fileName = ruta_personalizada.split("/")[len(ruta_personalizada.split("/")) - 1] 
-        self.proyect_name = re.split(r'(?=[A-Z])', fileName)[0]   
-        rutaBusqueda = self.ejbEntryRoute + "/" + self.proyect_name + "EAR/EarContent/APP-INF/lib"
+        nameEar = utlPaso6.obtener_con_pathEar(ruta_personalizada+"/.classpath")  
+        self.proyect_name  =  nameEar.replace("EAR","")
+        rutaBusqueda = self.ejbEntryRoute + "/" + nameEar + "/EarContent/APP-INF/lib"
         files = []
         try:
             for file in os.listdir(rutaBusqueda): #buscar jar acabdos en Remoting , 
