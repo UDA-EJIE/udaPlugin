@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from lxml import etree
 from io import StringIO, BytesIO
-from lxml.etree import Element
+from lxml.etree import Element, SubElement
 import fileinput
 import logging
 import configparser
@@ -139,26 +139,46 @@ def modifyTiles(ruta,entityName, final):
     try:
         tree = etree.parse(ruta)
         root = tree.getroot()   
-        diag = root.find('definition[@name="'+entityName+'"]') 
+        diag = root.find(f'definition[@name="{entityName}"]') 
         if (diag == None): 
+
+            if len(root) > 0:  # Verificar si el root ya tiene hijos
+                root[-1].tail = '\n\n'
+
             padre = Element("definition")
             padre.set('extends','template')
             padre.set('name',entityName)
-            content = Element("put-attribute")
+
+            content = SubElement(padre,"put-attribute")
             content.set('name','content')
-            content.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+".jsp")
-            includes = Element("put-attribute")
+            content.set('value', f"/WEB-INF/views/{entityName}/{entityName}.jsp")
+            
+
+            includes = SubElement(padre,"put-attribute")
             includes.set('name','includes')
-            includes.set('value',"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
+            includes.set('value',f"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
+            padre.tail = '\n'
             padre.append(content)
+            etree.indent(padre, space=" ")
+
             padre.append(includes)
-            etree.indent(padre, space="")
+            etree.indent(padre, space="   ")
+            padre.text = "\n\t\t"  # Añadir salto de línea después de <definition>
             root.append(padre)
-            tree.write(ruta, encoding='utf-8', xml_declaration=True)
+            etree.indent(padre, space="  ", level=1)
+
+            xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8', xml_declaration=True)
+            xml_string_with_newline = xml_string + b'\n\n\n'
+
+            with open(ruta, 'wb') as f:
+                f.write(xml_string_with_newline )
         if(final):
-            tree.write(ruta, encoding='utf-8', xml_declaration=True) 
+            xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8', xml_declaration=True)
+            xml_string_with_newline = xml_string + b'\n\n\n'
+            with open(ruta, 'wb') as f:
+                f.write(xml_string) 
     except Exception as e:
-        logging.error('An exception occurred: modifyTiles:')        
+        logging.error('An exception occurred: modifyTiles:') 
 
 def modifyJackson(ruta,entityName, final, packageName):
     try:
