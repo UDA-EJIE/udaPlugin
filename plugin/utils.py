@@ -143,9 +143,10 @@ def modifyTiles(ruta,entityName, final):
         if (diag == None): 
 
             if len(root) > 0:  # Verificar si el root ya tiene hijos
-                root[-1].tail = '\n\n'
+                root[-1].tail = '\n\n\t'
 
             padre = Element("definition")
+            etree.indent(padre, space=" ")
             padre.set('extends','template')
             padre.set('name',entityName)
 
@@ -159,13 +160,13 @@ def modifyTiles(ruta,entityName, final):
             includes.set('value',f"/WEB-INF/views/"+entityName+"/"+entityName+"-includes.jsp")
             padre.tail = '\n'
             padre.append(content)
-            etree.indent(padre, space=" ")
+            
 
             padre.append(includes)
             etree.indent(padre, space="   ")
             padre.text = "\n\t\t"  # Añadir salto de línea después de <definition>
             root.append(padre)
-            etree.indent(padre, space="  ", level=1)
+            etree.indent(padre, space="    ", level=1)
 
             xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8', xml_declaration=True)
             xml_string_with_newline = xml_string + b'\n\n\n'
