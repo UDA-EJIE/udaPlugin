@@ -331,8 +331,10 @@ class VentanaPaso7(CTk):
         # Regex para capturar el tipo de retorno, nombre del método y parámetros
         method_pattern = re.compile(r'^\s*([^\s]+)\s+([^\s(]+)\s*\(([^)]*)\)\s*;')
 
-        with open(impl_file_path, 'r') as file:
-            for line in file:
+        with open(impl_file_path, 'r',  encoding='cp65001') as file:
+            while True:
+                line = file.readline()
+
                 match = method_pattern.search(line)
                 if match:
                     return_type = match.group(1)
@@ -351,6 +353,8 @@ class VentanaPaso7(CTk):
                     
                     # Agregar el resultado a la lista
                     methods.append(method_signature)
+                if not line:
+                    break
         
         return methods
     
@@ -363,7 +367,7 @@ class VentanaPaso7(CTk):
         inicio = datetime.now()
 
         self.ruta_destino = self.ejb_container_entry.get() + "\\\ejbModule\\com\\ejie\\" + self.parte + "\\remoting"
-        
+        self.valorEjb = self.ejb_name_entry.get()
         yaml_data = {
             "jndiName": self.ejb_name_entry.get(),
             "serviceName": self.ejb_name_entry.get(),
@@ -421,7 +425,7 @@ class VentanaPaso7(CTk):
         nombre_label = CTkLabel(frame_center, text="Has creado el siguiente servicio EJB: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         nombre_label.pack(pady=(0, 0), padx=30)
         
-        nombre_proyecto_label = CTkLabel(frame_center, text= self.ejb_name_entry, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_proyecto_label = CTkLabel(frame_center, text= self.valorEjb, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
         nombre_proyecto_label.pack(pady=(0, 0), padx=30)
 
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
