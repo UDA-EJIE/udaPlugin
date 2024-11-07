@@ -301,8 +301,8 @@ class VentanaPaso7(CTk):
 
     def get_patch_services(self, ruta_personalizada):
 
-        fileName = ruta_personalizada.split("/")[len(ruta_personalizada.split("/")) - 1] 
-        self.parte = re.split(r'(?=[A-Z])', fileName)[0]  
+        nameEar = utlPaso6.obtener_con_pathEar(ruta_personalizada+"/.classpath")  
+        self.parte  =  nameEar.replace("EAR","") 
 
         self.ruta_services = self.ejbEntryRoute +"\\"+ self.parte +"EARClasses\\src\\com\\ejie\\" + self.parte +"\\service\\"
 
