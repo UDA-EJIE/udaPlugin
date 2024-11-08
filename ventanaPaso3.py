@@ -626,32 +626,37 @@ class VentanaPaso3(CTkFrame):
         self.tables = tables
         self.data_mantenimiento = data_mantenimiento
         self.grid_rowconfigure(0, weight=1)
+        
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=2)
 
         self.main_menu = main_menu
-        # Izquierda: Contenedor para la lista de entidades con radio buttons
-        left_title = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red")
-        left_title.grid(row=0, column=0, sticky="nswe", padx=0, pady=2)
-        left_title.grid_columnconfigure(0, weight=1)
-        left_title.grid_rowconfigure(1, weight=1)
-        # left_container.grid_columnconfigure(0, weight=1)
+        # Define una altura y anchura fijas para el contenedor izquierdo
+        fixed_height = 300  # Ajusta según tus necesidades
+        fixed_width = 200   # Ajusta según tus necesidades
+
+        # En la inicialización de self.left_title, configura la anchura y altura fijas
+        self.left_title = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red", width=fixed_width, height=fixed_height)
+        self.left_title.grid(row=0, column=0, sticky="nswe", padx=30, pady=2)
+        self.left_title.grid_columnconfigure(0, weight=1)
+        self.left_title.grid_rowconfigure(1, weight=1)
+
         # Campo de búsqueda para filtrar tablas
-        search_entry = CTkEntry(left_title, placeholder_text="Buscar tabla...", fg_color='#84bfc4', text_color="black")
+        search_entry = CTkEntry(self.left_title, placeholder_text="Buscar tabla...", fg_color='#84bfc4', text_color="black")
         search_entry.grid(row=0, column=0, padx=0, pady=1, sticky="ew")
         search_entry.bind("<KeyRelease>", self.filtrar_tablas)
+        # Scrollable frame inicial para los radio buttons
+        self.create_scrollable_frame()
+        # # Scrollbar para los radio buttons
+        # self.scrollbar = CTkScrollableFrame(self.left_title, fg_color="#FFFFFF", width=fixed_width, height=fixed_height)
+        # self.scrollbar.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
 
-        # # Izquierda: Contenedor para la lista de entidades con radio buttons
-        # left_container = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red")
-        # left_container.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
-        # left_container.grid_rowconfigure(0, weight=1)
-        # left_container.grid_columnconfigure(0, weight=1)
+        # Frame estático para los resultados filtrados (sin scrollbar)
+        self.result_frame = CTkFrame(self.left_title, fg_color="#FFFFFF", width=fixed_width, height=fixed_height)
+        self.result_frame.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
+        self.result_frame.grid_remove()  # Ocultar al inicio
 
-        # Scrollbar para los radio buttons
-        self.scrollbar = CTkScrollableFrame(left_title, fg_color="#FFFFFF")
-        self.scrollbar.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
-        
         self.radio_var = tk.StringVar(value=tables[0].name if tables else None)  # Valor predeterminado
         self.filtered_tables = tables
         # Llenar los radio buttons inicialmente
@@ -667,7 +672,7 @@ class VentanaPaso3(CTkFrame):
         right_container = CTkFrame(self, corner_radius=5, fg_color="#FFFFFF", border_color="#84bfc4")
         right_container.grid(row=0, column=1, sticky="nswe", padx=10, pady=10)
         right_container.grid_columnconfigure(1, weight=1)
-        right_container.grid_rowconfigure(4, weight=1) 
+        
         # Campos de entrada y otros widgets en el contenedor derecho
         url_label = CTkLabel(right_container, text="URL(*):", text_color="black")
         url_label.grid(row=0, column=0, sticky="w", padx=10, pady=10)
@@ -721,21 +726,36 @@ class VentanaPaso3(CTkFrame):
             tablaName = self.tables[self.tabla_seleccionada_index].name
             self.radio_var.set(tablaName)
         #self.master.ocultarSpinner()
+    
+    def create_scrollable_frame(self):
+        """Crea un nuevo CTkScrollableFrame para evitar problemas de desplazamiento."""
+        # Si el scrollbar ya existe, lo destruimos primero
+        if hasattr(self, 'scrollbar'):
+            self.scrollbar.destroy()
+        
+        # Crear un nuevo CTkScrollableFrame
+        self.scrollbar = CTkScrollableFrame(self.left_title, fg_color="#FFFFFF")
+        self.scrollbar.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
+    
     def filtrar_tablas(self, event):
-        """Filtra la lista de tablas según el texto ingresado en el campo de búsqueda."""
         search_text = event.widget.get().lower()
         self.filtered_tables = [table for table in self.tables if search_text in table.name.lower()]
+
+        # Recrea el scrollbar para que comience desde la posición superior
+        self.create_scrollable_frame()
         self.actualizar_radiobuttons()
 
     def actualizar_radiobuttons(self):
         """Actualiza los radio buttons en el scrollbar basado en `self.filtered_tables`."""
+        # Limpiar el contenedor actual de items
         for widget in self.scrollbar.winfo_children():
-            widget.destroy()  # Elimina los widgets antiguos
+            widget.destroy()
 
+        # Agregar los radio buttons en el contenedor adecuado
         for i, table in enumerate(self.filtered_tables):
             radio_button = CTkRadioButton(
                 self.scrollbar, text=table.name, variable=self.radio_var, value=table.name, text_color="black",
-                command=lambda table=table, i=i: self.actualizar_indice(table.name, table), 
+                command=lambda table=table, i=i: self.actualizar_indice(table.name, table),
                 border_color='#84bfc4', fg_color='#84bfc4'
             )
             radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)

@@ -161,8 +161,23 @@ class PaginaDos(CTkFrame):
         self.estado_tables = estado_tables
 
         # Scrollable frame in the middle using pack inside a grid row
+
+
         self.middle_frame = CTkFrame(self)
         self.middle_frame.grid(row=1, column=0, sticky="nsew")
+
+        self.search_barFrame = CTkFrame(self.middle_frame)
+        self.search_barFrame.pack(pady=5)
+
+        sv = StringVar(self)
+        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
+        
+        self.search_entry = CTkEntry(self.search_barFrame, textvariable=sv, width=220,placeholder_text="Buscar Tablas...",placeholder_text_color="black")
+        
+        self.search_entry.configure(placeholder_text="Buscar Tablas...")
+        self.search_entry.pack(pady=5)
+
+        
         self.scrollable_frame = CTkScrollableFrame(self.middle_frame, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
         self.scrollable_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -209,19 +224,14 @@ class PaginaDos(CTkFrame):
         total_pasos = len(tables_original) + 1
         pasos_por_parte = total_pasos // 8
 
-         # Campo de entrada para autocompletado en la parte superior
+        # Campo de entrada para autocompletado en la parte superior
         
  
 
         # Callback para actualizar los checkboxes en función del texto ingresado
         #search_var.trace_add("write", lambda *args: self.update_checkboxes(search_var.get()))
-        sv = StringVar(self)
-        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
-
-        self.search_entry = CTkEntry(frame, textvariable=sv, width=220,placeholder_text="Buscar Tablas...",placeholder_text_color="black")
         
-        self.search_entry.configure(placeholder_text="Buscar Tablas...")
-        self.search_entry.pack(pady=5)
+
         self.checkboxes = []  # Almacenar referencias a los checkboxes para actualizarlos
 
         for index, table in enumerate(tables_original):
