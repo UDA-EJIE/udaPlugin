@@ -172,7 +172,7 @@ class PaginaDos(CTkFrame):
         sv = StringVar(self)
         sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
         
-        self.search_entry = CTkEntry(self.search_barFrame, textvariable=sv, width=220,placeholder_text="Buscar Tablas...",placeholder_text_color="black")
+        self.search_entry = CTkEntry(self.search_barFrame, text_color="black",fg_color="white", placeholder_text="Buscar Tablas...",textvariable=sv, width=220)
         
         self.search_entry.configure(placeholder_text="Buscar Tablas...")
         self.search_entry.pack(pady=5)
