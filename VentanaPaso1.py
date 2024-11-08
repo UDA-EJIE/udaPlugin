@@ -252,6 +252,7 @@ class Paso1(CTk):
                 if lang_option == "Francés":
                     availableLangs = availableLangs + " ,fr"   
         filesExcludes.append("*EJB") 
+        filesExcludes.append("*gitkeep")
         defaultLanguage = self.default_language_combobox.get() 
         
         if  defaultLanguage == "Castellano":      
