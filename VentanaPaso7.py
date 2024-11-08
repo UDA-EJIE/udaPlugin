@@ -298,6 +298,7 @@ class VentanaPaso7(CTk):
 
     def on_button_click(self, resultados_services,  service):
         self.service_seleccionado = service.split("\\")[len(service.split("\\")) -1 ]
+        self.serviceImport = service.replace("\\",".").replace(".java","")
         print(f"Selected Service: {service}")
         # Aquí puedes realizar cualquier acción adicional cuando se selecciona un servicio
         # Por ejemplo, almacenar el servicio seleccionado o actualizar la interfaz
@@ -406,7 +407,8 @@ class VentanaPaso7(CTk):
         yaml_data = {
             "jndiName": self.ejb_name_entry.get(),
             "serviceName": serviceName,
-            "metodos" : metodos
+            "metodos" : metodos,
+            "serviceImport":self.serviceImport
         }
 
         rutaPath = utl.rutaActual(__file__)
