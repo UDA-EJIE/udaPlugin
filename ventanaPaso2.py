@@ -293,7 +293,8 @@ class PaginaDos(CTkFrame):
         # Luego, muestra solo los que coinciden en el orden correcto
         for name, checkbox in self.checkboxes:
             if search_text.lower() in name.lower():
-                checkbox.pack(fill="x", padx=10, pady=2, expand=True)   
+                checkbox.pack(fill="x", padx=10, pady=2, expand=True) 
+        self.scrollable_frame._parent_canvas.yview_moveto(0)          
 
     def toggle_columns(self, table_frame):
     # Asegúrate de referirte al columns_frame para expandir/contraer
