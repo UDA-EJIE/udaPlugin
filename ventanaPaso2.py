@@ -165,23 +165,27 @@ class PaginaDos(CTkFrame):
 
         self.middle_frame = CTkFrame(self)
         self.middle_frame.grid(row=1, column=0, sticky="nsew")
-
+        self.middle_frame.grid_rowconfigure(1, weight=1)
+        self.middle_frame.grid_columnconfigure(0, weight=1)
         self.search_barFrame = CTkFrame(self.middle_frame)
-        self.search_barFrame.pack(pady=5)
+        self.search_barFrame.grid(row=0, column=0, sticky="nsew")
 
         sv = StringVar(self)
-        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
+        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes(tables_original))
         
         self.search_entry = CTkEntry(self.search_barFrame, text_color="black",fg_color="white", placeholder_text="Buscar Tablas...",textvariable=sv, width=220)
         
         self.search_entry.configure(placeholder_text="Buscar Tablas...")
         self.search_entry.pack(pady=5)
 
-        
-        self.scrollable_frame = CTkScrollableFrame(self.middle_frame, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
-        self.scrollable_frame.pack(fill="both", expand=True, padx=10, pady=10)
+        self.scrollbar_frame = CTkFrame(self.middle_frame)
+        self.scrollbar_frame.grid(row=1, column=0, sticky="nsew")
+        self.scrollbar_frame.grid_rowconfigure(0, weight=1)
+        self.scrollbar_frame.grid_columnconfigure(0, weight=1)
+        self.scrollbar = CTkScrollableFrame(self.scrollbar_frame, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+        self.scrollbar.grid(row=0, column=0, sticky="nsew")
 
-        self.populate_scrollable_frame(self.scrollable_frame, tables_original)
+        self.populate_scrollable_frame(self.scrollbar, tables_original)
         self.master.update_progress(1.0)
         # Footer frame using grid for buttons
         self.footer_frame = CTkFrame(self, fg_color="#FFFFFF")
@@ -225,8 +229,6 @@ class PaginaDos(CTkFrame):
         pasos_por_parte = total_pasos // 8
 
         # Campo de entrada para autocompletado en la parte superior
-        
- 
 
         # Callback para actualizar los checkboxes en función del texto ingresado
         #search_var.trace_add("write", lambda *args: self.update_checkboxes(search_var.get()))
@@ -285,15 +287,40 @@ class PaginaDos(CTkFrame):
                 self.master.update_progress(porcentaje)     
         self.master.update_progress(1.0)    
         # Función para actualizar la visibilidad de los checkboxes según el texto de búsqueda
-    def update_checkboxes(self):
+    def update_checkboxes(self, tables_original):
         search_text = self.search_entry.get()
         for _, checkbox in self.checkboxes:
             checkbox.pack_forget()
 
-        # Luego, muestra solo los que coinciden en el orden correcto
-        for name, checkbox in self.checkboxes:
-            if search_text.lower() in name.lower():
-                checkbox.pack(fill="x", padx=10, pady=2, expand=True)   
+        if hasattr(self, 'scrollbar'):
+            self.scrollbar.destroy()
+       
+        filtered_tables = []
+        filter = False
+        for tables in tables_original:
+           if search_text.lower() in tables.name.lower():
+               filtered_tables.append(tables)
+               filter = True
+
+        if filter:
+            self.scrollbar_frame.grid_rowconfigure(0, weight=1)
+            self.scrollbar_frame.grid_columnconfigure(0, weight=1)
+            self.scrollbar = CTkScrollableFrame(self.scrollbar_frame, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+            self.scrollbar.grid(row=0, column=0, sticky="nsew")
+            self.populate_scrollable_frame(self.scrollbar, filtered_tables)
+        else:
+            self.scrollbar_frame.grid_rowconfigure(0, weight=1)
+            self.scrollbar_frame.grid_columnconfigure(0, weight=1)
+            self.scrollbar = CTkScrollableFrame(self.scrollbar_frame, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+            self.scrollbar.grid(row=0, column=0, sticky="nsew")
+            self.populate_scrollable_frame(self.scrollbar, tables_original)
+
+            
+
+        # # Luego, muestra solo los que coinciden en el orden correcto
+        # for name, checkbox in self.checkboxes:
+        #     if search_text.lower() in name.lower():
+        #         checkbox.pack(fill="x", padx=10, pady=2, expand=True)   
 
     def toggle_columns(self, table_frame):
     # Asegúrate de referirte al columns_frame para expandir/contraer
