@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch, call,Mock
 from plugin.paso3 import initPaso3, calcularOrden
 from datetime import datetime
 import logging
@@ -93,7 +93,8 @@ class TestInitPaso3(unittest.TestCase):
         #mock_snakeToCamel.side_effect = lambda x: x.capitalize()  # Convert first letter to uppercase
 
         # Execute initPaso3
-        initPaso3(tables, yaml_data, data_mantenimiento, columnsOriginal)
+        self.ventanaPaso3 = Mock()
+        initPaso3(tables, yaml_data, data_mantenimiento, columnsOriginal,self.ventanaPaso3)
 
         # Assertions to verify directory paths and data handling
         mock_worker.assert_called_with(
@@ -186,7 +187,8 @@ class TestInitPaso3(unittest.TestCase):
         columnsOriginal = ["id", "username","email","order_id","user_id"]
 
         # Run function
-        initPaso3(tables, yaml_data, data_mantenimiento, columnsOriginal)
+        self.ventanaPaso3 = Mock()
+        initPaso3(tables, yaml_data, data_mantenimiento, columnsOriginal,self.ventanaPaso3)
         
         # Assert writeConfig was called twice
         self.assertEqual(mock_writeConfig.call_count, 2)
@@ -255,7 +257,8 @@ class TestInitPaso3(unittest.TestCase):
         columnsOriginal = ["id", "data"]
 
         # Run function
-        initPaso3(tables, yaml_data, data_mantenimiento, columnsOriginal)
+        self.ventanaPaso3 = Mock()
+        initPaso3(tables, yaml_data, data_mantenimiento, columnsOriginal,self.ventanaPaso3)
         
         # Verify logging calls
         mock_logging.info.assert_any_call('Fin mantenimento: LogTable')
