@@ -15,8 +15,9 @@ from plugin.utils import writeConfig
 from plugin.utils import toRestUrlNaming
 
 #INICIO función principal
-def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
+def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal,ventanaPaso3):
     # work only controller
+    ventanaPaso3.update_progress(0.2)
     proyectName = yaml_data["project_name"]
     proyectWar = yaml_data["war_project_name"]
     directorio_actual = yaml_data["directorio_actual"] 
@@ -106,6 +107,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
          worker.template.version = ":  1.0 Paso 3 Jsps ::: "+data["date"]
          worker.run_copy() 
+        ventanaPaso3.update_progress(0.4) 
         if data["maint"]["isMaint"]: 
             #Generando jsp Includes MAINT 
             with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,overwrite=True) as worker:
@@ -121,9 +123,11 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
          worker.run_copy() 
          if(x == len(tables) - 1):
            lastTable = True
+        ventanaPaso3.update_progress(0.6)   
         modifyTiles(rutaTiles,alias,lastTable)
         modifyMenu(rutaMenu, tableRequestMapping, alias, lastTable)
         destinoWar = destinoWar.replace(proyectWar+"War/","")
+        ventanaPaso3.update_progress(0.8)
         writeConfig("RUTA", {"ruta_war":destinoWar})
         writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoWar})
         logging.info("Fin mantenimento: "+data["tableName"])  
@@ -132,6 +136,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal):
     logging.info("Final: paso 3 creado")
     print("Final: paso 3 creado ::: "+data["date"],file=sys.stderr)
     sys.stderr.flush()
+    ventanaPaso3.update_progress(1.0)
         
 #FIN función principal
 def calcularOrden(pos,columns, columsSelected):

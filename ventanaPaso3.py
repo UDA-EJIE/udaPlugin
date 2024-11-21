@@ -199,7 +199,7 @@ class PaginaUno(CTkFrame):
                 and all_constraints.owner = all_cons_columns.owner 
             order by all_cons_columns.owner,all_cons_columns.table_name) tb2
         ON tb1.table_name = tb2.table_name AND tb1.column_name = tb2.column_name"""
-        
+        self.master.update_progress(0.1)
         oracledb.init_oracle_client(lib_dir=d)
         try:
             if(sid == ''):
@@ -223,6 +223,12 @@ class PaginaUno(CTkFrame):
                 tableName = ''
                 cont = 0
                 contPrimaryKey = 0
+                 # Calcular el número total de tablas
+                total_rows = len(rows)
+                progress_start = 0.1
+                progress_end = 1.0
+                progress_increment = (progress_end - progress_start) / total_rows
+                current_progress = progress_start
                 for row in rows:
                     cont = cont + 1
                     tableNameBBDD = row[0]
@@ -249,11 +255,14 @@ class PaginaUno(CTkFrame):
                     if cont == len(rows) and contPrimaryKey > 0 and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
+                    self.master.update_progress(current_progress)
+                    current_progress += progress_increment
         if(len(tables) == 0): 
             self.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
             self.configuration_warning.configure(text_color ="red")
             self.close_loading_frame()    
-            return False       
+            return False  
+        self.master.update_progress(1.0)     
         self.master.mostrar_pagina_dos(self.main_menu, tables)           
 
 
@@ -751,6 +760,12 @@ class VentanaPaso3(CTkFrame):
         for widget in self.scrollbar.winfo_children():
             widget.destroy()
 
+         # Calcular el número total de tablas
+        total_rows = len(self.filtered_tables)
+        progress_start = 0.00
+        progress_end = 1.0
+        progress_increment = (progress_end - progress_start) / total_rows
+        current_progress = progress_start
         # Agregar los radio buttons en el contenedor adecuado
         for i, table in enumerate(self.filtered_tables):
             radio_button = CTkRadioButton(
@@ -759,6 +774,9 @@ class VentanaPaso3(CTkFrame):
                 border_color='#84bfc4', fg_color='#84bfc4'
             )
             radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
+            self.master.update_progress(current_progress)
+            current_progress += progress_increment
+        self.master.update_progress(1.0)
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -923,7 +941,7 @@ class VentanaColumnas(CTkFrame):
         this = self.master        
         tablaResultados = self.getTablaResultados(tables[index_seleccionado])
 
-        p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento, self.master.ordenColumnas)
+        p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento, self.master.ordenColumnas,this)
 
         self.master.close_loading_frame()
         this.mostrarResumenFinal(tablaResultados) 
@@ -999,6 +1017,16 @@ class VentanaPrincipal(CTk):
        }
         logging.info(data)
         return data  
+    
+    def update_progress(self,value):
+        if self.progressbar.winfo_exists():
+            self.progressbar.set(value)
+            valor = value*100
+            if(valor > 100):
+                valor = 100
+            self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
+            self.loading_frame.update_idletasks()
+            self.update()
 
     def mostrarSpinner(self,caso):
         # validar al paso 2
@@ -1009,27 +1037,23 @@ class VentanaPrincipal(CTk):
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        l.place(relx=0.5, rely=0.5, anchor='center')
+        self.percentage_label = CTkLabel(self.loading_frame, text="Cargando... 0%", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
+        self.percentage_label.place(relx=0.5, rely=0.5, anchor='center')
         
-        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
-        progressbar.place(relx=0.5, rely=0.5, anchor='center')
-        progressbar.start()
-        l.pack()
-        self.update()
-        l.pack()
+        self.progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
+       
+        self.percentage_label.pack()
         self.update()
         if(caso == "avanzarPaso2"):
             threading.Thread(target=self.pagina_actual.avanzar_paso2()).start()
-        elif caso == "paso3To4":#ir a las columnas
-            self.update()
+        elif caso == "paso3To4":#ir a las columnas            
             threading.Thread(target=self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)).start()
             #resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)) 
         elif caso == "paso4To5":
             threading.Thread(target=self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas())).start()
             #resultados_window2.after(710,self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas()))
-        elif caso == "finalizar":
-            self.update()
+        elif caso == "finalizar":            
             pfinal = self.pagina_actual
             rutaActual = utl.rutaActual(__file__)
             threading.Thread(target=pfinal.paso3(pfinal.tables, pfinal.index_seleccionado, self.getDatos(rutaActual), pfinal.data_mantenimiento)).start()

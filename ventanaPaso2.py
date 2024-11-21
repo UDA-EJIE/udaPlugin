@@ -1380,7 +1380,7 @@ class VentanaPrincipal(CTk):
         
 
 
-        self.update_progress(0.1)
+        self.update_progress(0.01)
         oracledb.init_oracle_client(lib_dir=d)
         try:
             if(sid == ''):
@@ -1404,6 +1404,12 @@ class VentanaPrincipal(CTk):
                 tableName = ''
                 cont = 0
                 contPrimaryKey = 0
+                # Calcular el número total de tablas
+                total_rows = len(rows)
+                progress_start = 0.01
+                progress_end = 0.2
+                progress_increment = (progress_end - progress_start) / total_rows
+                current_progress = progress_start
 
                 for row in rows:
                     cont = cont + 1
@@ -1430,7 +1436,9 @@ class VentanaPrincipal(CTk):
                     
                     if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         self.tables.append(Table(tableName,columns))   
-                    tableName = tableNameBBDD   
+                    tableName = tableNameBBDD  
+                    self.update_progress(current_progress)
+                    current_progress += progress_increment 
 
         if(len(self.tables) == 0): 
            self.pagina_actual.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
