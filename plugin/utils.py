@@ -137,8 +137,24 @@ def fistLetterMin(cadena):
 
 def modifyTiles(ruta,entityName, final):
     try:
-        tree = etree.parse(ruta)
-        root = tree.getroot()   
+        # Leer la cabecera original del archivo
+        with open(ruta, 'rb') as f:
+            content = f.read()
+        
+        # Separar la cabecera
+        header = b''
+        if content.startswith(b'<?xml'):
+            header_end = content.find(b'>') + 1
+            header = content[:header_end] + b'\n'
+            content = content[header_end:].strip()
+        # Detectar <!DOCTYPE> y separarlo también
+        if content.startswith(b'<!DOCTYPE'):
+            doctype_end = content.find(b'>') + 1
+            header += content[:doctype_end].strip() + b'\n'
+            content = content[doctype_end:].strip()     
+
+        tree = etree.fromstring(content)
+        root = tree   
         diag = root.find(f'definition[@name="{entityName}"]') 
         if (diag == None): 
 
@@ -168,16 +184,16 @@ def modifyTiles(ruta,entityName, final):
             root.append(padre)
             etree.indent(padre, space="    ", level=1)
 
-            xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8', xml_declaration=True)
+            xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8')
             xml_string_with_newline = xml_string + b'\n\n\n'
 
             with open(ruta, 'wb') as f:
-                f.write(xml_string_with_newline )
+                f.write(header + xml_string_with_newline )
         if(final):
-            xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8', xml_declaration=True)
+            xml_string = etree.tostring(root, pretty_print=True, encoding='utf-8')
             xml_string_with_newline = xml_string + b'\n\n\n'
             with open(ruta, 'wb') as f:
-                f.write(xml_string) 
+                f.write(header + xml_string) 
     except Exception as e:
         logging.error('An exception occurred: modifyTiles:') 
 
