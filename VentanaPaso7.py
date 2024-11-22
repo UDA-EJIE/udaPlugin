@@ -305,7 +305,9 @@ class VentanaPaso7(CTk):
         self.service_entry.configure(state="normal")
         self.ejb_name_entry.configure(state="normal")
         self.service_entry.insert(0 ,service)  # Guardar el servicio seleccionado
-        nombre_EJB = service.split("\\")[len(service.split("\\")) -1].split(".")[0] + "Skeleton"
+        nombreServicio = service.split("\\")[len(service.split("\\")) -1].split(".")[0]
+        nombre_EJB = nombreServicio + "Skeleton" 
+        self.entidadImport = self.serviceImport.replace("service."+nombreServicio,"model."+nombreServicio.replace("Service",""))       
         self.ejb_name_entry.insert(0, nombre_EJB)
         resultados_services.withdraw()
         self.service_entry.configure(state="disabled")
@@ -408,7 +410,9 @@ class VentanaPaso7(CTk):
             "jndiName": self.ejb_name_entry.get(),
             "serviceName": serviceName,
             "metodos" : metodos,
-            "serviceImport":self.serviceImport
+            "serviceImport":self.serviceImport,
+            "entidadImport":self.entidadImport,
+            "packagenameskeleton":"com.ejie."+self.parte+".remoting"
         }
 
         rutaPath = utl.rutaActual(__file__)

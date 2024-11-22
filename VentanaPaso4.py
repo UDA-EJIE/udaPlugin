@@ -80,7 +80,6 @@ class Paso4(CTk):
 
         self.full_war_name_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
         self.full_war_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
-        self.full_war_name_entry.configure(text_color="grey")
         self.full_war_name_entry.configure(state="disabled")
 
         # Idiomas
