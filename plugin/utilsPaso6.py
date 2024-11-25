@@ -2,6 +2,7 @@ import subprocess
 import os
 import zipfile
 import re
+from lxml import etree
 
 def list_classes_in_jar(jar_path):
     """
@@ -168,3 +169,20 @@ def extract_java_types(method_declaration):
         return method_name,return_type, param_types
     else:
         return None, None  , None
+
+def obtener_con_pathEar(archivo_classpath):
+    try:
+        # Parsear el archivo XML .classpath
+        tree = etree.parse(archivo_classpath)
+        root = tree.getroot()
+
+        # Buscar el elemento <classpathentry> que tiene el atributo kind="output"
+        output_entry = root.xpath('//classpathentry[@kind="con" and starts-with(@path, "oracle.eclipse.tools.weblogic.lib.application")]')
+
+        if output_entry:
+            return output_entry[0].get('path').replace("oracle.eclipse.tools.weblogic.lib.application/","")
+        else:
+            return None
+    except Exception as e:
+        print(f"Error al leer el archivo .classpath: {e}")
+        return None  

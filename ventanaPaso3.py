@@ -107,10 +107,10 @@ class PaginaUno(CTkFrame):
         self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         self.test_button.grid(row=len(labels) + 1, column=0, columnspan=2, pady=10, padx=20, sticky="ew")
 
-        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         next_button.grid(row=len(labels) + 2, column=1, pady=0, padx=20, sticky="e")
         
-        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         back_button.grid(row=len(labels) + 2, column=1, pady=0, padx=(0, 180), sticky="e")
         
     def selectDirectory(self,directory):
@@ -199,7 +199,7 @@ class PaginaUno(CTkFrame):
                 and all_constraints.owner = all_cons_columns.owner 
             order by all_cons_columns.owner,all_cons_columns.table_name) tb2
         ON tb1.table_name = tb2.table_name AND tb1.column_name = tb2.column_name"""
-        
+        self.master.update_progress(0.1)
         oracledb.init_oracle_client(lib_dir=d)
         try:
             if(sid == ''):
@@ -223,6 +223,12 @@ class PaginaUno(CTkFrame):
                 tableName = ''
                 cont = 0
                 contPrimaryKey = 0
+                 # Calcular el número total de tablas
+                total_rows = len(rows)
+                progress_start = 0.1
+                progress_end = 1.0
+                progress_increment = (progress_end - progress_start) / total_rows
+                current_progress = progress_start
                 for row in rows:
                     cont = cont + 1
                     tableNameBBDD = row[0]
@@ -249,11 +255,14 @@ class PaginaUno(CTkFrame):
                     if cont == len(rows) and contPrimaryKey > 0 and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         tables.append(Table(tableName,columns))   
                     tableName = tableNameBBDD   
+                    self.master.update_progress(current_progress)
+                    current_progress += progress_increment
         if(len(tables) == 0): 
             self.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
             self.configuration_warning.configure(text_color ="red")
             self.close_loading_frame()    
-            return False       
+            return False  
+        self.master.update_progress(1.0)     
         self.master.mostrar_pagina_dos(self.main_menu, tables)           
 
 
@@ -318,13 +327,13 @@ class PaginaUno(CTkFrame):
         button_frame = ctk.CTkFrame(resultados_window, fg_color="#FFFFFF", border_color="#84bfc4")
         button_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=20)
         
-        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        buscar_button = ctk.CTkButton(button_frame, text="Buscar", command=lambda: self.open_file_explorer(resultados_window), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         buscar_button.pack(side="left", padx=10, expand=True)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        cancel_button = ctk.CTkButton(button_frame, text="Cancelar", command=resultados_window.destroy, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.pack(side="right", padx=10, expand=True)
         
-        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        accept_button = ctk.CTkButton(button_frame, text="Aceptar", command=lambda: self.aceptar(resultados_window, selected_file.get(), ruta), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         accept_button.pack(side="right", padx=10, expand=True)
 
     def mostrar_resultados(self, files, ruta):
@@ -511,11 +520,11 @@ class ventanaPaso2(CTkFrame):
         # Footer con botones de navegación
         footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         footer_frame.grid(row=3, column=0, columnspan=2, padx=20, sticky="se")
-        btn_back = CTkButton(footer_frame, text="Atrás", command=lambda :master.mostrar_pagina_uno(self.main_menu),  fg_color='#84bfc4',  hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        btn_back = CTkButton(footer_frame, text="Atrás", command=lambda :master.mostrar_pagina_uno(self.main_menu),  fg_color='#84bfc4',  hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         btn_back.pack(side="left", padx=10)
-        btn_next = CTkButton(footer_frame, text="Siguiente", command=lambda: self.validarPaso3() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        btn_next = CTkButton(footer_frame, text="Siguiente", command=lambda: self.validarPaso3() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         btn_next.pack(side="left", padx=10)
-        btn_cancel = CTkButton(footer_frame, text="Cancelar", command=lambda : self.cancelar() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        btn_cancel = CTkButton(footer_frame, text="Cancelar", command=lambda : self.cancelar() ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         btn_cancel.pack(side="left", padx=10)
 
         if data_mantenimiento ==None:
@@ -622,29 +631,45 @@ class ventanaPaso2(CTkFrame):
 class VentanaPaso3(CTkFrame):
     def __init__(self, master, main_menu, tables, data_mantenimiento, indexSeleccionado=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        tables = sorted(tables, key=lambda table: table.name.lower())
         self.tables = tables
         self.data_mantenimiento = data_mantenimiento
-        self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
+        
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=2)
 
         self.main_menu = main_menu
-        # Izquierda: Contenedor para la lista de entidades con radio buttons
-        left_container = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="#84bfc4", )
-        left_container.grid(row=0, column=0, sticky="nswe", padx=10, pady=10)
-        left_container.grid_rowconfigure(0, weight=1)
-        left_container.grid_columnconfigure(0, weight=1)
+        # Define una altura y anchura fijas para el contenedor izquierdo
+        fixed_height = 300  # Ajusta según tus necesidades
+        fixed_width = 200   # Ajusta según tus necesidades
 
-        # Scrollbar para los radio buttons
-        self.scrollbar = CTkScrollableFrame(left_container, fg_color="#FFFFFF")
-        self.scrollbar.pack(fill="both", expand=True, padx=10, pady=10)
-        
+        # En la inicialización de self.left_title, configura la anchura y altura fijas
+        self.left_title = CTkFrame(self, corner_radius=3, bg_color="#FFFFFF", border_color="red", width=fixed_width, height=fixed_height)
+        self.left_title.grid(row=0, column=0, sticky="nswe", padx=30, pady=2)
+        self.left_title.grid_columnconfigure(0, weight=1)
+        self.left_title.grid_rowconfigure(1, weight=1)
+
+        # Campo de búsqueda para filtrar tablas
+        search_entry = CTkEntry(self.left_title, placeholder_text="Buscar tabla...", fg_color='#84bfc4', text_color="black")
+        search_entry.grid(row=0, column=0, padx=0, pady=1, sticky="ew")
+        search_entry.bind("<KeyRelease>", self.filtrar_tablas)
+        # Scrollable frame inicial para los radio buttons
+        self.create_scrollable_frame()
+        # # Scrollbar para los radio buttons
+        # self.scrollbar = CTkScrollableFrame(self.left_title, fg_color="#FFFFFF", width=fixed_width, height=fixed_height)
+        # self.scrollbar.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
+
+        # Frame estático para los resultados filtrados (sin scrollbar)
+        self.result_frame = CTkFrame(self.left_title, fg_color="#FFFFFF", width=fixed_width, height=fixed_height)
+        self.result_frame.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
+        self.result_frame.grid_remove()  # Ocultar al inicio
+
         self.radio_var = tk.StringVar(value=tables[0].name if tables else None)  # Valor predeterminado
-        
-        # Creamos los radio buttons dentro del scrollbar
-        for i, table in enumerate(tables):
-            radio_button = CTkRadioButton(self.scrollbar , text=table.name, variable=self.radio_var, value=table.name, text_color="black", command=lambda table=table, i=i: self.actualizar_indice(i, table.name, table), border_color='#84bfc4', fg_color='#84bfc4')
-            radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
+        self.filtered_tables = tables
+        # Llenar los radio buttons inicialmente
+        self.actualizar_radiobuttons()
 
         # Si no se proporciona un índice seleccionado, usamos 0 por defecto
         if indexSeleccionado is None:
@@ -652,12 +677,11 @@ class VentanaPaso3(CTkFrame):
         self.tabla_seleccionada_index = indexSeleccionado
 
 
-
         # Derecha: Contenedor para los campos de entrada y opciones
         right_container = CTkFrame(self, corner_radius=5, fg_color="#FFFFFF", border_color="#84bfc4")
         right_container.grid(row=0, column=1, sticky="nswe", padx=10, pady=10)
         right_container.grid_columnconfigure(1, weight=1)
-
+        
         # Campos de entrada y otros widgets en el contenedor derecho
         url_label = CTkLabel(right_container, text="URL(*):", text_color="black")
         url_label.grid(row=0, column=0, sticky="w", padx=10, pady=10)
@@ -688,17 +712,17 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox.grid(row=4, column=1, sticky="we", padx=10, pady=10)
 
         # Asegurarse de que el índice predeterminado se maneja desde el inicio
-        self.actualizar_indice(indexSeleccionado, tables[indexSeleccionado].name, tables[indexSeleccionado])
+        self.actualizar_indice(tables[indexSeleccionado].name, tables[indexSeleccionado])
 
         # Footer con botones
         footer_frame = CTkFrame(self, fg_color="#FFFFFF")
         footer_frame.grid(row=1, column=0, columnspan=2, sticky="se", padx=10, pady=(20, 20))
         
-        btn_back = CTkButton(footer_frame, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
+        btn_back = CTkButton(footer_frame, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: master.mostrar_pagina_dos(self.main_menu, data_mantenimiento=data_mantenimiento, tables=tables))
         btn_back.pack(side="left", padx=10, pady=5)
-        btn_next = CTkButton(footer_frame, text="Finalizar", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
+        btn_next = CTkButton(footer_frame, text="Siguiente", fg_color='#84bfc4', hover_color='#41848a',text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : [self.anyadir_data_mantenimiento() , self.master.mostrarSpinner("paso4To5")])
         btn_next.pack(side="left", padx=10, pady=5)
-        btn_cancel = CTkButton(footer_frame, text="Cancelar" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
+        btn_cancel = CTkButton(footer_frame, text="Cancelar" ,fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
         btn_cancel.pack(side="left", padx=10, pady=5)
         if data_mantenimiento is not None and len(self.data_mantenimiento) > 12:
             self.url_entry.delete(0, "end") 
@@ -711,6 +735,48 @@ class VentanaPaso3(CTkFrame):
             tablaName = self.tables[self.tabla_seleccionada_index].name
             self.radio_var.set(tablaName)
         #self.master.ocultarSpinner()
+    
+    def create_scrollable_frame(self):
+        """Crea un nuevo CTkScrollableFrame para evitar problemas de desplazamiento."""
+        # Si el scrollbar ya existe, lo destruimos primero
+        if hasattr(self, 'scrollbar'):
+            self.scrollbar.destroy()
+        
+        # Crear un nuevo CTkScrollableFrame
+        self.scrollbar = CTkScrollableFrame(self.left_title, fg_color="#FFFFFF")
+        self.scrollbar.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
+    
+    def filtrar_tablas(self, event):
+        search_text = event.widget.get().lower()
+        self.filtered_tables = [table for table in self.tables if search_text in table.name.lower()]
+
+        # Recrea el scrollbar para que comience desde la posición superior
+        self.create_scrollable_frame()
+        self.actualizar_radiobuttons()
+
+    def actualizar_radiobuttons(self):
+        """Actualiza los radio buttons en el scrollbar basado en `self.filtered_tables`."""
+        # Limpiar el contenedor actual de items
+        for widget in self.scrollbar.winfo_children():
+            widget.destroy()
+
+         # Calcular el número total de tablas
+        total_rows = len(self.filtered_tables)
+        progress_start = 0.00
+        progress_end = 1.0
+        progress_increment = (progress_end - progress_start) / total_rows
+        current_progress = progress_start
+        # Agregar los radio buttons en el contenedor adecuado
+        for i, table in enumerate(self.filtered_tables):
+            radio_button = CTkRadioButton(
+                self.scrollbar, text=table.name, variable=self.radio_var, value=table.name, text_color="black",
+                command=lambda table=table, i=i: self.actualizar_indice(table.name, table),
+                border_color='#84bfc4', fg_color='#84bfc4'
+            )
+            radio_button.grid(row=i, column=0, sticky="w", padx=10, pady=2)
+            self.master.update_progress(current_progress)
+            current_progress += progress_increment
+        self.master.update_progress(1.0)
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -721,7 +787,10 @@ class VentanaPaso3(CTkFrame):
     def anyadir_data_mantenimiento(self):
         
         if  len(self.data_mantenimiento) > 12: 
-            self.data_mantenimiento =  self.data_mantenimiento[:len(self.data_mantenimiento)- 4]
+            keys = list(self.data_mantenimiento.keys())    
+            # Mantener solo las claves desde el inicio hasta el índice -4
+            for key in keys[-4:]:
+                del self.data_mantenimiento[key]  # Elimina las últimas 4 claves
         self.data_mantenimiento["alias"] = self.alias_entry.get()
         self.data_mantenimiento["loadOnStartUp"] = self.cargar_check.get()
         self.data_mantenimiento["sidx"] =  self.obtener_posicion(self.orden_nombre_combobox.get())
@@ -730,8 +799,9 @@ class VentanaPaso3(CTkFrame):
 
 
 
-    def actualizar_indice(self, index, name, table):
+    def actualizar_indice(self, name, table):
         """Actualizar el índice de la tabla seleccionada."""
+        index = self.get_position_by_name(self.tables,name)
         self.tabla_seleccionada_index = index
         # Borrar contenido existente
         self.url_entry.delete(0, "end") 
@@ -752,7 +822,12 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox.set(columnas[0])
         self.master.ordenColumnas = columnas
 
-        
+    def get_position_by_name(self,tables, name):
+        for index, table in enumerate(tables):
+            if table.name == name:
+                return index
+        return 0  
+      
     def obtener_posicion(self, nombre):
         """Obtener la posición del nombre dado en el combobox."""
         return self.column_dict.get(nombre, None)
@@ -821,13 +896,13 @@ class VentanaColumnas(CTkFrame):
         self.contenedor_botones = ctk.CTkFrame(self, fg_color="#FFFFFF")
         self.contenedor_botones.grid(row=4, column=0, sticky="se", padx=10, pady=10)
 
-        back_button = ctk.CTkButton(self.contenedor_botones, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command=lambda : master.mostrar_pagina_tres(self.main_menu, data_mantenimiento, tables,  index_seleccionado))
+        back_button = ctk.CTkButton(self.contenedor_botones, text="Atrás", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : master.mostrar_pagina_tres(self.main_menu, data_mantenimiento, tables,  index_seleccionado))
         back_button.grid(row=0, column=0, padx=5, sticky="e")
         
-        finish_button = ctk.CTkButton(self.contenedor_botones, text="Siguiente",  fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command=lambda:self.master.mostrarSpinner("finalizar") )
+        finish_button = ctk.CTkButton(self.contenedor_botones, text="Finalizar",  fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda:self.master.mostrarSpinner("finalizar") )
         finish_button.grid(row=0, column=1, padx=5, sticky="e")
 
-        cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancelar", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), command= lambda: self.cancelar())
+        cancel_button = ctk.CTkButton(self.contenedor_botones, text="Cancelar", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command= lambda: self.cancelar())
         cancel_button.grid(row=0, column=2, padx=5, sticky="e")
         #self.master.ocultarSpinner()
 
@@ -866,7 +941,7 @@ class VentanaColumnas(CTkFrame):
         this = self.master        
         tablaResultados = self.getTablaResultados(tables[index_seleccionado])
 
-        p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento, self.master.ordenColumnas)
+        p3.initPaso3(tablaResultados, datosCargados, data_mantenimiento, self.master.ordenColumnas,this)
 
         self.master.close_loading_frame()
         this.mostrarResumenFinal(tablaResultados) 
@@ -942,6 +1017,16 @@ class VentanaPrincipal(CTk):
        }
         logging.info(data)
         return data  
+    
+    def update_progress(self,value):
+        if self.progressbar.winfo_exists():
+            self.progressbar.set(value)
+            valor = value*100
+            if(valor > 100):
+                valor = 100
+            self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
+            self.loading_frame.update_idletasks()
+            self.update()
 
     def mostrarSpinner(self,caso):
         # validar al paso 2
@@ -952,27 +1037,23 @@ class VentanaPrincipal(CTk):
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        l.place(relx=0.5, rely=0.5, anchor='center')
+        self.percentage_label = CTkLabel(self.loading_frame, text="Cargando... 0%", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
+        self.percentage_label.place(relx=0.5, rely=0.5, anchor='center')
         
-        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
-        progressbar.place(relx=0.5, rely=0.5, anchor='center')
-        progressbar.start()
-        l.pack()
-        self.update()
-        l.pack()
+        self.progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
+       
+        self.percentage_label.pack()
         self.update()
         if(caso == "avanzarPaso2"):
             threading.Thread(target=self.pagina_actual.avanzar_paso2()).start()
-        elif caso == "paso3To4":#ir a las columnas
-            self.update()
+        elif caso == "paso3To4":#ir a las columnas            
             threading.Thread(target=self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)).start()
             #resultados_window2.after(710,self.mostrar_pagina_tres(self.main_menu, self.pagina_actual.obtener_datos(),self.pagina_actual.tables)) 
         elif caso == "paso4To5":
             threading.Thread(target=self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas())).start()
             #resultados_window2.after(710,self.mostrar_pagina_cuatro(self.main_menu, self.pagina_actual.tables, self.pagina_actual.data_mantenimiento, self.pagina_actual.abrir_ventana_columnas()))
-        elif caso == "finalizar":
-            self.update()
+        elif caso == "finalizar":            
             pfinal = self.pagina_actual
             rutaActual = utl.rutaActual(__file__)
             threading.Thread(target=pfinal.paso3(pfinal.tables, pfinal.index_seleccionado, self.getDatos(rutaActual), pfinal.data_mantenimiento)).start()
@@ -1040,12 +1121,12 @@ class VentanaPrincipal(CTk):
 
         # Create the 'Volver al menu' button
         boton_menu = ctk.CTkButton(button_container, text="Volver al menú", fg_color='#84bfc4', hover_color='#41848a', text_color="black", 
-                                font=("Arial", 12, "bold"), command=lambda: self.cancelar())
+                                font=("Arial", 12, "bold"), width= 100, height=25, command=lambda: self.cancelar())
         boton_menu.grid(row=0, column=0, padx=5, pady=(200,0), sticky="se")
 
         # Create the 'cerrar' button
         boton_cerrar = ctk.CTkButton(button_container, text="cerrar", fg_color='#84bfc4', hover_color='#41848a', text_color="black", 
-                                    font=("Arial", 12, "bold"), command=lambda: self.cancelar_cerrar())
+                                    font=("Arial", 12, "bold"), width= 100, height=25, command=lambda: self.cancelar_cerrar())
         boton_cerrar.grid(row=0, column=1, padx=5, pady=(200,0), sticky="sw")
 
 if __name__ == "__main__":

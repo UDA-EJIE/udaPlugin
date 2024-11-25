@@ -32,6 +32,9 @@ class VentanaPaso7(CTk):
         configuration_label = CTkLabel(configuration_frame, text="Generar EJB", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(10, 5), padx=10, sticky="w")
 
+        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
+        self.configuration_warning.grid(row=0, column=4, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+
         description_label = CTkLabel(configuration_frame, text="Este Wizard genera el EJB de un servicio existente")
         description_label.grid(row=1, column=0, columnspan=3, pady=(5, 5), padx=10, sticky="w")
 
@@ -57,8 +60,9 @@ class VentanaPaso7(CTk):
 
         ejb_container_label = CTkLabel(frame_ejb, text="Proyecto EJB contenedor:", bg_color='#FFFFFF', fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ejb_container_label.grid(row=0, column=0, sticky="w", pady=5, padx=10)
-        self.ejb_container_entry = CTkEntry(frame_ejb, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',width= 550, height=25, border_width=3, text_color="black")
+        self.ejb_container_entry = CTkEntry(frame_ejb, bg_color='#599398', fg_color='#599398', border_color='#599398',width= 550, height=25, border_width=3, text_color="black")
         self.ejb_container_entry.grid(row=0, column=1, pady=5, padx=10, sticky="w")
+        self.ejb_container_entry.configure(state="disabled")
 
         self.ejb_container_entry.insert(0, textRutaNegocio)
         ejb_container_button = CTkButton(frame_ejb, text="Buscar Proyecto",  command= lambda : self.buscar_archivos(self.selectDirectory(self.ejb_container_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold") , width= 100, height=23)
@@ -66,8 +70,9 @@ class VentanaPaso7(CTk):
 
         service_label = CTkLabel(frame_ejb, text="Servicio:", bg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         service_label.grid(row=1, column=0, sticky="w", pady=5, padx=10)
-        self.service_entry = CTkEntry(frame_ejb, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width= 550, height=25, border_width=3, text_color="black")
+        self.service_entry = CTkEntry(frame_ejb, bg_color='#599398', fg_color='#599398', border_color='#599398', width= 550, height=25, border_width=3, text_color="black")
         self.service_entry.grid(row=1, column=1, pady=5, padx=10, sticky="w")
+        self.service_entry.configure(state="disabled")
         service_button = CTkButton(frame_ejb, text="Buscar Servicio", command= lambda :  self.findServices(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=23)
         service_button.grid(row=1, column=2, sticky="e", padx=10)
 
@@ -78,20 +83,24 @@ class VentanaPaso7(CTk):
 
         ejb_name_label = CTkLabel(frame_ejb, text="Nombre del EJB:", bg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         ejb_name_label.grid(row=3, column=0, sticky="w", pady=5, padx=10)
-        self.ejb_name_entry = CTkEntry(frame_ejb, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', width= 550, height=25, border_width=3, text_color="black")
+        self.ejb_name_entry = CTkEntry(frame_ejb, bg_color='#599398', fg_color='#599398', border_color='#599398', width= 550, height=25, border_width=3, text_color="black")
         self.ejb_name_entry.grid(row=3, column=1, pady=5, padx=10, sticky="w")
+        self.ejb_name_entry.configure(state="disabled")
 
         buttons_frame = CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
         buttons_frame.grid(row=2, column=0, columnspan=3, pady= (300, 0))
 
-        back_button = CTkButton(buttons_frame, text="Back", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        back_button = CTkButton(buttons_frame, text="Atrás", command= lambda : self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         back_button.grid(row=0, column=0, padx=(280, 5))
-        next_button = CTkButton(buttons_frame, text="Next", state="disabled", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        next_button.grid(row=0, column=1, padx=5)
-        finish_button = CTkButton(buttons_frame, text="Finish", command= lambda : self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        finish_button.grid(row=0, column=2, padx=5)
-        cancel_button = CTkButton(buttons_frame, text="Cancel", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        cancel_button.grid(row=0, column=3, padx=5)
+        finish_button = CTkButton(buttons_frame, text="Finalizar", command= lambda : self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
+        finish_button.grid(row=0, column=1, padx=5)
+      
+
+    def cancelar(self):
+       # Cancela todos los eventos pendientes
+       self.withdraw()
+       self.quit()
+       self.main_menu.MainMenuLoop()
 
 
     def buscar_archivos(self, ruta_personalizada = None):
@@ -248,6 +257,10 @@ class VentanaPaso7(CTk):
 
 
     def findServices(self):
+        if (self.ejb_container_entry.get() == None or self.ejb_container_entry.get() == ""):
+            self.configuration_warning.configure(text="El nombre del contenedor EJB es obligatorio")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
         # Crear la ventana secundaria
         resultados_services = ctk.CTkToplevel(self)
         resultados_services.title("Resultados de Búsqueda")
@@ -285,21 +298,31 @@ class VentanaPaso7(CTk):
 
     def on_button_click(self, resultados_services,  service):
         self.service_seleccionado = service.split("\\")[len(service.split("\\")) -1 ]
+        self.serviceImport = service.replace("\\",".").replace(".java","")
         print(f"Selected Service: {service}")
         # Aquí puedes realizar cualquier acción adicional cuando se selecciona un servicio
         # Por ejemplo, almacenar el servicio seleccionado o actualizar la interfaz
+        self.service_entry.configure(state="normal")
+        self.ejb_name_entry.configure(state="normal")
         self.service_entry.insert(0 ,service)  # Guardar el servicio seleccionado
-        nombre_EJB = service.split("\\")[len(service.split("\\")) -1].split(".")[0] + "Skeleton"
+        nombreServicio = service.split("\\")[len(service.split("\\")) -1].split(".")[0]
+        nombre_EJB = nombreServicio + "Skeleton" 
+        self.entidadImport = self.serviceImport.replace("service."+nombreServicio,"model."+nombreServicio.replace("Service",""))       
         self.ejb_name_entry.insert(0, nombre_EJB)
         resultados_services.withdraw()
+        self.service_entry.configure(state="disabled")
+        self.ejb_name_entry.configure(state="disabled")
 
         return self.service_seleccionado 
 
 
     def get_patch_services(self, ruta_personalizada):
 
-        fileName = ruta_personalizada.split("/")[len(ruta_personalizada.split("/")) - 1] 
-        self.parte = re.split(r'(?=[A-Z])', fileName)[0]  
+        nameEar = utlPaso6.obtener_con_pathEar(ruta_personalizada+"/.classpath")  
+        self.parte  =  nameEar.replace("EAR","") 
+        if self.ejbEntryRoute == None or self.ejbEntryRoute == "":
+            indice = self.ejb_container_entry.get().rfind('/')
+            self.ejbEntryRoute = self.ejb_container_entry.get()[:indice]
 
         self.ruta_services = self.ejbEntryRoute +"\\"+ self.parte +"EARClasses\\src\\com\\ejie\\" + self.parte +"\\service\\"
 
@@ -328,8 +351,10 @@ class VentanaPaso7(CTk):
         # Regex para capturar el tipo de retorno, nombre del método y parámetros
         method_pattern = re.compile(r'^\s*([^\s]+)\s+([^\s(]+)\s*\(([^)]*)\)\s*;')
 
-        with open(impl_file_path, 'r') as file:
-            for line in file:
+        with open(impl_file_path, 'r',  encoding='cp65001') as file:
+            while True:
+                line = file.readline()
+
                 match = method_pattern.search(line)
                 if match:
                     return_type = match.group(1)
@@ -348,10 +373,29 @@ class VentanaPaso7(CTk):
                     
                     # Agregar el resultado a la lista
                     methods.append(method_signature)
+                if not line:
+                    break
         
         return methods
     
-    def save_to_yaml(self):      
+    def save_to_yaml(self):   
+
+        if (self.ejb_container_entry.get() == None or self.ejb_container_entry.get() == ""):
+            self.configuration_warning.configure(text="El nombre del contenedor EJB es obligatorio")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE  
+        if (self.service_entry.get() == None or self.service_entry.get() == ""):
+            self.configuration_warning.configure(text="El nombre del servicio es obligatorio")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
+        if (self.jndi_entry.get() == None or self.jndi_entry.get() == ""):
+            self.configuration_warning.configure(text="El nombre del JNDI es obligatorio")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
+        if (self.ejb_name_entry.get() == None or self.ejb_name_entry.get() == ""):
+            self.configuration_warning.configure(text="El nombre del EJB es obligatorio")
+            self.configuration_warning.configure(text_color ="red")
+            return FALSE
 
         prueba = self.find_impl_file(self.service_seleccionado, self.ruta_services)
 
@@ -360,11 +404,15 @@ class VentanaPaso7(CTk):
         inicio = datetime.now()
 
         self.ruta_destino = self.ejb_container_entry.get() + "\\\ejbModule\\com\\ejie\\" + self.parte + "\\remoting"
-        
+        self.valorEjb = self.ejb_name_entry.get()
+        serviceName = self.ejb_name_entry.get().replace("Skeleton","")
         yaml_data = {
             "jndiName": self.ejb_name_entry.get(),
-            "serviceName": self.ejb_name_entry.get(),
-            "metodos" : metodos
+            "serviceName": serviceName,
+            "metodos" : metodos,
+            "serviceImport":self.serviceImport,
+            "entidadImport":self.entidadImport,
+            "packagenameskeleton":"com.ejie."+self.parte+".remoting"
         }
 
         rutaPath = utl.rutaActual(__file__)
@@ -418,7 +466,7 @@ class VentanaPaso7(CTk):
         nombre_label = CTkLabel(frame_center, text="Has creado el siguiente servicio EJB: " , fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         nombre_label.pack(pady=(0, 0), padx=30)
         
-        nombre_proyecto_label = CTkLabel(frame_center, text= self.ejb_name_entry, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
+        nombre_proyecto_label = CTkLabel(frame_center, text= self.valorEjb, fg_color="#FFFFFF", text_color="black", font=("Arial", 14, "bold"))
         nombre_proyecto_label.pack(pady=(0, 0), padx=30)
 
         ruta_label = CTkLabel(frame_center, text="Has guardado el proyecto en la ruta ", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))

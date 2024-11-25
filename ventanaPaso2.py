@@ -35,7 +35,6 @@ class PaginaUno(CTkFrame):
     
     def __init__(self, master, main_menu, tables=None, tables_ori=None, columns=None,estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
 
         self.main_menu = main_menu
@@ -141,7 +140,8 @@ class PaginaDos(CTkFrame):
     def __init__(self, master, main_menu, tables, cursor, tables_ori=None,  estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#FFFFFF")
-
+        # Ordena las tablas alfabéticamente según el nombre
+        tables = sorted(tables, key=lambda table: table.name.lower())
         self.original_tables = copy.deepcopy(tables)
         self.tables = []
         self.tables_ori = tables_ori
@@ -156,13 +156,28 @@ class PaginaDos(CTkFrame):
         self.grid_columnconfigure(0, weight=1)  # Ensure this column can expand
         self.grid_rowconfigure(1, weight=1)     # Central row where the scrollable frame will go
 
-        header_label = CTkLabel(self.header_frame, text="Seleccione las tablas y sus columnas para la generación de código", font=("Arial", 14, "bold"))
+        header_label = CTkLabel(self.header_frame, text="Seleccione las tablas y sus columnas para la generación de código", font=("Arial", 14, "bold"), text_color="white")
         header_label.pack(pady=10, padx=10)
         self.estado_tables = estado_tables
 
         # Scrollable frame in the middle using pack inside a grid row
+
+
         self.middle_frame = CTkFrame(self)
         self.middle_frame.grid(row=1, column=0, sticky="nsew")
+
+        self.search_barFrame = CTkFrame(self.middle_frame)
+        self.search_barFrame.pack(pady=5)
+
+        sv = StringVar(self)
+        sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_checkboxes())
+        
+        self.search_entry = CTkEntry(self.search_barFrame, text_color="black",fg_color="white", placeholder_text="Buscar Tablas...",textvariable=sv, width=220)
+        
+        self.search_entry.configure(placeholder_text="Buscar Tablas...")
+        self.search_entry.pack(pady=5)
+
+        
         self.scrollable_frame = CTkScrollableFrame(self.middle_frame, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
         self.scrollable_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -208,7 +223,20 @@ class PaginaDos(CTkFrame):
         self.var_list = []
         total_pasos = len(tables_original) + 1
         pasos_por_parte = total_pasos // 8
+
+        # Campo de entrada para autocompletado en la parte superior
+        
+ 
+
+        # Callback para actualizar los checkboxes en función del texto ingresado
+        #search_var.trace_add("write", lambda *args: self.update_checkboxes(search_var.get()))
+        
+
+        self.checkboxes = []  # Almacenar referencias a los checkboxes para actualizarlos
+
         for index, table in enumerate(tables_original):
+            # Creación del checkbox de la tabla
+            table_var = tk.IntVar(value=0)
             self.var_list.append(IntVar(value=0))
             table_frame = CTkFrame(frame, fg_color="#FFFFFF", corner_radius=10)
             table_frame.pack(fill="x", padx=10, pady=2, expand=True)
@@ -217,6 +245,10 @@ class PaginaDos(CTkFrame):
                                             text_color="black", font=("Arial", 10, "bold"),
                                             checkbox_height=15, checkbox_width=15, border_color='#84bfc4', fg_color='#84bfc4')
             table_checkbox.pack(side="left", padx=5)
+            table_frame.pack(fill="x", padx=10, pady=2, expand=True)
+
+            # Almacenar el nombre y referencia para el autocompletado
+            self.checkboxes.append((table.name, table_frame))
             if self.estado_tables != None and len([x for x in self.estado_tables if x['name'] == table.name]) == 1:
                 table_checkbox.select()
             
@@ -252,6 +284,17 @@ class PaginaDos(CTkFrame):
                     porcentaje = 0.2 
                 self.master.update_progress(porcentaje)     
         self.master.update_progress(1.0)    
+        # Función para actualizar la visibilidad de los checkboxes según el texto de búsqueda
+    def update_checkboxes(self):
+        search_text = self.search_entry.get()
+        for _, checkbox in self.checkboxes:
+            checkbox.pack_forget()
+
+        # Luego, muestra solo los que coinciden en el orden correcto
+        for name, checkbox in self.checkboxes:
+            if search_text.lower() in name.lower():
+                checkbox.pack(fill="x", padx=10, pady=2, expand=True) 
+        self.scrollable_frame._parent_canvas.yview_moveto(0)          
 
     def toggle_columns(self, table_frame):
     # Asegúrate de referirte al columns_frame para expandir/contraer
@@ -705,71 +748,86 @@ class PaginaTres(CTkFrame):
         
         ##Esta query saca las relaciones entre las tablas
         query_relations = """WITH fk_tables AS (
-                            -- Seleccionamos las tablas que tienen claves foráneas
-                            SELECT acc.table_name, acc.column_name, ac.constraint_name AS fk_constraint_name,
-                                acc.position, ac.constraint_type, acc2.table_name AS referenced_table, acc2.column_name AS referenced_column
-                            FROM all_cons_columns acc
-                            JOIN all_constraints ac 
-                                ON acc.constraint_name = ac.constraint_name
-                            JOIN all_cons_columns acc2 
-                                ON ac.r_constraint_name = acc2.constraint_name
-                            WHERE ac.constraint_type = 'R' -- Clave foránea (Foreign Key)
-                        ),
-                        pk_tables AS (
-                            -- Seleccionamos las tablas que tienen claves primarias
-                            SELECT acc.table_name, acc.column_name
-                            FROM all_cons_columns acc
-                            JOIN all_constraints ac 
-                                ON acc.constraint_name = ac.constraint_name
-                            WHERE ac.constraint_type = 'P' -- Primary Key
-                        ),
-                        unique_constraints AS (
-                            -- Seleccionamos las columnas que tienen restricciones de unicidad (UNIQUE)
-                            SELECT acc.table_name, acc.column_name
-                            FROM all_cons_columns acc
-                            JOIN all_constraints ac 
-                                ON acc.constraint_name = ac.constraint_name
-                            WHERE ac.constraint_type = 'U' -- Unique Key
-                        )
-                        SELECT fk.table_name AS child_table, 
-                            fk.column_name AS child_column, 
-                            fk.referenced_table AS parent_table, 
-                            fk.referenced_column AS parent_column,
-                            CASE 
-                                -- Relación Many-to-Many: Si la tabla intermedia contiene únicamente claves PF (Primary/Foreign Keys)
-                                WHEN fk.table_name IN (
-                                        SELECT pf.table_name FROM (
-                                            SELECT fk.table_name
-                                            FROM fk_tables fk
-                                            JOIN pk_tables pk 
-                                                ON fk.table_name = pk.table_name 
-                                                AND fk.column_name = pk.column_name
-                                            GROUP BY fk.table_name
-                                            HAVING COUNT(DISTINCT fk.column_name) = (
-                                                SELECT COUNT(*) FROM user_tab_columns utc WHERE utc.table_name = fk.table_name)
-                                        ) pf
-                                )
-                                THEN 'Many to Many'
+            -- Seleccionamos las tablas que tienen claves foráneas
+            SELECT acc.table_name, acc.column_name, ac.constraint_name AS fk_constraint_name,
+                acc.position, ac.constraint_type, acc2.table_name AS referenced_table, acc2.column_name AS referenced_column
+            FROM all_cons_columns acc
+            JOIN all_constraints ac 
+                ON acc.constraint_name = ac.constraint_name
+            JOIN all_cons_columns acc2 
+                ON ac.r_constraint_name = acc2.constraint_name
+            WHERE ac.constraint_type = 'R' -- Clave foránea (Foreign Key)
+        ),
+        pk_tables AS (
+            -- Seleccionamos las tablas que tienen claves primarias
+            SELECT acc.table_name, acc.column_name
+            FROM all_cons_columns acc
+            JOIN all_constraints ac 
+                ON acc.constraint_name = ac.constraint_name
+            WHERE ac.constraint_type = 'P' -- Primary Key
+        ),
+        unique_constraints AS (
+            -- Seleccionamos las columnas que tienen restricciones de unicidad (UNIQUE)
+            SELECT acc.table_name, acc.column_name
+            FROM all_cons_columns acc
+            JOIN all_constraints ac 
+                ON acc.constraint_name = ac.constraint_name
+            WHERE ac.constraint_type = 'U' -- Unique Key
+        )
+        SELECT fk.table_name AS child_table, 
+            fk.column_name AS child_column, 
+            fk.referenced_table AS parent_table, 
+            fk.referenced_column AS parent_column,
+            CASE 
+                -- Relación Many-to-Many: Si la tabla intermedia contiene únicamente claves PF (Primary/Foreign Keys)
+                WHEN fk.table_name IN (
+                        SELECT pf.table_name FROM (
+                            SELECT fk.table_name
+                            FROM fk_tables fk
+                            JOIN pk_tables pk 
+                                ON fk.table_name = pk.table_name 
+                                AND fk.column_name = pk.column_name
+                            GROUP BY fk.table_name
+                            HAVING COUNT(DISTINCT fk.column_name) = (
+                                SELECT COUNT(*) FROM user_tab_columns utc WHERE utc.table_name = fk.table_name)
+                        ) pf
+                )
+                THEN 'Many to Many'
 
-                                -- Relación One-to-One: Si la clave foránea es también la clave primaria de la tabla hija
-                                WHEN fk.column_name IN (
-                                        SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
-                                ) 
-                                THEN 'One to One'
+                -- Relación One-to-One: Si **todas** las columnas de la clave primaria de la tabla hija son claves foráneas
+                WHEN fk.table_name IN (
+                    SELECT pk.table_name
+                    FROM pk_tables pk
+                    LEFT JOIN fk_tables fk ON pk.table_name = fk.table_name AND pk.column_name = fk.column_name
+                    GROUP BY pk.table_name
+                    HAVING COUNT(pk.column_name) = COUNT(fk.column_name)
+                )
+                AND fk.column_name IN (
+                    SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
+                )
+                THEN 'One to One'
 
-                                -- Relación One-to-Many: Si la clave foránea **no es** la clave primaria en la tabla hija
-                                WHEN fk.column_name NOT IN (
-                                        SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
-                                )
-                                THEN 'One to Many'
+                -- Relación One-to-Many: Si la clave foránea **no es** parte completa de la clave primaria en la tabla hija
+                WHEN fk.table_name IN (
+                    SELECT pk.table_name
+                    FROM pk_tables pk
+                    LEFT JOIN fk_tables fk ON pk.table_name = fk.table_name AND pk.column_name = fk.column_name
+                    GROUP BY pk.table_name
+                    HAVING COUNT(pk.column_name) > COUNT(fk.column_name)
+                )
+                OR fk.column_name NOT IN (
+                    SELECT column_name FROM pk_tables WHERE table_name = fk.table_name
+                )
+                THEN 'One to Many'
 
-                                ELSE 'Unknown'
-                            END AS relationship_type
-                        FROM fk_tables fk
-                        LEFT JOIN pk_tables pk 
-                            ON fk.referenced_table = pk.table_name 
-                            AND fk.referenced_column = pk.column_name
-                        ORDER BY fk.table_name, relationship_type
+                ELSE 'Unknown'
+            END AS relationship_type
+        FROM fk_tables fk
+        LEFT JOIN pk_tables pk 
+            ON fk.referenced_table = pk.table_name 
+            AND fk.referenced_column = pk.column_name
+        ORDER BY fk.table_name, relationship_type
+
                         """
         
         self.cursor.execute(query_relations)
@@ -786,9 +844,7 @@ class PaginaTres(CTkFrame):
                     if table_ori[5] is None:
                         table['original_table'] = table['name']
                         break
-
-                    
-            
+          
         tablas_seleccionadas_nombres = [tabla['original_table'] for tabla in tablasSeleccionadas]
         relaciones_encontradas = []
     
@@ -833,7 +889,12 @@ class PaginaTres(CTkFrame):
             tabla_1, columna_1, tabla_2, columna_2, tipo_relacion = relacion
             
             if tabla_1 in tablas_seleccionadas_nombres and tabla_2 in tablas_seleccionadas_nombres:
-                relaciones_encontradas.append(relacion)
+                tablaSinonimo = list(filter(lambda persona: persona['original_table'] == tabla_1, tablasSeleccionadas))
+                tablaSinonimo2 = list(filter(lambda persona: persona['original_table'] == tabla_2, tablasSeleccionadas))
+                if len(tablaSinonimo) == 1:
+                    tabla_1 = tablaSinonimo[0]['name']
+                    tabla_2 = tablaSinonimo2[0]['name']
+                relaciones_encontradas.append([tabla_1, columna_1, tabla_2, columna_2, tipo_relacion])
                 continue
 
             # Si es una relación many-to-many con una tabla intermedia
@@ -858,13 +919,14 @@ class PaginaTres(CTkFrame):
     # Añadir relaciones a las tablas seleccionadas
     def agregar_relaciones_a_tablas(self, tablas_seleccionadas, relaciones):
         for relacion in relaciones:
+            
             tabla_1, columna_1, tabla_2, columna_2, tipo_relacion = relacion
             
             # Encontrar ambas tablas en la lista de tablas seleccionadas
             tabla_obj_1 = self.encontrar_tabla(tabla_1, tablas_seleccionadas)
             tabla_obj_2 = self.encontrar_tabla(tabla_2, tablas_seleccionadas)
-            tName = snakeToCamel(tabla_1)
-            tName2 = snakeToCamel(tabla_2)
+            tName = tabla_1
+            tName2 = tabla_2
 
             if not tabla_obj_1 or not tabla_obj_2:
                 continue  # Si no encontramos las tablas, pasamos a la siguiente relación
@@ -878,18 +940,69 @@ class PaginaTres(CTkFrame):
                 #En los casos One to One solo guardo en la tabla "Padre"
                 nueva_columna_2 = {
                     'name': tName, 
-                    'type': tName.capitalize(),
+                    'type': tName,
                     'dataPrecision': None,
                     'datoImport': None,
                     'datoType': None,
                     'nullable': 'N',
                     'primaryKey': ' ',
                     'tableName': tabla_1
+                    
                 }
-                tabla_obj_2['columns'].append(nueva_columna_2)
+                if "columnasDao" not in tabla_obj_2:
+                    tabla_obj_2['columnasDao'] = tabla_obj_2['columns'].copy()
 
-                tabla_obj_1['dao'] =  None
-                tabla_obj_2['dao'] =  None
+                if "columnasOriNoForeing" not in tabla_obj_2:
+                    tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+
+                    for col in tabla_obj_2['originalCol']:
+                        if col['primaryKey'] == 'R':
+                            tabla_obj_2['originalCol'].remove(col)
+
+                    tabla_obj_2['columnasOriNoForeing'] =  tabla_obj_2['originalCol'].copy()
+                tabla_obj_2['columns'].append(nueva_columna_2)
+                # Verifica y solo asigna `None` si no están inicializados
+                if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
+                    tabla_obj_1['dao'] = None
+
+                if 'dao' not in tabla_obj_2 or tabla_obj_2['dao'] is None:
+                    tabla_obj_2['dao'] = None
+
+                if 'controller' not in tabla_obj_1 or tabla_obj_1['controller'] is None:
+                    tabla_obj_1['controller'] = None
+
+                if 'controller' not in tabla_obj_2 or tabla_obj_2['controller'] is None:
+                    tabla_obj_2['controller'] = None
+
+                if "originalCol" not in tabla_obj_1:
+                    tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()
+
+               
+                numero_columnaOnetOne = 0
+                for indexOnetOne, columnsOnetOne in enumerate(tabla_obj_1['columns']):
+
+                    if columnsOnetOne['primaryKey']  == 'P':
+                        numero_columnaOnetOne = indexOnetOne
+                        break
+  
+                if 'rowMapper' not in tabla_obj_2 or tabla_obj_2['rowMapper'] is None:
+                    # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
+                    tabla_obj_2['rowMapper'] = [{
+                        'entidadPadre': tabla_obj_1['name'].capitalize(),
+                        'primaryKey': tabla_obj_1['columns'][numero_columnaOnetOne]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_1['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    }]
+                else:
+                    # Si `dao` ya está inicializado y es una lista, agrega el nuevo diccionario
+                    tabla_obj_2['rowMapper'].append({
+                        'entidadPadre': tabla_obj_1['name'].capitalize(),
+                        'primaryKey': tabla_obj_1['columns'][numero_columnaOnetOne]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_1['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    })
 
             elif tipo_relacion == 'One to Many':
                 # Para One to Many, agregamos una lista en la segunda tabla (la que tiene "Many")
@@ -904,8 +1017,29 @@ class PaginaTres(CTkFrame):
                     'primaryKey': ' ',
                     'tableName': tabla_1
                 }
-                tabla_obj_2['columns'].append(nueva_lista_2)
 
+                if "columnasDao" not in tabla_obj_2:
+                    tabla_obj_2['columnasDao'] = tabla_obj_2['columns'].copy()
+
+                if "originalCol" not in tabla_obj_2:
+                    tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+
+                    for col in tabla_obj_2['originalCol']:
+                        if col['primaryKey'] == 'R':
+                            tabla_obj_2['originalCol'].remove(col)
+
+                    tabla_obj_2['columnasOriNoForeing'] =  tabla_obj_2['originalCol'].copy()
+                
+                alreadyTab2 = False
+                for sameNameCol2 in tabla_obj_2['columns']:
+                    if sameNameCol2['name'] == nueva_lista_2['name']:
+                        tabla_obj_2['columns'].remove(sameNameCol2)
+                        tabla_obj_2['columns'].append(nueva_lista_2)
+                        alreadyTab2 = True
+                        break
+
+                if not alreadyTab2:
+                    tabla_obj_2['columns'].append(nueva_lista_2)
                 #Extraer primary key del padre
                 numero_columna = 0
                 for index, columns in enumerate(tabla_obj_2['columns']):
@@ -913,21 +1047,65 @@ class PaginaTres(CTkFrame):
                     if columns['primaryKey']  == 'P':
                         numero_columna = index
                         break
-            
-                #Se pasan los datos necesarios para las plantillas del dao 
-                tabla_obj_1['dao'] =  {
-                        'entidadPadre': tabla_obj_2['name'].capitalize(), 
-                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
-                        'columns' : tabla_obj_2['columns']
-                        
-                    }
                 
-                tabla_obj_2['dao'] =  None
+                
+                if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
+                    # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
+                    tabla_obj_1['dao'] = [{
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    }]
+                else:
+                    # Si `dao` ya está inicializado y es una lista, agrega el nuevo diccionario
+                    tabla_obj_1['dao'].append({
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    })
+
+                if 'rowMapper' not in tabla_obj_1 or tabla_obj_1['rowMapper'] is None:
+                    # Inicializa `dao` como una lista con el primer diccionario si no existe o es None
+                    tabla_obj_1['rowMapper'] = [{
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    }]
+                else:
+                    # Si `dao` ya está inicializado y es una lista, agrega el nuevo diccionario
+                    tabla_obj_1['rowMapper'].append({
+                        'entidadPadre': tabla_obj_2['name'].capitalize(),
+                        'primaryKey': tabla_obj_2['columns'][numero_columna]['name'].capitalize(),
+                        'entidadPadreCol': tabla_obj_2['originalCol'],
+                        'foreingkey': columna_1,
+                        'primaryPadre': columna_2
+                    })
+
+                
+                if "originalCol" not in tabla_obj_1:
+                    tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()
+                    
+                    for col in tabla_obj_1['originalCol']:
+                        if col['primaryKey'] == 'R':
+                            tabla_obj_1['originalCol'].remove(col)
+
+                    tabla_obj_1['columnasOriNoForeing'] =  tabla_obj_1['originalCol'].copy()
+
+                    
+                
+                if 'dao' not in tabla_obj_2 or tabla_obj_2['dao'] is None:
+                    tabla_obj_2['dao'] = None
 
                 # En la primera tabla, agregamos una referencia a la segunda tabla como entidad
                 nueva_columna_1 = {
                     'name': tName2,
-                    'type': tName2.capitalize(),
+                    'type': tName2,
                     'dataPrecision': None,
                     'datoImport': None,
                     'datoType': None,
@@ -935,7 +1113,35 @@ class PaginaTres(CTkFrame):
                     'primaryKey': ' ',
                     'tableName': tabla_2
                 }
-                tabla_obj_1['columns'].append(nueva_columna_1)
+
+                if "columnasDao" not in tabla_obj_1:
+                    tabla_obj_1['columnasDao'] = tabla_obj_1['columns'].copy()
+                    
+               
+                # for column in tabla_obj_1['columns']:
+                #     for coldaos in tabla_obj_1['dao']:
+                #         if column['name'] == coldaos['foreingkey']:
+                #             tabla_obj_1['columns'].remove(column)
+                #             if "columnasOriNoForeing" not in tabla_obj_1:
+                #                 tabla_obj_1['columnasOriNoForeing'] = tabla_obj_1['columns'].copy()
+                #             else:
+                #                 tabla_obj_1['columnasOriNoForeing'].remove(column)
+                
+                alreadyTab1 = False
+                for sameNameCol1 in tabla_obj_1['columns']:
+                    if sameNameCol1['name'] == nueva_columna_1['name']:
+                        tabla_obj_1['columns'].remove(sameNameCol1)
+                        tabla_obj_1['columns'].append(nueva_columna_1)
+                        alreadyTab1 = True
+                        break
+            
+                if not alreadyTab1:
+                    tabla_obj_1['columns'].append(nueva_columna_1)
+                if 'controller' not in tabla_obj_1 or tabla_obj_1['controller'] is None:
+                    tabla_obj_1['controller'] = None
+
+                if 'controller' not in tabla_obj_2 or tabla_obj_2['controller'] is None:
+                    tabla_obj_2['controller'] = None
 
             elif tipo_relacion == 'Many to Many':
                 # Para Many to Many, agregamos una lista en ambas tablas
@@ -961,6 +1167,14 @@ class PaginaTres(CTkFrame):
                     'primaryKey': ' ',
                     'tableName': tabla_1
                 }
+
+                if "originalCol" not in tabla_obj_2:
+                    tabla_obj_2['originalCol'] = tabla_obj_2['columns'].copy()
+
+                if "originalCol" not in tabla_obj_1:
+                    tabla_obj_1['originalCol'] = tabla_obj_1['columns'].copy()    
+
+
                 tabla_obj_1['columns'].append(nueva_lista_1)
                 tabla_obj_2['columns'].append(nueva_lista_2)
                 
@@ -988,21 +1202,23 @@ class PaginaTres(CTkFrame):
                         'primaryKeyCol': [tabla_obj_1['columns'][numero_columna_tab1]],
                         'columns' : tabla_obj_1['columns'],
                         'colPrimaryRelacion': [tabla_obj_2['columns'][numero_columna_tab2]]
-    
-
                         
                     }
                 
                  #Se guardan los datos necesarios para modificar las plantillas del controler 
                 tabla_obj_2['controller'] =  {
-                        'entidadRelacion': tabla_obj_2['name'].capitalize(), 
+                        'entidadRelacion': tabla_obj_1['name'].capitalize(), 
                         'primaryKeyCol': [tabla_obj_2['columns'][numero_columna_tab2]],
                         'columns' : tabla_obj_2['columns'],
                         'colPrimaryRelacion': [tabla_obj_1['columns'][numero_columna_tab1]],
                         
                     }
-                tabla_obj_1['dao'] =  None
-                tabla_obj_2['dao'] =  None
+                
+                if 'dao' not in tabla_obj_1 or tabla_obj_1['dao'] is None:
+                    tabla_obj_1['dao'] = None
+
+                if 'dao' not in tabla_obj_2 or tabla_obj_2['dao'] is None:
+                    tabla_obj_2['dao'] = None
 
         return tablas_seleccionadas
 
@@ -1060,22 +1276,27 @@ class VentanaPrincipal(CTk):
         self.mostrar_pagina(PaginaUno, main_menu)
 
     def update_progress(self,value):
-        self.progressbar.set(value)
-        self.loading_frame.update_idletasks()
-        self.update()
+        if self.progressbar.winfo_exists():
+            self.progressbar.set(value)
+            valor = value*100
+            if(valor > 100):
+                valor = 100
+            self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
+            self.loading_frame.update_idletasks()
+            self.update()
     
     def mostrarSpinner(self,caso):
         # Crear y configurar el Frame de carga
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        l.place(relx=0.5, rely=0.5, anchor='center')
+        self.percentage_label = CTkLabel(self.loading_frame, text="Cargando... 0%", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
+        self.percentage_label.place(relx=0.5, rely=0.5, anchor='center')
         self.progress_var = tk.IntVar()
         self.progressbar = CTkProgressBar(self.loading_frame, variable=self.progress_var)
         self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
-      #  self.progressbar.start()
-        l.pack()
+
+        self.percentage_label.pack()
         self.update()
 
         if(caso == "avanzarPaso2"):
@@ -1134,28 +1355,32 @@ class VentanaPrincipal(CTk):
         
         self.tables = [] 
         columns = [] 
-        query = """select tb1.table_name, tb1.column_name,tb1.DATA_TYPE,tb1.NULLABLE,tb2.constraint_type, tb1.SYNONYM_NAME, tb1.DATA_PRECISION
-         FROM  
-            (SELECT ta.table_name,sy.SYNONYM_NAME, utc.COLUMN_NAME, utc.data_type,utc.nullable,utc.DATA_PRECISION
-             FROM user_tables ta
-             LEFT JOIN user_synonyms sy
-             ON ta.TABLE_NAME = sy.TABLE_NAME
-             INNER JOIN USER_TAB_COLUMNS utc
-             ON ta.TABLE_NAME = utc.TABLE_NAME 
-             order by sy.SYNONYM_NAME,ta.table_name,utc.column_name) tb1 
-        LEFT JOIN 
-            (select all_cons_columns.owner , all_cons_columns.table_name, all_cons_columns.column_name, all_constraints.constraint_type
-            from all_constraints, all_cons_columns 
-            where 
-                all_constraints.constraint_type = 'P' AND all_constraints.owner = :esquema
-                and all_constraints.constraint_name = all_cons_columns.constraint_name
-                and all_constraints.owner = all_cons_columns.owner 
-            order by all_cons_columns.owner,all_cons_columns.table_name) tb2
-        ON tb1.table_name = tb2.table_name AND tb1.column_name = tb2.column_name"""
+        query = """
+        SELECT tb1.table_name, tb1.column_name, tb1.DATA_TYPE, tb1.NULLABLE,
+            CASE WHEN pk.constraint_type = 'P' THEN 'P' WHEN fk.constraint_type = 'R' THEN 'R' ELSE NULL END AS constraint_type,
+            tb1.SYNONYM_NAME, tb1.DATA_PRECISION
+        FROM (SELECT ta.table_name, sy.SYNONYM_NAME, utc.COLUMN_NAME, utc.data_type, utc.nullable, utc.DATA_PRECISION
+            FROM user_tables ta
+            LEFT JOIN user_synonyms sy ON ta.TABLE_NAME = sy.TABLE_NAME
+            INNER JOIN USER_TAB_COLUMNS utc ON ta.TABLE_NAME = utc.TABLE_NAME
+            ORDER BY sy.SYNONYM_NAME, ta.table_name, utc.column_name) tb1
+        LEFT JOIN (SELECT acc.table_name, acc.column_name, ac.constraint_type
+                FROM all_constraints ac
+                INNER JOIN all_cons_columns acc ON ac.constraint_name = acc.constraint_name AND ac.owner = acc.owner
+                WHERE ac.constraint_type = 'P' AND ac.owner = :esquema) pk
+                ON tb1.table_name = pk.table_name AND tb1.column_name = pk.column_name
+        LEFT JOIN (SELECT acc.table_name, acc.column_name, ac.constraint_type
+                FROM all_constraints ac
+                INNER JOIN all_cons_columns acc ON ac.constraint_name = acc.constraint_name AND ac.owner = acc.owner
+                WHERE ac.constraint_type = 'R' AND ac.owner = :esquema) fk
+                ON tb1.table_name = fk.table_name AND tb1.column_name = fk.column_name
+        ORDER BY tb1.SYNONYM_NAME, tb1.table_name, tb1.column_name
+        """
+
         
 
 
-        self.update_progress(0.1)
+        self.update_progress(0.01)
         oracledb.init_oracle_client(lib_dir=d)
         try:
             if(sid == ''):
@@ -1179,6 +1404,12 @@ class VentanaPrincipal(CTk):
                 tableName = ''
                 cont = 0
                 contPrimaryKey = 0
+                # Calcular el número total de tablas
+                total_rows = len(rows)
+                progress_start = 0.01
+                progress_end = 0.2
+                progress_increment = (progress_end - progress_start) / total_rows
+                current_progress = progress_start
 
                 for row in rows:
                     cont = cont + 1
@@ -1205,7 +1436,9 @@ class VentanaPrincipal(CTk):
                     
                     if cont == len(rows) and contPrimaryKey < len(columns): #si es la última se mete a la tabla
                         self.tables.append(Table(tableName,columns))   
-                    tableName = tableNameBBDD   
+                    tableName = tableNameBBDD  
+                    self.update_progress(current_progress)
+                    current_progress += progress_increment 
 
         if(len(self.tables) == 0): 
            self.pagina_actual.configuration_warning.configure(text="Ninguna tabla encontrada en esta BBDD")
@@ -1270,8 +1503,21 @@ class VentanaPrincipal(CTk):
         if len(tabla_resultados) > 1:
             relaciones_encontradas, tablas_seleccionadas = self.comprobar_relaciones(self.tables_original, tabla_resultados) 
             tablas_seleccionadas_modificadas = self.agregar_relaciones_a_tablas(tablas_seleccionadas, relaciones_encontradas )
+            for tablas_modificadas in tablas_seleccionadas_modificadas:
+                try:
+                    if tablas_modificadas["dao"] is not None:
+                        None
+                    if tablas_modificadas["controller"] is not None:
+                        None
+
+                except KeyError:
+                    tablas_modificadas["dao"] = None
+                    tablas_modificadas["controller"] = None
+
         else:    
             tablas_seleccionadas_modificadas = tabla_resultados
+            tablas_seleccionadas_modificadas[0]["dao"] = None
+            tablas_seleccionadas_modificadas[0]["controller"] = None
 
 
         p2.initPaso2(tablas_seleccionadas_modificadas, self.getDatos(rutaActual,archivoClases,archivoWar),self)

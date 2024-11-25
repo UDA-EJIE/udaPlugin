@@ -12,10 +12,13 @@ import logging
 from customtkinter import *
 from plugin.utils import writeConfig
 from plugin.utils import obtenerNombreProyectoByEar
+import numpy as np
+from plugin.utils import contains
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
     # work only controller
+    ventanaPaso2.master.update_progress(0.2)
     data = {}
     proyectName = yaml_data["project_name"]
     proyectWar = yaml_data["war_project_name"]
@@ -58,37 +61,108 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         os.makedirs(destinoEarModel)            
     data["packageName"] = "com.ejie."+proyectName  
     lastTable = False
-
+    total_pasos = len(tables) + 1
+    pasos_por_parte = total_pasos # 8
     for x, table in enumerate(tables):
         #añadir funciones
         columnsDates = getColumnsDates(table["columns"])
-        colControllerPk= getColumnsDates(table["controller"]['primaryKeyCol'])
-        colControllerAll = getColumnsDates(table["controller"]['columns'])
-        colControllerPkRel = getColumnsDates(table["controller"]['colPrimaryRelacion'])
-        data["colControllerPk"] = colControllerPk
-        data["colControllerAll"] = colControllerAll
-        data["colControllerPkRel"] = colControllerPkRel
-        data["entidadRelacion"] = table["controller"]["entidadRelacion"]
+        #columnDao = getColumnsDates(table["columnasDao"])
+        if not table["controller"] is None:
+            colControllerPk= getColumnsDates(table["controller"]['primaryKeyCol'])
+            colControllerAll = table["controller"]['columns']
+            colControllerPkRel = getColumnsDates(table["controller"]['colPrimaryRelacion'])
+            data["colControllerPk"] = colControllerPk
+            data["colControllerAll"] = colControllerAll
+            data["colControllerPkRel"] = colControllerPkRel
+            data["entidadRelacion"] = table["controller"]["entidadRelacion"]
+            data["controller"] = "value"
+        else:
+           data["controller"] = None
         data["listPks"] = columnsDates[1]  
         columnas = columnsDates[0]
         allColumns = columnsDates[1] + [x for x in columnas if x['primaryKey'] != 'P']
         data["columnsDates"] = columnsDates[0]
+        data["entidadesRelacionadas"] = columnsDates[2]
         data["allColumns"] = allColumns
         tNameOriginal = table["name"]
         tName = snakeToCamel(tNameOriginal) 
         data["tableNameOriginal"] = tNameOriginal
         data["tableName"] = tName[0].capitalize() + tName[1:] 
-        data["tableNameDecapitalize"] = tName
+        data["tableNameDecapitalize"] = snakeToCamel(tName)
+        rowMapper_list = []
+        if 'rowMapper' in table and table['rowMapper'] is not None:
+            # Recorre cada elemento en `table["dao"]`
+            for rowMapper in table['rowMapper']:
+                row = getColumnsDates(rowMapper['entidadPadreCol'])
+                
+                dataRowMapper = {
+                    "entidadPadre": toCamelCase(rowMapper['entidadPadre']),
+                    "primaryKeyPadre": toCamelCase(rowMapper['primaryKey']),
+                    "padreOriginalCol": row[1] + [x for x in row[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'],
+                    "tableFKey": rowMapper["foreingkey"],
+                    "primaryKPadre": rowMapper["primaryPadre"]
+                }
+                
+                # Agrega el diccionario `data` a la lista `data_list`
+                rowMapper_list.append(dataRowMapper)
+        if 'dao' in table and table['dao'] is not None:
+            dao_list = []
+
+            # Recorre cada elemento en `table["dao"]`
+            for daoEntity in table['dao']:
+                dataDaos = {
+                    "entidadPadre": toCamelCase(daoEntity['entidadPadre']),
+                    "primaryKeyPadre": toCamelCase(daoEntity['primaryKey']),
+                    "padreOriginalCol": getColumnsDates(daoEntity['entidadPadreCol'])[0],
+                    "tableFKey": daoEntity["foreingkey"],
+                    "primaryKPadre": daoEntity["primaryPadre"]
+                }
+                
+                # Agrega el diccionario `data` a la lista `data_list`
+                dao_list.append(dataDaos)
+            data["rowMapper"] = rowMapper_list
+
+            data["entidadesRelacionadasDaos"] = dao_list
         if not table["dao"] is None:
-            data["entidadPadre"] = table["dao"]['entidadPadre']
-            data["primaryKeyPadre"] = table["dao"]['primaryKey']
-            data["columnasDaos"] = table["dao"]['columns']
+            columnDaos =  getColumnsDates(table["columnasDao"])
+            data["columnasDaos"] = columnDaos[1] + [x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] + columnDaos[3]
+            data["foreingKDaos"] = columnDaos[3]
+            columnsNoForeing = getColumnsDates(table["columnasOriNoForeing"])
+            colForeing = columnsNoForeing[0]
+            data["columOriNoForeing"]  =    columnsNoForeing[1] + [x for x in colForeing if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST']
+            data["dao"] = "value"
+        else:
+            data["dao"] = None
+            data["entidadPadre"] = None
+            # Asumiendo que table["columnasDao"] y columnsDates están definidos y contienen datos válidos
+            if "columnasDao" in table:
+                columnDaos = getColumnsDates(table["columnasDao"])
+                
+                # Definimos los valores en 'data' basándonos en 'columnDaos'
+                data["columnasDaos"] = (columnDaos[1] +[x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] +columnDaos[3])
+                data["foreingKDaos"] = columnDaos[3]
+                data["columOriNoForeing"] = (columnDaos[1] +[x for x in columnDaos[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST'])
+            else:
+                # Usamos 'columnsDates' si "columnasDao" no está en 'table'
+                data["columnasDaos"] = (columnsDates[1] +[x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R'] +columnsDates[3])
+                data["columOriNoForeing"] = (columnsDates[1] +[x for x in columnsDates[0] if x['primaryKey'] != 'P' and x['primaryKey'] != 'R' and x['type'] != 'LIST'])
+                
+                # Verificación adicional de 'controller' en 'table' dentro del else
+                if table["controller"] is not None: 
+                    data["constructorEntidad"] = False
+                    data["columnasDaos"] = table.get("originalCol", [])
+                                
+        if "columns" in table and "originalCol" in table:
+            data["constructorEntidad"] = np.array_equal(table["columns"], table["originalCol"])
+        else:
+            data["constructorEntidad"] = True                  
         #Fecha creación controllers
         now = datetime.now()        
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')    
-        print("Inicio paso 2")
+        print("Inicio paso 2 :: Tabla "+str(x+1)+"/"+str(len(tables))+" -> " + data["tableName"])
         generoEar = False
         #controller java 
+        
         if(ventanaPaso2.controladores_var.get()):            
             logging.info("Inicio: crear controllers...")
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
@@ -131,7 +205,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')  
         #Models java 
         if(ventanaPaso2.modelo_datos_var.get()):
-            logging.info("Inicio: crear models...")
+            logging.info("Inicio: crear mcolumOriNoForeingodels...")
             with Worker(src_path=dirModel, dst_path=destinoEarModel, data=data, exclude=["*model*"],overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
@@ -148,10 +222,16 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                     rutaJackson = destinoWarViews+"jackson-config.xml"    
                     if os.path.isfile(rutaJackson) == True:    
                         modifyJackson(rutaJackson,data["tableName"],lastTable,data["packageName"])  
-                generoEar = True                     
+                generoEar = True   
+         
+        porcentaje = (x+1) / total_pasos
+        if(porcentaje < 0.2): 
+            porcentaje = 0.2 
+        ventanaPaso2.master.update_progress(porcentaje)                          
     if(generoEar):
         writeConfig("RUTA", {"ruta_classes":destinoSrc})
         writeConfig("RUTA", {"ruta_ultimo_proyecto":destinoSrc})
+    ventanaPaso2.master.update_progress(1.0)    
     print("Fin paso 2") 
     logging.info("Final: paso 2 creado") 
     print("Final: paso 2 creado ::: "+data["date"],file=sys.stderr)  

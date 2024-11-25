@@ -42,7 +42,6 @@ a = Analysis(
         ('templates/proyecto/{{project_name}}EAR/', 'templates/proyecto/{{project_name}}EAR'),
         ('templates/proyecto/{{project_name}}EARClasses/', 'templates/proyecto/{{project_name}}EARClasses'),
         ('templates/proyecto/{{project_name}}Statics/', 'templates/proyecto/{{project_name}}Statics'),
-        ('templates/proyecto/{{project_name}}{{ejb_project_name}}EJB/', 'templates/proyecto/{{project_name}}{{ejb_project_name}}EJB'),
         ('templates/proyecto/{{project_name}}{{war_project_name}}War/', 'templates/proyecto/{{project_name}}{{war_project_name}}War'),
 		('templates/proyectoPaso4/{{project_name}}{{war_project_name}}War/', 'templates/proyectoPaso4/{{project_name}}{{war_project_name}}War'),
 		('templates/proyectoPaso5/{{project_name}}{{ejb_project_name}}EJB/', 'templates/proyectoPaso5/{{project_name}}{{ejb_project_name}}EJB'),
