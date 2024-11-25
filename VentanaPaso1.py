@@ -10,15 +10,51 @@ import menuPrincipal as m
 import customtkinter as ctk
 from datetime import datetime
 import threading
-
+import subprocess
+import shutil
+import re
 
 self = CTk()
 
 base_path = os.path.dirname(os.path.abspath(__file__))
+logsPath = os.path.join(base_path, 'logs\\log.log')
+
+ansi_escape = re.compile(r'\x1b\[[0-9;]*[A-Za-z]')
+class CustomStderr:
+    
+    def __init__(self, func,  master):
+        self.func = func
+        self.log_file = open(logsPath, 'a')
+        self.cont = 0
+        self.total_pasos = 1858 #actualizar con los templates para que sea exacto
+        self.pasos_por_parte = 10 # 10
+        self.master = master
+
+    def write(self, message):
+        if message.strip() != '' and len(ansi_escape.findall(message)) == 0:  # Evitar imprimir líneas vacías
+            if not message.endswith('\n'):
+              message += '\n'
+            self.func(message)
+            self.log_file.write(message) 
+            self.cont = self.cont + 1 
+            if self.cont % self.pasos_por_parte == 0:  
+                porcentaje = (self.cont / self.total_pasos)  
+                self.master.update_progress(porcentaje)     
+
+    def flush(self):
+        self.log_file.flush()
+        pass  # No se necesita hacer nada especial para flush en este caso
+        
+
+stderr_lambda = lambda message: print(message)
 
 
 class Paso1(CTk):
     def __init__(self, main_menu):
+
+        self.cont = 0
+        sys.stderr = CustomStderr(stderr_lambda,self)        
+        #paso 1 se muestra los logs en 2 sitios
         super().__init__()
 
         self.title("Crear nueva aplicación")
@@ -125,7 +161,15 @@ class Paso1(CTk):
         cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
-
+    def update_progress(self,value):
+        if self.progressbar.winfo_exists():
+            self.progressbar.set(value)
+            valor = value*100
+            if(valor > 100):
+                valor = 100
+            self.percentage_label.configure(text=f"Cargando... {int(valor)}%")
+            self.loading_frame.update_idletasks()
+            self.update()
 
     def cancelar(self):
         # Cancela todos los eventos pendientes
@@ -136,7 +180,7 @@ class Paso1(CTk):
     def cerrar(self):
         # Cancela todos los eventos pendientes
         self.withdraw()
-        self.quit()
+        sys.exit(0)
 
 
 
@@ -187,9 +231,9 @@ class Paso1(CTk):
             "war_project_name": self.entry_war.get()
         }
         if self.security_yes_radio._check_state:
-            yaml_data["xlnets"] = TRUE
+            yaml_data["xlnets"] = True
         else:
-            yaml_data["xlnets"] = FALSE     
+            yaml_data["xlnets"] = False     
 
         rutaPath = utl.rutaActual(__file__)
         directorio_actual = rutaPath + "\\templates\\proyecto"
@@ -208,6 +252,7 @@ class Paso1(CTk):
                 if lang_option == "Francés":
                     availableLangs = availableLangs + " ,fr"   
         filesExcludes.append("*EJB") 
+        filesExcludes.append("*gitkeep")
         defaultLanguage = self.default_language_combobox.get() 
         
         if  defaultLanguage == "Castellano":      
@@ -236,7 +281,7 @@ class Paso1(CTk):
             #guardar ultima ruta creada
             utl.writeConfig(
                 "RUTA", {"ruta_classes":destinoPath,"ruta_war":destinoPath,"ruta_ultimo_proyecto":destinoPath})
-        #self.ocultarSpinner()
+           
         self.close_loading_frame()
         print('Fin: proyecto Creado: ' + yaml_data["project_name"]+yaml_data["war_project_name"])
         fin = datetime.now()
@@ -248,7 +293,22 @@ class Paso1(CTk):
     
         self.ventana_final_popup()
         
-
+    def ejecutarBuild(self,fichBuild):
+        if os.path.exists(fichBuild):
+            print(f"El archivo {fichBuild} existe, ejecutando tarea maven...")  
+            if shutil.which("mvn") is not None:
+                print("El comando maven está disponible.")
+            else:
+                print("El comando de maven(mvn), no está en el PATH o no está instalado." )     
+            try:
+                result = subprocess.run(["mvn", "-s", fichBuild, "compile"], check=True)
+                print("Salida estándar:", result.stdout)  # Salida de mvn
+                print("Error estándar:", result.stderr)   # Cualquier error generado por mvn
+            except subprocess.CalledProcessError as e:
+                print(f"Error al ejecutar Maven: {e.stderr}")
+            except Exception as e:
+                # Captura cualquier otro error no específico
+                print(f"Error inesperado: {str(e)}")    
             
     def close_loading_frame(self):
         if self.loading_frame:
@@ -312,13 +372,13 @@ class Paso1(CTk):
         self.loading_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         self.loading_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        l = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
-        l.place(relx=0.5, rely=0.5, anchor='center')
+        self.percentage_label = CTkLabel(self.loading_frame, text="Cargando...", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 50, "bold"))
+        self.percentage_label.place(relx=0.5, rely=0.5, anchor='center')
         
-        progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
-        progressbar.place(relx=0.5, rely=0.5, anchor='center')
-        progressbar.start()
-        l.pack()
+        self.progressbar = CTkProgressBar(self.loading_frame, orientation="horizontal")
+        self.progressbar.place(relx=0.5, rely=0.5, anchor='center')
+        #self.progressbar.start()
+        self.percentage_label.pack()
         self.update()
 
         # Iniciar el proceso en segundo plano
@@ -342,8 +402,11 @@ class Paso1(CTk):
         entry_location_value = self.entry_location.get()
 
         # Destruir todos los widgets hijos del frame actual
-        for widget in self.winfo_children():
-            widget.destroy()
+        try:
+            for widget in self.winfo_children():
+                widget.grid_forget()
+        except Exception as e:
+            logging.error('An exception occurred: destroy widget:')   
 
         # Crear un nuevo frame que ocupe toda la ventana
         frame_final = CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
