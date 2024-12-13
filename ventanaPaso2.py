@@ -222,7 +222,7 @@ class PaginaDos(CTkFrame):
     def populate_scrollable_frame(self, frame, tables_original):
         self.var_list = []
         total_pasos = len(tables_original) + 1
-        pasos_por_parte = total_pasos // 8
+        pasos_por_parte = max(total_pasos // 8, 1)
 
         # Campo de entrada para autocompletado en la parte superior
         
