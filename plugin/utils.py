@@ -197,7 +197,7 @@ def modifyTiles(ruta,entityName, final):
     except Exception as e:
         logging.error('An exception occurred: modifyTiles:') 
 
-def modifyJackson(ruta,entityName, final, packageName):
+def modifyJacksonxml(ruta,entityName, final, packageName):
     try:
         packageName = packageName + ".model."+entityName
         tree = etree.parse(ruta)
@@ -225,6 +225,57 @@ def modifyJackson(ruta,entityName, final, packageName):
             tree.write(ruta, encoding='utf-8', xml_declaration=True)    
     except Exception as e:
         logging.error('An exception occurred: modifyJackson:')    
+
+def modifyJackson(ruta,entityName, packageName):
+    try:
+        file_path = ruta
+
+        # Clase a agregar
+        new_class_name = packageName+".model."+entityName
+
+        # Línea que se añadirá
+        class_import = f"import {new_class_name};"
+        new_line = f"serializers.put({new_class_name.split('.')[-1]}.class, customSerializer());"
+
+        # Leer contenido del archivo existente
+        with open(file_path, "r") as file:
+            content = file.readlines()
+
+               # Verificar si el import ya existe
+        if class_import not in content:
+            # Encontrar el lugar para insertar el import
+            last_import_index = -1
+            for i, line in enumerate(content):
+                if line.startswith("import "):
+                    last_import_index = i
+            
+            # Insertar el import después del último import existente
+            if last_import_index != -1:
+                content.insert(last_import_index + 1, f"{class_import}\n")     
+
+        # Verificar si la línea ya existe
+        if any(new_line in line for line in content):
+            print(f"La línea ya está presente en el archivo: {new_line}")
+            return  # Salir de la función si la línea ya existe    
+
+        indent = "    "  # Nivel de tabulación para la nueva línea
+        # Encontrar el lugar adecuado para insertar la nueva línea
+        insert_after = "Map<Class<? extends Object>,"  # Busca este marcador en el archivo
+        for i, line in enumerate(content):
+            if insert_after in line:
+                # Inserta la nueva línea después del marcador
+                content.insert(i + 1, f"\n")  # Salto de línea
+                content.insert(i + 2, f"    {indent}{new_line}\n")
+                break
+
+        # Escribir el archivo actualizado
+        with open(file_path, "w") as file:
+            file.writelines(content)
+
+        print(f"Línea añadida al archivo: {new_line}")
+    
+    except Exception as e:
+        logging.error('An exception occurred: modifyJackson:') 
 
 def modifyMenu(ruta,tableRequestMapping,entityName, final):
  try:
