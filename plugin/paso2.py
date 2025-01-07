@@ -60,7 +60,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
     if ventanaPaso2.modelo_datos_var.get() and os.path.isdir(destinoEarModel) == False:
         os.makedirs(destinoEarModel)            
     data["packageName"] = "com.ejie."+proyectName  
-    lastTable = False
+
     total_pasos = len(tables) + 1
     pasos_por_parte = total_pasos # 8
     for x, table in enumerate(tables):
@@ -212,16 +212,15 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                 worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
                 worker.template.version = ": 1.0 Paso 2 modelos ::: "+data["date"]
                 worker.run_copy()
-                if(x == len(tables) - 1):
-                    lastTable = True
+
                 #Obtener war desde el Ear seleccionado
                 rutaClasses = destinoSrc + "/" + ventanaPaso2.archivoClases.replace("Classes","") 
                 nombreWar = obtenerNombreProyectoByEar(rutaClasses)
                 if nombreWar != '':
-                    destinoWarViews = destinoSrc+"/"+nombreWar+"/WebContent/WEB-INF/spring/"
-                    rutaJackson = destinoWarViews+"jackson-config.xml"    
+                    destinoWarViews = destinoSrc+"/"+nombreWar+"/src/com/ejie/"+proyectName+"/config/"
+                    rutaJackson = destinoWarViews+"jacksonConfig.java"    
                     if os.path.isfile(rutaJackson) == True:    
-                        modifyJackson(rutaJackson,data["tableName"],lastTable,data["packageName"])  
+                        modifyJackson(rutaJackson,data["tableName"],data["packageName"])  
                 generoEar = True   
          
         porcentaje = (x+1) / total_pasos
