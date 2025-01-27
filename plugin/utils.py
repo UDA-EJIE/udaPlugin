@@ -316,8 +316,8 @@ def writeConfig(section,key):
     
         with open(configfile_name, 'w') as configfile:
             config.write(configfile)
-    except ValueError:
-        print("An exception occurred al escribir el config: " + ValueError)
+    except Exception:
+        print("An exception occurred al escribir el config: " + Exception)
 
 #escriba las propiedades en un archivo properties
 def writeProperties(path,nameFile,section,key):
@@ -348,8 +348,8 @@ def writeProperties(path,nameFile,section,key):
     
         with open(configfile_name, 'w') as configfile:
             config.write(configfile)
-    except ValueError:
-        print("An exception occurred al escribir el config: " + ValueError)
+    except Exception:
+        print("An exception occurred al escribir el config: " + Exception)
 
 def readConfig(valor,key):
 
@@ -390,15 +390,16 @@ def obtenerNombreProyecto(ruta,nombreWar):
         tree = etree.parse(ruta+"/.classpath")
         root = tree.getroot()
         diag = root.xpath(".//classpathentry[contains(@path, '%s')]" % "EARClasses")
-        path = diag[0].attrib["path"]
-        path = path.replace("/","")
-        path = path.replace("EARClassesbuildclasses","")
-        nombreWar = nombreWar.replace("War","")
-        nombreWar = nombreWar.replace(path,"")
-        return nombreWar
-    except ValueError:
-        print("An exception occurred: obtenerNombreProyecto: ", ValueError)
-    return path
+        if len(diag) > 0:
+            path = diag[0].attrib["path"]
+            path = path.replace("/","")
+            path = path.replace("EARClassesbuildclasses","")
+            nombreWar = nombreWar.replace("War","")
+            nombreWar = nombreWar.replace(path,"")
+            return nombreWar
+    except Exception:
+        print("An exception occurred: obtenerNombreProyecto: ", Exception)
+    return obtenerNombreProyectoWar(ruta)
 
 def obtenerNombreProyectoWar(ruta):
     path = ""
@@ -420,8 +421,8 @@ def obtenerNombreProyectoByEar(ruta):
         diag = root.find(".//{http://java.sun.com/xml/ns/javaee}context-root")
         nombreWar = diag.text
         return nombreWar
-    except ValueError:
-        print("An exception occurred: obtenerNombreProyecto: ", ValueError)
+    except Exception:
+        print("An exception occurred: obtenerNombreProyecto: ", Exception)
     return path
 
 def buscarPropiedadInXml(ruta,prop,valor):
