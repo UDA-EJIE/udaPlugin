@@ -471,3 +471,9 @@ def run_plumbum_git():
     git = local[git_path]  # Usar la ruta completa de Git embebido
     result = git("--version")
     print(result)
+
+def get_index(value, index):
+    return value[index] if len(value) > index else ""
+
+def is_upper(value):
+    return value.isupper() if value else False

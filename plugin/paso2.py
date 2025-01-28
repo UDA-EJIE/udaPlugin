@@ -14,6 +14,8 @@ from plugin.utils import writeConfig
 from plugin.utils import obtenerNombreProyectoByEar
 import numpy as np
 from plugin.utils import contains
+from plugin.utils import get_index
+from plugin.utils import is_upper
 
 #INICIO función principal
 def initPaso2(tables,yaml_data,ventanaPaso2):
@@ -81,6 +83,10 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         data["listPks"] = columnsDates[1]  
         columnas = columnsDates[0]
         allColumns = columnsDates[1] + [x for x in columnas if x['primaryKey'] != 'P']
+        needs_json_property = any(
+            snakeToCamel(col['name'])[1:2].isupper() for col in allColumns
+        )
+        data["needs_json_property"] = needs_json_property
         data["columnsDates"] = columnsDates[0]
         data["entidadesRelacionadas"] = columnsDates[2]
         data["allColumns"] = allColumns
@@ -210,6 +216,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
                 worker.jinja_env.filters["toRestUrlNaming"] = toRestUrlNaming
+                worker.jinja_env.filters['get_index'] = get_index
+                worker.jinja_env.filters['is_upper'] = is_upper
                 worker.template.version = ": 1.0 Paso 2 modelos ::: "+data["date"]
                 worker.run_copy()
 
