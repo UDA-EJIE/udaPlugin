@@ -52,6 +52,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
      destinoWar = destinoWar.replace("\\"+ventanaPaso2.archivoWar,"")
      destinoSrcWar = destinoWar.replace("/"+ventanaPaso2.archivoWar,"") 
 
+    data["typeTemplate"]  =  ventanaPaso2.plantillar_var.get()
+
     # si no existe crear la carpeta, raiz control - config java
     if ventanaPaso2.controladores_var.get() and os.path.isdir(destinoWarControl) == False:
         os.makedirs(destinoWarControl)
