@@ -143,7 +143,7 @@ class Paso1(CTk):
 
         self.default_language_combobox = self.update_default_language_options()
         security_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        security_frame.grid(row=8, column=0, columnspan=2, pady=(30, 20), padx=20, sticky="ew")
+        security_frame.grid(row=8, column=0, columnspan=2, pady=(5, 10), padx=20, sticky="ew")
 
         # Crear un widget Label encima del borde del marco
         labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNetS", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
@@ -155,6 +155,19 @@ class Paso1(CTk):
         security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
         security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
+        # Plantillas Tiles o Thymeleaf
+        plantillar_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
+        plantillar_frame.grid(row=9, column=0, columnspan=2, pady=(20, 5), padx=20, sticky="ew")
+        labelPlantillarFrame = CTkLabel(self, text="Plantillar con Tiles o Thymeleaf", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        labelPlantillarFrame.place(in_=plantillar_frame, anchor="sw" )
+
+        self.plantillar_var = tk.StringVar(value="tiles")
+        self.plantillar_yes_radio = CTkRadioButton(plantillar_frame, text="Tiles", value="tiles", variable=self.plantillar_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
+        self.plantillar_yes_radio.grid(row=0, column=0, padx=(20, 0), pady=(20, 10), sticky="nsew")
+        plantillar_no_radio = CTkRadioButton(plantillar_frame, text="Thymeleaf", value="thymeleaf", variable=self.plantillar_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
+        plantillar_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
+
+        # botones terminar y cancelar
         finish_button = CTkButton(self, text="Terminar", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
         finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
 
@@ -270,6 +283,17 @@ class Paso1(CTk):
         destinoPath = self.entry_location.get()
         if(destinoPath == ''):
             destinoPath = rutaPath
+
+        if self.plantillar_var.get() == "tiles":
+            filesExcludes.append("*.html")
+            filesExcludes.append("HomeController.java")
+            filesExcludes.append("MvcConfig.java")
+            filesExcludes.append("GlobalModelAttributes.java")
+        elif self.plantillar_var.get() == "thymeleaf": 
+            filesExcludes.append("*.jsp")
+            filesExcludes.append("tiles.xml")
+        yaml_data["typeTemplate"]  =  self.plantillar_var.get()
+
         now = datetime.now()
         dates = now.strftime('%d-%b-%Y %H:%M:%S') 
         print('Inicio: proyecto Creando... ' + yaml_data["project_name"]+yaml_data["war_project_name"])    
