@@ -711,6 +711,30 @@ class VentanaPaso3(CTkFrame):
         self.orden_nombre_combobox = CTkComboBox(right_container, fg_color='#84bfc4', text_color="black", state="readonly", font=("Arial", 10, "bold"))
         self.orden_nombre_combobox.grid(row=4, column=1, sticky="we", padx=10, pady=10)
 
+                # Plantillas Tiles o Thymeleaf
+        labelPlantillarFrame = CTkLabel(right_container, text="Plantillar con Tiles o Thymeleaf", 
+                                        bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", 
+                                        font=("Arial", 12, "bold"))
+        labelPlantillarFrame.grid(row=8, column=0, columnspan=2, pady=(10, 0), padx=10, sticky="w")  
+
+        plantillar_frame = CTkFrame(right_container, bg_color='#FFFFFF', fg_color='#FFFFFF', 
+                                    border_color='#84bfc4', border_width=3)
+        plantillar_frame.grid(row=9, column=0, columnspan=2, pady=(0, 5), padx=10, sticky="ew")
+
+        # Variable para los radio buttons
+        self.master.plantillar_var = tk.StringVar(value="tiles")
+
+        # Colocar los RadioButtons en la fila 0 dentro del Frame
+        self.plantillar_yes_radio = CTkRadioButton(plantillar_frame, text="Tiles", value="tiles", 
+                                                variable=self.master.plantillar_var, text_color="black", 
+                                                fg_color='#84bfc4', radiobutton_height=18, radiobutton_width=18)
+        self.plantillar_yes_radio.grid(row=0, column=0, padx=(20, 5), pady=(10, 10), sticky="w")
+
+        plantillar_no_radio = CTkRadioButton(plantillar_frame, text="Thymeleaf", value="thymeleaf", 
+                                            variable=self.master.plantillar_var, text_color="black", 
+                                            fg_color='#84bfc4', radiobutton_height=18, radiobutton_width=18)
+        plantillar_no_radio.grid(row=0, column=1, padx=5, pady=(10, 10), sticky="w")
+
         # Asegurarse de que el índice predeterminado se maneja desde el inicio
         self.actualizar_indice(tables[indexSeleccionado].name, tables[indexSeleccionado])
 

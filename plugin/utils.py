@@ -299,7 +299,26 @@ def modifyMenu(ruta,tableRequestMapping,entityName, final):
                     logging.warning('Mantenimiento ya definido en el menu.jsp')
                 print (linea, end='')
  except Exception as e:
-    logging.error('An exception occurred: modifyMenu:')        
+    logging.error('An exception occurred: modifyMenu:')  
+
+def modifyMenuThymeleaf(ruta,tableRequestMapping,entityName, final):
+ try:
+    linea1 = "	<a class=\"dropdown-item\" th:href=\"@{/"+entityName+"/maint}\" th:text=\"#{"+entityName+"Maint}\"></a>"
+
+    encontrado = False
+    with fileinput.input(ruta, inplace=True) as f:
+        for linea in f:
+            if linea == "</div>": #ultima linea  
+                if not encontrado:
+                    print (linea1)
+                print (linea, end='')
+            else:   
+                if entityName+"/maint" in (linea):#encontrado
+                    encontrado = True
+                    logging.warning('Mantenimiento ya definido en el menu.jsp')
+                print (linea, end='')
+ except Exception as e:
+    logging.error('An exception occurred: modifyMenu:')         
 
 #section String padre, keyArray array de llaves
 def writeConfig(section,key):

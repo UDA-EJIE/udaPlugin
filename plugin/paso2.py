@@ -50,9 +50,7 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
      destinoWar = yaml_data["destinoWar"]
      destinoWar = destinoWar.replace("//"+ventanaPaso2.archivoWar,"")
      destinoWar = destinoWar.replace("\\"+ventanaPaso2.archivoWar,"")
-     destinoSrcWar = destinoWar.replace("/"+ventanaPaso2.archivoWar,"") 
-
-    data["typeTemplate"]  =  ventanaPaso2.plantillar_var.get()
+     destinoSrcWar = destinoWar.replace("/"+ventanaPaso2.archivoWar,"")     
 
     # si no existe crear la carpeta, raiz control - config java
     if ventanaPaso2.controladores_var.get() and os.path.isdir(destinoWarControl) == False:
@@ -171,7 +169,8 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
         generoEar = False
         #controller java 
         
-        if(ventanaPaso2.controladores_var.get()):            
+        if(ventanaPaso2.controladores_var.get()):   
+            data["typeTemplate"]  =  ventanaPaso2.plantillar_var.get()         
             logging.info("Inicio: crear controllers...")
             with Worker(src_path=dirController, dst_path=destinoWarControl, data=data, exclude=["Mvc*","*RelationsImpl"],overwrite=True) as worker:
              worker.jinja_env.filters["snakeToCamel"] = snakeToCamel

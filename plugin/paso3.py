@@ -7,6 +7,7 @@ from plugin.utils import snakeToCamel
 from plugin.utils import toCamelCase
 from plugin.utils import modifyTiles
 from plugin.utils import modifyMenu
+from plugin.utils import modifyMenuThymeleaf
 import operator
 import logging
 from customtkinter import *
@@ -95,14 +96,26 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal,ventanaPaso3
           if pks != "":
             pks = pks +";"
           pks = pks + snakeToCamel(pk["name"])
-        data["maint"]["primaryKey"] = pks     
+        data["maint"]["primaryKey"] = pks    
+
+        data["typeTemplate"]  =  ventanaPaso3.plantillar_var.get() 
+        filesExcludesJsp = []
+        filesExcludesIncluesJsp = []
+        filesExcludesJsp.append("*.js")
+        filesExcludesJsp.append("*includes")
+        if ventanaPaso3.plantillar_var.get() == "tiles":
+            filesExcludesJsp.append("*.html")
+            filesExcludesIncluesJsp.append("*.html")
+        elif ventanaPaso3.plantillar_var.get() == "thymeleaf": 
+            filesExcludesJsp.append("*.jsp")
+            filesExcludesIncluesJsp.append("*.jsp")
         
         logging.info("SRC MAINT Jsp:: " +dirMaintJsp)
         logging.info("DEST MAINT Jsp:: " +destinoWarViewsFinal)
         now = datetime.now()
         data["date"] = now.strftime('%d-%b-%Y %H:%M:%S')
         #Generando jsp MAINT 
-        with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=["*.js","includes"],overwrite=True) as worker:
+        with Worker(src_path=dirMaintJsp, dst_path=destinoWarViewsFinal, data=data, exclude=filesExcludesJsp,overwrite=True) as worker:
          worker.jinja_env.filters["toCamelCase"] = toCamelCase
          worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
          worker.template.version = ":  1.0 Paso 3 Jsps ::: "+data["date"]
@@ -110,7 +123,7 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal,ventanaPaso3
         ventanaPaso3.update_progress(0.4) 
         if data["maint"]["isMaint"]: 
             #Generando jsp Includes MAINT 
-            with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,overwrite=True) as worker:
+            with Worker(src_path=dirMaintJspIncludes, dst_path=destinoWarViewsFinalIncludes, data=data,exclude=filesExcludesIncluesJsp,overwrite=True) as worker:
                 worker.jinja_env.filters["toCamelCase"] = toCamelCase
                 worker.jinja_env.filters["snakeToCamel"] = snakeToCamel
                 worker.template.version = ": 1.0 Paso 3 Includes ::: "+data["date"]
@@ -124,8 +137,11 @@ def initPaso3(tables,yaml_data, data_mantenimiento, columnsOriginal,ventanaPaso3
          if(x == len(tables) - 1):
            lastTable = True
         ventanaPaso3.update_progress(0.6)   
-        modifyTiles(rutaTiles,alias,lastTable)
-        modifyMenu(rutaMenu, tableRequestMapping, alias, lastTable)
+        if ventanaPaso3.plantillar_var.get() == "tiles":
+          modifyTiles(rutaTiles,alias,lastTable)
+          modifyMenu(rutaMenu, tableRequestMapping, alias, lastTable)
+        else:
+          modifyMenuThymeleaf(rutaMenu, tableRequestMapping, alias, lastTable)
         destinoWar = destinoWar.replace(proyectWar+"War/","")
         ventanaPaso3.update_progress(0.8)
         writeConfig("RUTA", {"ruta_war":destinoWar})
