@@ -25,94 +25,141 @@ class PaginaUno(CTkFrame):
     def __init__(self, master, main_menu, tables=None, data_mantenimiento=None, indexSeleccionado=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
-         # Configura el contenedor principal para que las columnas se expandan
-        self.grid_columnconfigure(0, weight=1)  # Esto hace que la columna se expanda
-        self.grid_columnconfigure(1, weight=1) 
-        self.stop_event = threading.Event()
         self.main_menu = main_menu
 
-        configuration_frame = CTkFrame(self)
-        configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
-        configuration_frame.grid_columnconfigure(0, weight=1)
-        configuration_frame.grid_rowconfigure(0, weight=1)
+        # 3 Filas: 0=Barra negra, 1=Contenido, 2=Footer
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
 
+        # ============= FRAME SUPERIOR (NEGRO) =============
+        top_frame = ctk.CTkFrame(self, fg_color="#000000", bg_color="#000000")
+        top_frame.grid(row=0, column=0, columnspan=2, sticky="ew")  # Se expande horizontalmente
 
-        configuration_label = CTkLabel(configuration_frame,  text="Generar nuevo mantenimiento para una aplicación", font=("Arial", 14, "bold"))
-        configuration_label.grid(row=0, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
+        # Etiqueta principal y descripciones (en blanco sobre negro)
+        main_title = ctk.CTkLabel(top_frame, text="Generar nuevo mantenimiento para una aplicación",
+                                  font=("Arial", 14, "bold"),
+                                  fg_color="#000000", bg_color="#000000", text_color="#FFFFFF")
+        main_title.grid(row=0, column=0, columnspan=2, pady=(5,5), padx=20, sticky="w")
 
-        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=2, columnspan=3, pady=(20, 5), padx=10, sticky="w")
+        self.configuration_warning = ctk.CTkLabel(top_frame, text="", font=("Arial", 13, "bold"),
+                                                  text_color="red", fg_color="#000000", bg_color="#000000")
+        self.configuration_warning.grid(row=0, column=1, pady=(5,5), padx=(10,20), sticky="e")
 
-        description_label = CTkLabel(configuration_frame, text="Este Wizard genera un nuevo mantenimiento para una aplicación UDA")
-        description_label.grid(row=1, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
+        desc_label1 = ctk.CTkLabel(top_frame, text="Este Wizard genera un nuevo mantenimiento para una aplicación UDA",
+                                   fg_color="#000000", bg_color="#000000", text_color="#FFFFFF")
+        desc_label1.grid(row=1, column=0, columnspan=2, pady=(5,5), padx=20, sticky="w")
 
-        desc_label = CTkLabel(configuration_frame, text="Seleccione el WAR al que se quiere añadir el mantenimiento y configure una conexión a la base de datos")
-        desc_label.grid(row=2, column=0, columnspan=3, pady=(5, 5), padx=20, sticky="w")
+        desc_label2 = ctk.CTkLabel(top_frame, text="Seleccione el WAR al que se quiere añadir el mantenimiento y configure una conexión a la base de datos",
+                                   fg_color="#000000", bg_color="#000000", text_color="#FFFFFF")
+        desc_label2.grid(row=2, column=0, columnspan=2, pady=(5,5), padx=20, sticky="w")
 
-        war_frame = CTkFrame(configuration_frame, fg_color="#FFFFFF", border_color="#707070", border_width=3, height=2.5)
-        war_frame.grid(row=3, column=0, sticky="ew", columnspan=3)
-        war_frame.grid_columnconfigure(0, weight=1)
-        war_frame.grid_rowconfigure(0, weight=1, minsize=100)
+        # ============= FRAME DE CONTENIDO =============
+        content_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        content_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=20, pady=10)
+        content_frame.grid_columnconfigure(0, weight=0)
+        content_frame.grid_columnconfigure(1, weight=1)
 
-        # Crear un widget Label encima del borde del marco
-        labelSecurityFrame = CTkLabel(self, text="Selección del proyecto WAR", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        labelSecurityFrame.place(in_=war_frame, anchor="sw", x=10, y=35 )
-        # Entry y Botón de Buscar para Componentes de Negocio
+        # Frame para selección WAR (sin 'height', para que se ajuste al contenido)
+        war_frame = ctk.CTkFrame(content_frame, fg_color="#FFFFFF", bg_color="#FFFFFF", border_color="#707070", border_width=2  # borde más fino si quieres
+        )
+        war_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=0, pady=(0, 10))
+
+        # Configuramos filas/columnas
+        war_frame.grid_columnconfigure(0, weight=1)  # Columna 0 se expande
+        war_frame.grid_columnconfigure(1, weight=0)  # Para el botón
+
+        labelSecurityFrame = ctk.CTkLabel(war_frame, text="Selección del proyecto WAR",
+                                          bg_color="#FFFFFF", fg_color="#FFFFFF",
+                                          text_color="black", font=("Arial", 12, "bold"))
+        # Ajusta la posición en el interior del frame
+        labelSecurityFrame.place(in_=war_frame, anchor="sw", x=10, y=35)
+
+        # Lógica simulada para obtener la ruta del WAR
         rutaActual = utl.rutaActual(__file__)
         ruta_war = utl.readConfig("RUTA", "ruta_war")
-        if(ruta_war != None and ruta_war != ""):
-           rutaActual = ruta_war 
-        archivoWar = utl.buscarArchivo(rutaActual,"War") 
-        if(archivoWar != ''):
-           rutaActual = rutaActual+"/"+archivoWar
-           rutaActual = rutaActual.replace("///","\\")
-           rutaActual = rutaActual.replace("//","\\")
-           nombreProyecto = utl.obtenerNombreProyectoWar(rutaActual) 
-           self.master.nombreProyecto = nombreProyecto
-           self.master.archivoWar = rutaActual 
+        if ruta_war and ruta_war != "": rutaActual = ruta_war
+        archivoWar = utl.buscarArchivo(rutaActual, "War")
+        if archivoWar != '':
+            rutaActual = os.path.join(rutaActual, archivoWar).replace("///","\\").replace("//","\\")
+            nombreProyecto = utl.obtenerNombreProyectoWar(rutaActual)
+            self.master.nombreProyecto = nombreProyecto
+            self.master.archivoWar = rutaActual
         else:
-            rutaActual = ""  
-        self.war_entry = CTkEntry(war_frame, fg_color='#84bfc4', border_color='#84bfc4', height=2.5, width=600, text_color="black")
-        self.war_entry.grid(row=0, column=0 , padx=(220,60), pady=(30, 2), sticky="ew")
+            rutaActual = ""
+
+        # Etiqueta arriba, abarcando dos columnas (similar a un título del recuadro)
+        label_border = ctk.CTkLabel(
+            war_frame,
+            text="Selección del proyecto WAR",
+            bg_color="#FFFFFF",
+            fg_color="#FFFFFF",
+            text_color="black",
+            font=("Arial", 12, "bold")
+        )
+        label_border.grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(5, 5))
+
+        # Entrada en la siguiente fila, columna 0
+        self.war_entry = ctk.CTkEntry(war_frame, fg_color='#84bfc4', border_color='#84bfc4', height=2.5, text_color="black"
+        )
+        self.war_entry.grid(row=1, column=0, sticky="ew", padx=(10, 5), pady=(5, 5))
         self.war_entry.insert(0, rutaActual)
-        
+        # Botón “Buscar” en la misma fila, columna 1
+        buscar_button = ctk.CTkButton(war_frame, text="Buscar...",fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=100, height=25, command=lambda: self.buscar_archivos(self.selectDirectory(self.war_entry.get()))
+        )
+        buscar_button.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(5, 5))
 
-        # Botones
-        buscar_button = CTkButton(war_frame, text="Buscar...", fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25, command=lambda : self.buscar_archivos(self.selectDirectory(self.war_entry.get())))
-        buscar_button.grid(row=0, column=2, pady=(30, 2), padx=20, sticky="ew")
-      
-
-        # Formulario
+        # Formulario de conexión
         labels = ["Service name:", "SID:", "Host:", "Puerto:", "Usuario:", "Contraseña:", "Esquema Catálogo:", "URL:"]
         valores = ["serviceName", "sid", "host", "puerto", "usuario", "password", "esquema", "url"]
         self.entries = []
-
-
         for i, label_text in enumerate(labels):
-            sv = StringVar(self)
-            sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.urlModify())
-            label = CTkLabel(self, text=label_text, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-            label.grid(row=i+1, column=0, sticky="w", padx=(20, 10), pady=(15, 2))
-            entry = CTkEntry(self,textvariable=sv, fg_color='#84bfc4', border_color='#84bfc4', height=2.5,
-                              width=400, text_color="grey" if label_text == 'URL:' else 'black', show='*' if label_text == 'Contraseña:' else None,state='disabled' if label_text == 'URL:' else 'normal')
-            entry.grid(row=i+1, column=1, padx=(0, 200), pady=(15, 2), sticky="ew")
-            if (valores[i] != None):
-               try:
-                 entry.insert(0, utl.readConfig("BBDD", valores[i]))  
-               except ValueError:    
-                 logging.exception("Error al obtener el valor:" )
+            sv = tk.StringVar(self)
+            sv.trace_add("write", lambda name, index, mode, sv=sv: self.urlModify())
+            label = ctk.CTkLabel(content_frame, text=label_text, fg_color="#FFFFFF", bg_color="#FFFFFF",
+                                 text_color="black", font=("Arial", 12, "bold"))
+            label.grid(row=i+1, column=0, sticky="w", padx=(20,10), pady=(15,2))
+            entry = ctk.CTkEntry(content_frame, textvariable=sv, fg_color='#84bfc4', border_color='#84bfc4',
+                                 height=2.5, width=400, text_color="grey" if label_text=='URL:' else 'black',
+                                 show='*' if label_text=='Contraseña:' else None,
+                                 state='disabled' if label_text=='URL:' else 'normal')
+            entry.grid(row=i+1, column=1, padx=(0,200), pady=(15,2), sticky="ew")
+            try:
+                entry.insert(0, utl.readConfig("BBDD", valores[i]))
+            except ValueError:
+                logging.exception("Error al obtener el valor:")
             self.entries.append(entry)
-        self.urlModify()
-        # Botones
-        self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
-        self.test_button.grid(row=len(labels) + 1, column=0, columnspan=2, pady=10, padx=20, sticky="ew")
 
-        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        next_button.grid(row=len(labels) + 2, column=1, pady=0, padx=20, sticky="e")
-        
-        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        back_button.grid(row=len(labels) + 2, column=1, pady=0, padx=(0, 180), sticky="e")
-        
+        self.urlModify()
+        self.test_button = ctk.CTkButton(content_frame, text="Probar conexión", command=self.probar_conexion,
+                                         fg_color='#84bfc4', hover_color='#41848a', text_color="black",
+                                         font=("Arial", 12, "bold"))
+        self.test_button.grid(row=len(labels)+1, column=0, columnspan=2, pady=10, padx=20, sticky="ew")
+
+        next_button = ctk.CTkButton(content_frame, text="Siguiente", command=lambda: self.master.mostrarSpinner("avanzarPaso2"),
+                                    fg_color='#84bfc4', hover_color='#41848a', text_color="black",
+                                    font=("Arial",12,"bold"), width=100, height=25)
+        next_button.grid(row=len(labels)+2, column=1, pady=0, padx=20, sticky="e")
+
+        back_button = ctk.CTkButton(content_frame, text="Atrás", command=lambda: self.cancelar(),
+                                    fg_color='#84bfc4', hover_color='#41848a', text_color="black",
+                                    font=("Arial",12,"bold"), width=100, height=25)
+        back_button.grid(row=len(labels)+2, column=1, pady=0, padx=(0,140), sticky="e")
+
+        # ============= FRAME 3: FOOTER (BOTÓN VERSIÓN) =============
+        footer_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        footer_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=(0,10))
+        footer_frame.grid_columnconfigure(0, weight=1); footer_frame.grid_columnconfigure(1, weight=0)
+
+        version_button = ctk.CTkButton(footer_frame, text="Versión 6.2.0", bg_color="#FFFFFF", fg_color="#84bfc4",
+                                       border_color="#84bfc4", text_color="black", font=("Arial",12,"bold"),
+                                       hover_color='#84bfc4')
+        version_button.grid(row=0, column=1, sticky="e")
+    
+    
     def selectDirectory(self,directory):
         if(directory == ""):
             return directory

@@ -12,9 +12,8 @@ self = CTk()
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
 
 class Paso4(CTk):
-    def __init__(self,main_menu):
+    def __init__(self, main_menu):
         super().__init__()
-        
         
         self.title("Crear nueva aplicación")
         self.geometry("900x700")
@@ -22,7 +21,7 @@ class Paso4(CTk):
         self.main_menu = main_menu
 
         # Configurar el color de fondo de la ventana
-        self.config(bg="#E0E0E0")
+        self.config(bg="#FFFFFF")
 
         self.columnconfigure(1, weight=1)
         self.rowconfigure(12, weight=1)
@@ -33,7 +32,7 @@ class Paso4(CTk):
         configuration_label = CTkLabel(configuration_frame,  text="Añadir un war a la aplicación", font=("Arial", 14, "bold"))
         configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
-        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
+        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"), text_color="red")
         self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
 
         description_label = CTkLabel(configuration_frame, text="Este Wizard genera un nuevo WAR y lo añade a un EAR existente")
@@ -46,65 +45,61 @@ class Paso4(CTk):
         ruta_war = utl.readConfig("RUTA", "ruta_war")
         if(ruta_classes != None and ruta_classes != ""):
            textRutaNegocio = ruta_classes 
-        archivoClases = utl.buscarArchivo(textRutaNegocio,"EAR") 
-        archivoWar = utl.buscarArchivo(textRutaControlador,"War") 
+        archivoClases = utl.buscarArchivo(textRutaNegocio, "EAR")
+        archivoWar = utl.buscarArchivo(textRutaControlador, "War")
         if(archivoClases != '' ):
-           textRutaNegocio = textRutaNegocio+"\\"+archivoClases 
+           textRutaNegocio = textRutaNegocio + "\\" + archivoClases 
         else:
             textRutaNegocio = ""
 
-
         # EAR to bind
-        ear_label = CTkLabel(self, text="EAR a vincular:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
-        ear_label.grid(row=2, column=0, sticky="w", padx= (20,20), pady=5)
-        self.ear_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
+        ear_label = CTkLabel(self, text="EAR a vincular:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        ear_label.grid(row=2, column=0, sticky="w", padx=(20,20), pady=5)
+        self.ear_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black")
         self.ear_entry.grid(row=2, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.ear_entry.insert(0, textRutaNegocio)
-        ear_button = CTkButton(self, text="Buscar Proyecto", command= lambda : self.buscar_archivos(self.selectDirectory(self.ear_entry.get())), bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
+        ear_button = CTkButton(self, text="Buscar Proyecto", command=lambda: self.buscar_archivos(self.selectDirectory(self.ear_entry.get())), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
         ear_button.grid(row=2, column=1, sticky="e", padx=(100, 20))
         self.ear_entry.configure(state="disabled")
 
         # WAR name
         sv = StringVar(self)
         sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.update_entry())
-        war_name_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
-        war_name_label.grid(row=3, column=0, sticky="w", padx= (20,20), pady=5)
-        self.war_name_entry = CTkEntry(self,textvariable=sv, bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
+        war_name_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        war_name_label.grid(row=3, column=0, sticky="w", padx=(20,20), pady=5)
+        self.war_name_entry = CTkEntry(self, textvariable=sv, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
         self.war_name_entry.grid(row=3, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
-        
-
 
         # Full WAR name
-        full_war_name_label = CTkLabel(self, text="Nombre Completo del WAR:", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
-        full_war_name_label.grid(row=4, column=0, sticky="w", padx= (20,20), pady=5)
-
-        self.full_war_name_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black" )
+        full_war_name_label = CTkLabel(self, text="Nombre Completo del WAR:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        full_war_name_label.grid(row=4, column=0, sticky="w", padx=(20,20), pady=5)
+        self.full_war_name_entry = CTkEntry(self, bg_color='#599398', fg_color='#599398', border_color='#599398', height=2.5, border_width=3, text_color="black")
         self.full_war_name_entry.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
         self.full_war_name_entry.configure(state="disabled")
 
         # Idiomas
-        idiomas_label = CTkLabel(self, text="Idiomas", bg_color='#E0E0E0', text_color="black", font=("Arial", 12, "bold"))
-        idiomas_label.grid(row=6, column=0, sticky="w", padx= (20,20), pady=5)
+        idiomas_label = CTkLabel(self, text="Idiomas", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        idiomas_label.grid(row=6, column=0, sticky="w", padx=(20,20), pady=5)
         
-        languages_frame = CTkFrame(self,  bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#84bfc4', border_width=3)
+        languages_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         languages_frame.grid(row=7, column=0, columnspan=2, pady=(5, 30), padx=20, sticky="ew")
-         # Crear un marco interno para organizar los widgets dentro del contenedor "Idiomas"
-        self.idiomas_inner_frame = CTkFrame(languages_frame, fg_color='#E0E0E0', bg_color='#E0E0E0', border_color='#84bfc4')
+        # Crear un marco interno para organizar los widgets dentro del contenedor "Idiomas"
+        self.idiomas_inner_frame = CTkFrame(languages_frame, fg_color='#FFFFFF', bg_color='#FFFFFF', border_color='#84bfc4')
         self.idiomas_inner_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         
-         # obligatoria Castellano y Euskera
+        # Obligatoria: Castellano y Euskera
         self.language_options = ["Castellano", "Euskera", "Inglés", "Francés"]
         self.language_vars = []
-        self.language_vars.append(tk.BooleanVar(name="Castellano",value=TRUE))
-        self.language_vars.append(tk.BooleanVar(name="Euskera",value=TRUE))
-        self.language_vars.append(tk.BooleanVar(name="Inglés",value=False))
-        self.language_vars.append(tk.BooleanVar(name="Francés",value=False))
+        self.language_vars.append(tk.BooleanVar(name="Castellano", value=TRUE))
+        self.language_vars.append(tk.BooleanVar(name="Euskera", value=TRUE))
+        self.language_vars.append(tk.BooleanVar(name="Inglés", value=False))
+        self.language_vars.append(tk.BooleanVar(name="Francés", value=False))
         stateCheck = "disabled"
 
         for i, (lang_option, lang_var) in enumerate(zip(self.language_options, self.language_vars)):
             if(lang_option != 'Castellano' and lang_option != 'Euskera'):
                 stateCheck = "normal"
-            CTkCheckBox(self.idiomas_inner_frame,state=stateCheck, text=lang_option, variable=lang_var, checkbox_height=20, checkbox_width=20, text_color="black",border_color='#84bfc4', fg_color='#84bfc4', font=("Arial", 12, "bold")).grid(row=0, column=i, padx=5, pady=(10, 2), sticky="w")
+            CTkCheckBox(self.idiomas_inner_frame, state=stateCheck, text=lang_option, variable=lang_var, checkbox_height=20, checkbox_width=20, text_color="black", border_color='#84bfc4', fg_color='#84bfc4', font=("Arial", 12, "bold")).grid(row=0, column=i, padx=5, pady=(10, 2), sticky="w")
 
         default_language_label = CTkLabel(self.idiomas_inner_frame, text="Idioma por defecto:", text_color="black", font=("Arial", 12, "bold"))
         default_language_label.grid(row=7, column=0, sticky="w", padx=(10, 10), pady=(25, 2))
@@ -112,27 +107,44 @@ class Paso4(CTk):
 
         self.default_language_combobox = self.update_default_language_options()
 
-        security_frame = CTkFrame(self, bg_color='#E0E0E0', fg_color='#E0E0E0', border_color='#84bfc4', border_width=3)
+        security_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
         security_frame.grid(row=8, column=0, columnspan=2, pady=(30, 20), padx=20, sticky="ew")
 
         # Crear un widget Label encima del borde del marco
-        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNets", bg_color="#E0E0E0", fg_color="#E0E0E0", text_color="black", font=("Arial", 12, "bold"))
-        labelSecurityFrame.place(in_=security_frame, anchor="sw" )
+        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNets", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        labelSecurityFrame.place(in_=security_frame, anchor="sw")
 
         self.security_var = tk.StringVar(value="Si")
-        self.security_yes_radio = CTkRadioButton(security_frame, text="Sí", value="Si", variable=self.security_var, text_color="black", radiobutton_height= 18 , radiobutton_width= 18)
+        self.security_yes_radio = CTkRadioButton(security_frame, text="Sí", value="Si", variable=self.security_var, text_color="black", radiobutton_height=18, radiobutton_width=18)
         self.security_yes_radio.grid(row=0, column=0, padx=(20, 0), pady=(20, 10), sticky="nsew")
-        security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", radiobutton_height= 18 , radiobutton_width= 18)
+        security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", radiobutton_height=18, radiobutton_width=18)
         security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
-        # Buttons
-        buttons_frame = CTkFrame(self, fg_color="#E0E0E0", bg_color="#E0E0E0")
-        buttons_frame.grid(row=12, column=0, columnspan=2, pady=10)
-        back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        back_button.grid(row=0, column=0, padx=(450,0), pady= (100, 0))
+        # Buttons Frame (actualmente en row 12)
+        buttons_frame = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        buttons_frame.grid(row=12, column=0, columnspan=2, pady=10, sticky="ew")
 
-        finish_button = CTkButton(buttons_frame, command= lambda : self.save_to_yaml(), text="Terminar", bg_color='#E0E0E0', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        finish_button.grid(row=0, column=2, padx=5, pady= (100, 0))
+         #Configurar columnas del frame de botones
+        buttons_frame.grid_columnconfigure(0, weight=1)  # Columna 0 se expande
+        buttons_frame.grid_columnconfigure(1, weight=0)  # Para botón "Atrás"
+        buttons_frame.grid_columnconfigure(2, weight=0)  # Para botón "Terminar"
+        back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        back_button.grid(row=0, column=0, padx=(620, 0), pady=(100, 0))
+
+        finish_button = CTkButton(buttons_frame, command=lambda: self.save_to_yaml(), text="Terminar", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        finish_button.grid(row=0, column=2, padx=(0,50), pady=(100, 0))
+        
+        # ==========================
+        # Footer Frame para versión
+        # ==========================
+        footer_frame = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        footer_frame.grid(row=13, column=0, columnspan=2, sticky="ew", padx=20, pady=(0,10))
+        footer_frame.grid_columnconfigure(0, weight=1)
+        footer_frame.grid_columnconfigure(1, weight=0)
+        version_button = ctk.CTkButton(footer_frame, text="Versión 6.2.0", bg_color="#FFFFFF", fg_color="#84bfc4",
+                                       border_color="#84bfc4", text_color="black", font=("Arial",12,"bold"),
+                                       hover_color='#84bfc4')
+        version_button.grid(row=0, column=1, sticky="e")
 
 
     
@@ -219,7 +231,7 @@ class Paso4(CTk):
         scrollbar_container.grid_columnconfigure(0, weight=1)
         scrollbar_container.grid_rowconfigure(0, weight=1)
         
-        scrollbar_resumen = ctk.CTkScrollableFrame(scrollbar_container, fg_color="#E0E0E0", scrollbar_fg_color="#E0E0E0")
+        scrollbar_resumen = ctk.CTkScrollableFrame(scrollbar_container, fg_color="#FFFFFF", scrollbar_fg_color="#FFFFFF")
         scrollbar_resumen.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Descripción

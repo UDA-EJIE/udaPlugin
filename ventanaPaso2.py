@@ -33,58 +33,57 @@ CADENA_COLUMN = "TTTABLA"
 PRIMARY_COLUMN = "PPPRIMARY"
 class PaginaUno(CTkFrame):
     
-    def __init__(self, master, main_menu, tables=None, tables_ori=None, columns=None,estado_tables=None, *args, **kwargs):
+    def __init__(self, master=None, main_menu=None, tables=None, tables_ori=None, columns=None, estado_tables=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.configure(corner_radius=10, fg_color="#FFFFFF", border_color="#84bfc4", border_width=4)
-
         self.main_menu = main_menu
-        # Configura el contenedor principal para que las columnas se expandan
-        self.grid_columnconfigure(0, weight=1)  # Esto hace que la columna se expanda
-        
-        configuration_frame = CTkFrame(self)
-        configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
+        # Configuración de la ventana: 3 filas → 0: configuración, 1: contenido, 2: footer
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1) 
+        self.grid_rowconfigure(2, weight=0)
 
-        configuration_label = CTkLabel(configuration_frame,  text="Generar código para una aplicación UDA", font=("Arial", 14, "bold"))
-        configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
+        # FRAME 1: CONFIGURACIÓN (NEGRO)
+        configuration_frame = ctk.CTkFrame(self, bg_color="black")
+        configuration_frame.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
+        configuration_label = ctk.CTkLabel(configuration_frame, text="Generar código para una aplicación UDA", font=("Arial",14,"bold"))
+        configuration_label.grid(row=0, column=0, columnspan=3, pady=(20,5), padx=20, sticky="w")
+        self.configuration_warning = ctk.CTkLabel(configuration_frame, text="", font=("Arial",13,"bold"), text_color="red")
+        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20,5), padx=10, sticky="w")
+        description_label = ctk.CTkLabel(configuration_frame, text="Este Wizard genera el código fuente para desplegar una aplicación UDA")
+        description_label.grid(row=1, column=0, columnspan=3, pady=(10,5), padx=20, sticky="w")
 
-        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=10, sticky="w")
-
-        description_label = CTkLabel(configuration_frame, text="Este Wizard genera el código fuente para desplegar una aplicación UDA")
-        description_label.grid(row=1, column=0, columnspan=3, pady=(10, 5), padx=20, sticky="w")
-
-        # Formulario
-        labels = ["Service name:", "SID:", "Host:", "Puerto:", "Usuario:", "Contraseña:", "Esquema Catálogo:", "URL:"]
-        valores = ["serviceName", "sid", "host", "puerto", "usuario", "password", "esquema", "url"]
-        self.entries = []
-        
+        # FRAME 2: CONTENIDO (FORMULARIO Y BOTONES)
+        content_frame = ctk.CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        content_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=10); content_frame.grid_columnconfigure(0, weight=0); content_frame.grid_columnconfigure(1, weight=1)
+        labels = ["Service name:","SID:","Host:","Puerto:","Usuario:","Contraseña:","Esquema Catálogo:","URL:"]
+        valores = ["serviceName","sid","host","puerto","usuario","password","esquema","url"]; self.entries = []
         for i, label_text in enumerate(labels):
-            
-            sv = StringVar(self)
-            sv.trace_add("write", lambda name, index, mode, sv=lambda:sv: self.urlModify())
-            label = CTkLabel(self, text=label_text, fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-            label.grid(row=i+1, column=0, sticky="w", padx=(20, 10), pady=(20, 2))
-            entry = CTkEntry(self,textvariable=sv, fg_color='#84bfc4', border_color='#84bfc4', height=2.5, 
-                             width=500, text_color="grey" if label_text == 'URL:' else 'black', show='*' if label_text == 'Contraseña:' else None,state='disabled' if label_text == 'URL:' else 'normal')
-            entry.grid(row=i+1, column=1, padx=(0, 200), pady=(20, 2), sticky="ew")
-            
-            if (valores[i] != None):
-               try:
-                entry.insert(0, utl.readConfig("BBDD", valores[i]))  
-               except ValueError:    
-                   logging.exception("Error al obtener el valor:" + ValueError)
+            sv = tk.StringVar(self); sv.trace_add("write", lambda name, index, mode, sv=sv: self.urlModify())
+            label = ctk.CTkLabel(content_frame, text=label_text, bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial",12,"bold"))
+            label.grid(row=i, column=0, sticky="w", padx=(20,10), pady=(20,2))
+            entry = ctk.CTkEntry(content_frame, textvariable=sv, fg_color="#84bfc4", border_color="#84bfc4", height=2.5, width=500,
+                                   text_color="grey" if label_text=='URL:' else "black", show='*' if label_text=='Contraseña:' else None,
+                                   state="disabled" if label_text=='URL:' else "normal")
+            entry.grid(row=i, column=1, padx=(0,200), pady=(20,2), sticky="ew")
+            try:
+                entry.insert(0, readConfig("BBDD", valores[i]))
+            except ValueError:
+                logging.exception("Error al obtener el valor:" + str(ValueError))
             self.entries.append(entry)
         self.urlModify()
-        # Botones
-        self.test_button = CTkButton(self, text="Probar conexión", command=self.probar_conexion, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        self.test_button.grid(row=len(labels) + 1, column=0, columnspan=2, pady=20, padx=20, sticky="ew")
+        self.test_button = ctk.CTkButton(content_frame, text="Probar conexión", command=self.probar_conexion, fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial",12,"bold"), width=100, height=25)
+        self.test_button.grid(row=len(labels)+1, column=0, columnspan=2, pady=20, padx=20, sticky="ew")
+        next_button = ctk.CTkButton(content_frame, text="Siguiente", command=lambda: self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial",12,"bold"), width=100, height=25)
+        next_button.grid(row=len(labels)+2, column=1, pady=10, padx=20, sticky="e")
+        back_button = ctk.CTkButton(content_frame, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial",12,"bold"), width=100, height=25)
+        back_button.grid(row=len(labels)+2, column=1, pady=10, padx=(50,130), sticky="e")
 
-        next_button = CTkButton(self, text="Siguiente", command=lambda:self.master.mostrarSpinner("avanzarPaso2"), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        next_button.grid(row=len(labels) + 2, column=1, pady=10, padx=20, sticky="e")
-
-        back_button = CTkButton(self, text="Atrás", command=lambda: self.cancelar(), fg_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        back_button.grid(row=len(labels) + 2, column=1, pady=10, padx=(50, 130), sticky="e")
-                 
+        # FRAME 3: FOOTER (BOTÓN VERSIÓN)
+        footer_frame = ctk.CTkFrame(self, bg_color="#FFFFFF", fg_color="#FFFFFF")
+        footer_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(0,10)); footer_frame.grid_columnconfigure(0, weight=1); footer_frame.grid_columnconfigure(1, weight=0)
+        version_button = ctk.CTkButton(footer_frame, text="Versión 6.2.0", bg_color="#FFFFFF", fg_color="#84bfc4", border_color="#84bfc4", text_color="black", font=("Arial",12,"bold"), hover_color='#84bfc4')
+        version_button.grid(row=0, column=1, sticky="e")
     
     def urlModify(self):
         if(len(self.entries) > 7):
@@ -1245,6 +1244,7 @@ class VentanaPrincipal(CTk):
         # self.geometry(f"+{toplevel_offsetx + padx}+{toplevel_offsety + pady}")
         self.geometry("900x700") 
         self.resizable(width=False, height=False)
+        self.config(bg="#FFFFFF")
         self.stop_event = threading.Event()
 
         self.main_menu = main_menu

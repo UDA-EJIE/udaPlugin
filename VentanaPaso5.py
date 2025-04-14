@@ -80,14 +80,28 @@ class Paso5(CTk):
 
         # Buttons
         buttons_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
-        buttons_frame.grid(row=5, column=0, columnspan=2, pady=10)
+        buttons_frame.grid(row=5, column=0, columnspan=2, pady=10, sticky = "ew")
         
         back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        back_button.grid(row=0, column=0, padx=(400, 5), pady = (400, 0))
+        back_button.grid(row=0, column=0, padx=(650, 5), pady = (300, 0))
 
         finish_button = CTkButton(buttons_frame, text="Terminar", command= lambda: self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        finish_button.grid(row=0, column=2, padx=5, pady = (400, 0))
+        finish_button.grid(row=0, column=2, padx=(5, 5), pady = (300, 0))
 
+        # --- FRAME 4: FOOTER DE VERSIÓN ---
+        version_frame = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        version_frame.grid(row=6, column=0, columnspan=2, sticky="ew", padx=10, pady=(0,10))
+        version_frame.grid_columnconfigure(0, weight=1)
+        version_frame.grid_columnconfigure(1, weight=0)
+        version_button = CTkButton(version_frame,
+                                text="Versión 6.2.0",
+                                bg_color="#FFFFFF",
+                                fg_color="#84bfc4",
+                                border_color="#84bfc4",
+                                text_color="black",
+                                font=("Arial", 12, "bold"),
+                                hover_color="#84bfc4")
+        version_button.grid(row=0, column=1, sticky="e")
     def update_entry(self):
         if self.ear_entry.get() != '' and self.ejb_name_entry.get() != '':
             content = self.ejb_name_entry.get()

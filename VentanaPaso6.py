@@ -139,6 +139,26 @@ class VentanaPaso6(CTk):
         finish_button = CTkButton(buttons_frame, text="Finalizar",command= lambda : self.save_to_yaml(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"))
         finish_button.grid(row=0, column=2, padx=5)
 
+        # === FRAME 6: FOOTER DE VERSIÓN ===
+        version_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF')
+        version_frame.grid(row=6, column=0, columnspan=3, sticky="ew", padx=10, pady=(0,10))
+
+        # Configurar las columnas para alinear el botón a la derecha
+        version_frame.grid_columnconfigure(0, weight=1)
+        version_frame.grid_columnconfigure(1, weight=0)
+
+        # Botón que muestra la versión
+        version_button = CTkButton(
+            version_frame,
+            text="Versión 6.2.0",
+            bg_color="#FFFFFF",
+            fg_color='#84bfc4',
+            border_color='#84bfc4',
+            text_color="black",
+            font=("Arial", 12, "bold"),
+            hover_color='#84bfc4'
+        )
+        version_button.grid(row=0, column=1, sticky="e")
 
     def cancelar(self):
        # Cancela todos los eventos pendientes
