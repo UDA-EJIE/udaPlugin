@@ -1,3 +1,5 @@
+import plugin.utils as utl
+from plugin.git_patch import patch_git_for_copier
 from customtkinter import *
 import VentanaPaso1 as paso1
 import ventanaPaso2 as paso2
@@ -9,9 +11,9 @@ import VentanaPaso7 as paso7
 from tkinter import *
 from PIL import Image, ImageTk
 import logging
-import plugin.utils as utl
 import sys
 import os
+#from simple_git_test import ejecutar_test_git
 
 
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -22,10 +24,13 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG,encodi
 
 sys.stderr = open(logsPath, 'a')
 
-
 class MainMenu(CTkToplevel):
     def __init__(self):
         super().__init__()
+        utl.setup_embedded_git()
+        #ejecutar_test_git()
+        patch_git_for_copier()
+       
         self.title("Menú Principal")
         self.geometry("900x700")   # Configura el tamaño de la ventana
         self.config(bg="#FFFFFF")
