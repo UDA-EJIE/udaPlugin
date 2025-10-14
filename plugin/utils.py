@@ -11,6 +11,8 @@ from plumbum import local
 import subprocess
 import sys
 
+VERSION_STR = "Version 6.3.0"
+
 def getColumnsDates(columns):
     newColumns = []
     columnsPks = []

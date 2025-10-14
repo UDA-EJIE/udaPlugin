@@ -10,6 +10,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 import logging
 import plugin.utils as utl
+from plugin.utils import VERSION_STR 
 import sys
 import os
 
@@ -27,52 +28,108 @@ class MainMenu(CTkToplevel):
     def __init__(self):
         super().__init__()
         self.title("Menú Principal")
-        self.geometry("900x700")   # Configura el tamaño de la ventana
+        self.geometry("900x700")
         self.config(bg="#FFFFFF")
         self.resizable(width=False, height=False)
-    
-        self.configure(columnspan = 3)
-        self.grid_columnconfigure(1, weight=1)
-        # Load the image
-        image_path = base_path+'\\plugin\\images\\logo_uda.png'
-        logo_ejie = CTkImage(light_image=Image.open(image_path), size=(200,200))
-        label_logo = CTkLabel(self, text="", image=logo_ejie, bg_color='#E0E0E0')
-        label_logo.grid(row=0, column = 1, pady=(20, 10), padx=20)
+
+        # Configurar el grid de la ventana principal (self)
+        # Se crean 2 filas: fila 0 para el contenido (que se expande) y fila 1 para el footer.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_columnconfigure(0, weight=1)
+        
+        # =======================================
+        # Frame de Contenido (logo y botones)
+        # =======================================
+        content_frame = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        content_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
+        
+        # Opcional: configurar columnas internas del content_frame (si es necesario)
+        content_frame.grid_columnconfigure(0, weight=1)
+        
+        # Cargar la imagen del logo
+        image_path = base_path + '\\plugin\\images\\logo_uda.png'
+        logo_ejie = CTkImage(light_image=Image.open(image_path), size=(200, 200))
+        label_logo = CTkLabel(content_frame, text="", image=logo_ejie, bg_color='#E0E0E0')
+        label_logo.grid(row=0, column=0, pady=(20, 10), padx=20)
        
         # Botón para Paso 1
-        self.button_paso_1 = CTkButton(self, text="1. Crear una nueva aplicación", command= lambda: self.abrir_paso1(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black",hover_color='#41848a', font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_1.grid(row= 1 , column = 1, pady=(20, 10), padx=20)
+        self.button_paso_1 = CTkButton(content_frame,
+            text="1. Crear una nueva aplicación",
+            command=lambda: self.abrir_paso1(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black",
+            hover_color='#41848a', font=("Arial", 12, "bold"), width=400, height=25)
+        self.button_paso_1.grid(row=1, column=0, pady=(20, 10), padx=20)
 
         # Botón para Paso 2
-        self.button_paso_2 = CTkButton(self, text="2. Generar código de negocio y control", command= lambda: self.abrir_paso2(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_2.grid(row= 2 , column = 1,pady=10, padx=20)
+        self.button_paso_2 = CTkButton(content_frame,
+            text="2. Generar código de negocio y control",
+            command=lambda: self.abrir_paso2(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',
+            hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=400, height=25)
+        self.button_paso_2.grid(row=2, column=0, pady=10, padx=20)
 
         # Botón para Paso 3
-        self.button_paso_3 = CTkButton(self, text="3. Generar mantenimiento", command= lambda:self.abrir_paso3(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_3.grid(row= 3 , column = 1,pady=10, padx=20)
-        self.protocol("WM_DELETE_WINDOW", lambda: close_win())
+        self.button_paso_3 = CTkButton(content_frame,
+            text="3. Generar mantenimiento",
+            command=lambda: self.abrir_paso3(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',
+            hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=400, height=25)
+        self.button_paso_3.grid(row=3, column=0, pady=10, padx=20)
 
         # Botón para Paso 4
-        self.button_paso_4 = CTkButton(self, text="4. Añadir proyecto WAR", command= lambda:self.abrir_paso4(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_4.grid(row= 4 , column = 1,pady=10, padx=20)
-        self.protocol("WM_DELETE_WINDOW", lambda: close_win())
+        self.button_paso_4 = CTkButton(content_frame,
+            text="4. Añadir proyecto WAR",
+            command=lambda: self.abrir_paso4(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',
+            hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=400, height=25)
+        self.button_paso_4.grid(row=4, column=0, pady=10, padx=20)
 
         # Botón para Paso 5
-        self.button_paso_5 = CTkButton(self, text="5. Añadir proyecto EJB", command= lambda:self.abrir_paso5(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_5.grid(row= 5 , column = 1,pady=10, padx=20)
-        self.protocol("WM_DELETE_WINDOW", lambda: close_win())
+        self.button_paso_5 = CTkButton(content_frame,
+            text="5. Añadir proyecto EJB",
+            command=lambda: self.abrir_paso5(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',
+            hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=400, height=25)
+        self.button_paso_5.grid(row=5, column=0, pady=10, padx=20)
 
         # Botón para Paso 6
-        self.button_paso_6 = CTkButton(self, text="6. Generar código para EJB cliente", command= lambda:self.abrir_paso6(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_6.grid(row= 6 , column = 1,pady=10, padx=20)
-        self.protocol("WM_DELETE_WINDOW", lambda: close_win())
+        self.button_paso_6 = CTkButton(content_frame,
+            text="6. Generar código para EJB cliente",
+            command=lambda: self.abrir_paso6(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',
+            hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=400, height=25)
+        self.button_paso_6.grid(row=6, column=0, pady=10, padx=20)
 
         # Botón para Paso 7
-        self.button_paso_7 = CTkButton(self, text="7. Generar código para EJB servidor", command= lambda:self.abrir_paso7(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 400, height=25)
-        self.button_paso_7.grid(row= 7 , column = 1,pady=10, padx=20)
+        self.button_paso_7 = CTkButton(content_frame,
+            text="7. Generar código para EJB servidor",
+            command=lambda: self.abrir_paso7(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4',
+            hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"),
+            width=400, height=25)
+        self.button_paso_7.grid(row=7, column=0, pady=10, padx=20)
+        
+        #Frame para pie de pagina
+        footer_frame = CTkFrame(self,fg_color="#FFFFFF", bg_color="#FFFFFF")
+        footer_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=(0,10))
+        footer_frame.grid_columnconfigure(0, weight=1)
+        footer_frame.grid_columnconfigure(1, weight=0)
+
+        # Botón deshabilitado para mostrar la versión en el pie de página
+        version_button = CTkButton(footer_frame, text=VERSION_STR,
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"),  hover_color='#84bfc4')
+        version_button.grid(row=0, column=1, sticky="e")
+
+        # Configurar el protocolo de cierre
         self.protocol("WM_DELETE_WINDOW", lambda: close_win())
     def on_close(self,ventana):
-        ventana.destroy()  # Destruye la ventana del paso
+        ventana.destroy()  # Destruye la ventana ddel paso
         self.deiconify()   # Muestra el menú principal
 
     def abrir_paso1(self):
