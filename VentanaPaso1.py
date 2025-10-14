@@ -287,7 +287,6 @@ class Paso1(CTk):
         if self.plantillar_var.get() == "tiles":
             filesExcludes.append("*.html")
             filesExcludes.append("HomeController.java")
-            filesExcludes.append("MvcConfig.java")
             filesExcludes.append("GlobalModelAttributes.java")
         elif self.plantillar_var.get() == "thymeleaf": 
             filesExcludes.append("*.jsp")

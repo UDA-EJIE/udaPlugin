@@ -460,19 +460,63 @@ def buscarPropiedadInXml(ruta,prop,valor):
 
 
 def setup_embedded_git():
-    if hasattr(sys, '_MEIPASS'):
-        # Cuando la aplicación es ejecutada por PyInstaller
-        print("Paso por aqui")
-        git_base_path = os.path.join(sys._MEIPASS, "embedded_git")
+    """Configura Git embebido para el distribuible"""
+    import sys
+    import os
+    
+    print("Paso por aqui")
+    
+    # Detectar si estamos en un distribuible
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS
+        print(f"   Ejecutable empaquetado detectado: {base_path}")
     else:
-        # Cuando ejecutas en local
-        git_base_path = os.path.join(os.path.dirname(__file__), "embedded_git")
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        print(f"   Modo desarrollo: {base_path}")
     
+    # Ruta del Git embebido
+    embedded_git_path = os.path.join(base_path, 'plugin', 'embedded_git')
+    git_exe_path = os.path.join(embedded_git_path, 'bin', 'git.exe')
+    
+    print(f"   Buscando Git en: {git_exe_path}")
+    
+    if os.path.exists(git_exe_path):
+        print(f"   ✅ Git embebido encontrado: {git_exe_path}")
+        
+        # Actualizar PATH al inicio (máxima prioridad)
+        git_bin_path = os.path.join(embedded_git_path, 'bin')
+        current_path = os.environ.get('PATH', '')
+        os.environ['PATH'] = git_bin_path + os.pathsep + current_path
+        print(f"   ✅ PATH actualizado con: {git_bin_path}")
+        
+        # SOLUCIÓN SIMPLE: Solo configurar variables de entorno
+        os.environ['GIT_EXECUTABLE'] = git_exe_path
+        os.environ['GIT_PYTHON_GIT_EXECUTABLE'] = git_exe_path
+        print(f"   ✅ Variables de entorno configuradas")
+        
+        # Intentar parchear copier si ya está importado
+        try:
+            import copier.vcs
+            from plumbum import local  # Import correcto
+            
+            # Crear comando git embebido
+            embedded_git_cmd = local[git_exe_path]
+            
+            # Reemplazar la función get_git
+            copier.vcs.get_git = lambda: embedded_git_cmd
+            print(f"   ✅ copier.vcs.get_git parcheado: {embedded_git_cmd}")
+            
+        except ImportError:
+            print("   ℹ️  copier no importado aún, se parcheará cuando se use")
+        except Exception as e:
+            print(f"   ⚠️  Error parcheando copier: {e}")
+        
+        return True
+            
+    else:
+        print(f"   ❌ Git embebido NO encontrado en: {git_exe_path}")
+        return False
 
-    git_bin_path = os.path.join(git_base_path, "bin")
-    git_executable_path = os.path.join(git_bin_path, "git.exe")
-    os.environ["PATH"] = git_bin_path + os.pathsep + git_executable_path + os.pathsep + os.environ["PATH"]
-    
 
 def check_git_path():
     git_path = os.path.join(os.path.dirname(__file__), "embedded_git", "bin", "git.exe")
