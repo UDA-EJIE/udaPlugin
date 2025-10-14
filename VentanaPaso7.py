@@ -8,6 +8,7 @@ import logging
 from datetime import datetime
 from copier import *
 import plugin.utilsPaso6 as utlPaso6
+from plugin.utils import VERSION_STR 
 
 
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
@@ -106,7 +107,7 @@ class VentanaPaso7(CTk):
         # Botón que muestra la versión
         version_button = CTkButton(
             version_frame,
-            text="Versión 6.2.0",
+            text=VERSION_STR,
             bg_color="#FFFFFF",
             fg_color='#84bfc4',
             border_color='#84bfc4',

@@ -6,6 +6,9 @@ from pathlib import Path
 from copier import Worker
 import logging
 from datetime import datetime
+from plugin.utils import VERSION_STR 
+
+
 self = CTk()
 
 ruta_classes = utl.readConfig("RUTA", "ruta_classes")
@@ -94,7 +97,7 @@ class Paso5(CTk):
         version_frame.grid_columnconfigure(0, weight=1)
         version_frame.grid_columnconfigure(1, weight=0)
         version_button = CTkButton(version_frame,
-                                text="Versión 6.2.0",
+                                text=VERSION_STR,
                                 bg_color="#FFFFFF",
                                 fg_color="#84bfc4",
                                 border_color="#84bfc4",

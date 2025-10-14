@@ -16,6 +16,8 @@ from pathlib import Path
 import time
 import logging
 import threading
+from plugin.utils import VERSION_STR 
+
 
 d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instantclient_21_12')
 #sys.stderr = open('logs/log.log', 'a')
@@ -154,7 +156,7 @@ class PaginaUno(CTkFrame):
         footer_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=(0,10))
         footer_frame.grid_columnconfigure(0, weight=1); footer_frame.grid_columnconfigure(1, weight=0)
 
-        version_button = ctk.CTkButton(footer_frame, text="Versión 6.2.0", bg_color="#FFFFFF", fg_color="#84bfc4",
+        version_button = ctk.CTkButton(footer_frame, text=VERSION_STR, bg_color="#FFFFFF", fg_color="#84bfc4",
                                        border_color="#84bfc4", text_color="black", font=("Arial",12,"bold"),
                                        hover_color='#84bfc4')
         version_button.grid(row=0, column=1, sticky="e")

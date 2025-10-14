@@ -6,6 +6,7 @@ from pathlib import Path
 import logging
 from copier import Worker
 from datetime import datetime
+from plugin.utils import VERSION_STR 
 
 
 self = CTk()
@@ -141,7 +142,7 @@ class Paso4(CTk):
         footer_frame.grid(row=13, column=0, columnspan=2, sticky="ew", padx=20, pady=(0,10))
         footer_frame.grid_columnconfigure(0, weight=1)
         footer_frame.grid_columnconfigure(1, weight=0)
-        version_button = ctk.CTkButton(footer_frame, text="Versión 6.2.0", bg_color="#FFFFFF", fg_color="#84bfc4",
+        version_button = ctk.CTkButton(footer_frame, text=VERSION_STR, bg_color="#FFFFFF", fg_color="#84bfc4",
                                        border_color="#84bfc4", text_color="black", font=("Arial",12,"bold"),
                                        hover_color='#84bfc4')
         version_button.grid(row=0, column=1, sticky="e")
