@@ -14,6 +14,8 @@ import subprocess
 import shutil
 import re
 
+from plugin.utils import VERSION_STR 
+
 self = CTk()
 
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -65,100 +67,121 @@ class Paso1(CTk):
         # Configurar el color de fondo de la ventana
         self.config(bg="#FFFFFF")
 
-        self.columnconfigure(1, weight=1)
-
-        configuration_frame = CTkFrame(self, bg_color="black")
-        configuration_frame.grid(row=0, column=0, columnspan=3, sticky="ew")
-
-        configuration_label = CTkLabel(configuration_frame,  text="Crear nueva aplicación", font=("Arial", 14, "bold"))
-        configuration_label.grid(row=0, column=0, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-
-        self.configuration_warning = CTkLabel(configuration_frame,  text="", font=("Arial", 13, "bold"),text_color="red")
-        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20, 5), padx=20, sticky="w")
-
-        description_label = CTkLabel(configuration_frame, text="Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar")
-        description_label.grid(row=1, column=0, columnspan=3, pady=(10, 5), padx=20, sticky="w")
-
-        code_label = CTkLabel(self, text="Código de aplicación:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
-        code_label.grid(row=2, column=0, sticky="w", padx=(20, 10), pady=(20, 2))
-        self.entry_code = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black" )
-        self.entry_code.grid(row=2, column=1, padx=(30, 400), pady=(20, 2), sticky="ew")
+         # Configura la ventana con tres filas: 0 (config), 1 (contenido) y 2 (footer)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        
+        # --- FRAME: CONFIGURACIÓN ---
+        configuration_frame = ctk.CTkFrame(self, bg_color="black")
+        configuration_frame.grid(row=0, column=0, sticky="ew")
+        configuration_label = ctk.CTkLabel(configuration_frame, text="Crear nueva aplicación", font=("Arial", 14, "bold"))
+        configuration_label.grid(row=0, column=0, columnspan=3, pady=(20,5), padx=20, sticky="w")
+        self.configuration_warning = ctk.CTkLabel(configuration_frame, text="", font=("Arial", 13, "bold"), text_color="red")
+        self.configuration_warning.grid(row=0, column=3, columnspan=3, pady=(20,5), padx=20, sticky="w")
+        description_label = ctk.CTkLabel(configuration_frame, text="Este Wizard genera la estructura necesaria para desarrollar una aplicación estándar")
+        description_label.grid(row=1, column=0, columnspan=3, pady=(10,5), padx=20, sticky="w")
+        
+        # --- FRAME: CONTENIDO PRINCIPAL ---
+        content_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        content_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
+        content_frame.grid_columnconfigure(0, weight=0)
+        content_frame.grid_columnconfigure(1, weight=1)
+        
+        code_label = ctk.CTkLabel(content_frame, text="Código de aplicación:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        code_label.grid(row=0, column=0, sticky="w", padx=(20,10), pady=(20,2))
+        self.entry_code = ctk.CTkEntry(content_frame, bg_color='#FFFFFF', fg_color='#84bfc4',
+            border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
+        self.entry_code.grid(row=0, column=1, padx=(30,400), pady=(20,2), sticky="ew")
+        
 
         self.use_default_location = tk.BooleanVar()
-        location_checkbox = CTkCheckBox(self,hover=True, text="Usar localización por defecto", checkbox_height=20, checkbox_width=20, border_color='#84bfc4',fg_color='#84bfc4', variable=self.use_default_location, command=self.toggle_textbox, bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
-        location_checkbox.grid(row=3, column=0, columnspan=2, pady=(5, 2), padx=20, sticky="w")
+        location_checkbox = ctk.CTkCheckBox(content_frame, hover=True, text="Usar localización por defecto",
+            checkbox_height=20, checkbox_width=20, border_color='#84bfc4', fg_color='#84bfc4',
+            variable=self.use_default_location, command=self.toggle_textbox, bg_color='#FFFFFF',
+            text_color="black", font=("Arial", 12, "bold"))
+        location_checkbox.grid(row=1, column=0, columnspan=2, pady=(5,2), padx=20, sticky="w")
         location_checkbox.select()
 
-        localizacion_label = CTkLabel(self, text="Localización:",  bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
-        localizacion_label.grid(row=4, column=0, sticky="w", padx=(20, 10), pady=(5, 2))
-        self.entry_location = CTkEntry(self, state="normal", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3)
-        self.entry_location.grid(row=4, column=1, padx=(30,180), pady=(5, 2), sticky="ew")
-        self.entry_location.configure(placeholder_text=os.getcwd())
-        self.entry_location.configure(placeholder_text_color="grey")
-        self.entry_location.configure(text_color="grey")
+        localizacion_label = ctk.CTkLabel(content_frame, text="Localización:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        localizacion_label.grid(row=2, column=0, sticky="w", padx=(20,10), pady=(5,2))
+        self.entry_location = ctk.CTkEntry(content_frame, state="normal", bg_color='#FFFFFF', fg_color='#84bfc4',
+            border_color='#84bfc4', height=2.5, border_width=3)
+        self.entry_location.grid(row=2, column=1, padx=(30,180), pady=(5,2), sticky="ew")
+        self.entry_location.configure(placeholder_text=os.getcwd(), placeholder_text_color="grey", text_color="grey")
         self.entry_location.delete(0, "end")
-        rutaUltimoProyecto = utl.readConfig("RUTA", "ruta_ultimo_proyecto")
-        if rutaUltimoProyecto == '':
-            self.entry_location.insert(0, os.getcwd())
-        else:
-            self.entry_location.insert(0, rutaUltimoProyecto)    
+
+        rutaUltimoProyecto = os.getcwd()  # O usar utl.readConfig("RUTA", "ruta_ultimo_proyecto")
+        self.entry_location.insert(0, rutaUltimoProyecto) 
         self.entry_location.configure(state="disabled")
 
-        self.location_button = CTkButton(self,state="disabled", text="Explorar", command=self.browse_location, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        self.location_button.grid(row=4, column=1, pady=(5, 2), padx= (0, 20), sticky="e")
-
-        war_label = CTkLabel(self, text="Nombre del WAR:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
-        war_label.grid(row=5, column=0, sticky="w", padx=(20, 10), pady=(5, 30))
-        self.entry_war = CTkEntry(self, bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
-        self.entry_war.grid(row=5, column=1, padx=(30, 20), pady=(5, 30), sticky="ew")
-
-        languages_frame = CTkFrame(self,  bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        languages_frame.grid(row=6, column=0, columnspan=2, pady=(5, 30), padx=20, sticky="ew")
-
-        # Crear un marco interno para organizar los widgets dentro del contenedor "Idiomas"
-        self.idiomas_inner_frame = CTkFrame(languages_frame, fg_color='#FFFFFF', bg_color='#FFFFFF', border_color='#84bfc4')
+        self.location_button = ctk.CTkButton(content_frame, state="disabled", text="Explorar",
+            command=self.browse_location, bg_color='#FFFFFF', fg_color='#84bfc4',
+            border_color='#84bfc4', hover_color='#41848a', text_color="black",
+            font=("Arial", 12, "bold"), width=100, height=25)
+        self.location_button.grid(row=2, column=1, pady=(5,2), padx=(0,20), sticky="e")
+        
+        war_label = ctk.CTkLabel(content_frame, text="Nombre del WAR:", bg_color='#FFFFFF', text_color="black", font=("Arial", 12, "bold"))
+        war_label.grid(row=3, column=0, sticky="w", padx=(20,10), pady=(5,30))
+        self.entry_war = ctk.CTkEntry(content_frame, bg_color='#FFFFFF', fg_color='#84bfc4',
+            border_color='#84bfc4', height=2.5, border_width=3, text_color="black")
+        self.entry_war.grid(row=3, column=1, padx=(30,20), pady=(5,30), sticky="ew")
+        
+        languages_frame = ctk.CTkFrame(content_frame, bg_color='#FFFFFF', fg_color='#FFFFFF',
+            border_color='#84bfc4', border_width=3)
+        languages_frame.grid(row=4, column=0, columnspan=2, pady=(5,30), padx=20, sticky="ew")
+        self.idiomas_inner_frame = ctk.CTkFrame(languages_frame, fg_color='#FFFFFF', bg_color='#FFFFFF', border_color='#84bfc4')
         self.idiomas_inner_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # Crear un widget Label encima del borde del marco
-        label_on_border = CTkLabel(self, text="Idiomas", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        label_on_border.place(in_=languages_frame, anchor="sw" )
-
+        label_on_border = ctk.CTkLabel(content_frame, text="Idiomas", bg_color="#FFFFFF", fg_color="#FFFFFF",
+            text_color="black", font=("Arial", 12, "bold"))
+        label_on_border.place(in_=languages_frame, anchor="sw")
+        
         # obligatoria Castellano y Euskera
         self.language_options = ["Castellano", "Euskera", "Inglés", "Francés"]
         self.language_vars = []
-        self.language_vars.append(tk.BooleanVar(name="Castellano",value=TRUE))
-        self.language_vars.append(tk.BooleanVar(name="Euskera",value=TRUE))
-        self.language_vars.append(tk.BooleanVar(name="Inglés",value=False))
-        self.language_vars.append(tk.BooleanVar(name="Francés",value=False))
+        self.language_vars.append(tk.BooleanVar(name="Castellano", value=True))
+        self.language_vars.append(tk.BooleanVar(name="Euskera", value=True))
+        self.language_vars.append(tk.BooleanVar(name="Inglés", value=False))
+        self.language_vars.append(tk.BooleanVar(name="Francés", value=False))
         stateCheck = "disabled"
 
         for i, (lang_option, lang_var) in enumerate(zip(self.language_options, self.language_vars)):
-            if(lang_option != 'Castellano' and lang_option != 'Euskera'):
+            if lang_option not in ['Castellano', 'Euskera']:
                 stateCheck = "normal"
             CTkCheckBox(self.idiomas_inner_frame,state=stateCheck, text=lang_option, variable=lang_var, checkbox_height=20, checkbox_width=20, border_color='#84bfc4', bg_color='#FFFFFF', fg_color='#84bfc4', text_color="black", font=("Arial", 12, "bold")).grid(row=0, column=i, padx=5, pady=(10, 2), sticky="w")
 
-        default_language_label = CTkLabel(self.idiomas_inner_frame, text="Idioma por defecto:", text_color="black", font=("Arial", 12, "bold"))
-        default_language_label.grid(row=7, column=0, sticky="w", padx=(10, 10), pady=(25, 2))
+        ctk.CTkCheckBox(self.idiomas_inner_frame, state=stateCheck, text=lang_option, variable=lang_var,
+                checkbox_height=20, checkbox_width=20, border_color='#84bfc4', bg_color='#FFFFFF',
+                fg_color='#84bfc4', text_color="black", font=("Arial", 12, "bold")
+                ).grid(row=0, column=i, padx=5, pady=(10,2), sticky="w")
+        
+        default_language_label = ctk.CTkLabel(self.idiomas_inner_frame, text="Idioma por defecto:", text_color="black", font=("Arial", 12, "bold"))
+        default_language_label.grid(row=7, column=0, sticky="w", padx=(10,10), pady=(25,2))
         self.default_language_var = tk.StringVar()
 
         self.default_language_combobox = self.update_default_language_options()
-        security_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        security_frame.grid(row=8, column=0, columnspan=2, pady=(5, 10), padx=20, sticky="ew")
-
-        # Crear un widget Label encima del borde del marco
-        labelSecurityFrame = CTkLabel(self, text="Seguridad con XLNetS", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
-        labelSecurityFrame.place(in_=security_frame, anchor="sw" )
-
+        security_frame = ctk.CTkFrame(content_frame, bg_color='#FFFFFF', fg_color='#FFFFFF',
+            border_color='#84bfc4', border_width=3)
+        security_frame.grid(row=5, column=0, columnspan=2, pady=(30,20), padx=20, sticky="ew")
+        labelSecurityFrame = ctk.CTkLabel(content_frame, text="Seguridad con XLNetS", bg_color="#FFFFFF",
+            fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        labelSecurityFrame.place(in_=security_frame, anchor="sw")
+        
         self.security_var = tk.StringVar(value="Si")
-        self.security_yes_radio = CTkRadioButton(security_frame, text="Sí", value="Si", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
-        self.security_yes_radio.grid(row=0, column=0, padx=(20, 0), pady=(20, 10), sticky="nsew")
-        security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
-        security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
+        self.security_yes_radio = ctk.CTkRadioButton(security_frame, text="Sí", value="Si", variable=self.security_var,
+            text_color="black", fg_color='#84bfc4', radiobutton_height=18, radiobutton_width=18)
+        self.security_yes_radio.grid(row=0, column=0, padx=(20,0), pady=(20,10), sticky="nsew")
+        security_no_radio = ctk.CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var,
+            text_color="black", fg_color='#84bfc4', radiobutton_height=18, radiobutton_width=18)
+        security_no_radio.grid(row=0, column=1, padx=5, pady=(20,10), sticky="nsew")
 
         # Plantillas Tiles o Thymeleaf
-        plantillar_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
-        plantillar_frame.grid(row=9, column=0, columnspan=2, pady=(20, 5), padx=20, sticky="ew")
-        labelPlantillarFrame = CTkLabel(self, text="Plantillar con Tiles o Thymeleaf", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        plantillar_frame = CTkFrame(content_frame, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
+        plantillar_frame.grid(row=6, column=0, columnspan=2, pady=(20, 5), padx=20, sticky="ew")
+        labelPlantillarFrame = CTkLabel(content_frame, text="Plantillar con Tiles o Thymeleaf", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
         labelPlantillarFrame.place(in_=plantillar_frame, anchor="sw" )
 
         self.plantillar_var = tk.StringVar(value="tiles")
@@ -168,11 +191,24 @@ class Paso1(CTk):
         plantillar_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
         # botones terminar y cancelar
-        finish_button = CTkButton(self, text="Terminar", command=lambda:self.mostrarSpinner(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        finish_button.grid(row=12, column=1, pady=(60, 0), padx=(560, 30), sticky = "se")
+        finish_button = ctk.CTkButton(content_frame, text="Terminar", command=lambda: self.mostrarSpinner(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a',
+            text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        finish_button.grid(row=7, column=1, pady=(10,0), padx=(560,30), sticky="se")
+        cancel_button = ctk.CTkButton(content_frame, text="Cancelar", command=lambda: self.cancelar(),
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a',
+            text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
+        cancel_button.grid(row=7, column=1, pady=(10,0), padx=(300,150), sticky="se")
+        
+        # --- FRAME: FOOTER ---
+        footer_frame = ctk.CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
+        footer_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(0,10))
+        footer_frame.grid_columnconfigure(0, weight=1)
+        footer_frame.grid_columnconfigure(1, weight=0)
+        version_button = CTkButton(footer_frame, text=VERSION_STR,
+            bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', text_color="black", font=("Arial", 12, "bold"),  hover_color='#84bfc4')
+        version_button.grid(row=0, column=1, sticky="e")
 
-        cancel_button = CTkButton(self, text="Cancelar", command= lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width= 100, height=25)
-        cancel_button.grid(row=12, column=1, pady=(60, 0), padx=(300,150), sticky = "se")
 
     def update_progress(self,value):
         if self.progressbar.winfo_exists():
