@@ -405,9 +405,20 @@ class Paso4(CTk):
             self.configuration_warning.configure(text_color ="red")
             return FALSE
         inicio = datetime.now()
-        array_proyect = self.ear_entry.get().split("/")
-        self.proyect_name = array_proyect[len(array_proyect)-1].replace("EAR","")
-        self.rutaDest = self.ear_entry.get().replace("/"+self.proyect_name+"EAR","")
+        ear_path = self.ear_entry.get().strip()
+        if ear_path:
+            normalized_path = os.path.normpath(ear_path)
+            base_name = os.path.basename(normalized_path)
+            # Extraer nombre del proyecto
+            if base_name.upper().endswith("EAR"):
+                self.proyect_name = base_name[:-3]
+            else:
+                self.proyect_name = base_name
+            # Obtener ruta de destino
+            self.rutaDest = os.path.dirname(normalized_path)
+        else:
+            self.proyect_name = ""
+            self.rutaDest = ""
 
         yaml_data = {
             "i18n_app": [lang_option for lang_option, lang_var in zip(self.language_options, self.language_vars) if lang_var.get()],
