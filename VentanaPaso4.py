@@ -121,25 +121,38 @@ class Paso4(CTk):
         security_no_radio = CTkRadioButton(security_frame, text="No", value="No", variable=self.security_var, text_color="black", radiobutton_height=18, radiobutton_width=18)
         security_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
 
+        # Plantillas Tiles o Thymeleaf
+        plantillar_frame = CTkFrame(self, bg_color='#FFFFFF', fg_color='#FFFFFF', border_color='#84bfc4', border_width=3)
+        plantillar_frame.grid(row=9, column=0, columnspan=2, pady=(20, 5), padx=20, sticky="ew")
+        labelPlantillarFrame = CTkLabel(self, text="Plantillar con Tiles o Thymeleaf", bg_color="#FFFFFF", fg_color="#FFFFFF", text_color="black", font=("Arial", 12, "bold"))
+        labelPlantillarFrame.place(in_=plantillar_frame, anchor="sw" )
+
+        self.plantillar_var = tk.StringVar(value="tiles")
+        self.plantillar_yes_radio = CTkRadioButton(plantillar_frame, text="Tiles", value="tiles", variable=self.plantillar_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
+        self.plantillar_yes_radio.grid(row=0, column=0, padx=5, pady=(20, 10), sticky="nsew")
+        plantillar_no_radio = CTkRadioButton(plantillar_frame, text="Thymeleaf", value="thymeleaf", variable=self.plantillar_var, text_color="black", fg_color='#84bfc4', radiobutton_height= 18 , radiobutton_width= 18)
+        plantillar_no_radio.grid(row=0, column=1, padx=5, pady=(20, 10), sticky="nsew")
+
+
         # Buttons Frame (actualmente en row 12)
         buttons_frame = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
-        buttons_frame.grid(row=12, column=0, columnspan=2, pady=10, sticky="ew")
+        buttons_frame.grid(row=10, column=0, columnspan=2, pady=10, sticky="ew")
 
          #Configurar columnas del frame de botones
         buttons_frame.grid_columnconfigure(0, weight=1)  # Columna 0 se expande
         buttons_frame.grid_columnconfigure(1, weight=0)  # Para botón "Atrás"
         buttons_frame.grid_columnconfigure(2, weight=0)  # Para botón "Terminar"
         back_button = CTkButton(buttons_frame, text="Atrás", command=lambda: self.cancelar(), bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        back_button.grid(row=0, column=0, padx=(620, 0), pady=(100, 0))
+        back_button.grid(row=0, column=0, padx=(620, 0), pady=(40, 0))
 
         finish_button = CTkButton(buttons_frame, command=lambda: self.save_to_yaml(), text="Terminar", bg_color='#FFFFFF', fg_color='#84bfc4', border_color='#84bfc4', hover_color='#41848a', text_color="black", font=("Arial", 12, "bold"), width=100, height=25)
-        finish_button.grid(row=0, column=2, padx=(0,50), pady=(100, 0))
+        finish_button.grid(row=0, column=2, padx=(0,40), pady=(40, 0))
         
         # ==========================
         # Footer Frame para versión
         # ==========================
         footer_frame = CTkFrame(self, fg_color="#FFFFFF", bg_color="#FFFFFF")
-        footer_frame.grid(row=13, column=0, columnspan=2, sticky="ew", padx=20, pady=(0,10))
+        footer_frame.grid(row=13, column=0, columnspan=2, sticky="ew", padx=20, pady=(0,20))
         footer_frame.grid_columnconfigure(0, weight=1)
         footer_frame.grid_columnconfigure(1, weight=0)
         version_button = ctk.CTkButton(footer_frame, text=VERSION_STR, bg_color="#FFFFFF", fg_color="#84bfc4",
@@ -464,6 +477,17 @@ class Paso4(CTk):
             yaml_data["defaultLanguage"] = "es"    
 
         yaml_data["availableLangs"] = availableLangs
+
+        if self.plantillar_var.get() == "tiles":
+            filesExcludes.append("*.html")
+            filesExcludes.append("HomeController.java")
+            filesExcludes.append("GlobalModelAttributes.java")
+        elif self.plantillar_var.get() == "thymeleaf": 
+            filesExcludes.append("*.jsp")
+            filesExcludes.append("tiles.xml")
+        yaml_data["typeTemplate"]  =  self.plantillar_var.get()
+
+
         #destinoPath = self.entry_location.get()
         #if(destinoPath == ''):
         destinoPath = rutaPath
