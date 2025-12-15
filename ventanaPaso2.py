@@ -1451,7 +1451,7 @@ class VentanaPrincipal(CTk):
                         if row[4]  == 'P': #primarykey
                             contPrimaryKey = contPrimaryKey + 1
                     else:
-                        if cont > 1 and contPrimaryKey < len(columns):
+                        if cont > 1 and contPrimaryKey <= len(columns):
                             self.tables.append(Table(tableName,columns)) 
                         contPrimaryKey = 0    
                         if row[4]  == 'P': #primarykey
