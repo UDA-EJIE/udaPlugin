@@ -76,7 +76,13 @@ def initPaso2(tables,yaml_data,ventanaPaso2):
             data["colControllerPk"] = colControllerPk
             data["colControllerAll"] = colControllerAll
             data["colControllerPkRel"] = colControllerPkRel
-            data["entidadRelacion"] = table["controller"]["entidadRelacion"]
+
+            def to_pascal_case(name: str) -> str:
+                if "_" not in name:
+                    return name
+                parts = [p for p in name.split("_") if p]
+                return "".join(p[:1].upper() + p[1:] for p in parts)
+            data["entidadRelacion"] = to_pascal_case(table["controller"]["entidadRelacion"])
             data["controller"] = "value"
         else:
            data["controller"] = None
